@@ -1,3218 +1,3199 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-06-21 01:04+0000\n"
-"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
-"Language-Team: Galician <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/gl/>\n"
-"Language: gl\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: mk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.7.dev0\n"
-"X-Language: gl\n"
+"Plural-Forms: nplurals=2; plural=n==1 || n%10==1 ? 0 : 1;\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
 msgid "Quality Control"
-msgstr "Control de Calidade"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Measurement Systems Analysis"
-msgstr "Análise de Sistemas de Medición"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Attributes Agreement Analysis"
-msgstr "Análise de Concordancia de Atributos"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Control Charts"
-msgstr "Gráficas de control"
-
-msgctxt "Description|"
-msgid "Variables Charts for Subgroups"
-msgstr "Gráficas de Variables para Subgrupos"
-
-msgctxt "Description|"
-msgid "Time Weighted Charts"
-msgstr "Gráficas de Tempo Ponderado"
-
-msgctxt "Description|"
-msgid "Process Capability Study"
-msgstr "Estudo de Capacidade de Proceso"
-
-msgctxt "attributesCharts|"
-msgid "Defectives/Defects"
-msgstr "Defectuosos/Defectos"
-
-msgctxt "attributesCharts|"
-msgid "Charts for Attributes"
-msgstr "Gráficas para Atributos"
-
-msgctxt "attributesCharts|"
-msgid "Defectives"
-msgstr "Defectuosos"
-
-msgctxt "attributesCharts|"
-msgid "np chart"
-msgstr "Gráfica NP"
-
-msgctxt "attributesCharts|"
-msgid "p chart"
-msgstr "Gráfica P"
-
-msgctxt "attributesCharts|"
-msgid "Defects"
-msgstr "Defectos"
-
-msgctxt "attributesCharts|"
-msgid "c chart"
-msgstr "Gráfica C"
-
-msgctxt "attributesCharts|"
-msgid "u chart"
-msgstr "Gráfica U"
-
-msgctxt "attributesCharts|"
-msgid "X-mR chart"
-msgstr "Gráfica X-mR"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Name"
-msgstr "Nome"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "2-level split-plot (hard-to-change factors)"
-msgstr "Gráfica en divisións de 2 niveis (factores difíciles de trocar)"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Number of hard-to-change factors"
-msgstr "Número de factores difíciles de trocar"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Resolution"
-msgstr "Resolución"
+msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Standard"
-msgstr "Típico"
+msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Tables"
-msgstr "Táboas"
-
-msgctxt "msaAttribute|"
-msgid "Kendall's tau"
-msgstr "Tau de Kendall"
+msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Parts"
-msgstr "Partes"
-
-msgctxt "msaGaugeLinearity|"
-msgid "Measurements"
-msgstr "Medidas"
+msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Standard"
-msgstr "Típico"
+msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Analysis Options"
-msgstr "Opcións da Análise"
-
-msgctxt "msaGaugeLinearity|"
-msgid "Linearity table"
-msgstr "Táboa de linearidade"
-
-msgctxt "msaGaugeLinearity|"
-msgid "Bias table"
-msgstr "Táboa de nesgos"
+msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Plots"
-msgstr "Gráficas"
-
-msgctxt "msaGaugeLinearity|"
-msgid "Linearity and bias graph"
-msgstr "Gráfica de linearidade e nesgos"
-
-msgctxt "msaGaugeLinearity|"
-msgid "Percent process variation graph"
-msgstr "Gráfica de variación de proceso porcentual"
-
-msgctxt "msaGaugeRR|"
-msgid "Data format"
-msgstr "Formato de datos"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Measurements"
-msgstr "Medidas"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Std. Deviation"
-msgstr "Desvío padrón"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Percent"
-msgstr "Por cento"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Plots"
-msgstr "Gráficas"
-
-msgctxt "msaGaugeRR|"
-msgid "Scatter plots operators"
-msgstr "Operadores de gráficas de dispersión"
-
-msgctxt "msaGaugeRR|"
-msgid "Fit line"
-msgstr "Liña de axuste"
-
-msgctxt "msaGaugeRR|"
-msgid "Show origin line"
-msgstr "Amosar a liña da orixe"
-
-msgctxt "msaGaugeRR|"
-msgid "Display all measurements"
-msgstr "Presentar tódalas medidas"
-
-msgctxt "msaGaugeRR|"
-msgid "Measurement"
-msgstr "Medida"
-
-msgctxt "msaGaugeRR|"
-msgid "Name"
-msgstr "Nome"
-
-msgctxt "msaGaugeRR|"
-msgid "Date"
-msgstr "Data"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Operators"
-msgstr "Operadores"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Parts"
-msgstr "Partes"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Measurements"
-msgstr "Medidas"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Percent"
-msgstr "Por cento"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Graph variation components"
-msgstr "Debuxar as compoñentes da variación"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Plots"
-msgstr "Gráficas"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Display all measurements"
-msgstr "Presentar tódalas medidas"
-
-msgctxt "msaType1Gauge|"
-msgid "6"
-msgstr "6"
-
-msgctxt "msaType1Gauge|"
-msgid "4"
-msgstr "4"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Plots"
-msgstr "Gráficas"
-
-msgctxt "msaType1Gauge|"
-msgid "Run chart"
-msgstr "Executar gráfica"
-
-msgctxt "msaType1Gauge|"
-msgid "Display individual measurements"
-msgstr "Presentar as medidas individuais"
-
-msgctxt "msaType1Gauge|"
-msgid "Confidence interval for bias"
-msgstr "Intervalos de confianza para o nesgo"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Histogram"
-msgstr "Histograma"
-
-msgctxt "msaType1Gauge|"
-msgid "Bin width type"
-msgstr "Tipo de ancho da barra"
-
-msgctxt "msaType1Gauge|"
-msgid "Sturges"
-msgstr "Sturges"
-
-msgctxt "msaType1Gauge|"
-msgid "Scott"
-msgstr "Scott"
-
-msgctxt "msaType1Gauge|"
-msgid "Freedman-Diaconis"
-msgstr "Freedman-Diaconis"
-
-msgctxt "msaType1Gauge|"
-msgid "Manual"
-msgstr "Manual"
-
-msgctxt "msaType1Gauge|"
-msgid "Number of bins"
-msgstr "Número de barras"
-
-msgctxt "msaType1Gauge|"
-msgid "Display mean"
-msgstr "Presentar a media"
-
-msgctxt "msaType1Gauge|"
-msgid "Confidence interval for mean"
-msgstr "Intervalo de confianza para a media"
-
-msgctxt "msaType1Gauge|"
-msgid "Display reference value"
-msgstr "Presentar o valor de referencia"
-
-msgctxt "processCapabilityStudies|"
-msgid "Data format"
-msgstr "Formato de datos"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Measurements"
-msgstr "Medidas"
-
-msgctxt "processCapabilityStudies|"
-msgid "Specify a distribution"
-msgstr "Especificar unha distribución"
-
-msgctxt "processCapabilityStudies|"
-msgid "Weibull"
-msgstr "Weibull"
-
-msgctxt "processCapabilityStudies|"
-msgid "Process capability plot"
-msgstr "Gráfica de capacidades do proceso"
-
-msgctxt "processCapabilityStudies|"
-msgid "Number of bins"
-msgstr "Número de barras"
-
-msgctxt "processCapabilityStudies|"
-msgid "Process capability tables"
-msgstr "Táboas de capacidades de proceso"
-
-msgctxt "processCapabilityStudies|"
-msgid "Confidence intervals"
-msgstr "Intervalos de confianza"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Lower specification limit"
-msgstr "Límite inferior de especificación"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Target value"
-msgstr "Valor obxectivo"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Upper specification limit"
-msgstr "Límite superior de especificación"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
-msgid "Histogram"
-msgstr "Histograma"
+msgid "Specify a distribution"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
-msgid "Probability table and plot"
-msgstr "Táboa e gráfica de probabilidades"
+msgid "Weibull"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Median Rank (Benard)"
-msgstr "Rango Mediano (Benard)"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Mean Rank (Herd-Johnson)"
-msgstr "Rango Medio (Herd-Johnson)"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Kaplan-Meier"
-msgstr "Kaplan-Meier"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Modified Kaplan-Meier (Hazen)"
-msgstr "Kaplan-Meier modificado (Hazen)"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Normal"
-msgstr "Normal"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Variables Charts for Subgroups"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Time Weighted Charts"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Defectives/Defects"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Charts for Attributes"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Defectives"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "np chart"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "p chart"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Defects"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "c chart"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "u chart"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Kendall's tau"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Linearity table"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Bias table"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Linearity and bias graph"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Percent process variation graph"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Scatter plots operators"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Fit line"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show origin line"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Display all measurements"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Operators"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Parts"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Measurements"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Percent"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Graph variation components"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Plots"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Display all measurements"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "6"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "4"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Run chart"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Display individual measurements"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Confidence interval for bias"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Bin width type"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Sturges"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Scott"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Freedman-Diaconis"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Manual"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Number of bins"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Display mean"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Confidence interval for mean"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Display reference value"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
-msgid "Process Capability Report"
-msgstr "Informe de capacidade do proceso"
-
-msgctxt "processCapabilityStudies|"
-msgid "Measurement"
-msgstr "Medida"
-
-msgctxt "processCapabilityStudies|"
-msgid "Name"
-msgstr "Nome"
-
-msgctxt "processCapabilityStudies|"
-msgid "Date"
-msgstr "Data"
-
-msgctxt "processCapabilityStudies|"
-msgid "Show Report"
-msgstr "Amosar informe"
+msgid "Number of bins"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Measurements"
-msgstr "Medidas"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Cumulative sum chart"
-msgstr "Gráfica da suma acumulada"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Exponentially weighted moving average chart"
-msgstr "Diagrama de media móbil ponderada exponencialmente"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Variables Chart for Individuals"
-msgstr "Gráfica de Variables para Individuos"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "X-mR chart"
-msgstr "Gráfica X-mR"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & R"
-msgstr "Barras X & R"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Warning limits"
-msgstr "Límites de advertencia"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & s"
-msgstr "Barras X & s"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Process Capability Study"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "X-mR chart"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Data format"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurement"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Name"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Date"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Data format"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Process capability plot"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Process capability tables"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Confidence intervals"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Histogram"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Probability table and plot"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Process Capability Report"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Measurement"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Name"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Date"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Show Report"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Variables Chart for Individuals"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "X-mR chart"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Variables Charts for Individuals"
-msgstr "Gráficas de Variables para Individuos"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Probability of Detection"
-msgstr "Probabilidade de Detección"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Outcomes"
-msgstr "Resultados"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Covariates"
-msgstr "Covariantes"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Tables"
-msgstr "Táboas"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Model fit table"
-msgstr "Táboa de axuste do modelo"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Detection plot"
-msgstr "Gráfica de detección"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Show data"
-msgstr "Amosar os datos"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Rugs"
-msgstr "Marcas de alfombrilla"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Points"
-msgstr "Puntos"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Add jitter"
-msgstr "Engadir oscilación"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Show density"
-msgstr "Amosar a densidade"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Confidence interval"
-msgstr "Intervalo de confianza"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Ticks x-axis"
-msgstr "Marcas do eixe x"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "based on data"
-msgstr "con base nos datos"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "based on data and model"
-msgstr "con base nos datos e no modelo"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Logarithmic x-axis"
-msgstr "Eixe x logarítmico"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Asymptotes"
-msgstr "Asíntotas"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Horizontal asymptotes"
-msgstr "Asíntotas horizontais"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Label"
-msgstr "Etiqueta"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "y-coordinate"
-msgstr "Coordenada y"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Asymptote "
-msgstr "Asíntota "
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Vertical asymptotes"
-msgstr "Asíntotas verticais"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "x-coordinate"
-msgstr "Coordenada x"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Fitting options"
-msgstr "Opcións de axuste"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Link function"
-msgstr "Función de enlace"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Logit"
-msgstr "Logit"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Probit"
-msgstr "Probit"
+msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Log transform covariate"
-msgstr "Covariante da transformación logarítmica"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Autocorrelation"
-msgstr "Autocorrelación"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Data format"
-msgstr "Formato de datos"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurements"
-msgstr "Medidas"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroups"
-msgstr "Subgrupos"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Informe de gráficas de variables por subgrupos"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurement"
-msgstr "Medida"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Name"
-msgstr "Nome"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Date"
-msgstr "Data"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Show Report"
-msgstr "Amosar informe"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Test-retest (Range method)"
-msgstr "Probar-Volver probar (método do Rango)"
+msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Available variables"
-msgstr "Variables dispoñibles"
+msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Response variable"
-msgstr "Variable de resposta"
+msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Assigned factors"
-msgstr "Factores asignados"
+msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Run order"
-msgstr "Orde de execución"
+msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Alpha level:"
-msgstr "Nivel alfa:"
+msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Pareto plot of standardized effects"
-msgstr "Gráfica de Pareto de efectos tipificados"
+msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals plots"
-msgstr "Gráficas dos erros"
+msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Normal probability plot of residuals"
-msgstr "Gráfica de probabilidade Normal dos erros"
+msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Histogram of residuals"
-msgstr "Histograma dos erros"
+msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs fitted value"
-msgstr "Erros vs Valor axustado"
+msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs run order"
-msgstr "Erros vs Orde de execución"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (default generator)"
-msgstr "Factorial de 2 niveis (xerador predeterminado)"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (specify generator)"
-msgstr "Factorial de 2 niveis (especificar o xerador)"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Type of Screening Design"
-msgstr "Tipo de Deseño da Esculca"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Plackett-Burman"
-msgstr "Plackett-Burman"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Definitive screening"
-msgstr "Esculca definitiva"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Number of 3-level factors"
-msgstr "Número de factores de nivel 3"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Number of runs"
-msgstr "Número de execucións"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Coded"
-msgstr "Codificado"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Uncoded"
-msgstr "Non codificado"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Run Order"
-msgstr "Orde de Execución"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Standard"
-msgstr "Típico"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Random"
-msgstr "Aleatorio"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Factor"
-msgstr "Factor"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Name"
-msgstr "Nome"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Level 1"
-msgstr "Nivel 1"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Level 2"
-msgstr "Nivel 2"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Level 3"
-msgstr "Nivel 3"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Factor "
-msgstr "Factor "
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid " Level 1"
-msgstr " Nivel 1"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid " Level 2"
-msgstr " Nivel 2"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid " Level 3"
-msgstr " Nivel 3"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Additional Options"
-msgstr "Opcións Adicionais"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Number of replicates for corner points"
-msgstr "Número de réplicas para puntos de curruncho"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Single column"
-msgstr "Columna única"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Across rows"
-msgstr "A través de filas"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Data format"
-msgstr "Formato de datos"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Single column"
-msgstr "Columna única"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Across rows"
-msgstr "A través de filas"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Name"
-msgstr "Nome"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Date"
-msgstr "Data"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Data format"
-msgstr "Formato de datos"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Single column"
-msgstr "Columna única"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Across rows"
-msgstr "A través de filas"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Measurements"
-msgstr "Medidas"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "r&R table"
-msgstr "Táboa r&R"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Plots"
-msgstr "Gráficas"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Single column"
-msgstr "Columna única"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Across rows"
-msgstr "A través de filas"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Type of data distribution"
-msgstr "Tipo de distribución de datos"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Normal distribution"
-msgstr "Distribución Normal"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal distribution"
-msgstr "Distribución Non-Normal"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Stability of the process"
-msgstr "Estabilidade do proceso"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Distribution of the process"
-msgstr "Distribución do proceso"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Fit distribution"
-msgstr "Axustar distribución"
+msgstr ""
 
 msgctxt "Description|"
 msgid ""
 "Investigate if a manufactured product adheres to a defined set of quality "
 "criteria"
 msgstr ""
-"Investigar se un produto manufacturado se cingue a un conxunto definido de "
-"criterios de calidade"
 
 msgctxt "msaAttribute|"
 msgid "Data format"
-msgstr "Formato de datos"
+msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Single column"
-msgstr "Columna única"
+msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Across rows"
-msgstr "A través de filas"
+msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Cohen's kappa (interrater kappa)"
-msgstr "Kappa de Cohen (kappa entre cualificadores)"
+msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Fleiss' kappa (multirater kappa)"
-msgstr "Kappa de Fleiss (kappa de multicualificadores)"
+msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Process variation"
-msgstr "Variación do proceso"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Alpha interaction removal"
-msgstr "Eliminación da interacción alfa"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Components of variation"
-msgstr "Compoñentes de variación"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Title"
-msgstr "Título"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Gauge name"
-msgstr "Nome de calibre"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Tolerance"
-msgstr "Tolerancia"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Title"
-msgstr "Título"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge name"
-msgstr "Nome do calibrador"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Tolerance"
-msgstr "Tolerancia"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Run chart of parts"
-msgstr "Executar a gráfica das partes"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Range chart"
-msgstr "Gráfica de rangos"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Tolerance range"
-msgstr "Rango de tolerancia"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Percent of tolerance for Cg"
-msgstr "Porcentaxe de tolerancia para Cg"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Bias and instrument capability table"
-msgstr "Táboa de nesgos e capacidade do instrumento"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "3-parameter Weibull"
-msgstr "Weibull de 3 parámetros"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Display grid lines"
-msgstr "Presentar liñas da grella"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Shift size"
-msgstr "Tamaño de paso"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Moving range length"
-msgstr "Longo do rango de movemento"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Number of lags"
-msgstr "Número de retardos"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Confidence interval size"
-msgstr "Tamaño do intervalo de confianza"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Single column"
-msgstr "Columna única"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Across rows"
-msgstr "A través de filas"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Known parameters"
-msgstr "Parámetros coñecidos"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Mean"
-msgstr "Media"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Standard deviation"
-msgstr "Desvío padrón"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Title"
-msgstr "Título"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Control Charts for Attributes"
-msgstr "Gráficas de Control para Atributos"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Control Charts for Attributes Report"
-msgstr "Gráficas de Control para o Informe de Atributos"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Title"
-msgstr "Título"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Measurement"
-msgstr "Medida"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Name"
-msgstr "Nome"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Appraiser"
-msgstr "Taxador"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Measurement system"
-msgstr "Sistema de medición"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Subgroups size"
-msgstr "Tamaño dos subgrupos"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Size"
-msgstr "Tamaño"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Time"
-msgstr "Tempo"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Frequency"
-msgstr "Frecuencia"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Show Report"
-msgstr "Amosar informe"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Design Space"
-msgstr "Espazo de Deseño"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Number of factors"
-msgstr "Número de factores"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Run Order"
-msgstr "Orde de Execución"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Random"
-msgstr "Aleatorio"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Standard"
-msgstr "Típico"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Factor"
-msgstr "Factor"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Name"
-msgstr "Nome"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Levels"
-msgstr "Niveis"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Factor "
-msgstr "Factor "
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Additional Options"
-msgstr "Opcións Adicionais"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Number of random runs to repeat"
-msgstr "Número de execucións aleatorias a repetir"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Save as:"
-msgstr "Gardar como:"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "<b>Sync Design: On</b>"
-msgstr "<b>Deseño Sincr: Aceso</b>"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "<b>Sync Design: Off</b>"
-msgstr "<b>Deseño Sincr: Apagado</b>"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Available factors"
-msgstr "Factores dispoñibles"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Response variable"
-msgstr "Variable de resposta"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Assigned factors"
-msgstr "Factores asignados"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Run order"
-msgstr "Orde de execución"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Unit Display"
-msgstr "Presentación de unidades"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Coded"
-msgstr "Codificado"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Uncoded"
-msgstr "Non codificado"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Run Order"
-msgstr "Orde de Execución"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Random"
-msgstr "Aleatorio"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Standard"
-msgstr "Típico"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Desired Two-level Factorial Design Options"
-msgstr "Opcións do Deseño Desexado Factorial de Nivel 2"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Design Options"
-msgstr "Opcións de Deseño"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Number of runs"
-msgstr "Número de execucións"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Resolution"
-msgstr "Resolución"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Full"
-msgstr "Completo"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "III"
-msgstr "III"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "IV"
-msgstr "IV"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "V"
-msgstr "V"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "VI"
-msgstr "VI"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "VII"
-msgstr "VII"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "VIII"
-msgstr "VIII"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Fraction"
-msgstr "Fracción"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "1/2"
-msgstr "1/2"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "1/4"
-msgstr "1/4"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "1/8"
-msgstr "1/8"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Additional Options"
-msgstr "Opcións Adicionais"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Number of center points"
-msgstr "Número de puntos do centro"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Number of random runs to repeat"
-msgstr "Número de execucións aleatorias a repetir"
+msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Show desired design"
-msgstr "Amosar o deseño desexado"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Name"
-msgstr "Nome"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Design Space"
-msgstr "Espazo de Deseño"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Number of centre points"
-msgstr "Número de puntos de centro"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Save as:"
-msgstr "Gardar como:"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "<b>Sync Design: On</b>"
-msgstr "<b>Deseño Sincr: Aceso</b>"
+msgstr ""
 
 msgctxt "doeScreening|"
 msgid "<b>Sync Design: Off</b>"
-msgstr "<b>Deseño Sincr: Apagado</b>"
+msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Optional"
-msgstr "Opcional"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Type of model for F-statistic"
-msgstr "Tipo de modelo para o estatístico F"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Random effects"
-msgstr "Efectos aleatorios"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Fixed effects"
-msgstr "Efectos fixos"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Analysis options"
-msgstr "Opcións de análise"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variable Charts for Individuals Report"
-msgstr "Gráficas de Variables para Informe de Individuos"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Title"
-msgstr "Título"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Measurement"
-msgstr "Medida"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Name"
-msgstr "Nome"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Date"
-msgstr "Data"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Sub-title"
-msgstr "Subtítulo"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Name of the chart"
-msgstr "Nome da gráfica"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Design generator"
-msgstr "Xerador do deseño"
-
-msgctxt "doeFactorial|"
-msgid "Blocks"
-msgstr "Bloques"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Low"
-msgstr "Baixo"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "High"
-msgstr "Alto"
-
-msgctxt "doeScreening|"
-msgid "Number of factors"
-msgstr "Número de factores"
-
-msgctxt "doeScreening|"
-msgid "Design Display"
-msgstr "Deseñar Presentación"
-
-msgctxt "msaAttribute|"
-msgid "Results"
-msgstr "Resultados"
+msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Positive reference:"
-msgstr "Referencia positiva:"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Blocks"
+msgstr ""
+
+msgctxt "doeScreening|"
+msgid "Design Display"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Results"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Type 3 study (automatic equipment)"
-msgstr "Estudo de tipo 3 (equipamento automático)"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Tolerance width"
-msgstr "Ancho de tolerancia"
-
-msgctxt "msaGaugeRR|"
-msgid "Measurements by part plot"
-msgstr "Gráfica de medidas por parte"
-
-msgctxt "msaGaugeRR|"
-msgid "Measurements by operator plot"
-msgstr "Gráfica de medidas por operador"
-
-msgctxt "msaGaugeRR|"
-msgid "Part × operator interaction plot"
-msgstr "Gráfica da interacción parte x operador"
-
-msgctxt "msaGaugeRR|"
-msgid "Traffic light chart"
-msgstr "Gráfica de semáforo"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Average charts by operator"
-msgstr "Gráficas medias por operador"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Measurements by part plot"
-msgstr "Gráfica de medidas por parte"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Measurements by operator plot"
-msgstr "Gráfica de medidas por operador"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Measurement"
-msgstr "Medida"
-
-msgctxt "processCapabilityStudies|"
-msgid "Percentile"
-msgstr "Percentil"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-conformance"
-msgstr "Desconformidade"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Percentile"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Rank method for probability plot"
-msgstr "Método do rango para a gráfica de probabilidade"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Low"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "High"
+msgstr ""
+
+msgctxt "doeScreening|"
+msgid "Number of factors"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Measurements"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurements by part plot"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurements by operator plot"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Part × operator interaction plot"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Traffic light chart"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Average charts by operator"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Measurements by part plot"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Measurements by operator plot"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Null distribution for probability plot"
-msgstr "Distribución nula para gráfica de probabilidade"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show report metadata"
-msgstr "Amosar os metadatos do informe"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Select Report Components"
-msgstr "Escoller as compoñentes do Informe"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show components of variation"
-msgstr "Amosar as compoñentes da variación"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show measurements by part"
-msgstr "Amosar as medicións por parte"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show measurements by operator"
-msgstr "Amosar as medicións por operador"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show part × operator interaction"
-msgstr "Amosar a interacción parte x operador"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show traffic light chart"
-msgstr "Amosar a gráfica de semáforo"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show report"
-msgstr "Amosar informe"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show report metadata"
-msgstr "Amosar os metadatos do informe"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Select Report Components"
-msgstr "Escoller as compoñentes do Informe"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show components of variation"
-msgstr "Amosar as compoñentes da variación"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show measurements by operator"
-msgstr "Amosar as medicións por operador"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show average chart by operator"
-msgstr "Amosar a gráfica media por operador"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Moving range length"
-msgstr "Longo do rango de movemento"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Show report metadata"
-msgstr "Amosar os metadatos do informe"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Show stability of process charts"
-msgstr "Amosar as gráficas da estabilidade do proceso"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Show process capability plot"
-msgstr "Amosar a gráfica da capacidade de proceso"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Show probability plot"
-msgstr "Amosar a gráfica de probabilidade"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Show process capability tables"
-msgstr "Amosar as táboas da capacidade de proceso"
+msgstr ""
 
 msgctxt "ShowAndExportDesign|"
 msgid "Display design"
-msgstr "Presentar o deseño"
+msgstr ""
 
 #, qt-format
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Level %1"
-msgstr "Nivel %1"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design Table"
-msgstr "Deseñar Táboa"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Runs"
-msgstr "Execucións"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Blocks"
-msgstr "Bloques"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Total"
-msgstr "Total"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Cube"
-msgstr "Cubo"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Axial"
-msgstr "Axial"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Alpha"
-msgstr "Alfa"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Centre points"
-msgstr "Centrar puntos"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design"
-msgstr "Deseñar"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "debug selected row"
-msgstr "Depurar a fila escollida"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "debug selected col"
-msgstr "Depurar a columna escollida"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Default"
-msgstr "Por defecto"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Face centred"
-msgstr "Cara centrada"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Custom"
-msgstr "Personalizado"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Cube block"
-msgstr "Bloque de cubo"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Axial block"
-msgstr "Bloque axial"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Replicates"
-msgstr "Repeticións"
+msgstr ""
 
 msgctxt "ShowAndExportDesign|"
 msgid "Coded units"
-msgstr "Unidades codificadas"
+msgstr ""
 
 msgctxt "ShowAndExportDesign|"
 msgid "Sort by run order"
-msgstr "Clasificar segundo orde de execución"
+msgstr ""
 
 msgctxt "ShowAndExportDesign|"
 msgid "Sort by standard order"
-msgstr "Clasificar segundo orde típica"
+msgstr ""
 
 msgctxt "ShowAndExportDesign|"
 msgid "Save as:"
-msgstr "Gardar como:"
+msgstr ""
 
 msgctxt "ShowAndExportDesign|"
 msgid "e.g. design.csv"
-msgstr "p.e. design.csv"
+msgstr ""
 
 msgctxt "ShowAndExportDesign|"
 msgid "Export design"
-msgstr "Exportar deseño"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Blocks"
-msgstr "Bloques"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Model"
-msgstr "Modelo"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Components"
-msgstr "Compoñentes"
+msgstr ""
 
 #, qt-format
 msgctxt "doeFactorial|"
 msgid "Level %1"
-msgstr "Nivel %1"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Design Table"
-msgstr "Deseñar Táboa"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Runs"
-msgstr "Execucións"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Design"
-msgstr "Deseñar"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "debug selected row"
-msgstr "Depurar a fila escollida"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "debug selected col"
-msgstr "Depurar a columna escollida"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Alias structure"
-msgstr "Estrutura de alcumes"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Centre points per block"
-msgstr "Centrar puntos por bloque"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Replications"
-msgstr "Réplicas"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Repetitions"
-msgstr "Repeticións"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Number of replications"
-msgstr "Número de réplicas"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Repeats only"
-msgstr "Só repeticións"
+msgstr ""
 
 msgctxt "doeFull|"
 msgid "Display selected design"
-msgstr "Presentar o deseño elixido"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Response"
-msgstr "Resposta"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Define by highest order interaction term"
-msgstr "Definir segundo o temo de interacción de maior orde"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Highest order interaction term"
-msgstr "Temo de interacción de maior orde"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Residuals Plots"
-msgstr "Gráficas dos Erros"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Normal probability plot"
-msgstr "Gráfica de probabilidade Normal"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Histogram"
-msgstr "Histograma"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Residuals vs. fitted values"
-msgstr "Erros vs. Valores axustados"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Residuals vs. run order"
-msgstr "Erros vs. Orde de execución"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Other Plots"
-msgstr "Outras Gráficas"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Design type"
-msgstr "Tipo de deseño"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Factorial design"
-msgstr "Deseño factorial"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Response surface design"
-msgstr "Deseño da superficie de resposta"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Select predefined model"
-msgstr "Escolle un modelo predefinido"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Include following terms"
-msgstr "Incluír os seguintes termos"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Linear"
-msgstr "Linear"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Linear and interaction terms"
-msgstr "Termos lineais e de interacción"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Linear and squared terms"
-msgstr "Termos lineais e ao cadrado"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Full quadratic"
-msgstr "Cuadrática completa"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Show regression equation"
-msgstr "Amosar a ecuación da regresión"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Plots"
-msgstr "Gráficas"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Contour/surface plots"
-msgstr "Gráficas de superficie/contorno"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Plot type"
-msgstr "Tipo de gráfica"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Contour plot"
-msgstr "Gráfica de contorno"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Surface plot"
-msgstr "Gráfica de superficie"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Plotting variables"
-msgstr "Variables da representación"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Contour/surface plot options"
-msgstr "Opcións da gráfica de superficie/contorno"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Show legend next to graph"
-msgstr "Amosar a lenda a carón da gráfica"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Divide response surface into N parts"
-msgstr "Dividir a superficie de resposta en N partes"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Rotating angle (vertical plane)"
-msgstr "Ángulo de rotación (plano vertical)"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Rotating angle (horizontal plane)"
-msgstr "Ángulo de rotación (plano horizontal)"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Specify subgroups"
-msgstr "Especificar subgrupos"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Through grouping variable"
-msgstr "Mediante a variable de agrupamento"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show report"
-msgstr "Amosar informe"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show report metadata"
-msgstr "Amosar os metadatos do informe"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Select Report Components"
-msgstr "Escoller as compoñentes do Informe"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show X-mR chart"
-msgstr "Amosar a gráfica X-mR"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show autocorrelation chart"
-msgstr "Amosar a gráfica de Autocorrelación"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Total"
-msgstr "Total"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Laney p'(p-prime) chart"
-msgstr "Gráfica p'(p-prima) de Laney"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Laney u'(u-prime) chart"
-msgstr "Gráfica u'(u-prima) de Laney"
+msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Operator"
-msgstr "Operador"
+msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Part"
-msgstr "Parte"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Operator"
-msgstr "Operador"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Part"
-msgstr "Parte"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show Report"
-msgstr "Amosar informe"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Part"
-msgstr "Parte"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Measurement"
-msgstr "Medida"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Scatter plot measurement"
-msgstr "Medida da gráfica de dispersión"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Fit line"
-msgstr "Liña de axuste"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Display all measurements"
-msgstr "Presentar tódalas medidas"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Traffic light chart"
-msgstr "Gráfica de semáforo"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Subgroup"
-msgstr "Subgrupo"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Title"
-msgstr "Título"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Reported by"
-msgstr "Informado por"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Stage"
-msgstr "Etapa"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroup size"
-msgstr "Tamaño do subgrupo"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Stages"
-msgstr "Etapas"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Unequal subgroup sizes"
-msgstr "Tamaños de subgrupos desiguais"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Use actual sizes"
-msgstr "Utilizar os tamaños vixentes"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Use fixed subgroup size"
-msgstr "Utilizar o tamaño de subgrupo fixo"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Advanced Options"
-msgstr "Opcións Avanzadas"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Timestamp (optional)"
-msgstr "Marca temporal (opcional)"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Show report metadata"
-msgstr "Amosar os metadatos do informe"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Report for Attribute Control Charts"
-msgstr "Informe das Gráficas de control de atributos"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Performed by"
-msgstr "Realizado por"
+msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Analyst"
-msgstr "Analista"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Gauge r&R Report"
-msgstr "Informe de calibre r&R"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Part name"
-msgstr "Nome da parte"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Characteristic"
-msgstr "Característica"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Gauge number"
-msgstr "Número de calibre"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Number"
-msgstr "Número"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Tolerance"
-msgstr "Tolerancia"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Location"
-msgstr "Posición"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Performed by"
-msgstr "Realizado por"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Analyst"
-msgstr "Analista"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Part name"
-msgstr "Nome da parte"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Characteristic"
-msgstr "Característica"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge number"
-msgstr "Número de calibre"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Number"
-msgstr "Número"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Location"
-msgstr "Posición"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Performed by"
-msgstr "Realizado por"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Analyst"
-msgstr "Analista"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Stages"
-msgstr "Etapas"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Timestamp (optional)"
-msgstr "Marca temporal (opcional)"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Specify subgroups"
-msgstr "Especificar subgrupos"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Subgroup size"
-msgstr "Tamaño do subgrupo"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Through grouping variable"
-msgstr "Mediante a variable de agrupamento"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Subgroup value change"
-msgstr "Cambio de valor do subgrupo"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Same subgroup value"
-msgstr "Mesmo valor do subgrupo"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Unequal subgroup sizes"
-msgstr "Tamaños de subgrupos desiguais"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Use actual sizes"
-msgstr "Utilizar os tamaños vixentes"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Use fixed subgroup size"
-msgstr "Utilizar o tamaño de subgrupo fixo"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Process capability options"
-msgstr "Opcións das capacidades do proceso"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal capability statistics"
-msgstr "Estatísticos das capacidades non normais"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Capability study"
-msgstr "Estudo de Capacidade"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Boundary"
-msgstr "Fronteira"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Overlay distribution"
-msgstr "Distribución sobreposta"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Display specification limits"
-msgstr "Presentar os límites das especificacións"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "X-bar & R control chart"
-msgstr "Gráfica de control de barras X & R"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "X-bar & s control chart"
-msgstr "Gráfica de control de barras X & s"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "X-mR control chart"
-msgstr "Gráfica de control X-mR"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "X-bar & mR control chart"
-msgstr "Gráfica de control de barras X & mR"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Process capability report"
-msgstr "Informe de capacidade do proceso"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Location"
-msgstr "Posición"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Line"
-msgstr "Liña"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Machine"
-msgstr "Máquina"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Variable"
-msgstr "Variable"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Process"
-msgstr "Proceso"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Conclusion"
-msgstr "Conclusión"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Select report components"
-msgstr "Escoller as compoñentes do Informe"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Advanced options"
-msgstr "Opcións Avanzadas"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Histogram bin boundaries"
-msgstr "Límites das barras do histograma"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Left open"
-msgstr "Esquerdo aberto"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Right open"
-msgstr "Dereito aberto"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Method for estimating within subgroup std. dev. for subgroup size"
 msgstr ""
-"Método para estimar o desvío padrón dentro do grupo para o tamaño de subgrupo"
 
 msgctxt "processCapabilityStudies|"
 msgid " > 1"
-msgstr " > 1"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "= 1"
-msgstr "= 1"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "R-bar"
-msgstr "Barra-R"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "S-bar"
-msgstr "Barra-S"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Mean moving range"
-msgstr "Rango móbil da media"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Use unbiasing constant"
-msgstr "Usar constante sen nesgo"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of std. dev. for calculation of control limits"
-msgstr "Número de desvíos padrón para calcular os límites dos controis"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Timestamp (optional)"
-msgstr "Marca temporal (opcional)"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Informe de gráficas de variables por subgrupos"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Chart name"
-msgstr "Nome da gráfica"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Name of the chart"
-msgstr "Nome da gráfica"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Sub-title"
-msgstr "Subtítulo"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Measurement name"
-msgstr "Nome da medida"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Footnote"
-msgstr "Nota ao pé"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Comment"
-msgstr "Comentario"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Location"
-msgstr "Posición"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Performed by"
-msgstr "Realizado por"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Analyst"
-msgstr "Analista"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Date printed"
-msgstr "Data impresa"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Today"
-msgstr "Hoxe"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Advanced Options"
-msgstr "Opcións Avanzadas"
+msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Number of std. dev. for calculation of control limits"
-msgstr "Número de desvíos padrón para calcular os límites dos controis"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Timestamp (optional)"
-msgstr "Marca temporal (opcional)"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroup value change"
-msgstr "Cambio de valor do subgrupo"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Same subgroup value"
-msgstr "Mesmo valor do subgrupo"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Control charts"
-msgstr "Gráficas de control"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Show report metadata"
-msgstr "Amosar os metadatos do informe"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Chart name"
-msgstr "Nome da gráfica"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurement name"
-msgstr "Nome da medida"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Footnote"
-msgstr "Nota ao pé"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Comment"
-msgstr "Comentario"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Location"
-msgstr "Posición"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Performed by"
-msgstr "Realizado por"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Analyst"
-msgstr "Analista"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Date printed"
-msgstr "Data impresa"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Today"
-msgstr "Hoxe"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Number of std. dev. for calculation of control limits"
-msgstr "Número de desvíos padrón para calcular os límites dos controis"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Available variables"
-msgstr "Variables dispoñibles"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Covariates"
-msgstr "Covariantes"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Automatically detect low/high"
-msgstr "Detectar automaticamente baixo/alto"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Manually specify low/high"
-msgstr "Especificar manualmente baixo/alto"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Display results in coded units"
-msgstr "Presentar os resultados en unidades codificadas"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Model terms"
-msgstr "Elementos do modelo"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Main and interaction terms"
-msgstr "Elementos principais e de interacción"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Squared terms"
-msgstr "Elementos cadrados"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Pareto plot of effects"
-msgstr "Gráfica de Pareto dos efectos"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Advanced options"
-msgstr "Opcións Avanzadas"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Histogram bin width type"
-msgstr "Tipo de ancho das barras do histograma"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Sturges"
-msgstr "Sturges"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Scott"
-msgstr "Scott"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Doane"
-msgstr "Doane"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Freedman-Diaconis"
-msgstr "Freedman-Diaconis"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Manual"
-msgstr "Manual"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Number of bins"
-msgstr "Número de barras"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Sum of squares type"
-msgstr "Tipo de suma de cadrados"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Type I"
-msgstr "Tipo I"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Type II"
-msgstr "Tipo II"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Type III"
-msgstr "Tipo III"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Use coded data to calculate squared terms"
-msgstr "Usar datos codificados para calcular os termos cadrados"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "General full factorial"
-msgstr "Factorial completo xeral"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design type"
-msgstr "Tipo de deseño"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Central composite design"
-msgstr "Deseño combinado central"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Box-Behnken design"
-msgstr "Deseño de Box-Behnken"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Maximum discrete levels"
-msgstr "Máximo de niveis discretos"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Center points"
-msgstr "Puntos centrais"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Analyse Design"
-msgstr "Deseño de análise"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Residuals four-in-one plot"
-msgstr "Gráfica 'catro en un' de erros"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "1"
-msgstr "1"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "2"
-msgstr "2"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "4"
-msgstr "4"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "8"
-msgstr "8"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Type 1 Instrument Capability Study"
-msgstr "Tipo 1 Estudo de Capacidade do Instrumento"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Gauge r&R Study (Non-replicable Measurements)"
-msgstr "Estudo de calibre r&R (medidas non replicables)"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Type 4 Linearity Study"
-msgstr "Tipo 4 Estudo de Linearidade"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Capability Analysis"
-msgstr "Análise de Capacidade"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Design of Experiments"
-msgstr "Deseño de Experimentos"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Create Factorial Worksheet"
-msgstr "Crear Folla de Cálculo Factorial"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Create Response Surface Worksheet"
-msgstr "Crear Folla de Cálculo de Superficie de Resposta"
+msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Kappa study"
-msgstr "Estudo de Kappa"
+msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Tau study"
-msgstr "Estudo de Tau"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Analysis options"
-msgstr "Opcións de análise"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "r&R ANOVA table"
-msgstr "Táboa ANOVA de r&R"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Study var. multiplier type"
-msgstr "Tipo de multiplicador de var. do estudo"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Study var. multiplier value"
-msgstr "Valor do multiplicador de var. do estudo"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Range charts by operator"
-msgstr "Gráficas de rango por operador"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Average chart bys operator"
-msgstr "Gráficas medias por operador"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Report options"
-msgstr "Opcións do informe"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show gauge evaluation table"
-msgstr "Amosar táboa de avaliación do calibre"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show range charts by operator"
-msgstr "Amosar gráficas de rango por operador"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show average charts by operator"
-msgstr "Amosar gráficas medias por operador"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Analysis options"
-msgstr "Opcións de análise"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study std. dev."
-msgstr "Desv. padr. do estudo"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. dev. value"
-msgstr "Valor do Desv. padrón"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Tolerance width"
-msgstr "Ancho de tolerancia"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "r&R ANOVA table"
-msgstr "Táboa ANOVA de r&R"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study var. multiplier type"
-msgstr "Tipo de multiplicador de var. do estudo"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. dev."
-msgstr "Desv. padr."
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study var. multiplier value"
-msgstr "Valor do multiplicador de var. do estudo"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Range charts by operator"
-msgstr "Gráficas de rango por operador"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Traffic light chart"
-msgstr "Gráfica de semáforo"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Report options"
-msgstr "Opcións do informe"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge r&R report"
-msgstr "Informe de calibre r&R"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show gauge evaluation table"
-msgstr "Amosar táboa de avaliación do calibre"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show range chart by operator"
-msgstr "Amosar gráfica de rango por operador"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show traffic light chart"
-msgstr "Amosar a gráfica de semáforo"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Operator/Repetition"
-msgstr "Operador/Repetición"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Analysis options"
-msgstr "Opcións de análise"
+msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Process std. dev."
-msgstr "Desv. Padr. do proceso"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Reference/master value"
-msgstr "Referencia/valor principal"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Number of std. dev. for instrument variation"
-msgstr "Número de desv. padr. para a variación do instrumento"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Bias study options"
-msgstr "Opcións do estudo de nesgo"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "One sample t-test"
-msgstr "Proba T para unha mostra"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Display boundaries of the reference interval"
-msgstr "Presentar os límites do intervalo de referencia"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Histogram bin boundaries"
-msgstr "Límites das barras do histograma"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Left open"
-msgstr "Esquerdo aberto"
+msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Right open"
-msgstr "Dereito aberto"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Normal plot of effects"
-msgstr "Gráfica normal dos efectos"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Type 2 and 3 Gauge r&R Study"
-msgstr "Estudo de calibre r&R tipo 2 e 3"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Rare Event Charts"
-msgstr "Gráfica de eventos raros"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Variable"
-msgstr "Variable"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Stage"
-msgstr "Etapa"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Data type"
-msgstr "Tipo de datos"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Date/time"
-msgstr "Data/Hora"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Structure"
-msgstr "Estrutura"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Date + Time"
-msgstr "Data + Hora"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Time + Date"
-msgstr "Hora + Data"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Date only"
-msgstr "Só data"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Time only"
-msgstr "Só hora"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Date format"
-msgstr "Formato da data"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "DMY"
-msgstr "DMA"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "MDY"
-msgstr "MDA"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "YMD"
-msgstr "AMD"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "DM"
-msgstr "DM"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "MD"
-msgstr "MD"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Time format"
-msgstr "Formato da hora"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "H"
-msgstr "H"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "HM"
-msgstr "HM"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "HMS"
-msgstr "HMS"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Ip"
-msgstr "Ip"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "IMp"
-msgstr "IMp"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Interval between events"
-msgstr "Intervalo entre eventos"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Interval type"
-msgstr "Tipo de intervalo"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Opportunities"
-msgstr "Oportunidades"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Time"
-msgstr "Tempo"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Hours (decimal)"
-msgstr "Horas (decimal)"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Days (decimal)"
-msgstr "Días (decimal)"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "G chart"
-msgstr "Gráfica G"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Proportion"
-msgstr "Proporción"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Estimated from data"
-msgstr "Estimado a partir dos datos"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Historical"
-msgstr "Histórico"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Proportion value"
-msgstr "Valor da proporción"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "T chart"
-msgstr "Gráfica T"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Based on"
-msgstr "Baseado en"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Weibull distribution"
-msgstr "Distribución de Weibull"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Exponential distribution"
-msgstr "Distribución Exponencial"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Distribution parameters"
-msgstr "Parámetros da distribución"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Shape"
-msgstr "Forma"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Scale"
-msgstr "Escala"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Rare Event Charts Report"
-msgstr "Informe de gráficas de eventos raros"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Show Report"
-msgstr "Amosar informe"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Show report metadata"
-msgstr "Amosar os metadatos do informe"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Title"
-msgstr "Título"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Informe de gráficas de variables por subgrupos"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Chart name"
-msgstr "Nome da gráfica"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Name of the chart"
-msgstr "Nome da gráfica"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Sub-title"
-msgstr "Subtítulo"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Measurement name"
-msgstr "Nome da medida"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Name"
-msgstr "Nome"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Footnote"
-msgstr "Nota ao pé"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Comment"
-msgstr "Comentario"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Location"
-msgstr "Posición"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Date"
-msgstr "Data"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Performed by"
-msgstr "Realizado por"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Analyst"
-msgstr "Analista"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Date printed"
-msgstr "Data impresa"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Today"
-msgstr "Hoxe"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Data format"
-msgstr "Formato de datos"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Single column"
-msgstr "Columna única"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Across rows"
-msgstr "A través de filas"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Measurement"
-msgstr "Medida"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Timestamp (optional)"
-msgstr "Marca temporal (opcional)"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Subgroups"
-msgstr "Subgrupos"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Stages"
-msgstr "Etapas"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Specify subgroups"
-msgstr "Especificar subgrupos"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "No subgroups (n = 1)"
-msgstr "Sen subgrupos (n = 1)"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Subgroup size"
-msgstr "Tamaño do subgrupo"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Through grouping variable"
-msgstr "Mediante a variable de agrupamento"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Subgroup value change"
-msgstr "Cambio de valor do subgrupo"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Same subgroup value"
-msgstr "Mesmo valor do subgrupo"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Number of std. dev. for control limits"
-msgstr "Nº de desv. padr. para límites de control"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Target"
-msgstr "Obxectivo"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Std. dev."
-msgstr "Desv. padr."
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Estimated from data"
-msgstr "Estimado a partir dos datos"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Historical"
-msgstr "Histórico"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Std. dev. estimation method"
-msgstr "Método de estimación do desv. padr."
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "X-mR"
-msgstr "X-mR"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "S-bar"
-msgstr "Barra-S"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "R-bar"
-msgstr "Barra-R"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Std. dev. value"
-msgstr "Valor do Desv. padrón"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Moving range length"
-msgstr "Longo do rango de movemento"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Lambda (smoothing parameter)"
-msgstr "Lambda (parámetro de suavizado)"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "In-control std. dev."
-msgstr "Desv. padr. do Control-In"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Time Weighted Charts Report"
-msgstr "Informe de gráficas ponderadas no tempo"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Show Report"
-msgstr "Amosar informe"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Show report metadata"
-msgstr "Amosar os metadatos do informe"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Title"
-msgstr "Título"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Informe de gráficas de variables por subgrupos"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Chart name"
-msgstr "Nome da gráfica"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Name of the chart"
-msgstr "Nome da gráfica"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Sub-title"
-msgstr "Subtítulo"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Measurement name"
-msgstr "Nome da medida"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Name"
-msgstr "Nome"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Footnote"
-msgstr "Nota ao pé"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Comment"
-msgstr "Comentario"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Location"
-msgstr "Posición"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Date"
-msgstr "Data"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Performed by"
-msgstr "Realizado por"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Analyst"
-msgstr "Analista"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Date printed"
-msgstr "Data impresa"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Today"
-msgstr "Hoxe"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Responses"
-msgstr "Respostas"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Response optimizer"
-msgstr "Optimizador de respostas"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Available responses"
-msgstr "Respostas dispoñibles"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Included responses"
-msgstr "Respostas incluídas"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Maximize"
-msgstr "Maximizar"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Minimize"
-msgstr "Minimizar"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Target"
-msgstr "Obxectivo"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Show optimal solution"
-msgstr "Amosar a solución óptima"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Show optimization plot"
-msgstr "Amosar a gráfica de optimización"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Predict"
-msgstr "Predicir"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Individual desirability"
-msgstr "Conveniencia individual"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Set input parameters manually"
-msgstr "Establecer manualmente os parámetros de entrada"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Value"
-msgstr "Valor"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Set all bounds manually"
-msgstr "Establecer manualmente tódolos límites"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Set all targets manually"
-msgstr "Establecer manualmente tódolos obxectivos"
+msgstr ""
 
 msgctxt "ControlChartTests|"
 msgid "Tests for control charts"
-msgstr "Probas para gráficas de control"
+msgstr ""
 
 msgctxt "ControlChartTests|"
 msgid "Test set"
-msgstr "Conxunto de probas"
+msgstr ""
 
 msgctxt "ControlChartTests|"
 msgid "JASP"
-msgstr "JASP"
+msgstr ""
 
 msgctxt "ControlChartTests|"
 msgid "Nelson laws"
-msgstr "Leis de Nelson"
+msgstr ""
 
 msgctxt "ControlChartTests|"
 msgid "Western Electric rules"
-msgstr "Regras de Western Electric"
+msgstr ""
 
 msgctxt "ControlChartTests|"
 msgid "Custom selection"
-msgstr "Selección personalizada"
+msgstr ""
 
 msgctxt "ControlChartTests|"
 msgid "One point outside of control limits - Test 1: Beyond limit"
-msgstr "Un punto fóra dos límites de control - Proba 1: Límite máis alá"
+msgstr ""
 
 msgctxt "ControlChartTests|"
 msgid "points in a row, on the same side of center line - Test 2: Shift"
 msgstr ""
-"Puntos nunha fila, ao mesmo lado da liña do centro - Proba 2: Desprazamento"
 
 msgctxt "ControlChartTests|"
 msgid "points in a row, all increasing or decreasing - Test 3: Trend"
-msgstr "Puntos nunha fila, todos aumentando ou diminuíndo - Proba 3: Tendencia"
+msgstr ""
 
 msgctxt "ControlChartTests|"
 msgid ""
 "out of k+1 points > 2 std. dev. from center line (same side) - Test 4: "
 "Increasing variation"
 msgstr ""
-"Fóra de k+1 puntos > 2 desv. padr. desde a liña do centro (mesmo lado) - "
-"Proba 4: Variación crecente"
 
 msgctxt "ControlChartTests|"
 msgid ""
 "points in a row < 1 std. dev from center line (either side) - Test 5: "
 "Reducing variation"
 msgstr ""
-"Puntos nunha fila < 1 desv. padr. desde a liña do centro (cada lado) - Proba "
-"5: Variación decrecente"
 
 msgctxt "ControlChartTests|"
 msgid ""
 "points in a row > 1 std. dev from center line (either side) - Test 6: "
 "Bimodal distribution"
 msgstr ""
-"Puntos nunha fila > 1 desv. padr. desde a liña do centro (cada lado) - Proba "
-"6: Distribución Binomial"
 
 msgctxt "ControlChartTests|"
 msgid ""
 "out of k+1 points > 1 std. dev. from center line (same side) - Test 7: "
 "Slightly increasing variation"
 msgstr ""
-"Fóra de k+1 puntos > 1 desv. padr. desde a liña do centro (mesmo lado) - "
-"Proba 7: Variación lixeiramente crecente"
 
 msgctxt "ControlChartTests|"
 msgid ""
 "points in a row, alternating increase and decrease - Test 8: Oscillation"
 msgstr ""
-"Puntos nunha fila, alternando aumento e diminución - Proba 8: Oscilación"
 
 msgctxt "msaGaugeRR|"
 msgid "Advanced Options"
-msgstr "Opcións Avanzadas"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Advanced Options"
-msgstr "Opcións Avanzadas"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Advanced Options"
-msgstr "Opcións Avanzadas"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Tests for control charts"
-msgstr "Probas para gráficas de control"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Test set"
-msgstr "Conxunto de probas"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "JASP"
-msgstr "JASP"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Custom selection"
-msgstr "Selección personalizada"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "One point outside of control limits - Test 1: Beyond limit"
-msgstr "Un punto fóra dos límites de control - Proba 1: Límite máis alá"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "points in a row, on the same side of center line - Test 2: Shift"
 msgstr ""
-"Puntos nunha fila, ao mesmo lado da liña do centro - Proba 2: Desprazamento"
 
 msgctxt "rareEventCharts|"
 msgid "points in a row, all increasing or decreasing - Test 3: Trend"
-msgstr "Puntos nunha fila, todos aumentando ou diminuíndo - Proba 3: Tendencia"
+msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid ""
 "points in a row, alternating increase and decrease - Test 8: Oscillation"
 msgstr ""
-"Puntos nunha fila, alternando aumento e diminución - Proba 8: Oscilación"
 
 msgctxt "rareEventCharts|"
 msgid "points in a row, equal to 0 - Test 9: Benneyan test"
-msgstr "Puntos nunha fila, iguais a 0 - Proba 9: Proba de Benneyan"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Advanced Options"
-msgstr "Opcións Avanzadas"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Tests for control charts"
-msgstr "Probas para gráficas de control"
+msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Points outside of control limits"
-msgstr "Puntos fóra dos límites de control"
+msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Use unbiasing constant for X-bar & s control chart"
-msgstr "Usar constante de non nesgo para gráfica de barras-X & control"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Discrete factors"
-msgstr "Factores discretos"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Continuous factors"
-msgstr "Factores continuos"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Factor levels"
-msgstr "Niveis dos factores"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Factor"
-msgstr "Factor"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Available continuous factors"
-msgstr "Factores continuos dispoñibles"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Number of factors"
-msgstr "Número de factores"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Maximum factor levels"
-msgstr "Niveis máximos dos factores"
+msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Factor"
-msgstr "Factor"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of continuous factors"
-msgstr "Número de factores continuos"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of discrete factors"
-msgstr "Número de factores discretos"
+msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
-msgstr "Factor"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Low"
-msgstr "Baixo"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "High"
-msgstr "Alto"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Goal"
-msgstr "Meta"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Lower"
-msgstr "Inferior"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Upper"
-msgstr "Superior"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Weight"
-msgstr "Ponderación"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Importance"
-msgstr "Importancia"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Transform data"
-msgstr "Transformar datos"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Type"
-msgstr "Tipo"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "None"
-msgstr "Ningún"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Box-Cox"
-msgstr "Box-Cox"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Box-Cox (auto)"
-msgstr "Box-Cox (auto)"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Yeo-Johnson"
-msgstr "Yeo-Johnson"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Yeo-Johnson (auto)"
-msgstr "Yeo-Johnson (auto)"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Johnson"
-msgstr "Johnson"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Shift"
-msgstr "Desprazamento"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Lambda"
-msgstr "Lambda"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Log. Lik"
-msgstr "Log. Verosim"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "SD"
-msgstr "DP"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Average moving range"
-msgstr "Rango de media móbil"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Continuity Adjustment"
-msgstr "Axuste por continuidade"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Method"
-msgstr "Método"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid ""
@@ -3221,42 +3202,34 @@ msgid ""
 "that the present release does not allow for more than one block. The "
 "backward and forward method are based on model AIC."
 msgstr ""
-"Especificar a orde na que os preditores se introducen no modelo. Un bloque "
-"de un ou máis preditores representa unha etapa na xerarquía. Cae na conta de "
-"que a versión actual non permite máis que un bloque. Os métodos Cara atrás e "
-"Cara adiante baséanse no AIC do modelo."
 
 msgctxt "doeAnalysis|"
 msgid "Enter"
-msgstr "Introducir"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "All predictors are entered into the model simultaneously."
-msgstr "Tódolos preditores introdúcense simultaneamente no modelo."
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Backward"
-msgstr "Cara atrás"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid ""
 "Starting with the full model, predictors are removed sequentially based on "
 "AIC."
 msgstr ""
-"Empezando co modelo completo, os preditores elimínanse secuencialmente en "
-"base ao AIC."
 
 msgctxt "doeAnalysis|"
 msgid "Forward"
-msgstr "Cara adiante"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid ""
 "Starting with the intercept-only model, predictors are entered sequentially "
 "based on AIC."
 msgstr ""
-"Empezando co modelo só con constante, os preditores introdúcense "
-"secuencialmente en base ao AIC."
 
 msgctxt "doeAnalysis|"
 msgid ""
@@ -3264,120 +3237,113 @@ msgid ""
 "block of one or more predictors represents one step in the hierarchy. Note "
 "that the present release does not allow for more than one block."
 msgstr ""
-"Especificar a orde na que os preditores se introducen no modelo. Un bloque "
-"de un ou máis preditores representa unha etapa na xerarquía. Cae na conta de "
-"que a versión actual non permite máis que un bloque."
 
 msgctxt "msaGaugeRR|"
 msgid "Std. dev. source"
-msgstr "Desv. padr. orixe"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Study std. dev."
-msgstr "Desv. padr. do estudo"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Historical std. dev."
-msgstr "Desv. padr. histórica"
+msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Historical std. dev.:"
-msgstr "Desv. padr. histórica:"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. dev. source"
-msgstr "Desv. padr. orixe"
+msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Historical std. dev."
-msgstr "Desv. padr. histórica"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Historical mean"
-msgstr "Media histórica"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Historical std. dev."
-msgstr "Desv. padr. histórica"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Log-normal"
-msgstr "Log-Normal"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Gamma"
-msgstr "Gamma"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Exponential"
-msgstr "Exponencial"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Logistic"
-msgstr "Loxística"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Log-logistic"
-msgstr "Log-loxística"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "3-parameter log-normal"
-msgstr "Log-Normal de 3 parámetros"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Historical shape"
-msgstr "Forma histórica"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Historical location"
-msgstr "Posición histórica"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Historical scale"
-msgstr "Escala histórica"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Historical log mean"
-msgstr "Media de log histórica"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Historical log std. dev."
-msgstr "Desv. padr. de log histórica"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Historical threshold"
-msgstr "Lindeiro histórico"
+msgstr ""
 
 msgctxt "Description|"
 msgid "Multivariate Control Charts"
-msgstr "Gráficas de control multivariantes"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Variables"
-msgstr "Variables"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid ""
 "Two or more continuous quality characteristics to monitor jointly using a "
 "Hotelling T² chart."
 msgstr ""
-"Dúas ou máis características de cualidade para vixiar conxuntamente usando "
-"unha gráfica da T² de Hotelling."
 
 msgctxt "multivariateControlCharts|"
 msgid "Timestamp (optional)"
-msgstr "Marca temporal (opcional)"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid ""
 "Optional column used as x-axis labels (e.g., a timestamp or row identifier)."
 msgstr ""
-"Columna opcional utilizada para as etiquetas do eixe X (p.e. unha marca "
-"temporal ou un identificador de fila)."
 
 msgctxt "multivariateControlCharts|"
 msgid "Stage"
-msgstr "Etapa"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid ""
@@ -3385,14 +3351,10 @@ msgid ""
 "I) and a test phase (Phase II). Control limits are estimated from the "
 "training phase and applied to the test phase for anomaly detection."
 msgstr ""
-"Variable opcional de agrupación que separa os datos nunha fase de "
-"adestramento (Fase I) e unha fase de proba (Fase II). Os límites de control "
-"estímanse desde a fase de adestramento e se aplican á fase de proba para a "
-"detección de anomalías."
 
 msgctxt "multivariateControlCharts|"
 msgid "Training phase level"
-msgstr "Nivel da fase de adestramento"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid ""
@@ -3400,17 +3362,14 @@ msgid ""
 "control) phase. Control limits and the covariance matrix are estimated from "
 "this phase only."
 msgstr ""
-"Seleccionar que nivel da variable de estado representa a fase de "
-"adestramento (en control). Os límites de control e a matriz de varianzas-"
-"covarianzas estímanse só desde esta fase."
 
 msgctxt "multivariateControlCharts|"
 msgid "Control Chart"
-msgstr "Gráfica de control"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Automatic confidence level: (1 - 0.0027)ᵖ"
-msgstr "Nivel de confianza automático: (1 - 0.0027)ᵖ"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid ""
@@ -3418,99 +3377,88 @@ msgid ""
 "p is the number of variables. This is the standard Bonferroni-adjusted level "
 "for multivariate charts."
 msgstr ""
-"Cando se marca, o nivel de confianza establécese automaticamente en (1 - "
-"0.0027)^p, onde p é o número de variables. Este é o nivel estándar axustado "
-"de Bonferroni para gráficas multivariantes."
 
 msgctxt "multivariateControlCharts|"
 msgid "Confidence level"
-msgstr "Nivel de confianza"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid ""
 "Custom confidence level for the control limits. Only active when automatic "
 "confidence level is unchecked."
 msgstr ""
-"Nivel personalizado de confianza para os límites de control. Só se activa "
-"cando non se marca o nivel de confianza automático."
 
 msgctxt "multivariateControlCharts|"
 msgid "Output"
-msgstr "Saída de resultados"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Variable centers"
-msgstr "Centros de variables"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Show the mean of each variable."
-msgstr "Amosar a media de cada variable."
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Covariance matrix"
-msgstr "Matriz de covarianzas"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Show the sample covariance matrix of the selected variables."
-msgstr "Amosar a matriz mostral de covarianzas das variables seleccionadas."
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "T² values table"
-msgstr "Táboa de valores de T²"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid ""
 "Show a table with the T² statistic for each observation, along with the UCL "
 "and in/out-of-control status."
 msgstr ""
-"Amosar unha táboa co estatístico T² para cada observacióm, xunto co LCS e o "
-"estado baixo/fóra de control."
 
 msgctxt "multivariateControlCharts|"
 msgid "Add T² values to data"
-msgstr "Engadir os valores de T² aos datos"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Adds the computed Hotelling T² values as a new column in the dataset."
 msgstr ""
-"Engade os valores calculados de T² de Hotelling como nova columna do "
-"conxunto de datos."
 
 msgctxt "multivariateControlCharts|"
 msgid "Column name"
-msgstr "Nome de columna"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "e.g., tsq"
-msgstr "p.e. tsq"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Advanced Options"
-msgstr "Opcións Avanzadas"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Plot color scheme"
-msgstr "Representar o esquema de cores"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Standard (red/blue)"
-msgstr "Estándar (vermello/azul)"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Colorblind-friendly (orange/blue)"
-msgstr "Daltónico-amigable (laranxa/azul)"
+msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid ""
 "Choose colors for limits and out-of-control points. The colorblind-friendly "
 "scheme uses orange instead of red."
 msgstr ""
-"Escolle as cores para os puntos límites e fóra de control. O esquema "
-"daltónico-amigable utiliza a cor laranxa en troques do vermello."
 
 msgctxt "doeAnalysis|"
 msgid "Stepwise"
-msgstr "Paso a paso"
+msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid ""
@@ -3518,22 +3466,19 @@ msgid ""
 "sequentially based on AIC, combining both forward addition and backward "
 "elimination at each step."
 msgstr ""
-"Comezando co modelo só con constante, os preditores introdúcense e "
-"elimínanse secuencialmente en base ao AIC, combinando tanto a adición cara "
-"adiante como a eliminación cara atrás, en cada paso."
 
 msgctxt "processCapabilityStudies|"
 msgid "Z (ST) / Z (LT)"
-msgstr "Z (ST) / Z (LT)"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Axis modifications"
-msgstr "Modificacións dos eixes"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Thin x-axis labels"
-msgstr "Etiquetas delgadas dos eixes X"
+msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Compress x-axis"
-msgstr "Compactar os eixes X"
+msgstr ""
