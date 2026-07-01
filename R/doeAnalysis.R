@@ -48,6 +48,23 @@
   }, character(1))
 }
 
+.enforceSquaredTermMarginality <- function(model, data = stats::model.frame(model)) {
+  modelTerms         <- attr(stats::terms(model), "term.labels")
+  squaredVars        <- gsub("^I\\((.+)\\^2\\)$", "\\1", grep("^I\\(.+\\^2\\)$", modelTerms, value = TRUE))
+  forcedMainEffects  <- setdiff(squaredVars, modelTerms)
+
+  if (length(forcedMainEffects) > 0) {
+    keep       <- model$keep
+    newFormula <- stats::update(stats::formula(model), paste(". ~ . +", paste(forcedMainEffects, collapse = " + ")))
+    model      <- stats::lm(newFormula, data = data)
+
+    if (!is.null(keep))
+      model$keep <- keep
+  }
+
+  list(model = model, forcedMainEffects = forcedMainEffects)
+}
+
 #' @export
 doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
@@ -1639,8 +1656,8 @@ get_levels <- function(var, num_levels, dataset) {
     excludedVars <- result[["excludedVars"]]
     if (length(excludedVars) > 0) {
       message <- sprintf(ngettext(length(excludedVars),
-                                  "The following covariate was considered but not included: %s.",
-                                  "The following covariates were considered but not included: %s."),
+                                  "The following covariate was considered but not included: %1$s.",
+                                  "The following covariates were considered but not included: %1$s."),
                          paste(excludedVars, collapse=", "))
       tb$addFootnote(message)
     }
@@ -1648,8 +1665,8 @@ get_levels <- function(var, num_levels, dataset) {
     forcedMainEffects <- result[["forcedMainEffects"]]
     if (length(forcedMainEffects) > 0) {
       message <- sprintf(ngettext(length(forcedMainEffects),
-                                  "The main effect %s was retained to respect marginality (its squared term is in the model).",
-                                  "The main effects %s were retained to respect marginality (their squared terms are in the model)."),
+                                  "The main effect %1$s was retained to respect marginality (its squared term is in the model).",
+                                  "The main effects %1$s were retained to respect marginality (their squared terms are in the model)."),
                          paste(forcedMainEffects, collapse=", "))
       tb$addFootnote(message)
     }

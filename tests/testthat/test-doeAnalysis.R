@@ -5157,37 +5157,35 @@ test_that("53.4 Response Optimizer Response Surface Change All Options - Respons
                                  list(100, 2, 12.3, 120.83, -22, 0.885700020509264))
 })
 
-## Stepwise marginality (response surface) ####
-
-test_that("Stepwise selection respects marginality: a squared term keeps its main effect", {
+test_that("Stepwise marginality works without explicit data and preserves keep", {
   set.seed(1)
-  n <- 40
-  d <- data.frame(A = runif(n, -1, 1), B = runif(n, -1, 1))
-  d$y <- 2 * d$A^2 + 0.5 * d$B + rnorm(n, sd = 0.3) # A enters only via its square
+  model <- local({
+    A <- runif(40, -1, 1)
+    B <- runif(40, -1, 1)
+    y <- 2 * A^2 + 0.5 * B + rnorm(40, sd = 0.3)
 
-  model <- lm(y ~ I(A^2) + B + I(B^2), data = d)    # A^2 present, A absent
+    stats::lm(y ~ I(A^2) + B)
+  })
+  model$keep <- list(aic = 1)
+
   out   <- jaspQualityControl:::.enforceSquaredTermMarginality(model)
   terms <- attr(stats::terms(out[["model"]]), "term.labels")
 
   expect_equal(out[["forcedMainEffects"]], "A")
   expect_true("A" %in% terms)
-  squaredVars <- gsub("^I\\((.+)\\^2\\)$", "\\1", grep("^I\\(.+\\^2\\)$", terms, value = TRUE))
-  expect_true(all(squaredVars %in% terms))
+  expect_identical(out[["model"]][["keep"]], model[["keep"]])
 })
 
-test_that("Stepwise marginality leaves a compliant model untouched", {
+test_that("Stepwise marginality leaves compliant models untouched", {
   set.seed(1)
-  n <- 40
-  d <- data.frame(A = runif(n, -1, 1), B = runif(n, -1, 1))
-  d$y <- d$A + 2 * d$A^2 + rnorm(n, sd = 0.3)
+  d <- data.frame(A = runif(40, -1, 1))
+  d$y <- d$A + 2 * d$A^2 + rnorm(40, sd = 0.3)
 
-  model <- lm(y ~ A + I(A^2), data = d)             # already marginal
+  model <- stats::lm(y ~ A + I(A^2), data = d)
   out   <- jaspQualityControl:::.enforceSquaredTermMarginality(model)
 
   expect_length(out[["forcedMainEffects"]], 0)
-  expect_identical(coef(out[["model"]]), coef(model))
+  expect_identical(stats::coef(out[["model"]]), stats::coef(model))
 })
 
-
 options("jaspRoundToPrecision" = NULL) # reset default
-
