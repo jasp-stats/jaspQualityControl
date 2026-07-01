@@ -15,6 +15,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# Enforce marginality on a fitted model: a squared term I(x^2) requires its
+# main effect x. step() treats I(x^2) as unrelated to x (unlike interactions),
+# so stepwise selection may retain a squared term without its linear term.
+# Re-add any missing main effects, refit, and report which were forced in.
+.enforceSquaredTermMarginality <- function(model,
+                                           data = eval(stats::getCall(model)[["data"]], environment(stats::formula(model)))) {
+  modelTerms  <- attr(stats::terms(model), "term.labels")
+  squaredVars <- gsub("^I\\((.+)\\^2\\)$", "\\1", grep("^I\\(.+\\^2\\)$", modelTerms, value = TRUE))
+  forcedMainEffects <- setdiff(squaredVars, modelTerms)
+  if (length(forcedMainEffects) > 0) {
+    # update the formula (pure manipulation) and refit with explicit data, so the
+    # refit does not depend on the data object being in scope by name (as update() would).
+    newFormula <- stats::update(stats::formula(model), paste(". ~ . +", paste(forcedMainEffects, collapse = " + ")))
+    model      <- stats::lm(newFormula, data = data)
+  }
+  return(list(model = model, forcedMainEffects = forcedMainEffects))
+}
+
 .formatCoefEquation <- function(x, digits = .numDecimals) {
   vapply(x, function(val) {
     if (val == 0) return("0")
@@ -28,6 +46,23 @@
       trimws(formatC(val, digits = digits, format = "g", drop0trailing = TRUE))
     }
   }, character(1))
+}
+
+.enforceSquaredTermMarginality <- function(model, data = stats::model.frame(model)) {
+  modelTerms         <- attr(stats::terms(model), "term.labels")
+  squaredVars        <- gsub("^I\\((.+)\\^2\\)$", "\\1", grep("^I\\(.+\\^2\\)$", modelTerms, value = TRUE))
+  forcedMainEffects  <- setdiff(squaredVars, modelTerms)
+
+  if (length(forcedMainEffects) > 0) {
+    keep       <- model$keep
+    newFormula <- stats::update(stats::formula(model), paste(". ~ . +", paste(forcedMainEffects, collapse = " + ")))
+    model      <- stats::lm(newFormula, data = data)
+
+    if (!is.null(keep))
+      model$keep <- keep
+  }
+
+  list(model = model, forcedMainEffects = forcedMainEffects)
 }
 
 #' @export
@@ -294,6 +329,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
                                    aic = aic,
                                    coefficients = coef(model)))
 
+      # Enforce marginality before deriving the final model: step() may retain a
+      # squared term I(x^2) without its main effect x (see .enforceSquaredTermMarginality).
+      marginality       <- .enforceSquaredTermMarginality(stepwiseModel, stepwiseData)
+      stepwiseModel     <- marginality[["model"]]
+      forcedMainEffects <- marginality[["forcedMainEffects"]]
+
       excludedVars <- setdiff(names(fullModel$coefficients), names(stepwiseModel$coefficients))
       formula <- as.formula(stepwiseModel)
 
@@ -307,7 +348,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       )
 
       result[["stepwiseResult"]] <- list(excludedVars = gsub("I\\((.*)\\^2\\)", "\\1^2", excludedVars),
-                                         stepwiseResult = stepwiseResult)
+                                         stepwiseResult = stepwiseResult,
+                                         forcedMainEffects = forcedMainEffects)
     }
 
     regressionFit <- lm(formula, data = dataset)
@@ -1614,9 +1656,18 @@ get_levels <- function(var, num_levels, dataset) {
     excludedVars <- result[["excludedVars"]]
     if (length(excludedVars) > 0) {
       message <- sprintf(ngettext(length(excludedVars),
-                                  "The following covariate was considered but not included: %s.",
-                                  "The following covariates were considered but not included: %s."),
+                                  "The following covariate was considered but not included: %1$s.",
+                                  "The following covariates were considered but not included: %1$s."),
                          paste(excludedVars, collapse=", "))
+      tb$addFootnote(message)
+    }
+
+    forcedMainEffects <- result[["forcedMainEffects"]]
+    if (length(forcedMainEffects) > 0) {
+      message <- sprintf(ngettext(length(forcedMainEffects),
+                                  "The main effect %1$s was retained to respect marginality (its squared term is in the model).",
+                                  "The main effects %1$s were retained to respect marginality (their squared terms are in the model)."),
+                         paste(forcedMainEffects, collapse=", "))
       tb$addFootnote(message)
     }
 
