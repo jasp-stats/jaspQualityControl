@@ -17,6 +17,9 @@
 # Output files from R CMD check
 /*.Rcheck/
 
+# vdiffr snapshot failure dumps
+*.Rout.fail
+
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
