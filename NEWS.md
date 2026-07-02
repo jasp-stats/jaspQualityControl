@@ -17,7 +17,7 @@
 # jaspQualityControl (development version)
 
 ## Changed
-* DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode. The legend is now always shown; the "Show legend next to graph" option was removed.
+* DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
 ## Fixed
 * Stepwise model selection in the Response Surface design now respects marginality: a squared term is no longer retained without its corresponding main effect.
