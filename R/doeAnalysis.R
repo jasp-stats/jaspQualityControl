@@ -1988,10 +1988,12 @@ get_levels <- function(var, num_levels, dataset) {
   df$z    <- as.vector(plotData$z)
   zBreaks <- seq(min(df$z), max(df$z), length.out = nResponsePartitions + 1)
   df$zBin <- cut(df$z, breaks = zBreaks, include.lowest = TRUE)
+  # format legend labels "(a,b]" -> "a – b" and keep all N partitions (restores pre-ggplot behavior)
+  levels(df$zBin) <- gsub(",", " – ", gsub("[][()]", "", levels(df$zBin)))
 
   ggplot2::ggplot(df, ggplot2::aes(x = x, y = y)) +
     ggplot2::geom_raster(ggplot2::aes(fill = zBin)) +
-    ggplot2::scale_fill_viridis_d(name = dependent, direction = -1) +
+    ggplot2::scale_fill_viridis_d(name = dependent, direction = -1, drop = FALSE) +
     ggplot2::scale_x_continuous(name = plotData$labs[1]) +
     ggplot2::scale_y_continuous(name = plotData$labs[2]) +
     jaspGraphs::geom_rangeframe() +
