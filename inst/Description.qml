@@ -126,4 +126,11 @@ Description
 		func:			"doeAnalysis"
 		requiresData:	true
 	}
+
+	Analysis
+	{
+		title:			qsTr("Bayesian Process Capability Study")
+		func:			"bayesianProcessCapabilityStudies"
+		preloadData:		true
+	}
 }
