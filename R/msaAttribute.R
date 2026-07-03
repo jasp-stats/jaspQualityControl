@@ -206,16 +206,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   return(table)
 }
 
-# irr::kappam.fleiss (>= 0.85) drops a single-column data.frame to a vector in its
-# internal NA-omit step, so ncol() is NULL and it errors on `1:nr`. Degenerate
-# single-column input has no within-agreement; return NaN as older irr versions did.
-.fleissKappaValue <- function(ratings) {
-  value <- try(irr::kappam.fleiss(ratings)$value, silent = TRUE)
-  if (jaspBase::isTryError(value))
-    return(NaN)
-  return(value)
-}
-
 .fleissKappa <- function(dataset, measurements, parts, operators, standards, options) {
 
   table <- createJaspTable(title = gettext("Fleiss' kappa"))
@@ -240,7 +230,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     onlyAppraiser <- subset(dataset, dataset[operators] == appraiser)
 
     # Within
-    kappaWithinVector[i] <- .fleissKappaValue(onlyAppraiser[measurements])
+    fkappa <- irr::kappam.fleiss(onlyAppraiser[measurements])
+    kappaWithinVector[i] <- fkappa$value
 
     # Versus Standard
     if (standards != "") {
@@ -248,7 +239,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       count = 0
       for (j in measurements){
         count = count + 1
-        Kappa0[count] <- .fleissKappaValue(cbind(onlyAppraiser[j], onlyAppraiser[[standards]]))
+        Kappa0[count] <- irr::kappam.fleiss(cbind(onlyAppraiser[j], onlyAppraiser[[standards]]))$value
       }
       kappaStandardVector[i] <- mean(Kappa0)
     }
@@ -257,7 +248,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     listBetween[[i]] <- onlyAppraiser[measurements]
   }
 
-  kappaBetweenVector <- c(rep(NA,length(unique(dataset[[operators]]))), .fleissKappaValue(as.data.frame(listBetween)))
+  kappaBetweenVector <- c(rep(NA,length(unique(dataset[[operators]]))), irr::kappam.fleiss(as.data.frame(listBetween))$value)
   appraiserVector <- c(appraiserVector, 'All')
 
   if (standards != "") {

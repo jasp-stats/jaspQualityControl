@@ -446,6 +446,13 @@ Form
 				title: 		qsTr("Contour/surface plot options")
 				columns:	1
 
+				CheckBox
+				{
+					name:						"contourSurfacePlotLegend"
+					label:						qsTr("Show legend next to graph")
+					checked:					true
+				}
+
 				IntegerField
 				{
 					name:						"contourSurfacePlotResponseDivision"

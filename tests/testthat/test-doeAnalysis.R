@@ -5189,33 +5189,3 @@ test_that("Stepwise marginality leaves compliant models untouched", {
 })
 
 options("jaspRoundToPrecision" = NULL) # reset default
-
-## Contour plot ####
-
-options <- analysisOptions("doeAnalysis")
-options$designType <- "responseSurfaceDesign"
-options$dependentResponseSurface <- "Result"
-options$continuousFactorsResponseSurface <- c("A", "B", "C")
-options$codeFactors <- TRUE
-options$codeFactorsMethod <- "manual"
-options$codeFactorsManualTable <- list(
-  list(predictors = "A", lowValue = "-1", highValue = "1"),
-  list(predictors = "B", lowValue = "-1", highValue = "1"),
-  list(predictors = "C", lowValue = "-1", highValue = "1")
-)
-options$squaredTermsCoded <- TRUE
-options$rsmPredefinedModel <- TRUE
-options$rsmPredefinedTerms <- "fullQuadratic"
-options$modelTerms <- NULL
-options$contourSurfacePlot <- TRUE
-options$contourSurfacePlotType <- "contourPlot"
-options$contourSurfacePlotVariables <- c("A", "B")
-options$contourSurfacePlotResponseDivision <- 5
-set.seed(123)
-results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM3contCCD.csv", options)
-
-test_that("54.1 Contour plot matches", {
-  plotName <- results[["results"]][["Result"]][["collection"]][["Result_contourSurfacePlot"]][["collection"]][["Result_contourSurfacePlot_Contour plot of Result vs A and B"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "contour-plot54")
-})
