@@ -107,10 +107,13 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   if(options[["trafficLightChart"]] && is.null(jaspResults[["trafficPlot"]] )) {
     jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light chart"))
     jaspResults[["trafficPlot"]]$position <- 4
-      jaspResults[["trafficPlot"]]$dependOn(c("trafficLightChart", "manualProcessSdValue", "manualProcessSd",
-                "toleranceValue", "tolerance", "measurementLongFormat", "measurementsWideFormat",
-                "partLongFormat", "partWideFormat", "operator", "dataFormat",
-                "measurementLongFormat", "measurementsWideFormat", "partLongFormat", "partWideFormat", "operator", "dataFormat"))
+    jaspResults[["trafficPlot"]]$dependOn(c(
+      "trafficLightChart", "manualProcessSdValue", "manualProcessSd",
+      "toleranceValue", "tolerance",
+      "measurementLongFormat", "measurementsWideFormat",
+      "partLongFormat", "partWideFormat",
+      "operator", "dataFormat"
+    ))
     TrafficContainer <- jaspResults[["trafficPlot"]]
 
     valuesVec <- .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready, GRRpercent = TRUE)
