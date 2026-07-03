@@ -1971,7 +1971,10 @@ get_levels <- function(var, num_levels, dataset) {
       termLabels <- attr(stats::terms(result[["object"]]), "term.labels")
       missingVars <- variablePair[!sapply(variablePair, function(var) any(grepl(var, termLabels, fixed = TRUE)))]
       if (length(missingVars) > 0) {
-        plot$setError(gettext("Could not plot (some of the) selected variables as they were not included in the final model. They might have been removed during model selection."))
+        plot$setError(gettextf(
+          "Could not plot because the following selected variable(s) were not included in the final model: %1$s. They might have been removed during model selection.",
+          paste(missingVars, collapse = ", ")
+        ))
         jaspResults[[dep]][["contourSurfacePlot"]][[plotTitle]] <- plot
         next
       }
