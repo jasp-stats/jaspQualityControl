@@ -69,7 +69,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   tb[["catFactors"]]  <- options[["numberOfCategorical"]]
 
   if (options[["designType"]] == "boxBehnkenDesign" && options[["numberOfContinuous"]] == 8L) {
-    # yes 8 variables is not possible, also not in Minitab. Ideally the GUI would forbid this but that's not possible.
+    # yes 8 variables is not possible. Ideally the GUI would forbid this but that's not possible.
     jaspResults$setError(gettext("Box-BehnkenDesign are not supported for 8 variables."))
     return()
   }
@@ -181,7 +181,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
   designSpec <- .doeGetSelectedDesign(options)
 
-  # TODO: non-Full designs do not match minitab
+  # TODO: non-Full designs do not match the reference software
 
   design <- if (options[["designType"]] == "centralCompositeDesign") {
     .doeRsmGenerateCentralCompositeDesign(
@@ -325,7 +325,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
     # rsm provides a fourth option, spherical, which could be added (though SKF did not ask for it)
     # TODO: need to figure out when a design is rotatable!
     designSpec[["alpha"]] <- switch(options[["alphaType"]],
-                                    # same as Minitab, but we need to compute alpha to obtain full precision
+                                    # conventional default, but we need to compute alpha to obtain full precision
                                     "default"      = .doeRsmComputeAlpha(k                  = designSpec[["k"]],
                                                                          designtype         = designSpec[["designType"]],
                                                                          centerPointsInCube = designSpec[["cube"]],

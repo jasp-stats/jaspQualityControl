@@ -539,7 +539,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       sdWithin <- sum((hs*rowSd)/c4s)/sum(hs)
     }
   } else if (type == "pooled") {
-    # Pooled standard deviation (Minitab default for capability, AIAG SPC manual)
+    # Pooled standard deviation (common default for capability analysis, AIAG SPC manual)
     rowSd <- apply(df, 1, sd, na.rm = TRUE)
     n     <- apply(df, 1, function(x) sum(!is.na(x)))
     nu    <- sum(n - 1)
