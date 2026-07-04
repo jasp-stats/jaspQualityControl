@@ -1695,10 +1695,6 @@ msgid "Contour/surface plot options"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Show legend next to graph"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Divide response surface into N parts"
 msgstr ""
 

@@ -1638,10 +1638,6 @@ msgid "Contour/surface plot options"
 msgstr "Opcións da gráfica de superficie/contorno"
 
 msgctxt "doeAnalysis|"
-msgid "Show legend next to graph"
-msgstr "Amosar a lenda a carón da gráfica"
-
-msgctxt "doeAnalysis|"
 msgid "Divide response surface into N parts"
 msgstr "Dividir a superficie de resposta en N partes"
 
