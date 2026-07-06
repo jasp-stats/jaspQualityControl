@@ -1456,11 +1456,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fix.arg[["scale"]] # scale
     } else {
       fitWeibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle",
-                                              control = list(maxit = 10000),
                                               fix.arg = fix.arg))
-
-
-
 
       if (jaspBase::isTryError(fitWeibull))
         stop(estimationErrorMessage, call. = FALSE)
@@ -1510,7 +1506,6 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
       # Estimate parameters using fitdistrplus, because it can keep values fixed
       lnorm3Fit <- try(fitdistrplus::fitdist(data, "lnorm3Temp", method = "mle",
-                                             control = list(maxit = 10000),
                                              start = lnorm3startList,
                                              fix.arg = fix.arg))
       if (jaspBase::isTryError(lnorm3Fit))
