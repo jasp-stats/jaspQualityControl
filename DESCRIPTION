@@ -2,7 +2,7 @@ Package: jaspQualityControl
 Type: Package
 Title: Quality Control Module for JASP
 Version: 0.97.1
-Date: 2026-06-05
+Date: 2026-06-16
 Author: JASP Team
 Website: https://github.com/jasp-stats/jaspQualityControl
 Maintainer: JASP <info@jasp-stats.org>

@@ -4610,3 +4610,44 @@ test_that("Compress x-axis snapshot matches", {
 
   jaspTools::expect_equal_plots(testPlot, "capability-of-the-process-compress-x-axis")
 })
+
+##### Z.bench (ST/LT) consistency #####
+# Z.bench must equal the sigma level implied by the total expected ppm shown in the
+# Non-conformance table: qnorm(1 - ppmTotal/1e6). Overall uses total sd, within uses within sd.
+options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "groupingVariable"
+options$subgroup <- "Time"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$upperSpecificationLimitValue <- 12
+options$processCapabilityTableZBench <- TRUE
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("Z.bench (LT/ST) match sigma level from total ppm", {
+  base <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]]
+  perf    <- base[["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  overall <- base[["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]][[1]]
+  within  <- base[["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]][[1]]
+  eoTOT <- as.numeric(perf[[3]][["expOverall1"]]) # "ppm total" row, expected total
+  ewTOT <- as.numeric(perf[[3]][["expWithin1"]])  # "ppm total" row, expected within
+  testthat::expect_equal(round(as.numeric(overall[["zBenchLt"]]), 2), round(qnorm(1 - eoTOT/1e6), 2))
+  testthat::expect_equal(round(as.numeric(within[["zBenchSt"]]), 2),  round(qnorm(1 - ewTOT/1e6), 2))
+})
+
+##### Pooled within standard deviation (.sdXbar) #####
+test_that("Pooled standard deviation matches the textbook pooled-SD formula", {
+  df <- as.data.frame(matrix(c(1, 2, 3,
+                               2, 4, 6), nrow = 2, byrow = TRUE)) # 2 subgroups, s = 1 and 2
+  c4 <- jaspQualityControl:::KnownControlStats.RS(5, 0)$constants[3] # df = sum(n-1)+1 = 5
+  testthat::expect_equal(jaspQualityControl:::.sdXbar(df, type = "pooled", unbiasingConstantUsed = FALSE),
+                         sqrt(2.5))
+  testthat::expect_equal(jaspQualityControl:::.sdXbar(df, type = "pooled", unbiasingConstantUsed = TRUE),
+                         sqrt(2.5) / c4)
+})

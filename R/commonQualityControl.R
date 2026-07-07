@@ -505,7 +505,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(list(redPoints = redPoints, violationList = violationList))
 }
 
-.sdXbar <- function(df, type = c("s", "r"), unbiasingConstantUsed = TRUE) {
+.sdXbar <- function(df, type = c("s", "r", "pooled"), unbiasingConstantUsed = TRUE) {
   type <- match.arg(type)
 
   # exclude groups with single observation from calculation
@@ -537,6 +537,17 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       c4s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[3]))
       hs <- c4s^2/(1-c4s^2)
       sdWithin <- sum((hs*rowSd)/c4s)/sum(hs)
+    }
+  } else if (type == "pooled") {
+    # Pooled standard deviation (common default for capability analysis, AIAG SPC manual)
+    rowSd <- apply(df, 1, sd, na.rm = TRUE)
+    n     <- apply(df, 1, function(x) sum(!is.na(x)))
+    nu    <- sum(n - 1)
+    if (nu < 1) {
+      sdWithin <- 0
+    } else {
+      Sp <- sqrt(sum((n - 1) * rowSd^2) / nu)
+      sdWithin <- if (unbiasingConstantUsed) Sp / KnownControlStats.RS(nu + 1, 0)$constants[3] else Sp
     }
   }
   return(sdWithin)
@@ -636,7 +647,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 .controlChart <- function(dataset,  plotType        = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
                           ruleList                  = list(),
                           stages                    = "",
-                          xBarSdType                = c("r", "s"),
+                          xBarSdType                = c("r", "s", "pooled"),
                           nSigmasControlLimits      = 3,
                           phase2                    = FALSE,
                           phase2Mu                  = "",
@@ -693,7 +704,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 .controlChart_calculations <- function(dataset, plotType               = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
                                        ruleList                        = list(),
                                        stages                          = "",
-                                       xBarSdType                      = c("r", "s"),
+                                       xBarSdType                      = c("r", "s", "pooled"),
                                        nSigmasControlLimits            = 3,
                                        phase2                          = FALSE,
                                        phase2Mu                        = "",

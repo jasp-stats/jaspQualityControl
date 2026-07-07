@@ -1295,7 +1295,7 @@ get_levels <- function(var, num_levels, dataset) {
   return(desirabilityOutcome)
 }
 
-# All formulas for desirability are here: https://support.minitab.com/en-us/minitab/help-and-how-to/statistical-modeling/using-fitted-models/how-to/response-optimizer/methods-and-formulas/individual-desirabilities/
+# Desirability function formulas follow Derringer & Suich (1980), Journal of Quality Technology, 12(4), 214-219.
 .calculateDesirability <- function(dataset, outcome, roOptionsDf) {
   outcomeNames <- names(outcome)
   desiVector <- c()

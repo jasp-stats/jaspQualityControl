@@ -599,6 +599,13 @@ Form
 						label: qsTr("Z (ST) / Z (LT)")
 					}
 
+					CheckBox
+					{
+						name: "processCapabilityTableZBench"
+						label: qsTr("Z.bench (ST) / Z.bench (LT)")
+						info:  qsTr("Sigma level based on total defect probability across both specification limits, as opposed to Z (ST)/Z (LT) which equal 3·Cpk/3·Ppk (distance to the nearest bound).")
+					}
+
 				}
 
 				}
@@ -1023,7 +1030,8 @@ Form
 					values: 
 					[
 						{ label: qsTr("R-bar"),			value: "rBar"},
-						{ label: qsTr("S-bar"),			value: "sBar"}
+						{ label: qsTr("S-bar"),			value: "sBar"},
+						{ label: qsTr("Pooled"),			value: "pooled"}
 					]
 					indexDefaultValue:
 					(controlChartType.currentValue == "xBarR" || controlChartType.currentValue == "xBarMR") ? 0 : 
