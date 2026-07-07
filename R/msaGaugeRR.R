@@ -251,7 +251,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     if (options[["anova"]]) {
       if (is.null(jaspResults[["gaugeANOVA"]])) {
         jaspResults[["gaugeANOVA"]] <- createJaspContainer(gettext("Gauge r&R Analysis of Variance table"))
-        jaspResults[["gaugeANOVA"]]$dependOn(c("processVariationReference", "historicalSdValue", "report"))
+        jaspResults[["gaugeANOVA"]]$dependOn(c("processVariationReference", "historicalSdValue", "report", "anova"))
         jaspResults[["gaugeANOVA"]]$position <- 1
       }
       jaspResults[["gaugeANOVA"]] <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
@@ -908,7 +908,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 .gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3 = FALSE) {
-  sources <- gettext(c("Gauge r&R", "Repeatability", "Reproducibility", "Part-to-part"))
+  sourceIds <- c("gaugeRR", "repeatability", "reproducibility", "partToPart")
+  sources   <- gettext(c("Gauge r&R", "Repeatability", "Reproducibility", "Part-to-part"))
   if (!all(is.na(percentToleranceValues))) {
     references <- gettextf(c('%% Contribution', '%% Study variation', '%% Tolerance'))
     values <- c(percentContributionValues, studyVariationValues, percentToleranceValues)
@@ -916,15 +917,16 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     references <- gettextf(c('%% Contribution', '%% Study Variation'))
     values <- c(percentContributionValues, studyVariationValues)
   }
-  plotframe <- data.frame(source = rep(sources, length(references)),
+  plotframe <- data.frame(sourceId  = rep(sourceIds, length(references)),
+                          source    = rep(sources,   length(references)),
                           reference = rep(references, each = 4),
-                          value = values)
+                          value     = values)
   plotframe$source <- factor(plotframe$source, levels = sources)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, plotframe$value))
 
 
   if (Type3)
-    plotframe <- subset(plotframe, source != "Reprod")
+    plotframe <- subset(plotframe, sourceId != "reproducibility")
 
   p <- ggplot2::ggplot() +
     ggplot2::geom_bar(data = plotframe, mapping = ggplot2::aes(fill =  reference,  y = value, x = source),
@@ -934,7 +936,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     ggplot2::theme(legend.position = "right", legend.title = ggplot2::element_blank(),
              plot.margin = ggplot2::margin(5.5, 30, 5.5, 5.5, "pt")) +
     ggplot2::xlab(NULL) +
-    ggplot2::scale_y_continuous(name = "Percent", breaks = yBreaks, limits = range(c(yBreaks, plotframe$value)))
+    ggplot2::scale_y_continuous(name = gettext("Percent"), breaks = yBreaks, limits = range(c(yBreaks, plotframe$value)))
   return(p)
 }
 

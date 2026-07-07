@@ -1968,8 +1968,8 @@ get_levels <- function(var, num_levels, dataset) {
       plotTitle <- gettextf("%1$s of %2$s vs %3$s", plotTypeString, dep, variablePairString)
       plot <- createJaspPlot(title = plotTitle, width = 560, height = 460)
       result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
-      termLabels <- attr(stats::terms(result[["object"]]), "term.labels")
-      missingVars <- variablePair[!sapply(variablePair, function(var) any(grepl(var, termLabels, fixed = TRUE)))]
+      modelVars <- all.vars(attr(stats::terms(result[["object"]]), "variables"))
+      missingVars <- setdiff(variablePair, modelVars)
       if (length(missingVars) > 0) {
         plot$setError(gettextf(
           "Could not plot because the following selected variable(s) were not included in the final model: %1$s. They might have been removed during model selection.",
