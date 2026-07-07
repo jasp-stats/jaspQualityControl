@@ -451,6 +451,124 @@ test_that("LF5. Gauge r&R report plot matches", {
   jaspTools::expect_equal_plots(testPlot, "5_gauge-r-r-report")
 })
 
+## Real Data Example 1 (Flooring Issue) ####
+
+## Standard output ####
+options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
+options$dataFormat <- "longFormat"
+options$measurementLongFormat <- "Response"
+options$operatorLongFormat <- "Appraiser"
+options$partLongFormat <- "Part"
+options$tolerance <- TRUE
+options$toleranceValue <- 10
+options$rChart <- TRUE
+options$xBarChart <- TRUE
+options$scatterPlot <- TRUE
+options$scatterPlotFitLine <- TRUE
+options$scatterPlotOriginLine <- TRUE
+options$partMeasurementPlot <- TRUE
+options$partMeasurementPlotAllValues <- TRUE
+options$operatorMeasurementPlot <- TRUE
+options$partByOperatorMeasurementPlot <- TRUE
+options$trafficLightChart <- TRUE
+options$anovaModelType <- "randomEffect"
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/realDataExample1.csv", options)
+
+test_that("LF6.1 Real data example 1 - Variance components table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(8.67, "Total gauge r&amp;R", 0.0264583333333333, 4.1, "Repeatability",
+                                      0.0125, 4.58, "Reproducibility", 0.0139583333333333, 0, "Appraiser",
+                                      0, 4.58, "Part  *  Appraiser", 0.0139583333333333, 91.33, "Part-to-part",
+                                      0.278541666666666, 100, "Total variation", 0.305))
+})
+
+test_that("LF6.2 Real data example 1 - Gauge evaluation table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.162660177466193, 29.45, 9.76, "Total gauge r&amp;R", 0.975961064797156,
+                                      0.111803398874989, 20.24, 6.71, "Repeatability", 0.670820393249937,
+                                      0.118145390656315, 21.39, 7.09, "Reproducibility", 0.708872343937891,
+                                      0, 0, 0, "Appraiser", 0, 0.118145390656315, 21.39, 7.09, "Part  *  Appraiser",
+                                      0.708872343937891, 0.527770467785634, 95.56, 31.67, "Part-to-part",
+                                      3.1666228067138, 0.552268050859363, 100, 33.14, "Total variation",
+                                      3.31360830515618))
+})
+
+test_that("LF6.3 Real data example 1 - Components of variation plot matches", {
+  plotName <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_VarCompGraph"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "6_components-of-variation")
+})
+
+test_that("LF6.4 Real data example 1 - Two-way ANOVA table with interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(3, 42.3505154639175, 1.71166666666667, 0.000197181562997483, 5.135,
+                                      "Part", 2, 0.958762886597953, 0.0387500000000006, 0.435196399688716,
+                                      0.0775000000000011, "Appraiser", 6, 3.23333333333333, 0.0404166666666666,
+                                      0.0396371988233784, 0.2425, "Part  *  Appraiser", 12, 0.0125,
+                                      0.15, "Repeatability", 23, 5.605, "Total"))
+})
+
+test_that("LF6.5 Real data example 1 - Part by operator interaction plot matches", {
+  plotName <- results[["results"]][["gaugeByInteraction"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "6_part-by-operator-interaction")
+})
+
+test_that("LF6.6 Real data example 1 - Measurements by operator plot matches", {
+  plotName <- results[["results"]][["gaugeByOperator"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "6_measurements-by-operator")
+})
+
+test_that("LF6.7 Real data example 1 - Measurements by part plot matches", {
+  plotName <- results[["results"]][["gaugeByPart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "6_measurements-by-part")
+})
+
+test_that("LF6.8 Real data example 1 - Matrix plot for operators matches", {
+  plotName <- results[["results"]][["gaugeScatterOperators"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "6_matrix-plot-for-operators")
+})
+
+test_that("LF6.9 Real data example 1 - Range chart by operator plot matches", {
+  plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "6_range-chart-by-operator")
+})
+
+test_that("LF6.10 Real data example 1 - Test results for range chart table results match", {
+  table <- results[["results"]][["rChart"]][["collection"]][["rChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("No test violations occurred."))
+})
+
+test_that("LF6.11 Real data example 1 - Traffic plot matches", {
+  plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "6_traffic-plot")
+})
+
+test_that("LF6.12 Real data example 1 - Average chart by operator plot matches", {
+  plotName <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "6_average-chart-by-operator")
+})
+
+test_that("LF6.13 Real data example 1 - Test results for x-bar chart table results match", {
+  table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Carolyn", "Point 1", "", "Point 2", "", "Point 3", "Ernie", "Point 1",
+                                      "", "Point 2", "", "Point 3", "", "Point 4", "Yves", "Point 1",
+                                      "", "Point 2", "", "Point 3"))
+})
+
 # Wide format ####
 
 ## Default settings ####
