@@ -4438,6 +4438,42 @@
       "RemoteRef": "master",
       "RemoteSha": "281f17a2d6761eb5ec247d7ddcd59042f01fa409"
     },
+    "jaspTtests": {
+      "Package": "jaspTTests",
+      "Version": "0.96.5",
+      "Source": "GitHub",
+      "Type": "Package",
+      "Title": "T-Tests Module for JASP",
+      "Date": "2022-10-05",
+      "Author": "JASP Team",
+      "Website": "jasp-stats.org",
+      "Maintainer": "JASP Team <info@jasp-stats.org>",
+      "Description": "Evaluate the difference between two means",
+      "License": "GPL (>= 2)",
+      "Encoding": "UTF-8",
+      "Imports": [
+        "BayesFactor",
+        "car",
+        "ggplot2",
+        "jaspBase",
+        "jaspGraphs",
+        "logspline",
+        "plotrix",
+        "plyr"
+      ],
+      "Remotes": "jasp-stats/jaspBase, jasp-stats/jaspGraphs",
+      "RoxygenNote": "7.3.2",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "jaspTTests",
+      "RemoteUsername": "jasp-stats",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "30c95319e2a7b4280d7553a84e91242ddc183516",
+      "NeedsCompilation": "no",
+      "Depends": [
+        "R (>= 3.5.0)"
+      ]
+    },
     "jpeg": {
       "Package": "jpeg",
       "Version": "0.1-11",
