@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2026-07-04 04:49\n"
-"PO-Revision-Date: 2025-11-06 02:51+0000\n"
-"Last-Translator: \"Cheng R. Zhu\" <zcr@users.noreply.hosted.weblate.org>\n"
+"PO-Revision-Date: 2026-07-10 05:01+0000\n"
+"Last-Translator: 陳正昌 <chencc99@gmail.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
 "projects/jasp/jaspprocesscontrol-r/zh_Hans/>\n"
 "Language: zh_Hans\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.15-dev\n"
+"X-Generator: Weblate 2026.7.1.dev0\n"
 
 #, fuzzy
 msgid ""
@@ -372,7 +372,7 @@ msgid "Sum of squares"
 msgstr "平方和"
 
 msgid "df"
-msgstr "df"
+msgstr "自由度"
 
 #, fuzzy
 msgid "Mean square"
@@ -796,7 +796,6 @@ msgstr "回归模型"
 msgid "Predictor"
 msgstr "预测变量"
 
-#, fuzzy
 msgid "Std. error"
 msgstr "标准误"
 
@@ -857,9 +856,8 @@ msgstr ""
 msgid "Reference"
 msgstr "参考值"
 
-#, fuzzy
 msgid "Total"
-msgstr "总变异"
+msgstr "总计"
 
 msgid "Gauge r&R"
 msgstr "量具 r&R"
