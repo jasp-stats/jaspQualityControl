@@ -71,7 +71,7 @@ Graphical display for the tabular CUSUM. These charts are sometimes called CUSUM
 --------
 - Page, E.S. (1954), *Continuous inspection schemes*, Biometrika, Vol. 41, No. 1-2, pp. 100-115
 - Roberts, S.W. (1959), *Control chart tests based on geometric moving averages*, Technometrics, Vol. 1, No. 3, pp. 239-250
-- SKF Quality Techniques, Dodson, B., Lynch, D., Weidenbacher, M., and Klerx, R., *QT 2 – Statistical process control* (PUB GQS/P9 18343 EN – April 2019)
+- Automotive Industry Action Group (July 2005), *Statistical process control (SPC) – Reference manual*, AIAG.
 - International Organization for Standardization, *Control charts – Part 4: Cumulative sum charts*, ISO 7870-4:2021 (E)
 - Montgomery D. C. (2013), *Introduction to statistical quality control (7th Ed.)*, John Wiley & Sons, Inc , Hoboken (NJ)
 

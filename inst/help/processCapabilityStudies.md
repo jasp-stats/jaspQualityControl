@@ -126,10 +126,8 @@ The size of the subgroups is relevant for the calculation of the process varianc
 ## References
 -------
 1.	Automotive Industry Action Group, *Statistical Process Control - Reference Manual* (July 2005, 2nd Edition)
-2.	SKF Quality Techniques, Klerx, R., Dodson, B., and Dumont, D., QT 1 - *Process capability studies*. (PUB GQ/P9 10347/1 EN - December 2021)
-3.	SKF Quality Techniques, Dodson, B., Lynch, D., Weidenbacher, M., and Klerx, R. (), *QT 2 - Statistical process control*, (PUB GQS/P9 18343 EN - April 2019)
-4.  Yeo, I. K., & Johnson, R. A. (2000). A new family of power transformations to improve normality or symmetry. Biometrika, 87(4), 954-959.
-5.  Chou, Y. M., Polansky, A. M., & Mason, R. L. (1998). Transforming non-normal data to normality in statistical process control. Journal of Quality Technology, 30(2), 133-141.
+2.  Yeo, I. K., & Johnson, R. A. (2000). A new family of power transformations to improve normality or symmetry. Biometrika, 87(4), 954-959.
+3.  Chou, Y. M., Polansky, A. M., & Mason, R. L. (1998). Transforming non-normal data to normality in statistical process control. Journal of Quality Technology, 30(2), 133-141.
 
 
 ## R Packages

@@ -100,4 +100,4 @@ The Box-Behnken set-up consists of twelve "edge" points (shown as red dots) all 
 -------
 - Dodson, L., Dodson, M., and Klerx, R. (2010), *A study of the hierarchical ordering principle and the effect heredity principle in factorial experimental designs*, 10th Annual Transaction of ENBIS (12 16 September 2010, Antwerp).
 - Box, G.E.P., and Wilson, K.B. (1951), On the experimental attainment of optimum conditions. *Journal of the Royal Statistical Society 13*(1), 1-45.
-- Dodson, B., Weidenbacher, M., Lynch D., and Klerx, R., QT 9 - Design and analysis of experiments. *SKF Quality Techniques*. (PUB GQS/P9 16083 EN - August 2015).
+- Automotive Industry Action Group (July 2005), *Statistical process control (SPC) – Reference manual*, AIAG.

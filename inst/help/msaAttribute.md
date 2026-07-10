@@ -38,7 +38,6 @@ Data can be in the form of all observations in one column ("Single column") or a
 ## References 
 -------
 - Duncan, A.J. (1986), Quality control and industrial statistics, Richard D. Irwin, Inc., and Automotive Industry Action Group (July 2005), Statistical process control (SPC) – Reference manual, AIAG.
-- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009).*Statistical process control handbook*. SKF group. 
 ## R Packages
 -------
 - jaspGraphs

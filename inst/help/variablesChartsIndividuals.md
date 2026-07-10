@@ -87,8 +87,6 @@ Only Test 1, Test 2, Test 3 and Test 8 will be applied to the moving range chart
 -------
 - Duncan, A.J. (1986), *Quality control and industrial statistics*, Richard D. Irwin, Inc.
 - Automotive Industry Action Group, *Statistical Process Control – Reference Manual* (July 2005, 2nd Edition)
--	SKF Quality Techniques, Klerx, R., Dodson, B., and Dumont, D., *QT 1 – Process capability studies*, (PUB GQ/P9 10347/1 EN – December 2021)
--	SKF Quality Techniques, Dodson, B., Lynch, D., Weidenbacher, M., & and Klerx, R. (2009).), *QT 2 – Statistical process control*, (PUB GQS/P9 18343 EN – April 2019)
 
 
 ## R Packages

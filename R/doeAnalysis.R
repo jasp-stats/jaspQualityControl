@@ -41,10 +41,11 @@
       # avoid e-notation for small-to-moderate numbers
       mag <- floor(log10(absVal))
       sigDigits <- max(digits, mag + 1 + digits)
-      trimws(formatC(val, digits = sigDigits, format = "g", drop0trailing = TRUE))
+      formatted <- trimws(formatC(val, digits = sigDigits, format = "g", drop0trailing = TRUE))
     } else {
-      trimws(formatC(val, digits = digits, format = "g", drop0trailing = TRUE))
+      formatted <- trimws(formatC(val, digits = digits, format = "g", drop0trailing = TRUE))
     }
+    sub("^-", "\u2013", formatted)
   }, character(1))
 }
 
@@ -1527,7 +1528,7 @@ get_levels <- function(var, num_levels, dataset) {
       return()
     }
 
-    tb <- createJaspTable(gettext("ANOVA"))
+    tb <- createJaspTable(gettext("Analysis of Variance"))
     tb$addColumnInfo(name = "terms", title = gettext("Source"), type = "string")
     tb$addColumnInfo(name = "adjss", title = gettext("Sum of squares"), type = "number")
     tb$addColumnInfo(name = "df",    title = gettext("df"), type = "integer")
@@ -1967,6 +1968,16 @@ get_levels <- function(var, num_levels, dataset) {
       plotTitle <- gettextf("%1$s of %2$s vs %3$s", plotTypeString, dep, variablePairString)
       plot <- createJaspPlot(title = plotTitle, width = 560, height = 460)
       result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
+      modelVars <- all.vars(attr(stats::terms(result[["object"]]), "variables"))
+      missingVars <- setdiff(variablePair, modelVars)
+      if (length(missingVars) > 0) {
+        plot$setError(gettextf(
+          "Could not plot because the following selected variable(s) were not included in the final model: %1$s. They might have been removed during model selection.",
+          paste(missingVars, collapse = ", ")
+        ))
+        jaspResults[[dep]][["contourSurfacePlot"]][[plotTitle]] <- plot
+        next
+      }
       if (plotType == "contourPlot") {
         plot$plotObject <- .doeContourPlotObject(result, options, dep, variablePair)
       } else if (plotType == "surfacePlot") {

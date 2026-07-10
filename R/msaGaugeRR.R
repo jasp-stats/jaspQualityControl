@@ -250,8 +250,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     # Gauge r&R ANOVA Table
     if (options[["anova"]]) {
       if (is.null(jaspResults[["gaugeANOVA"]])) {
-        jaspResults[["gaugeANOVA"]] <- createJaspContainer(gettext("Gauge r&R ANOVA table"))
-        jaspResults[["gaugeANOVA"]]$dependOn(c("processVariationReference", "historicalSdValue", "report"))
+        jaspResults[["gaugeANOVA"]] <- createJaspContainer(gettext("Gauge r&R Analysis of Variance table"))
+        jaspResults[["gaugeANOVA"]]$dependOn(c("processVariationReference", "historicalSdValue", "report", "anova"))
         jaspResults[["gaugeANOVA"]]$position <- 1
       }
       jaspResults[["gaugeANOVA"]] <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
@@ -334,7 +334,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     if(options[["trafficLightChart"]] & is.null(jaspResults[["trafficPlot"]] )) {
       jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light chart"))
       jaspResults[["trafficPlot"]]$position <- 9
-      jaspResults[["trafficPlot"]]$dependOn(c("trafficLightChart", "toleranceValue", "tolerance", "gaugeRRmethod", "processVariationReference", "historicalSdValue", "report"))
+      jaspResults[["trafficPlot"]]$dependOn(c("trafficLightChart", "toleranceValue", "tolerance", "gaugeRRmethod",
+                        "processVariationReference", "historicalSdValue", "studyVarianceMultiplierType",
+                        "studyVarianceMultiplierValue", "measurementLongFormat", "operatorLongFormat",
+                        "partLongFormat", "measurementsWideFormat", "operatorWideFormat",
+                        "partWideFormat", "dataFormat", "type3", "report"))
       trafficContainer <- jaspResults[["trafficPlot"]]
 
       valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, returnTrafficValues = TRUE, Type3 = Type3)
@@ -348,11 +352,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .gaugeANOVA <- function(dataset, measurements, parts, operators, options, ready, returnPlotOnly = FALSE, returnTrafficValues = FALSE,
                         gaugeEvaluationDfOnly = FALSE, Type3 = FALSE) {
-  anovaTables <- createJaspContainer(gettext("Gauge r&R study - crossed ANOVA"))
+  anovaTables <- createJaspContainer(gettext("Gauge r&R study - crossed Analysis of Variance"))
   anovaTables$dependOn(c("anova", "gaugeRRmethod", "report"))
   anovaTables$position <- 1
 
-  anovaTable1 <- createJaspTable(title = ifelse(Type3, gettext("One-way ANOVA table"), gettext("Two-way ANOVA table with interaction")))
+  anovaTable1 <- createJaspTable(title = ifelse(Type3, gettext("One-way Analysis of Variance table"), gettext("Two-way Analysis of Variance table with interaction")))
   anovaTable1$addColumnInfo(title = gettext("Source"),       name = "source",   type = "string" )
   anovaTable1$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
   anovaTable1$addColumnInfo(title = gettext("Sum of squares"), name = "Sum Sq",  type = "number")
@@ -569,7 +573,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     } else {
 
-      anovaTable2 <- createJaspTable(title = gettext("Two-way ANOVA table without interaction"))
+      anovaTable2 <- createJaspTable(title = gettext("Two-way Analysis of Variance table without interaction"))
       anovaTable2$addColumnInfo(title = gettext("Source"),        name = "source",   type = "string" )
       anovaTable2$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
       anovaTable2$addColumnInfo(title = gettext("Sum of squares"), name = "Sum Sq",  type = "number")
@@ -904,7 +908,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 .gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3 = FALSE) {
-  sources <- gettext(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-part'))
+  sourceIds <- c("gaugeRR", "repeatability", "reproducibility", "partToPart")
+  sources   <- gettext(c("Gauge r&R", "Repeatability", "Reproducibility", "Part-to-part"))
   if (!all(is.na(percentToleranceValues))) {
     references <- gettextf(c('%% Contribution', '%% Study variation', '%% Tolerance'))
     values <- c(percentContributionValues, studyVariationValues, percentToleranceValues)
@@ -912,24 +917,26 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     references <- gettextf(c('%% Contribution', '%% Study Variation'))
     values <- c(percentContributionValues, studyVariationValues)
   }
-  plotframe <- data.frame(source = rep(sources, length(references)),
+  plotframe <- data.frame(sourceId  = rep(sourceIds, length(references)),
+                          source    = rep(sources,   length(references)),
                           reference = rep(references, each = 4),
-                          value = values)
+                          value     = values)
   plotframe$source <- factor(plotframe$source, levels = sources)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, plotframe$value))
 
 
   if (Type3)
-    plotframe <- subset(plotframe, source != "Reprod")
+    plotframe <- subset(plotframe, sourceId != "reproducibility")
 
   p <- ggplot2::ggplot() +
     ggplot2::geom_bar(data = plotframe, mapping = ggplot2::aes(fill =  reference,  y = value, x = source),
                       position="dodge", stat = "identity") +
     jaspGraphs::themeJaspRaw() +
     jaspGraphs::geom_rangeframe() +
-    ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank()) +
+    ggplot2::theme(legend.position = "right", legend.title = ggplot2::element_blank(),
+             plot.margin = ggplot2::margin(5.5, 30, 5.5, 5.5, "pt")) +
     ggplot2::xlab(NULL) +
-    ggplot2::scale_y_continuous(name = "Percent", breaks = yBreaks, limits = range(c(yBreaks, plotframe$value)))
+    ggplot2::scale_y_continuous(name = gettext("Percent"), breaks = yBreaks, limits = range(c(yBreaks, plotframe$value)))
   return(p)
 }
 
