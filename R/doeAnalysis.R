@@ -120,9 +120,17 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
   .doeAnalysisCheckErrors(dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, ready)
 
-  # Create containers for response variable(s)
-  for (dep in dependent) {
-    jaspResults[[dep]] <- createJaspContainer(title = dep)
+  # Create containers for response variable(s). Persist across invocations so
+  # display-only option changes (e.g. plot CI width) do not wipe the cached
+  # model fit. Low position keeps model output above the factorial plots (12).
+  for (depIdx in seq_along(dependent)) {
+    dep <- dependent[[depIdx]]
+    if (is.null(jaspResults[[dep]])) {
+      modelContainer <- createJaspContainer(title = dep)
+      modelContainer$dependOn(options = .doeAnalysisBaseDependencies())
+      modelContainer$position <- depIdx
+      jaspResults[[dep]] <- modelContainer
+    }
   }
 
   p <- try(.doeAnalysisMakeState(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, stepwiseMethod, ready))
@@ -279,6 +287,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
   allRuns <- dataset
   for (dep in dependent) {
+    # Skip refit when the cached fit survived (base deps unchanged)
+    if (!is.null(jaspResults[[dep]][["doeResult"]]))
+      next
+
     currentDependent <- dep
     dataset <- allRuns
 
@@ -2265,7 +2277,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
 .doeAnalysisAnovaTable <- function(jaspResults, dependent, options, ready, coded) {
   for (dep in dependent) {
-    if (!is.null(jaspResults[["tableAnova"]])) {
+    if (!is.null(jaspResults[[dep]][["tableAnova"]])) {
       return()
     }
 
@@ -3093,35 +3105,34 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 }
 
 .doeAnalysisPlotFactorialPlots <- function(jaspResults, dependent, options, ready) {
-  if ((!options[["mainEffectsPlot"]] && !options[["interactionPlot"]]) || !is.null(jaspResults[["factorialPlots"]])) {
+  if (!options[["mainEffectsPlot"]] && !options[["interactionPlot"]]) {
     return()
   }
 
-  container <- createJaspContainer(title = gettext("Factorial Plots"))
-  container$dependOn(options = c("mainEffectsPlot", "mainEffectsPlotCi", "mainEffectsPlotCiLevel",
-                                  "interactionPlot", "interactionPlotCi", "interactionPlotCiLevel",
-                                  .doeAnalysisBaseDependencies()))
-  container$position <- 12
-  jaspResults[["factorialPlots"]] <- container
+  # Nest a Factorial Plots container inside each response container.
+  for (dep in dependent) {
+    if (!is.null(jaspResults[[dep]][["factorialPlots"]])) {
+      next
+    }
 
-  # Create one child container per dependent outcome.
-  for (depIdx in seq_along(dependent)) {
-    dep <- dependent[[depIdx]]
-
-    depContainer <- createJaspContainer(title = dep)
-    depContainer$position <- depIdx
-    container[[dep]] <- depContainer
+    container <- createJaspContainer(title = gettext("Factorial Plots"))
+    # Parent response container already carries the base (model) dependencies;
+    # only the plot-specific options need to invalidate this sub-container.
+    container$dependOn(options = c("mainEffectsPlot", "mainEffectsPlotCi", "mainEffectsPlotCiLevel",
+                                    "interactionPlot", "interactionPlotCi", "interactionPlotCiLevel"))
+    container$position <- 13
+    jaspResults[[dep]][["factorialPlots"]] <- container
 
     if (!ready || is.null(jaspResults[[dep]][["doeResult"]]) || jaspResults[[dep]]$getError()) {
       next
     }
 
     if (options[["mainEffectsPlot"]]) {
-      .doeAnalysisPlotMainEffectsSubplots(depContainer, dep, options, jaspResults, ready)
+      .doeAnalysisPlotMainEffectsSubplots(container, dep, options, jaspResults, ready)
     }
 
     if (options[["interactionPlot"]]) {
-      .doeAnalysisPlotInteractionEffectsSubplots(depContainer, dep, options, jaspResults, ready)
+      .doeAnalysisPlotInteractionEffectsSubplots(container, dep, options, jaspResults, ready)
     }
   }
 }
@@ -3320,7 +3331,17 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       emm
     }
     
-    p <- ggplot2::ggplot(emm, ggplot2::aes(x = x, y = emmean, color = trace, group = trace)) +
+    hasCi <- includeCi && all(c("lower.CL", "upper.CL") %in% names(emm))
+
+    p <- ggplot2::ggplot(emm, ggplot2::aes(x = x, y = emmean, color = trace, group = trace))
+
+    # Continuous x: faded confidence bands drawn underneath the traces
+    if (hasCi && xFactorType == "continuous") {
+      p <- p + ggplot2::geom_ribbon(ggplot2::aes(ymin = lower.CL, ymax = upper.CL, fill = trace),
+                                     alpha = 0.3, color = NA, show.legend = FALSE)
+    }
+
+    p <- p +
       ggplot2::geom_line(linewidth = 0.95) +
       ggplot2::geom_point(data = emmForPoints, shape = 21, ggplot2::aes(fill = trace), size = 3.2, stroke = 0.2) +
       ggplot2::scale_y_continuous(name = dep, expand = ggplot2::expansion(mult = c(0.15, 0.15))) +
@@ -3335,7 +3356,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       p <- p + ggplot2::scale_x_discrete(name = factorA, expand = ggplot2::expansion(add = c(0.5, 0.5)))
     }
 
-    if (includeCi && all(c("lower.CL", "upper.CL") %in% names(emm))) {
+    # Discrete x: error bars at each level
+    if (hasCi && xFactorType != "continuous") {
       p <- p + ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.CL, ymax = upper.CL), width = 0.25, linewidth = 0.6)
     }
 
