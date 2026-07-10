@@ -1042,8 +1042,7 @@
       "URL": "https://www.rforge.net/base64enc",
       "BugReports": "https://github.com/s-u/base64enc/issues",
       "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "bbmle": {
       "Package": "bbmle",
@@ -1612,8 +1611,7 @@
       "NeedsCompilation": "no",
       "Author": "John Fox [aut], Sanford Weisberg [aut], Brad Price [aut, cre]",
       "Maintainer": "Brad Price <brad.price@mail.wvu.edu>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "checkmate": {
       "Package": "checkmate",
@@ -2259,8 +2257,7 @@
       "URL": "https://github.com/tpetzoldt/deSolve/",
       "LazyData": "yes",
       "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "desc": {
       "Package": "desc",
@@ -4287,7 +4284,7 @@
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspBase",
       "RemoteRef": "master",
-      "RemoteSha": "209d1787d5c9400601df960535b261029a350b12"
+      "RemoteSha": "f1944101ee749e3fcd605defca2e014ade4b3534"
     },
     "jaspDescriptives": {
       "Package": "jaspDescriptives",
@@ -4365,7 +4362,7 @@
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspGraphs",
       "RemoteRef": "master",
-      "RemoteSha": "cbe943517ac21078d0a502bcfaf8ae5e11756a05"
+      "RemoteSha": "aebeafe01da55d32d8ebd9cfe8a6241247d0a3b1"
     },
     "jaspTTests": {
       "Package": "jaspTTests",
@@ -4440,42 +4437,6 @@
       "RemoteRepo": "jaspTools",
       "RemoteRef": "master",
       "RemoteSha": "281f17a2d6761eb5ec247d7ddcd59042f01fa409"
-    },
-    "jaspTtests": {
-      "Package": "jaspTTests",
-      "Version": "0.96.5",
-      "Source": "GitHub",
-      "Type": "Package",
-      "Title": "T-Tests Module for JASP",
-      "Date": "2022-10-05",
-      "Author": "JASP Team",
-      "Website": "jasp-stats.org",
-      "Maintainer": "JASP Team <info@jasp-stats.org>",
-      "Description": "Evaluate the difference between two means",
-      "License": "GPL (>= 2)",
-      "Encoding": "UTF-8",
-      "Imports": [
-        "BayesFactor",
-        "car",
-        "ggplot2",
-        "jaspBase",
-        "jaspGraphs",
-        "logspline",
-        "plotrix",
-        "plyr"
-      ],
-      "Remotes": "jasp-stats/jaspBase, jasp-stats/jaspGraphs",
-      "RoxygenNote": "7.3.2",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "jaspTTests",
-      "RemoteUsername": "jasp-stats",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "30c95319e2a7b4280d7553a84e91242ddc183516",
-      "NeedsCompilation": "no",
-      "Depends": [
-        "R (>= 3.5.0)"
-      ]
     },
     "jpeg": {
       "Package": "jpeg",
@@ -4737,8 +4698,7 @@
       "NeedsCompilation": "yes",
       "Author": "Hadley Wickham [aut, cre], RStudio [cph]",
       "Maintainer": "Hadley Wickham <hadley@rstudio.com>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "libcoin": {
       "Package": "libcoin",
@@ -5492,8 +5452,7 @@
       "NeedsCompilation": "yes",
       "Author": "Alan Genz [aut], Frank Bretz [aut], Tetsuhisa Miwa [aut], Xuefei Mi [aut], Friedrich Leisch [ctb], Fabian Scheipl [ctb], Bjoern Bornkamp [ctb] (ORCID: <https://orcid.org/0000-0002-6294-8185>), Martin Maechler [ctb] (ORCID: <https://orcid.org/0000-0002-8685-9910>), Torsten Hothorn [aut, cre] (ORCID: <https://orcid.org/0000-0001-8301-0471>)",
       "Maintainer": "Torsten Hothorn <Torsten.Hothorn@R-project.org>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "nlme": {
       "Package": "nlme",
@@ -6204,12 +6163,11 @@
       "Depends": [
         "R (>= 3.5.0)"
       ],
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "URL": "https://plotrix.github.io/plotrix/, https://github.com/plotrix/plotrix",
       "BugReports": "https://github.com/plotrix/plotrix/issues",
       "Author": "Jim Lemon [aut], Ben Bolker [ctb], Sander Oom [ctb], Eduardo Klein [ctb], Barry Rowlingson [ctb], Hadley Wickham [ctb], Anupam Tyagi [ctb], Olivier Eterradossi [ctb], Gabor Grothendieck [ctb], Michael Toews [ctb], John Kane [ctb], Rolf Turner [ctb], Carl Witthoft [ctb], Julian Stander [ctb], Thomas Petzoldt [ctb], Remko Duursma [ctb], Elisa Biancotto [ctb], Ofir Levy [ctb], Christophe Dutang [ctb], Peter Solymos [ctb], Robby Engelmann [ctb], Michael Hecker [ctb], Felix Steinbeck [ctb], Hans Borchers [ctb], Henrik Singmann [ctb], Ted Toal [ctb], Derek Ogle [ctb], Darshan Baral [ctb], Ulrike Groemping [ctb], Bill Venables [ctb], The CRAN Team [ctb], Duncan Murdoch [ctb, cre]",
-      "Maintainer": "Duncan Murdoch <murdoch.duncan@gmail.com>",
-      "Encoding": "UTF-8"
+      "Maintainer": "Duncan Murdoch <murdoch.duncan@gmail.com>"
     },
     "plyr": {
       "Package": "plyr",
@@ -8208,8 +8166,7 @@
       "URL": "https://www.rforge.net/uuid",
       "BugReports": "https://github.com/s-u/uuid/issues",
       "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "vcd": {
       "Package": "vcd",
