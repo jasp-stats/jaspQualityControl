@@ -5322,73 +5322,73 @@ test_that("54.14 Data example 1 (factorial plots, two outcomes) - Strength Model
 })
 
 test_that("54.5 Data example 1 (factorial plots, two outcomes) - Density Interaction: InjPress x InjTemp plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_interactionEffect"]][["collection"]][["factorialPlots_Density_interactionEffect_interaction_InjPress_x_InjTemp"]][["data"]]
+  plotName <- results[["results"]][["Density"]][["collection"]][["Density_factorialPlots"]][["collection"]][["Density_factorialPlots_interactionEffect"]][["collection"]][["Density_factorialPlots_interactionEffect_interaction_InjPress_x_InjTemp"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-injpress-x-injtemp-54-05")
 })
 
 test_that("54.6 Data example 1 (factorial plots, two outcomes) - Density Interaction: Material x InjPress plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_interactionEffect"]][["collection"]][["factorialPlots_Density_interactionEffect_interaction_InjPress_x_Material"]][["data"]]
+  plotName <- results[["results"]][["Density"]][["collection"]][["Density_factorialPlots"]][["collection"]][["Density_factorialPlots_interactionEffect"]][["collection"]][["Density_factorialPlots_interactionEffect_interaction_InjPress_x_Material"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-material-x-injpress-54-06")
 })
 
 test_that("54.7 Data example 1 (factorial plots, two outcomes) - Density Interaction: Material x InjTemp plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_interactionEffect"]][["collection"]][["factorialPlots_Density_interactionEffect_interaction_InjTemp_x_Material"]][["data"]]
+  plotName <- results[["results"]][["Density"]][["collection"]][["Density_factorialPlots"]][["collection"]][["Density_factorialPlots_interactionEffect"]][["collection"]][["Density_factorialPlots_interactionEffect_interaction_InjTemp_x_Material"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-material-x-injtemp-54-07")
 })
 
 test_that("54.8 Data example 1 (factorial plots, two outcomes) - Density Main Effect: InjPress plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_mainEffect"]][["collection"]][["factorialPlots_Density_mainEffect_mainEffect_InjPress"]][["data"]]
+  plotName <- results[["results"]][["Density"]][["collection"]][["Density_factorialPlots"]][["collection"]][["Density_factorialPlots_mainEffect"]][["collection"]][["Density_factorialPlots_mainEffect_mainEffect_InjPress"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-injpress-54-08")
 })
 
 test_that("54.9 Data example 1 (factorial plots, two outcomes) - Density Main Effect: InjTemp plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_mainEffect"]][["collection"]][["factorialPlots_Density_mainEffect_mainEffect_InjTemp"]][["data"]]
+  plotName <- results[["results"]][["Density"]][["collection"]][["Density_factorialPlots"]][["collection"]][["Density_factorialPlots_mainEffect"]][["collection"]][["Density_factorialPlots_mainEffect_mainEffect_InjTemp"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-injtemp-54-09")
 })
 
 test_that("54.10 Data example 1 (factorial plots, two outcomes) - Density Main Effect: Material plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_mainEffect"]][["collection"]][["factorialPlots_Density_mainEffect_mainEffect_Material"]][["data"]]
+  plotName <- results[["results"]][["Density"]][["collection"]][["Density_factorialPlots"]][["collection"]][["Density_factorialPlots_mainEffect"]][["collection"]][["Density_factorialPlots_mainEffect_mainEffect_Material"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-material-54-10")
 })
 
 test_that("54.15 Data example 1 (factorial plots, two outcomes) - Strength Interaction: InjPress x InjTemp plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_interactionEffect"]][["collection"]][["factorialPlots_Strength_interactionEffect_interaction_InjPress_x_InjTemp"]][["data"]]
+  plotName <- results[["results"]][["Strength"]][["collection"]][["Strength_factorialPlots"]][["collection"]][["Strength_factorialPlots_interactionEffect"]][["collection"]][["Strength_factorialPlots_interactionEffect_interaction_InjPress_x_InjTemp"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-injpress-x-injtemp-54-15")
 })
 
 test_that("54.16 Data example 1 (factorial plots, two outcomes) - Strength Interaction: Material x InjPress plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_interactionEffect"]][["collection"]][["factorialPlots_Strength_interactionEffect_interaction_InjPress_x_Material"]][["data"]]
+  plotName <- results[["results"]][["Strength"]][["collection"]][["Strength_factorialPlots"]][["collection"]][["Strength_factorialPlots_interactionEffect"]][["collection"]][["Strength_factorialPlots_interactionEffect_interaction_InjPress_x_Material"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-material-x-injpress-54-16")
 })
 
 test_that("54.17 Data example 1 (factorial plots, two outcomes) - Strength Interaction: Material x InjTemp plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_interactionEffect"]][["collection"]][["factorialPlots_Strength_interactionEffect_interaction_InjTemp_x_Material"]][["data"]]
+  plotName <- results[["results"]][["Strength"]][["collection"]][["Strength_factorialPlots"]][["collection"]][["Strength_factorialPlots_interactionEffect"]][["collection"]][["Strength_factorialPlots_interactionEffect_interaction_InjTemp_x_Material"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-material-x-injtemp-54-17")
 })
 
 test_that("54.18 Data example 1 (factorial plots, two outcomes) - Strength Main Effect: InjPress plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_mainEffect"]][["collection"]][["factorialPlots_Strength_mainEffect_mainEffect_InjPress"]][["data"]]
+  plotName <- results[["results"]][["Strength"]][["collection"]][["Strength_factorialPlots"]][["collection"]][["Strength_factorialPlots_mainEffect"]][["collection"]][["Strength_factorialPlots_mainEffect_mainEffect_InjPress"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-injpress-54-18")
 })
 
 test_that("54.19 Data example 1 (factorial plots, two outcomes) - Strength Main Effect: InjTemp plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_mainEffect"]][["collection"]][["factorialPlots_Strength_mainEffect_mainEffect_InjTemp"]][["data"]]
+  plotName <- results[["results"]][["Strength"]][["collection"]][["Strength_factorialPlots"]][["collection"]][["Strength_factorialPlots_mainEffect"]][["collection"]][["Strength_factorialPlots_mainEffect_mainEffect_InjTemp"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-injtemp-54-19")
 })
 
 test_that("54.20 Data example 1 (factorial plots, two outcomes) - Strength Main Effect: Material plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_mainEffect"]][["collection"]][["factorialPlots_Strength_mainEffect_mainEffect_Material"]][["data"]]
+  plotName <- results[["results"]][["Strength"]][["collection"]][["Strength_factorialPlots"]][["collection"]][["Strength_factorialPlots_mainEffect"]][["collection"]][["Strength_factorialPlots_mainEffect_mainEffect_Material"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-material-54-20")
 })
@@ -5469,37 +5469,37 @@ test_that("55.4 Data example 2 (factorial plots, one outcome) - Model Summary ta
 })
 
 test_that("55.5 Data example 2 (factorial plots, one outcome) - Interaction: Angle x Vertical plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_interactionEffect"]][["collection"]][["factorialPlots_Distance_interactionEffect_interaction_Angle_x_Vertical"]][["data"]]
+  plotName <- results[["results"]][["Distance"]][["collection"]][["Distance_factorialPlots"]][["collection"]][["Distance_factorialPlots_interactionEffect"]][["collection"]][["Distance_factorialPlots_interactionEffect_interaction_Angle_x_Vertical"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-angle-x-vertical-55-05")
 })
 
 test_that("55.6 Data example 2 (factorial plots, one outcome) - Interaction: Ball x Angle plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_interactionEffect"]][["collection"]][["factorialPlots_Distance_interactionEffect_interaction_Angle_x_Ball"]][["data"]]
+  plotName <- results[["results"]][["Distance"]][["collection"]][["Distance_factorialPlots"]][["collection"]][["Distance_factorialPlots_interactionEffect"]][["collection"]][["Distance_factorialPlots_interactionEffect_interaction_Angle_x_Ball"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-angle-x-ball-55-06")
 })
 
 test_that("55.7 Data example 2 (factorial plots, one outcome) - Interaction: Ball x Vertical plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_interactionEffect"]][["collection"]][["factorialPlots_Distance_interactionEffect_interaction_Vertical_x_Ball"]][["data"]]
+  plotName <- results[["results"]][["Distance"]][["collection"]][["Distance_factorialPlots"]][["collection"]][["Distance_factorialPlots_interactionEffect"]][["collection"]][["Distance_factorialPlots_interactionEffect_interaction_Vertical_x_Ball"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-vertical-x-ball-55-07")
 })
 
 test_that("55.8 Data example 2 (factorial plots, one outcome) - Main Effect: Angle plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_mainEffect"]][["collection"]][["factorialPlots_Distance_mainEffect_mainEffect_Angle"]][["data"]]
+  plotName <- results[["results"]][["Distance"]][["collection"]][["Distance_factorialPlots"]][["collection"]][["Distance_factorialPlots_mainEffect"]][["collection"]][["Distance_factorialPlots_mainEffect_mainEffect_Angle"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-angle-55-08")
 })
 
 test_that("55.9 Data example 2 (factorial plots, one outcome) - Main Effect: Ball plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_mainEffect"]][["collection"]][["factorialPlots_Distance_mainEffect_mainEffect_Ball"]][["data"]]
+  plotName <- results[["results"]][["Distance"]][["collection"]][["Distance_factorialPlots"]][["collection"]][["Distance_factorialPlots_mainEffect"]][["collection"]][["Distance_factorialPlots_mainEffect_mainEffect_Ball"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-ball-55-09")
 })
 
 test_that("55.10 Data example 2 (factorial plots, one outcome) - Main Effect: Vertical plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_mainEffect"]][["collection"]][["factorialPlots_Distance_mainEffect_mainEffect_Vertical"]][["data"]]
+  plotName <- results[["results"]][["Distance"]][["collection"]][["Distance_factorialPlots"]][["collection"]][["Distance_factorialPlots_mainEffect"]][["collection"]][["Distance_factorialPlots_mainEffect_mainEffect_Vertical"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-vertical-55-10")
 })
@@ -5669,73 +5669,73 @@ test_that("56.10 Data example 3 (response surface, two outcomes) - Syruploss Mod
 })
 
 test_that("56.11 Data example 3 (response surface, two outcomes) - Cost Interaction: Pressure x Nozzle plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_interactionEffect"]][["collection"]][["factorialPlots_Cost_interactionEffect_interaction_Pressure_x_Nozzle"]][["data"]]
+  plotName <- results[["results"]][["Cost"]][["collection"]][["Cost_factorialPlots"]][["collection"]][["Cost_factorialPlots_interactionEffect"]][["collection"]][["Cost_factorialPlots_interactionEffect_interaction_Pressure_x_Nozzle"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-pressure-x-nozzle-56-11")
 })
 
 test_that("56.12 Data example 3 (response surface, two outcomes) - Cost Interaction: Speed x Nozzle plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_interactionEffect"]][["collection"]][["factorialPlots_Cost_interactionEffect_interaction_Speed_x_Nozzle"]][["data"]]
+  plotName <- results[["results"]][["Cost"]][["collection"]][["Cost_factorialPlots"]][["collection"]][["Cost_factorialPlots_interactionEffect"]][["collection"]][["Cost_factorialPlots_interactionEffect_interaction_Speed_x_Nozzle"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-speed-x-nozzle-56-12")
 })
 
 test_that("56.13 Data example 3 (response surface, two outcomes) - Cost Interaction: Speed x Pressure plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_interactionEffect"]][["collection"]][["factorialPlots_Cost_interactionEffect_interaction_Speed_x_Pressure"]][["data"]]
+  plotName <- results[["results"]][["Cost"]][["collection"]][["Cost_factorialPlots"]][["collection"]][["Cost_factorialPlots_interactionEffect"]][["collection"]][["Cost_factorialPlots_interactionEffect_interaction_Speed_x_Pressure"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-speed-x-pressure-56-13")
 })
 
 test_that("56.14 Data example 3 (response surface, two outcomes) - Cost Main Effect: Nozzle plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_mainEffect"]][["collection"]][["factorialPlots_Cost_mainEffect_mainEffect_Nozzle"]][["data"]]
+  plotName <- results[["results"]][["Cost"]][["collection"]][["Cost_factorialPlots"]][["collection"]][["Cost_factorialPlots_mainEffect"]][["collection"]][["Cost_factorialPlots_mainEffect_mainEffect_Nozzle"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-nozzle-56-14")
 })
 
 test_that("56.15 Data example 3 (response surface, two outcomes) - Cost Main Effect: Pressure plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_mainEffect"]][["collection"]][["factorialPlots_Cost_mainEffect_mainEffect_Pressure"]][["data"]]
+  plotName <- results[["results"]][["Cost"]][["collection"]][["Cost_factorialPlots"]][["collection"]][["Cost_factorialPlots_mainEffect"]][["collection"]][["Cost_factorialPlots_mainEffect_mainEffect_Pressure"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-pressure-56-15")
 })
 
 test_that("56.16 Data example 3 (response surface, two outcomes) - Cost Main Effect: Speed plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_mainEffect"]][["collection"]][["factorialPlots_Cost_mainEffect_mainEffect_Speed"]][["data"]]
+  plotName <- results[["results"]][["Cost"]][["collection"]][["Cost_factorialPlots"]][["collection"]][["Cost_factorialPlots_mainEffect"]][["collection"]][["Cost_factorialPlots_mainEffect_mainEffect_Speed"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-speed-56-16")
 })
 
 test_that("56.17 Data example 3 (response surface, two outcomes) - Syruploss Interaction: Pressure x Nozzle plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_interactionEffect"]][["collection"]][["factorialPlots_Syruploss_interactionEffect_interaction_Pressure_x_Nozzle"]][["data"]]
+  plotName <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_factorialPlots"]][["collection"]][["Syruploss_factorialPlots_interactionEffect"]][["collection"]][["Syruploss_factorialPlots_interactionEffect_interaction_Pressure_x_Nozzle"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-pressure-x-nozzle-56-17")
 })
 
 test_that("56.18 Data example 3 (response surface, two outcomes) - Syruploss Interaction: Speed x Nozzle plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_interactionEffect"]][["collection"]][["factorialPlots_Syruploss_interactionEffect_interaction_Speed_x_Nozzle"]][["data"]]
+  plotName <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_factorialPlots"]][["collection"]][["Syruploss_factorialPlots_interactionEffect"]][["collection"]][["Syruploss_factorialPlots_interactionEffect_interaction_Speed_x_Nozzle"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-speed-x-nozzle-56-18")
 })
 
 test_that("56.19 Data example 3 (response surface, two outcomes) - Syruploss Interaction: Speed x Pressure plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_interactionEffect"]][["collection"]][["factorialPlots_Syruploss_interactionEffect_interaction_Speed_x_Pressure"]][["data"]]
+  plotName <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_factorialPlots"]][["collection"]][["Syruploss_factorialPlots_interactionEffect"]][["collection"]][["Syruploss_factorialPlots_interactionEffect_interaction_Speed_x_Pressure"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-speed-x-pressure-56-19")
 })
 
 test_that("56.20 Data example 3 (response surface, two outcomes) - Syruploss Main Effect: Nozzle plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_mainEffect"]][["collection"]][["factorialPlots_Syruploss_mainEffect_mainEffect_Nozzle"]][["data"]]
+  plotName <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_factorialPlots"]][["collection"]][["Syruploss_factorialPlots_mainEffect"]][["collection"]][["Syruploss_factorialPlots_mainEffect_mainEffect_Nozzle"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-nozzle-56-20")
 })
 
 test_that("56.21 Data example 3 (response surface, two outcomes) - Syruploss Main Effect: Pressure plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_mainEffect"]][["collection"]][["factorialPlots_Syruploss_mainEffect_mainEffect_Pressure"]][["data"]]
+  plotName <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_factorialPlots"]][["collection"]][["Syruploss_factorialPlots_mainEffect"]][["collection"]][["Syruploss_factorialPlots_mainEffect_mainEffect_Pressure"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-pressure-56-21")
 })
 
 test_that("56.22 Data example 3 (response surface, two outcomes) - Syruploss Main Effect: Speed plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_mainEffect"]][["collection"]][["factorialPlots_Syruploss_mainEffect_mainEffect_Speed"]][["data"]]
+  plotName <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_factorialPlots"]][["collection"]][["Syruploss_factorialPlots_mainEffect"]][["collection"]][["Syruploss_factorialPlots_mainEffect_mainEffect_Speed"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-speed-56-22")
 })

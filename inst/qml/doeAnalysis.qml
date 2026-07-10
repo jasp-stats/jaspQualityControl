@@ -341,11 +341,12 @@ Form
 		Section
 	{
 		title: qsTr("Plots")
-		columns: 	1
+		columns: 	2
 
 		Group
 		{
 			title:                                  qsTr("Residuals Plots")
+			columns: 	2
 
 			CheckBox
 			{
@@ -381,6 +382,7 @@ Form
 		Group
 		{
 			title: 								qsTr("Factorial Plots")
+			columns: 	2
 
 			CheckBox
 			{
@@ -426,6 +428,7 @@ Form
 		Group
 		{
 			title: qsTr("Other Plots")
+			columns: 	2
 
 			CheckBox
 			{
