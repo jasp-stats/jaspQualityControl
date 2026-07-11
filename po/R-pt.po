@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2026-07-04 04:49\n"
+"POT-Creation-Date: 2026-07-11 04:41\n"
 "PO-Revision-Date: 2026-01-28 10:47+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
@@ -343,8 +343,8 @@ msgstr "%s preditivo"
 msgid "The following aliased terms were removed: %s."
 msgstr "Os seguintes termos alternativos foram removidos: %s."
 
-msgid "ANOVA"
-msgstr "ANOVA"
+msgid "Analysis of Variance"
+msgstr ""
 
 msgid "Source"
 msgstr "Fonte"
@@ -474,6 +474,12 @@ msgstr "e"
 
 msgid "%1$s of %2$s vs %3$s"
 msgstr "%1$s de %2$s vs %3$s"
+
+msgid ""
+"Could not plot because the following selected variable(s) were not included "
+"in the final model: %1$s. They might have been removed during model "
+"selection."
+msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
 msgstr "A análise falhou com a seguinte mensagem de erro: %s"
@@ -844,7 +850,8 @@ msgstr "Tolerância: %s"
 msgid "Number of distinct categories"
 msgstr "Número de categorias distintas"
 
-msgid "Gauge r&R ANOVA table"
+#, fuzzy
+msgid "Gauge r&R Analysis of Variance table"
 msgstr "Tabela ANOVA do Gauge r&R"
 
 msgid "Range chart by operator"
@@ -871,13 +878,16 @@ msgstr "Gráfico de interação peça por operador"
 msgid "Traffic light chart"
 msgstr "Gráfico de semáforo"
 
-msgid "Gauge r&R study - crossed ANOVA"
+#, fuzzy
+msgid "Gauge r&R study - crossed Analysis of Variance"
 msgstr "Estudo de medição r&R - ANOVA cruzada"
 
-msgid "One-way ANOVA table"
+#, fuzzy
+msgid "One-way Analysis of Variance table"
 msgstr "Tabela ANOVA simples"
 
-msgid "Two-way ANOVA table with interaction"
+#, fuzzy
+msgid "Two-way Analysis of Variance table with interaction"
 msgstr "Tabela ANOVA bifatorial com interação"
 
 msgid "Mean squares"
@@ -953,7 +963,8 @@ msgstr ""
 "Os valores para %% variação do processo não são exibidos porque são "
 "idênticos aos valores para %% variação do estudo."
 
-msgid "Two-way ANOVA table without interaction"
+#, fuzzy
+msgid "Two-way Analysis of Variance table without interaction"
 msgstr "Tabela ANOVA bifatorial sem interação"
 
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
@@ -998,12 +1009,6 @@ msgstr "Gráfico de dispersão do operador %1$s vs operador %2$s"
 msgid "Matrix plot for operators"
 msgstr "Gráfico de matriz para operadores"
 
-msgid "Repeat"
-msgstr "Repetib"
-
-msgid "Reprod"
-msgstr "Reprod"
-
 msgid "%% Study Variation"
 msgstr "%% Estudo de variação"
 
@@ -1033,7 +1038,8 @@ msgstr "Tabelas de medição r&R"
 msgid "Measurement by part x operator plot"
 msgstr "Gráfico de medição por peça x operador"
 
-msgid "Gauge r&R study - nested ANOVA"
+#, fuzzy
+msgid "Gauge r&R study - nested Analysis of Variance"
 msgstr "Estudo de medição r&R - ANOVA aninhada"
 
 msgid "Gauge r&R (nested)"
@@ -1681,6 +1687,10 @@ msgstr "%s IC para Cpk"
 msgid "Z (ST)"
 msgstr "Banco Z (ST)"
 
+#, fuzzy
+msgid "Z.bench (ST)"
+msgstr "Banco Z (ST)"
+
 msgid ""
 "Statistics displayed as * were not calculated because the relevant "
 "specification limit is not set or set as boundary."
@@ -1714,6 +1724,10 @@ msgstr "%s IC para Ppk"
 
 #, fuzzy
 msgid "Z (LT)"
+msgstr "Banco Z (LT)"
+
+#, fuzzy
+msgid "Z.bench (LT)"
 msgstr "Banco Z (LT)"
 
 msgid "Cpm"
@@ -2008,6 +2022,15 @@ msgid_plural ""
 "terms are in the model)."
 msgstr[0] ""
 msgstr[1] ""
+
+#~ msgid "ANOVA"
+#~ msgstr "ANOVA"
+
+#~ msgid "Repeat"
+#~ msgstr "Repetib"
+
+#~ msgid "Reprod"
+#~ msgstr "Reprod"
 
 #~ msgid ""
 #~ "Parameter estimation failed. Values might be too extreme. Try a different "

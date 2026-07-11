@@ -1518,10 +1518,6 @@ msgctxt "doeFactorial|"
 msgid "Replications"
 msgstr ""
 
-msgctxt "doeFactorial|"
-msgid "Repetitions"
-msgstr ""
-
 msgctxt "doeFull|"
 msgid "Number of replications"
 msgstr ""
@@ -2315,10 +2311,6 @@ msgid "Analysis options"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
-msgid "r&R ANOVA table"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
 msgid "Study var. multiplier type"
 msgstr ""
 
@@ -2328,10 +2320,6 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Range charts by operator"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Average chart bys operator"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
@@ -2364,10 +2352,6 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Tolerance width"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "r&R ANOVA table"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
@@ -3478,4 +3462,31 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Compress x-axis"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "r&R Analysis of Variance table"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Average chart by operator"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "r&R Analysis of Variance table"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Z.bench (ST) / Z.bench (LT)"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid ""
+"Sigma level based on total defect probability across both specification "
+"limits, as opposed to Z (ST)/Z (LT) which equal 3·Cpk/3·Ppk (distance to the "
+"nearest bound)."
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Pooled"
 msgstr ""

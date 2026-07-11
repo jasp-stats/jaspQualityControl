@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-07-04 04:49\n"
+"POT-Creation-Date: 2026-07-11 04:41\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -349,8 +349,8 @@ msgstr "Predictoren"
 msgid "The following aliased terms were removed: %s."
 msgstr "De volgende gealiaste termen zijn verwijderd: %s."
 
-msgid "ANOVA"
-msgstr "ANOVA"
+msgid "Analysis of Variance"
+msgstr ""
 
 msgid "Source"
 msgstr "Bron"
@@ -488,6 +488,12 @@ msgstr "en"
 
 msgid "%1$s of %2$s vs %3$s"
 msgstr "%1$s van %2$s vs %3$s"
+
+msgid ""
+"Could not plot because the following selected variable(s) were not included "
+"in the final model: %1$s. They might have been removed during model "
+"selection."
+msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
 msgstr "De analyse is mislukt met de volgende foutmelding: %s"
@@ -902,7 +908,7 @@ msgid "Number of distinct categories"
 msgstr "Aantal verschillende categorieën = %i"
 
 #, fuzzy
-msgid "Gauge r&R ANOVA table"
+msgid "Gauge r&R Analysis of Variance table"
 msgstr "Gauge r&R ANOVA Tabel"
 
 msgid "Range chart by operator"
@@ -934,15 +940,16 @@ msgstr "Onderdeel per Operator Interactie Figuur"
 msgid "Traffic light chart"
 msgstr "Stoplichtfiguur"
 
-msgid "Gauge r&R study - crossed ANOVA"
-msgstr ""
+#, fuzzy
+msgid "Gauge r&R study - crossed Analysis of Variance"
+msgstr "Gauge r&R (Genest)"
 
 #, fuzzy
-msgid "One-way ANOVA table"
+msgid "One-way Analysis of Variance table"
 msgstr "One-way ANOVA Tabel"
 
 #, fuzzy
-msgid "Two-way ANOVA table with interaction"
+msgid "Two-way Analysis of Variance table with interaction"
 msgstr "Two-way ANOVA Tabel met Interactie"
 
 #, fuzzy
@@ -1030,7 +1037,7 @@ msgstr ""
 "aan waarden voor %%Studievariatie."
 
 #, fuzzy
-msgid "Two-way ANOVA table without interaction"
+msgid "Two-way Analysis of Variance table without interaction"
 msgstr "Two-way ANOVA Tabel zonder Interactie"
 
 #, fuzzy
@@ -1084,12 +1091,6 @@ msgstr "Spreidingsdiagram van Operator  %1$s vs Operator %2$s"
 msgid "Matrix plot for operators"
 msgstr "Matrixfiguur voor Operators"
 
-msgid "Repeat"
-msgstr "Herhaal"
-
-msgid "Reprod"
-msgstr "Reprod"
-
 msgid "%% Study Variation"
 msgstr "%% Studievariatie"
 
@@ -1119,7 +1120,7 @@ msgid "Measurement by part x operator plot"
 msgstr "Meting per onderdeel x operator figuur"
 
 #, fuzzy
-msgid "Gauge r&R study - nested ANOVA"
+msgid "Gauge r&R study - nested Analysis of Variance"
 msgstr "Gauge r&R (Genest)"
 
 #, fuzzy
@@ -1801,6 +1802,9 @@ msgstr "%s BI voor Cpk"
 msgid "Z (ST)"
 msgstr ""
 
+msgid "Z.bench (ST)"
+msgstr ""
+
 msgid ""
 "Statistics displayed as * were not calculated because the relevant "
 "specification limit is not set or set as boundary."
@@ -1833,6 +1837,9 @@ msgid "%s CI for Ppk"
 msgstr "%s BI voor Ppk"
 
 msgid "Z (LT)"
+msgstr ""
+
+msgid "Z.bench (LT)"
 msgstr ""
 
 msgid "Cpm"
@@ -2117,6 +2124,15 @@ msgid_plural ""
 "terms are in the model)."
 msgstr[0] ""
 msgstr[1] ""
+
+#~ msgid "ANOVA"
+#~ msgstr "ANOVA"
+
+#~ msgid "Repeat"
+#~ msgstr "Herhaal"
+
+#~ msgid "Reprod"
+#~ msgstr "Reprod"
 
 #~ msgid ""
 #~ "Parameter estimation failed. Values might be too extreme. Try a different "

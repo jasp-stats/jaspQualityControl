@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.96.4\n"
-"POT-Creation-Date: 2026-07-04 04:49\n"
+"POT-Creation-Date: 2026-07-11 04:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -326,7 +326,7 @@ msgstr ""
 msgid "The following aliased terms were removed: %s."
 msgstr ""
 
-msgid "ANOVA"
+msgid "Analysis of Variance"
 msgstr ""
 
 msgid "Source"
@@ -456,6 +456,12 @@ msgid "and"
 msgstr ""
 
 msgid "%1$s of %2$s vs %3$s"
+msgstr ""
+
+msgid ""
+"Could not plot because the following selected variable(s) were not included "
+"in the final model: %1$s. They might have been removed during model "
+"selection."
 msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
@@ -803,7 +809,7 @@ msgstr ""
 msgid "Number of distinct categories"
 msgstr ""
 
-msgid "Gauge r&R ANOVA table"
+msgid "Gauge r&R Analysis of Variance table"
 msgstr ""
 
 msgid "Range chart by operator"
@@ -830,13 +836,13 @@ msgstr ""
 msgid "Traffic light chart"
 msgstr ""
 
-msgid "Gauge r&R study - crossed ANOVA"
+msgid "Gauge r&R study - crossed Analysis of Variance"
 msgstr ""
 
-msgid "One-way ANOVA table"
+msgid "One-way Analysis of Variance table"
 msgstr ""
 
-msgid "Two-way ANOVA table with interaction"
+msgid "Two-way Analysis of Variance table with interaction"
 msgstr ""
 
 msgid "Mean squares"
@@ -906,7 +912,7 @@ msgid ""
 "to values for %%study variation."
 msgstr ""
 
-msgid "Two-way ANOVA table without interaction"
+msgid "Two-way Analysis of Variance table without interaction"
 msgstr ""
 
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
@@ -948,12 +954,6 @@ msgstr ""
 msgid "Matrix plot for operators"
 msgstr ""
 
-msgid "Repeat"
-msgstr ""
-
-msgid "Reprod"
-msgstr ""
-
 msgid "%% Study Variation"
 msgstr ""
 
@@ -979,7 +979,7 @@ msgstr ""
 msgid "Measurement by part x operator plot"
 msgstr ""
 
-msgid "Gauge r&R study - nested ANOVA"
+msgid "Gauge r&R study - nested Analysis of Variance"
 msgstr ""
 
 msgid "Gauge r&R (nested)"
@@ -1575,6 +1575,9 @@ msgstr ""
 msgid "Z (ST)"
 msgstr ""
 
+msgid "Z.bench (ST)"
+msgstr ""
+
 msgid ""
 "Statistics displayed as * were not calculated because the relevant "
 "specification limit is not set or set as boundary."
@@ -1605,6 +1608,9 @@ msgid "%s CI for Ppk"
 msgstr ""
 
 msgid "Z (LT)"
+msgstr ""
+
+msgid "Z.bench (LT)"
 msgstr ""
 
 msgid "Cpm"

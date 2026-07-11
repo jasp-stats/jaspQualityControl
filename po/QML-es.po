@@ -1517,10 +1517,6 @@ msgctxt "doeFactorial|"
 msgid "Replications"
 msgstr "Réplicas"
 
-msgctxt "doeFactorial|"
-msgid "Repetitions"
-msgstr "Repeticiones"
-
 msgctxt "doeFull|"
 msgid "Number of replications"
 msgstr "Número de réplicas"
@@ -2319,10 +2315,6 @@ msgid "Analysis options"
 msgstr "Opciones de análisis"
 
 msgctxt "msaGaugeRR|"
-msgid "r&R ANOVA table"
-msgstr "Tabla ANOVA de r&R"
-
-msgctxt "msaGaugeRR|"
 msgid "Study var. multiplier type"
 msgstr "Tipo de multiplicador de var. del estudio"
 
@@ -2333,10 +2325,6 @@ msgstr "Valor del multiplicador de var. del estudio"
 msgctxt "msaGaugeRR|"
 msgid "Range charts by operator"
 msgstr "Gráficos de rango por operador"
-
-msgctxt "msaGaugeRR|"
-msgid "Average chart bys operator"
-msgstr "Gráficos promedio por operador"
 
 msgctxt "msaGaugeRR|"
 msgid "Report options"
@@ -2369,10 +2357,6 @@ msgstr "Valor de la Desv. típica"
 msgctxt "msaGaugeRRnonrep|"
 msgid "Tolerance width"
 msgstr "Ancho de tolerancia"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "r&R ANOVA table"
-msgstr "Tabla ANOVA de r&R"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study var. multiplier type"
@@ -3536,3 +3520,30 @@ msgstr "Etiquetas delgadas de los ejes X"
 msgctxt "processCapabilityStudies|"
 msgid "Compress x-axis"
 msgstr "Compactar los ejes X"
+
+msgctxt "msaGaugeRR|"
+msgid "r&R Analysis of Variance table"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Average chart by operator"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "r&R Analysis of Variance table"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Z.bench (ST) / Z.bench (LT)"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid ""
+"Sigma level based on total defect probability across both specification "
+"limits, as opposed to Z (ST)/Z (LT) which equal 3·Cpk/3·Ppk (distance to the "
+"nearest bound)."
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Pooled"
+msgstr ""

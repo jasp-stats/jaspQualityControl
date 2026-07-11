@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-07-04 04:49\n"
+"POT-Creation-Date: 2026-07-11 04:41\n"
 "PO-Revision-Date: 2026-07-10 05:01+0000\n"
 "Last-Translator: 陳正昌 <chencc99@gmail.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
@@ -361,7 +361,8 @@ msgstr "预测变量"
 msgid "The following aliased terms were removed: %s."
 msgstr ""
 
-msgid "ANOVA"
+#, fuzzy
+msgid "Analysis of Variance"
 msgstr "方差分析"
 
 msgid "Source"
@@ -503,6 +504,12 @@ msgid "and"
 msgstr ""
 
 msgid "%1$s of %2$s vs %3$s"
+msgstr ""
+
+msgid ""
+"Could not plot because the following selected variable(s) were not included "
+"in the final model: %1$s. They might have been removed during model "
+"selection."
 msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
@@ -907,8 +914,8 @@ msgid "Number of distinct categories"
 msgstr "可区分类别数 = %i"
 
 #, fuzzy
-msgid "Gauge r&R ANOVA table"
-msgstr "量具 r&R 方差分析表"
+msgid "Gauge r&R Analysis of Variance table"
+msgstr "方差分析"
 
 #, fuzzy
 msgid "Range chart by operator"
@@ -941,15 +948,16 @@ msgstr "零件和操作者交互作用图"
 msgid "Traffic light chart"
 msgstr "红绿灯图"
 
-msgid "Gauge r&R study - crossed ANOVA"
-msgstr ""
+#, fuzzy
+msgid "Gauge r&R study - crossed Analysis of Variance"
+msgstr "量具 r&R（嵌套）"
 
 #, fuzzy
-msgid "One-way ANOVA table"
-msgstr "单向方差分析表"
+msgid "One-way Analysis of Variance table"
+msgstr "方差分析"
 
 #, fuzzy
-msgid "Two-way ANOVA table with interaction"
+msgid "Two-way Analysis of Variance table with interaction"
 msgstr "双向方差分析表带交互作用"
 
 #, fuzzy
@@ -1032,7 +1040,7 @@ msgid ""
 msgstr "未显示 %%过程偏差的值，因为它们与 %%研究偏差的值相同。"
 
 #, fuzzy
-msgid "Two-way ANOVA table without interaction"
+msgid "Two-way Analysis of Variance table without interaction"
 msgstr "双向方差分析表不带交互作用"
 
 #, fuzzy
@@ -1084,12 +1092,6 @@ msgstr "操作者  %1$s vs 操作者 %2$s 散点图"
 msgid "Matrix plot for operators"
 msgstr "操作者矩阵图"
 
-msgid "Repeat"
-msgstr "重复性"
-
-msgid "Reprod"
-msgstr "再现性"
-
 msgid "%% Study Variation"
 msgstr "%% 研究变异"
 
@@ -1119,7 +1121,7 @@ msgid "Measurement by part x operator plot"
 msgstr "测量值图（按零件x操作者）"
 
 #, fuzzy
-msgid "Gauge r&R study - nested ANOVA"
+msgid "Gauge r&R study - nested Analysis of Variance"
 msgstr "量具 r&R（嵌套）"
 
 #, fuzzy
@@ -1779,6 +1781,9 @@ msgstr "Cpk 的 %s 置信区间"
 msgid "Z (ST)"
 msgstr ""
 
+msgid "Z.bench (ST)"
+msgstr ""
+
 msgid ""
 "Statistics displayed as * were not calculated because the relevant "
 "specification limit is not set or set as boundary."
@@ -1809,6 +1814,9 @@ msgid "%s CI for Ppk"
 msgstr "Ppk 的 %s 置信区间"
 
 msgid "Z (LT)"
+msgstr ""
+
+msgid "Z.bench (LT)"
 msgstr ""
 
 msgid "Cpm"
@@ -2076,6 +2084,23 @@ msgid_plural ""
 "The main effects %1$s were retained to respect marginality (their squared "
 "terms are in the model)."
 msgstr[0] ""
+
+#~ msgid "ANOVA"
+#~ msgstr "方差分析"
+
+#, fuzzy
+#~ msgid "Gauge r&R ANOVA table"
+#~ msgstr "量具 r&R 方差分析表"
+
+#, fuzzy
+#~ msgid "One-way ANOVA table"
+#~ msgstr "单向方差分析表"
+
+#~ msgid "Repeat"
+#~ msgstr "重复性"
+
+#~ msgid "Reprod"
+#~ msgstr "再现性"
 
 #~ msgid "No specification limits set."
 #~ msgstr "未设定规格限。"
@@ -2425,9 +2450,6 @@ msgstr[0] ""
 
 #~ msgid "Four in one for %s"
 #~ msgstr "%s 四合一"
-
-#~ msgid "Analysis of variance"
-#~ msgstr "方差分析"
 
 #~ msgid "Model summary"
 #~ msgstr "模型摘要"
