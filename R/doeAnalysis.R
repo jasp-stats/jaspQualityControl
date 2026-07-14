@@ -103,9 +103,17 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
   .doeAnalysisCheckErrors(dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, ready)
 
-  # Create containers for response variable(s)
-  for (dep in dependent) {
-    jaspResults[[dep]] <- createJaspContainer(title = dep)
+  # Create containers for response variable(s). Persist across invocations so
+  # display-only option changes (e.g. plot CI width) do not wipe the cached
+  # model fit. Low position keeps model output above the factorial plots (12).
+  for (depIdx in seq_along(dependent)) {
+    dep <- dependent[[depIdx]]
+    if (is.null(jaspResults[[dep]])) {
+      modelContainer <- createJaspContainer(title = dep)
+      modelContainer$dependOn(options = .doeAnalysisBaseDependencies())
+      modelContainer$position <- depIdx
+      jaspResults[[dep]] <- modelContainer
+    }
   }
 
   p <- try(.doeAnalysisMakeState(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, stepwiseMethod, ready))
@@ -127,6 +135,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   .doeAnalysisStepwiseTable(jaspResults, dependent, options, ready, coded, stepwiseMethod)
   .doeAnalysisPlotPareto(jaspResults, dependent, options, blocks, covariates, ready)
   .doeAnalysisPlotEffectNormalDistribution(jaspResults, dependent, options, blocks, covariates, ready)
+  .doeAnalysisPlotFactorialPlots(jaspResults, dependent, options, ready)
   .doeAnalysisPlotQQResiduals(jaspResults, dependent, options, ready)
   .doeAnalysisPlotHistResiduals(jaspResults, dependent, options, ready)
   .doeAnalysisPlotFittedVsResiduals(jaspResults, dependent, options, ready)
@@ -187,6 +196,10 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
 
   for (dep in dependent) {
+    # Skip refit when the cached fit survived (base deps unchanged)
+    if (!is.null(jaspResults[[dep]][["doeResult"]]))
+      next
+
     currentDependent <- dep
 
     result <- list()
@@ -1524,7 +1537,7 @@ get_levels <- function(var, num_levels, dataset) {
 
 .doeAnalysisAnovaTable <- function(jaspResults, dependent, options, ready, coded) {
   for (dep in dependent) {
-    if (!is.null(jaspResults[["tableAnova"]])) {
+    if (!is.null(jaspResults[[dep]][["tableAnova"]])) {
       return()
     }
 
@@ -1912,6 +1925,521 @@ get_levels <- function(var, num_levels, dataset) {
       ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = 0.1), name = gettext("Theoretical quantiles")) +
       ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = 0.1), name = gettext("Observed quantiles"))
     plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
+  }
+}
+
+.doeAnalysisPlotFactorCandidates <- function(options, model = NULL) {
+  # Collect candidate factors from the active design mode.
+  if (options[["designType"]] == "factorialDesign") {
+    factors <- c(unlist(options[["fixedFactorsFactorial"]]), unlist(options[["continuousFactorsFactorial"]]))
+  } else {
+    factors <- c(unlist(options[["fixedFactorsResponseSurface"]]), unlist(options[["continuousFactorsResponseSurface"]]))
+  }
+
+  factors <- factors[factors != ""]
+  factors <- unique(factors)
+
+  if (!is.null(model)) {
+    modelVars <- colnames(model$model)
+    responseVars <- all.vars(stats::formula(model)[[2]])
+    predictorVars <- setdiff(modelVars, responseVars)
+    factors <- factors[factors %in% predictorVars]
+
+    # Fallback for encoded/renamed predictor columns in the model frame.
+    if (length(factors) == 0) {
+      factors <- predictorVars
+    }
+  }
+
+  return(factors)
+}
+
+.doeAnalysisPlotFactorType <- function(factorName, options) {
+  continuousFactors <- if (options[["designType"]] == "factorialDesign") {
+    options[["continuousFactorsFactorial"]]
+  } else {
+    options[["continuousFactorsResponseSurface"]]
+  }
+
+  if (factorName %in% continuousFactors) {
+    return("continuous")
+  }
+
+  return("discrete")
+}
+
+.doeAnalysisPlotFactorValues <- function(model, factorName, factorType, gridResolution = 51, outerLimitsOnly = FALSE) {
+  values <- model.frame(model)[[factorName]]
+
+  if (factorType == "continuous") {
+    numericValues <- suppressWarnings(as.numeric(values))
+    numericValues <- numericValues[is.finite(numericValues)]
+
+    if (length(numericValues) == 0) {
+      return(numeric())
+    }
+
+    if (outerLimitsOnly) {
+      return(sort(unique(range(numericValues))))
+    }
+
+    if (length(unique(numericValues)) == 1) {
+      return(unique(numericValues))
+    }
+
+    return(seq(min(numericValues), max(numericValues), length.out = gridResolution))
+  }
+
+  if (is.factor(values)) {
+    return(levels(values))
+  }
+
+  return(unique(values))
+}
+
+.doeAnalysisInteractionPlotOrder <- function(factorA, factorB, options) {
+  typeA <- .doeAnalysisPlotFactorType(factorA, options)
+  typeB <- .doeAnalysisPlotFactorType(factorB, options)
+
+  if (typeA == "continuous" && typeB != "continuous") {
+    return(c(factorA, factorB))
+  }
+
+  if (typeA != "continuous" && typeB == "continuous") {
+    return(c(factorB, factorA))
+  }
+
+  return(c(factorA, factorB))
+}
+
+.doeAnalysisEmmeansByTerms <- function(model, termNames, level, includeCi = TRUE, options = NULL, gridResolution = 51) {
+  # Use emmeans on the already fitted model; never refit here.
+
+  specs <- if (length(termNames) == 1) {
+    as.formula(paste0("~", termNames))
+  } else {
+    as.formula(paste0("~", termNames[1], "*", termNames[2]))
+  }
+
+  # Continuous factors are evaluated on a prediction grid; discrete factors keep their levels.
+  modelData <- model.frame(model)
+  atList <- list()
+
+  for (termIdx in seq_along(termNames)) {
+    termName <- termNames[[termIdx]]
+    if (!termName %in% names(modelData)) {
+      next
+    }
+
+    factorType <- if (is.null(options)) {
+      if (is.numeric(modelData[[termName]]) && !is.factor(modelData[[termName]])) "continuous" else "discrete"
+    } else {
+      .doeAnalysisPlotFactorType(termName, options)
+    }
+
+    if (factorType == "continuous") {
+      outerLimitsOnly <- length(termNames) > 1 && termIdx == 2
+      atList[[termName]] <- .doeAnalysisPlotFactorValues(
+        model = model,
+        factorName = termName,
+        factorType = factorType,
+        gridResolution = gridResolution,
+        outerLimitsOnly = outerLimitsOnly
+      )
+    } else {
+      atList[[termName]] <- .doeAnalysisPlotFactorValues(
+        model = model,
+        factorName = termName,
+        factorType = factorType
+      )
+    }
+  }
+
+  emmArgs <- list(specs = specs, level = level)
+  if (length(atList) > 0) {
+    emmArgs[["at"]] <- atList
+  }
+
+  # Try emmeans first; fall back to direct prediction for squared terms.
+  tryCatch({
+    if (includeCi) {
+      emm <- do.call(emmeans::emmeans, c(list(model), emmArgs))
+      return(as.data.frame(emm))
+    }
+
+    emm <- do.call(emmeans::emmeans, c(list(model), emmArgs))
+    return(as.data.frame(emm, infer = c(FALSE, FALSE)))
+  }, error = function(e) {
+    tryCatch({
+      return(.doeAnalysisPredictByTerms(model, termNames, level, includeCi, options, gridResolution))
+    }, error = function(e2) {
+      stop(gettextf("Error computing emmeans for terms '%s': %s. Prediction fallback failed: %s.",
+                     paste(termNames, collapse = ", "), conditionMessage(e), conditionMessage(e2)))
+    })
+  })
+}
+
+.doeAnalysisPredictByTerms <- function(model, termNames, level, includeCi, options = NULL, gridResolution = 51) {
+  modelData <- model.frame(model)
+  responseVars <- all.vars(stats::formula(model)[[2]])
+  predictorNames <- setdiff(names(modelData), responseVars)
+
+  termValues <- list()
+  for (termIdx in seq_along(termNames)) {
+    termName <- termNames[[termIdx]]
+    if (!termName %in% names(modelData)) {
+      next
+    }
+
+    factorType <- if (is.null(options)) {
+      if (is.numeric(modelData[[termName]]) && !is.factor(modelData[[termName]])) "continuous" else "discrete"
+    } else {
+      .doeAnalysisPlotFactorType(termName, options)
+    }
+
+    if (factorType == "continuous") {
+      outerLimitsOnly <- length(termNames) > 1 && termIdx == 2
+      termValues[[termName]] <- .doeAnalysisPlotFactorValues(
+        model = model,
+        factorName = termName,
+        factorType = factorType,
+        gridResolution = gridResolution,
+        outerLimitsOnly = outerLimitsOnly
+      )
+    } else {
+      termValues[[termName]] <- .doeAnalysisPlotFactorValues(
+        model = model,
+        factorName = termName,
+        factorType = factorType
+      )
+    }
+  }
+
+  grid <- expand.grid(termValues, stringsAsFactors = FALSE)
+
+  for (pred in setdiff(predictorNames, termNames)) {
+    predValues <- modelData[[pred]]
+    if (is.factor(predValues)) {
+      grid[[pred]] <- factor(levels(predValues)[[1]], levels = levels(predValues))
+    } else if (is.character(predValues)) {
+      predNonMissing <- predValues[!is.na(predValues)]
+      grid[[pred]] <- if (length(predNonMissing) > 0) predNonMissing[[1]] else ""
+    } else {
+      grid[[pred]] <- mean(predValues, na.rm = TRUE)
+    }
+  }
+
+  for (termName in termNames) {
+    if (termName %in% names(modelData) && is.factor(modelData[[termName]])) {
+      grid[[termName]] <- factor(grid[[termName]], levels = levels(modelData[[termName]]))
+    }
+  }
+
+  if (includeCi) {
+    pred <- stats::predict(model, newdata = grid, se.fit = TRUE)
+    df <- stats::df.residual(model)
+    tcrit <- stats::qt((1 + level) / 2, df)
+    emmean <- pred$fit
+    se <- pred$se.fit
+    lower <- emmean - tcrit * se
+    upper <- emmean + tcrit * se
+  } else {
+    emmean <- stats::predict(model, newdata = grid)
+  }
+
+  out <- grid[, termNames, drop = FALSE]
+  out$emmean <- emmean
+  if (includeCi) {
+    out$lower.CL <- lower
+    out$upper.CL <- upper
+  }
+
+  return(out)
+}
+
+.doeAnalysisNormalizeCiLevel <- function(level) {
+  if (is.null(level) || !is.finite(level)) {
+    return(0.95)
+  }
+
+  if (level > 1) {
+    return(level / 100)
+  }
+
+  return(level)
+}
+
+.doeAnalysisPlotFactorialPlots <- function(jaspResults, dependent, options, ready) {
+  if (!options[["mainEffectsPlot"]] && !options[["interactionPlot"]]) {
+    return()
+  }
+
+  # Nest a Factorial Plots container inside each response container.
+  for (dep in dependent) {
+    if (!is.null(jaspResults[[dep]][["factorialPlots"]])) {
+      next
+    }
+
+    container <- createJaspContainer(title = gettext("Factorial Plots"))
+    # Parent response container already carries the base (model) dependencies;
+    # only the plot-specific options need to invalidate this sub-container.
+    container$dependOn(options = c("mainEffectsPlot", "mainEffectsPlotCi", "mainEffectsPlotCiLevel",
+                                    "interactionPlot", "interactionPlotCi", "interactionPlotCiLevel"))
+    container$position <- 13
+    jaspResults[[dep]][["factorialPlots"]] <- container
+
+    if (!ready || is.null(jaspResults[[dep]][["doeResult"]]) || jaspResults[[dep]]$getError()) {
+      next
+    }
+
+    if (options[["mainEffectsPlot"]]) {
+      .doeAnalysisPlotMainEffectsSubplots(container, dep, options, jaspResults, ready)
+    }
+
+    if (options[["interactionPlot"]]) {
+      .doeAnalysisPlotInteractionEffectsSubplots(container, dep, options, jaspResults, ready)
+    }
+  }
+}
+
+.doeAnalysisPlotMainEffectsSubplots <- function(depContainer, dep, options, jaspResults, ready) {
+  mainEffectContainer <- createJaspContainer(title = gettext("Main Effects"))
+  mainEffectContainer$position <- 1
+  depContainer[["mainEffect"]] <- mainEffectContainer
+
+  includeCi <- isTRUE(options[["mainEffectsPlotCi"]])
+  ciLevel <- .doeAnalysisNormalizeCiLevel(options[["mainEffectsPlotCiLevel"]])
+
+  result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
+  model <- result[["object"]]
+  factors <- .doeAnalysisPlotFactorCandidates(options, model)
+
+  # Build one plot per factor inside the main effects container.
+  plotCount <- 0
+  emmErrors <- character(0)
+  for (factorName in factors) {
+    if (!factorName %in% names(model$model)) {
+      next
+    }
+
+    predictor <- model$model[[factorName]]
+    predictor <- predictor[!is.na(predictor)]
+    if (length(unique(predictor)) < 2) {
+      next
+    }
+
+    emm <- try(.doeAnalysisEmmeansByTerms(model, factorName, ciLevel, includeCi = includeCi, options = options))
+    if (isTryError(emm)) {
+      emmErrors <- c(emmErrors, .extractErrorMessage(emm))
+      next
+    }
+
+    if (!factorName %in% names(emm)) {
+      emmErrors <- c(emmErrors, gettextf("Estimated means output did not contain factor '%s'.", factorName))
+      next
+    }
+
+    factorType <- .doeAnalysisPlotFactorType(factorName, options)
+    if (factorType == "continuous") {
+      emm[["x"]] <- as.numeric(emm[[factorName]])
+      xBreaks <- sort(unique(c(min(emm[["x"]], na.rm = TRUE), max(emm[["x"]], na.rm = TRUE))))
+    } else {
+      emm[["x"]] <- as.character(emm[[factorName]])
+
+      uniqueX <- unique(emm[["x"]])
+      numericX <- suppressWarnings(as.numeric(uniqueX))
+      if (!anyNA(numericX)) {
+        sortedLevels <- as.character(sort(numericX))
+        emm[["x"]] <- factor(emm[["x"]], levels = sortedLevels)
+      } else if (is.factor(emm[[factorName]])) {
+        emm[["x"]] <- factor(emm[["x"]], levels = levels(emm[[factorName]]))
+      }
+    }
+
+    factorPlot <- createJaspPlot(title = gettextf("Main Effect: %s", factorName), width = 500, height = 500)
+    
+    # Filter points: continuous factors show outer limits only, discrete show all levels
+    emmForPoints <- if (factorType == "continuous") {
+      emm[emm[["x"]] %in% xBreaks, ]
+    } else {
+      emm
+    }
+    
+    p <- ggplot2::ggplot(emm, ggplot2::aes(x = x, y = emmean, group = 1)) +
+      ggplot2::geom_line(color = "black", linewidth = 0.9) +
+      ggplot2::geom_point(data = emmForPoints, color = "black", fill = "black", shape = 21, size = 3.2, stroke = 0.2) +
+      ggplot2::scale_y_continuous(name = dep, expand = ggplot2::expansion(mult = c(0.15, 0.15))) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw() +
+      ggplot2::theme(plot.margin = ggplot2::margin(10, 10, 10, 10, unit = "pt"))
+
+    if (factorType == "continuous") {
+      p <- p + ggplot2::scale_x_continuous(name = factorName, breaks = xBreaks, expand = ggplot2::expansion(mult = c(0.15, 0.15)))
+    } else {
+      p <- p + ggplot2::scale_x_discrete(name = factorName, expand = ggplot2::expansion(add = c(0.5, 0.5)))
+    }
+
+    if (includeCi && all(c("lower.CL", "upper.CL") %in% names(emm))) {
+      p <- p + ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.CL, ymax = upper.CL), width = 0.25, linewidth = 0.6)
+    }
+
+    factorPlot$plotObject <- p
+    factorPlotKey <- gsub("[^[:alnum:]_]", "_", paste0("mainEffect_", factorName))
+    mainEffectContainer[[factorPlotKey]] <- factorPlot
+    plotCount <- plotCount + 1
+  }
+
+  if (plotCount == 0) {
+    errorPlot <- createJaspPlot(title = gettext("Main Effects"), width = 900, height = 500)
+    if (length(emmErrors) > 0) {
+      errorPlot$setError(gettextf("Failed to compute main effects plot: %s", emmErrors[[1]]))
+    } else {
+      errorPlot$setError(gettext("Main effects plot requires at least one factor with two or more levels."))
+    }
+    mainEffectContainer[["plot"]] <- errorPlot
+  }
+}
+
+.doeAnalysisPlotInteractionEffectsSubplots <- function(depContainer, dep, options, jaspResults, ready) {
+  interactionEffectContainer <- createJaspContainer(title = gettext("Interaction Effects"))
+  interactionEffectContainer$position <- 2
+  depContainer[["interactionEffect"]] <- interactionEffectContainer
+
+  includeCi <- isTRUE(options[["interactionPlotCi"]])
+  ciLevel <- .doeAnalysisNormalizeCiLevel(options[["interactionPlotCiLevel"]])
+
+  result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
+  model <- result[["object"]]
+  factors <- .doeAnalysisPlotFactorCandidates(options, model)
+  # Pairwise interactions for all available factors.
+  factorPairs <- if (length(factors) > 1) utils::combn(factors, 2, simplify = FALSE) else list()
+
+  if (length(factorPairs) == 0) {
+    errorPlot <- createJaspPlot(title = gettext("Interaction Effects"), width = 1000, height = 600)
+    errorPlot$setError(gettext("Interaction plot requires at least two factors with two or more levels."))
+    interactionEffectContainer[["plot"]] <- errorPlot
+    return()
+  }
+
+  # Each pair contributes one separate interaction plot.
+  plotCount <- 0
+  emmErrors <- character(0)
+  for (pair in factorPairs) {
+    orderedPair <- .doeAnalysisInteractionPlotOrder(pair[[1]], pair[[2]], options)
+    factorA <- orderedPair[[1]]
+    factorB <- orderedPair[[2]]
+
+    if (!all(c(factorA, factorB) %in% names(model$model))) {
+      next
+    }
+
+    predictorA <- model$model[[factorA]]
+    predictorB <- model$model[[factorB]]
+    predictorA <- predictorA[!is.na(predictorA)]
+    predictorB <- predictorB[!is.na(predictorB)]
+    if (length(unique(predictorA)) < 2 || length(unique(predictorB)) < 2) {
+      next
+    }
+
+    emm <- try(.doeAnalysisEmmeansByTerms(model, c(factorA, factorB), ciLevel, includeCi = includeCi, options = options))
+    if (isTryError(emm)) {
+      emmErrors <- c(emmErrors, .extractErrorMessage(emm))
+      next
+    }
+
+    if (!all(c(factorA, factorB) %in% names(emm))) {
+      emmErrors <- c(emmErrors, gettextf("Estimated means output did not contain factors '%1$s' and '%2$s'.", factorA, factorB))
+      next
+    }
+
+    xFactorType <- .doeAnalysisPlotFactorType(factorA, options)
+    traceFactorType <- .doeAnalysisPlotFactorType(factorB, options)
+
+    if (xFactorType == "continuous") {
+      emm[["x"]] <- as.numeric(emm[[factorA]])
+      xBreaks <- sort(unique(c(min(emm[["x"]], na.rm = TRUE), max(emm[["x"]], na.rm = TRUE))))
+    } else {
+      emm[["x"]] <- as.character(emm[[factorA]])
+
+      uniqueX <- unique(emm[["x"]])
+      numericX <- suppressWarnings(as.numeric(uniqueX))
+      if (!anyNA(numericX)) {
+        sortedLevels <- as.character(sort(numericX))
+        emm[["x"]] <- factor(emm[["x"]], levels = sortedLevels)
+      } else if (is.factor(emm[[factorA]])) {
+        emm[["x"]] <- factor(emm[["x"]], levels = levels(emm[[factorA]]))
+      }
+    }
+
+    if (traceFactorType == "continuous") {
+      traceValues <- as.character(emm[[factorB]])
+      traceNumeric <- suppressWarnings(as.numeric(traceValues))
+      if (!anyNA(traceNumeric)) {
+        emm[["trace"]] <- factor(traceValues, levels = as.character(sort(unique(traceNumeric))))
+      } else {
+        emm[["trace"]] <- factor(traceValues)
+      }
+    } else {
+      emm[["trace"]] <- as.character(emm[[factorB]])
+      if (is.factor(emm[[factorB]])) {
+        emm[["trace"]] <- factor(emm[["trace"]], levels = levels(emm[[factorB]]))
+      }
+    }
+
+    pairTitle <- gettextf("Interaction: %1$s x %2$s", factorA, factorB)
+    pairPlot <- createJaspPlot(title = pairTitle, width = 600, height = 500)
+    
+    # Filter points: continuous x-axis shows outer limits only, discrete shows all
+    emmForPoints <- if (xFactorType == "continuous") {
+      emm[emm[["x"]] %in% xBreaks, ]
+    } else {
+      emm
+    }
+    
+    hasCi <- includeCi && all(c("lower.CL", "upper.CL") %in% names(emm))
+
+    p <- ggplot2::ggplot(emm, ggplot2::aes(x = x, y = emmean, color = trace, group = trace))
+
+    # Continuous x: faded confidence bands drawn underneath the traces
+    if (hasCi && xFactorType == "continuous") {
+      p <- p + ggplot2::geom_ribbon(ggplot2::aes(ymin = lower.CL, ymax = upper.CL, fill = trace),
+                                     alpha = 0.3, color = NA, show.legend = FALSE)
+    }
+
+    p <- p +
+      ggplot2::geom_line(linewidth = 0.95) +
+      ggplot2::geom_point(data = emmForPoints, shape = 21, ggplot2::aes(fill = trace), size = 3.2, stroke = 0.2) +
+      ggplot2::scale_y_continuous(name = dep, expand = ggplot2::expansion(mult = c(0.15, 0.15))) +
+      ggplot2::labs(color = factorB, fill = factorB) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw() +
+      ggplot2::theme(legend.position = "right", plot.margin = ggplot2::margin(10, 10, 10, 10, unit = "pt"))
+
+    if (xFactorType == "continuous") {
+      p <- p + ggplot2::scale_x_continuous(name = factorA, breaks = xBreaks, expand = ggplot2::expansion(mult = c(0.15, 0.15)))
+    } else {
+      p <- p + ggplot2::scale_x_discrete(name = factorA, expand = ggplot2::expansion(add = c(0.5, 0.5)))
+    }
+
+    # Discrete x: error bars at each level
+    if (hasCi && xFactorType != "continuous") {
+      p <- p + ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.CL, ymax = upper.CL), width = 0.25, linewidth = 0.6)
+    }
+
+    pairPlot$plotObject <- p
+    pairPlotKey <- gsub("[^[:alnum:]_]", "_", paste0("interaction_", factorA, "_x_", factorB))
+    interactionEffectContainer[[pairPlotKey]] <- pairPlot
+    plotCount <- plotCount + 1
+  }
+
+  if (plotCount == 0) {
+    errorPlot <- createJaspPlot(title = gettext("Interaction Effects"), width = 1000, height = 600)
+    if (length(emmErrors) > 0) {
+      errorPlot$setError(gettextf("Failed to compute interaction plot: %s", emmErrors[[1]]))
+    } else {
+      errorPlot$setError(gettext("Interaction plot requires at least two factors with two or more levels."))
+    }
+    interactionEffectContainer[["plot"]] <- errorPlot
   }
 }
 

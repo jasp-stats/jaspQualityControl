@@ -23,6 +23,7 @@ Imports:
   ggrepel,
   goftest,
   ggpp,
+  emmeans,
   irr,
   jaspBase,
   jaspDescriptives,
