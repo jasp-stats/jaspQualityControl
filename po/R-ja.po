@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.0\n"
 "POT-Creation-Date: 2026-07-11 04:41\n"
-"PO-Revision-Date: 2026-05-21 07:11+0000\n"
-"Last-Translator: Akira Harada <momoldo@gmail.com>\n"
+"PO-Revision-Date: 2026-08-01 04:43+0000\n"
+"Last-Translator: Koji Kosugi <kosugitti@gmail.com>\n"
 "Language-Team: Japanese <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/ja/>\n"
 "Language: ja\n"
@@ -11,210 +11,212 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.6.dev0\n"
+"X-Generator: Weblate 2026.8.dev0\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
 "is considered.<br>"
 msgstr ""
+"1つ以上の群が複数のステージに割り当てられています。最初のステージのみを考慮し"
+"ます。<br>"
 
 msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
-msgstr ""
+msgstr "どのステージにも割り当てられていない %1$i 件の %2$s を除きました。<br>"
 
 msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
-msgstr ""
+msgstr "どの群にも割り当てられていない %i 件の観測値を除きました。<br>"
 
 msgid "Sample"
-msgstr ""
+msgstr "標本"
 
 msgid "Time weighted charts report"
-msgstr ""
+msgstr "時間重み付き管理図のレポート"
 
 msgid "Chart name: %s"
-msgstr ""
+msgstr "図の名前: %s"
 
 msgid "Sub-title: %s"
-msgstr ""
+msgstr "サブタイトル: %s"
 
 msgid "Measurement name: %s"
-msgstr ""
+msgstr "測定の名前: %s"
 
 msgid "Footnote: %s"
-msgstr ""
+msgstr "脚注: %s"
 
 msgid "Location: %s"
-msgstr ""
+msgstr "場所: %s"
 
 msgid "Date: %s"
-msgstr ""
+msgstr "日付: %s"
 
 msgid "Performed by: %s"
-msgstr ""
+msgstr "実施者: %s"
 
 msgid "Print date: %s"
-msgstr ""
+msgstr "印刷日: %s"
 
 msgid "Cumulative sum chart"
-msgstr ""
+msgstr "累積和管理図"
 
 msgid "Exponentially weighted moving average chart"
-msgstr ""
+msgstr "指数重み付き移動平均管理図"
 
 msgid "The number of Defectives/Defects is larger than the sample  size."
-msgstr ""
+msgstr "不適合品/不適合の数がサンプルサイズを超えています。"
 
 msgid "Attributes Control Charts"
-msgstr ""
+msgstr "計数値の管理図"
 
 msgid "p Chart"
-msgstr ""
+msgstr "p管理図"
 
 msgid "np Chart"
-msgstr ""
+msgstr "np管理図"
 
 msgid "Laney p' Chart"
-msgstr ""
+msgstr "Laney p' 管理図"
 
 msgid "c Chart"
-msgstr ""
+msgstr "c管理図"
 
 msgid "u Chart"
-msgstr ""
+msgstr "u管理図"
 
 msgid "Laney u' Chart"
-msgstr ""
+msgstr "Laney u' 管理図"
 
 msgid "Individuals and Moving Range Chart"
-msgstr ""
+msgstr "個々の値と移動範囲の管理図"
 
 msgid "Report for Attribute Control Charts"
-msgstr ""
+msgstr "計数値管理図のレポート"
 
 msgid "ID: %s"
-msgstr ""
+msgstr "ID: %s"
 
 msgid "Appraiser: %s"
-msgstr ""
+msgstr "測定者: %s"
 
 msgid "Measurement system: %s"
-msgstr ""
+msgstr "測定システム: %s"
 
 msgid "Subgroup size: %s"
-msgstr ""
+msgstr "群の大きさ: %s"
 
 msgid "Time: %s"
-msgstr ""
+msgstr "時間: %s"
 
 msgid "Frequency: %s"
-msgstr ""
+msgstr "頻度: %s"
 
 msgid "CL = %g"
-msgstr ""
+msgstr "CL = %g"
 
 msgid "Proportion"
-msgstr ""
+msgstr "母比率"
 
 msgid "UCL = %g"
-msgstr ""
+msgstr "UCL = %g"
 
 msgid "LCL = %g"
-msgstr ""
+msgstr "LCL = %g"
 
 msgid "Number of defectives"
-msgstr ""
+msgstr "不適合品の数"
 
 msgid "D"
-msgstr ""
+msgstr "D"
 
 msgid "Moving Range"
-msgstr ""
+msgstr "移動範囲"
 
 msgid "Test results for %s chart"
-msgstr ""
+msgstr "%s 管理図の検定結果"
 
 msgid "Test 1: Beyond limit"
-msgstr ""
+msgstr "検定1: 限界の外"
 
 msgid "Test 2: Shift"
-msgstr ""
+msgstr "検定2: シフト"
 
 msgid "Test 3: Trend"
-msgstr ""
+msgstr "検定3: トレンド"
 
 msgid "Test 4: Increasing variation"
-msgstr ""
+msgstr "検定4: ばらつきの増大"
 
 msgid "Test 5: Reducing variation"
-msgstr ""
+msgstr "検定5: ばらつきの減少"
 
 msgid "Test 6: Bimodal distribution"
-msgstr ""
+msgstr "検定6: 二峰性の分布"
 
 msgid "Points where a test failed."
-msgstr ""
+msgstr "検定に不合格となった点です。"
 
 msgid "Test results for %1$s chart"
-msgstr ""
+msgstr "%1$s 管理図の検定結果"
 
 msgid "Point"
-msgstr ""
+msgstr "点"
 
 msgid "- upper"
-msgstr ""
+msgstr "- 上側"
 
 msgid "- lower"
-msgstr ""
+msgstr "- 下側"
 
 msgid "Test 7: Slightly increasing variation"
-msgstr ""
+msgstr "検定7: ばらつきのわずかな増大"
 
 msgid "Test 8: Oscillation"
-msgstr ""
+msgstr "検定8: 振動"
 
 msgid "Test 9: Benneyan test"
-msgstr ""
+msgstr "検定9: Benneyan の検定"
 
 msgid "Tests"
-msgstr ""
+msgstr "検定"
 
 msgid "No test violations occurred."
-msgstr ""
+msgstr "検定の違反はありませんでした。"
 
 msgid "%1$s between events"
-msgstr ""
+msgstr "事象間の %1$s"
 
 msgid "Sample average"
-msgstr ""
+msgstr "標本平均"
 
 msgid "Sample range"
-msgstr ""
+msgstr "標本範囲"
 
 msgid "Individual value"
-msgstr ""
+msgstr "個々の値"
 
 msgid "Moving range"
-msgstr ""
+msgstr "移動範囲"
 
 msgid "Moving range of subgroup mean"
-msgstr ""
+msgstr "群平均の移動範囲"
 
 msgid "Sample std. dev."
-msgstr ""
+msgstr "標本標準偏差"
 
 msgid "Cumulative sum"
-msgstr ""
+msgstr "累積和"
 
 msgid "Exponentially weighted moving average"
-msgstr ""
+msgstr "指数重み付き移動平均"
 
 msgid "LSL = %g"
-msgstr ""
+msgstr "LSL = %g"
 
 msgid "Tar. = %g"
-msgstr ""
+msgstr "目標 = %g"
 
 msgid "USL = %g"
-msgstr ""
+msgstr "USL = %g"
 
 msgid ""
 "The parameters could not be estimated for the selected distribution, most "
@@ -222,91 +224,100 @@ msgid ""
 "the selected distribution, please try one that describes your data more "
 "closely."
 msgstr ""
+"選択した分布ではパラメータを推定できませんでした。観測された分布が選択した分"
+"布と大きく異なることが原因と考えられます。"
 
 msgid "Design of Experiments - Analysis"
-msgstr ""
+msgstr "実験計画法 - 分析"
 
 msgid "Error"
-msgstr ""
+msgstr "誤差"
 
 msgid ""
 "Stepwise method failed. Please consider a different method or starting model."
 msgstr ""
+"ステップワイズ法が失敗しました。別の方法か、別の開始モデルを検討してください"
+"。"
 
 msgid "The specified low/high levels for %1$s are not distinct."
-msgstr ""
+msgstr "%1$s に指定した低/高の水準が区別できません。"
 
 msgid ""
 "The specified low/high level(s) %1$s for %2$s do not match the levels in the "
 "dataset."
-msgstr ""
+msgstr "%2$s に指定した低/高の水準 %1$s が、データセットの水準と一致しません。"
 
 msgid "Terms removed from Regression:"
-msgstr ""
+msgstr "回帰から除かれた項:"
 
 msgid "and from ANOVA:"
-msgstr ""
+msgstr "および分散分析から:"
 
 msgid "Terms removed from ANOVA:"
-msgstr ""
+msgstr "分散分析から除かれた項:"
 
 msgid "Response Optimizer Settings"
-msgstr ""
+msgstr "反応の最適化の設定"
 
 msgid "lower and upper bounds and target are"
-msgstr ""
+msgstr "下限・上限と目標値は"
 
 msgid "lower and upper bounds are"
-msgstr ""
+msgstr "下限・上限は"
 
 msgid "target is"
-msgstr ""
+msgstr "目標値は"
 
 msgid "The %s estimated from data."
-msgstr ""
+msgstr "%s はデータから推定されました。"
 
 msgid "Response Optimizer Solution"
-msgstr ""
+msgstr "反応の最適化の解"
 
 msgid "%s fit"
-msgstr ""
+msgstr "%s のあてはめ"
 
 msgid "Optimization Plot"
-msgstr ""
+msgstr "最適化のプロット"
 
 msgid ""
 "Enter values for all predictors to create an optimization Plot with manual "
 "input parameters."
 msgstr ""
+"手動で入力したパラメータで最適化プロットを作るには、すべての予測変数に値を入"
+"力してください。"
 
 msgid "Summary Plot"
-msgstr ""
+msgstr "要約プロット"
 
 msgid ""
 "Enter plausible values for all discrete predictors.\n"
 "                                   Value %1$s is not a possible for the "
 "discrete predictor %2$s. Allowed values:"
 msgstr ""
+"すべての離散予測変数にありうる値を入力してください。\n"
+"                                   値 %1$s は離散予測変数 %2$s では使えません"
+"。使える値:"
 
 msgid ""
 "Enter plausible values for all continuous predictors. Only numeric values "
 "are allowed."
-msgstr ""
+msgstr "すべての連続予測変数にありうる値を入力してください。数値のみ使えます。"
 
 msgid "Comp. desirability"
-msgstr ""
+msgstr "総合的な望ましさ"
 
 msgid "Ind. desirability ("
-msgstr ""
+msgstr "個別の望ましさ ("
 
 msgid "Optimization Plot Summary (Manual Predictor Values)"
-msgstr ""
+msgstr "最適化のプロットの要約(予測変数の値を手動で指定)"
 
 msgid "Optimization Plot Summary"
-msgstr ""
+msgstr "最適化のプロットの要約"
 
 msgid "Composite desirability"
-msgstr ""
+msgstr "総合的な望ましさ"
 
 msgid ""
 "One or more input parameters for continuous predictors are outside of the "
@@ -314,1549 +325,1636 @@ msgid ""
 "                           Extrapolation beyond the design space might not "
 "be valid."
 msgstr ""
+"連続予測変数の入力パラメータのうち、1つ以上が計画空間の外にあります。\n"
+"                           計画空間の外への外挿は妥当でない可能性があります。"
 
 msgid "Model Summary"
-msgstr ""
+msgstr "モデルの概要"
 
 msgid "Adjusted %s"
-msgstr ""
+msgstr "自由度調整済み %s"
 
 msgid "Predictive %s"
-msgstr ""
+msgstr "予測 %s"
 
 msgid "The following aliased terms were removed: %s."
-msgstr ""
+msgstr "次の交絡した項を除きました: %s。"
 
 msgid "Analysis of Variance"
-msgstr ""
+msgstr "分散分析"
 
 msgid "Source"
-msgstr ""
+msgstr "要因"
 
 msgid "Sum of squares"
-msgstr ""
+msgstr "平方和"
 
 msgid "df"
-msgstr ""
+msgstr "df"
 
 msgid "Mean square"
-msgstr ""
+msgstr "平均平方"
 
 msgid "Type I sums of squares."
-msgstr ""
+msgstr "タイプIの平方和です。"
 
 msgid "Type II sums of squares."
-msgstr ""
+msgstr "タイプIIの平方和です。"
 
 msgid "Type III sums of squares."
-msgstr ""
+msgstr "タイプIIIの平方和です。"
 
 msgid "Coded"
-msgstr ""
+msgstr "コード化"
 
 msgid "Uncoded"
-msgstr ""
+msgstr "非コード化"
 
 msgid "%s Coefficients"
-msgstr ""
+msgstr "%s の係数"
 
 msgid "Alias"
-msgstr ""
+msgstr "エイリアス"
 
 msgid "Term"
-msgstr ""
+msgstr "項"
 
 msgid "Effect"
-msgstr ""
+msgstr "効果"
 
 msgid "Coefficient"
-msgstr ""
+msgstr "係数"
 
 msgid "Standard error"
-msgstr ""
+msgstr "標準誤差"
 
 msgid "Discrete Predictor Levels"
-msgstr ""
+msgstr "離散予測変数の水準"
 
 msgid "Name"
-msgstr ""
+msgstr "名前"
 
 msgid "Level"
-msgstr ""
+msgstr "水準"
 
 msgid "Regression equation in %s Units"
-msgstr ""
+msgstr "%s 単位での回帰式"
 
 msgid "Stepwise results"
-msgstr ""
+msgstr "ステップワイズ法の結果"
 
 msgid "Step"
-msgstr ""
+msgstr "ステップ"
 
 msgid "Formula"
-msgstr ""
+msgstr "式"
 
 msgid "Pareto Chart of Standardized Effects"
-msgstr ""
+msgstr "標準化効果のパレート図"
 
 msgid "Standardized Effect"
-msgstr ""
+msgstr "標準化効果"
 
 msgid "Normal Plot of Standardized Effects"
-msgstr ""
+msgstr "標準化効果の正規プロット"
 
 msgid "Significant"
-msgstr ""
+msgstr "有意"
 
 msgid "Not Significant"
-msgstr ""
+msgstr "有意でない"
 
 msgid "Normal Probability Plot of Residuals"
-msgstr ""
+msgstr "残差の正規確率プロット"
 
 msgid "Theoretical quantiles"
-msgstr ""
+msgstr "理論分位点"
 
 msgid "Observed quantiles"
-msgstr ""
+msgstr "観測分位点"
 
 msgid "Histogram of Residuals"
-msgstr ""
+msgstr "残差のヒストグラム"
 
 msgid "Residuals versus Fitted Values"
-msgstr ""
+msgstr "残差とあてはめ値"
 
 msgid "Fitted values"
-msgstr ""
+msgstr "あてはめ値"
 
 msgid "Residuals"
-msgstr ""
+msgstr "残差"
 
 msgid "Residuals versus Run Order"
-msgstr ""
+msgstr "残差と実行順序"
 
 msgid "Run order"
-msgstr ""
+msgstr "実行順序"
 
 msgid "Matrix residual plot"
-msgstr ""
+msgstr "残差の行列プロット"
 
 msgid "Contour plot"
-msgstr ""
+msgstr "等高線図"
 
 msgid "Surface plot"
-msgstr ""
+msgstr "曲面プロット"
 
 msgid "Contour plots"
-msgstr ""
+msgstr "等高線図"
 
 msgid "Surface plots"
-msgstr ""
+msgstr "曲面プロット"
 
 msgid "and"
-msgstr ""
+msgstr "および"
 
 msgid "%1$s of %2$s vs %3$s"
-msgstr ""
+msgstr "%3$s に対する %2$s の %1$s"
 
 msgid ""
 "Could not plot because the following selected variable(s) were not included "
 "in the final model: %1$s. They might have been removed during model "
 "selection."
 msgstr ""
+"次の選択された変数が最終モデルに含まれなかったため、プロットできませんでし"
+"た: %1$s。"
 
 msgid "The analysis failed with the following error message: %s"
-msgstr ""
+msgstr "分析が次のエラーメッセージで失敗しました: %s"
 
 msgid "Design Summary"
-msgstr ""
+msgstr "計画の要約"
 
 msgid "Variable"
-msgstr ""
+msgstr "変数"
 
 msgid "Factors"
-msgstr ""
+msgstr "因子"
 
 msgid "Base runs"
-msgstr ""
+msgstr "基本の実行数"
 
 msgid "Base blocks"
-msgstr ""
+msgstr "基本のブロック数"
 
 msgid "Centre points per block"
-msgstr ""
+msgstr "ブロックあたりの中心点"
 
 msgid "Replications"
-msgstr ""
+msgstr "繰り返し"
 
 msgid "Repetitions"
-msgstr ""
+msgstr "反復"
 
 msgid "Total runs"
-msgstr ""
+msgstr "総実行数"
 
 msgid "Total blocks"
-msgstr ""
+msgstr "総ブロック数"
 
 msgid "Value"
-msgstr ""
+msgstr "値"
 
 msgid "Please select a row in the design table."
-msgstr ""
+msgstr "計画の表で行を選んでください。"
 
 msgid "Cannote create designs with more than 100000 total runs."
-msgstr ""
+msgstr "総実行数が 100000 を超える計画は作成できません。"
 
 msgid "Click 'Display design' to show the design."
-msgstr ""
+msgstr "計画を表示するには「計画を表示」をクリックしてください。"
 
 msgid "The design is not exported until 'Export design' is checked."
-msgstr ""
+msgstr "「計画をエクスポート」にチェックを入れるまで、計画はエクスポートされません。"
 
 msgid "The design is exported as '%1$s'."
-msgstr ""
+msgstr "計画を '%1$s' としてエクスポートしました。"
 
 msgid "No aliasing among main effects and 2-factor interactions."
-msgstr ""
+msgstr "主効果と2因子交互作用のあいだに交絡はありません。"
 
 msgid "Alias Structure"
-msgstr ""
+msgstr "交絡構造"
 
 msgid "Factorial Design"
-msgstr ""
+msgstr "要因計画"
 
 msgid "Run Order"
-msgstr ""
+msgstr "実行順序"
 
 msgid "Standard Order"
-msgstr ""
+msgstr "標準順序"
 
 msgid "Hard-to-change factors: %1$s"
-msgstr ""
+msgstr "変更しにくい因子: %1$s"
 
 msgid "Continuous factors"
-msgstr ""
+msgstr "連続因子"
 
 msgid "Discrete factors"
-msgstr ""
+msgstr "離散因子"
 
 msgid "Replicates"
-msgstr ""
+msgstr "繰り返し"
 
 msgid "Centre points in cube"
-msgstr ""
+msgstr "立方体部の中心点"
 
 msgid "Centre points in axial"
-msgstr ""
+msgstr "軸上部の中心点"
 
 msgid "Centre points"
-msgstr ""
+msgstr "中心点"
 
 msgid "Box-BehnkenDesign are not supported for 8 variables."
-msgstr ""
+msgstr "Box-Behnken計画は8変数には対応していません。"
 
 msgid "Response Surface Design - Central Composite Design"
-msgstr ""
+msgstr "応答曲面計画 - 中心複合計画"
 
 msgid "Response Surface Design - Box-Behnken design"
-msgstr ""
+msgstr "応答曲面計画 - Box-Behnken計画"
 
 msgid "Standard order"
-msgstr ""
+msgstr "標準順序"
 
 msgid "Reference tables and plots"
-msgstr ""
+msgstr "参照の表とプロット"
 
 msgid "Please insert a reference value before specifying a positive reference."
-msgstr ""
+msgstr "陽性の基準を指定する前に、参照値を入力してください。"
 
 msgid "Attributes agreement analysis"
-msgstr ""
+msgstr "計数値の一致度分析"
 
 msgid "Cohen's kappa"
-msgstr ""
+msgstr "コーエンのκ"
 
 msgid "Kendall's tau"
-msgstr ""
+msgstr "ケンドールのタウ"
 
 msgid "Cohen's kappa for appraiser vs standard"
-msgstr ""
+msgstr "測定者と基準のコーエンのκ"
 
 msgid "Appraiser"
-msgstr ""
+msgstr "測定者"
 
 msgid "Cohen's kappa correlations summary"
-msgstr ""
+msgstr "コーエンのκの相関の要約"
 
 msgid ""
 "Please inseret a vaild positive reference as used in the results variables."
-msgstr ""
+msgstr "結果の変数で使われている有効な陽性の基準を入力してください。"
 
 msgid "Fleiss' kappa"
-msgstr ""
+msgstr "フライスのκ"
 
 msgid "Within appraisers"
-msgstr ""
+msgstr "測定者内"
 
 msgid "Appraiser vs standard"
-msgstr ""
+msgstr "測定者と基準"
 
 msgid "Between appraisers"
-msgstr ""
+msgstr "測定者間"
 
 msgid "Each appraiser vs standard"
-msgstr ""
+msgstr "各測定者と基準"
 
 msgid "All appraisers vs standard"
-msgstr ""
+msgstr "全測定者と基準"
 
 msgid "Inspected"
-msgstr ""
+msgstr "検査済み"
 
 msgid "Matched"
-msgstr ""
+msgstr "一致"
 
 msgid "Percent"
-msgstr ""
+msgstr "パーセント"
 
 msgid "Lower"
-msgstr ""
+msgstr "下限"
 
 msgid "Confidence interval of 95%%"
-msgstr ""
+msgstr "95%% 信頼区間"
 
 msgid "Upper"
-msgstr ""
+msgstr "上限"
 
 msgid "Invalid reference and/or results were inserted."
-msgstr ""
+msgstr "無効な基準または結果が入力されました。"
 
 msgid "Invalid values (NA) found in appraiser %s."
-msgstr ""
+msgstr "測定者 %s に無効な値 (NA) が見つかりました。"
 
 msgid "More than 1 measurement per operator required."
-msgstr ""
+msgstr "測定者1名につき2回以上の測定が必要です。"
 
 msgid "Study effectiveness summary"
-msgstr ""
+msgstr "調査の有効性の要約"
 
 msgid "Effectiveness"
-msgstr ""
+msgstr "有効性"
 
 msgid "Miss rate"
-msgstr ""
+msgstr "見逃し率"
 
 msgid "False alarm rate"
-msgstr ""
+msgstr "誤警報率"
 
 msgid ""
 "Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false "
 "alarm rate)"
-msgstr ""
+msgstr "許容できる: x >= 90%% (有効性)、x =< 2%% (見逃し率)、x =< 5%% (誤警報率)"
 
 msgid ""
 "Marginally acceptable: x >= 80%% (effectiveness), x =< 5%% (miss rate), x =< "
 "10%% (false alarm rate)"
 msgstr ""
+"かろうじて許容できる: x >= 80%% (有効性)、x =< 5%% (見逃し率)、x =< 10%% (誤"
+"警報率)"
 
 msgid ""
 "Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false "
 "alarm rate)"
-msgstr ""
+msgstr "許容できない: x < 80%% (有効性)、x > 5%% (見逃し率)、x > 10%% (誤警報率)"
 
 msgid "More than one measurement per operator required."
-msgstr ""
+msgstr "測定者1名につき2回以上の測定が必要です。"
 
 msgid "Kendall's tau is only available for numeric measurements."
-msgstr ""
+msgstr "ケンドールのタウは数値の測定値にのみ使えます。"
 
 msgid "Kendall's tau is only available for non-binary measurements."
-msgstr ""
+msgstr "ケンドールのタウは二値でない測定値にのみ使えます。"
 
 msgid "Operator"
-msgstr ""
+msgstr "測定者"
 
 msgid "%g (unacceptable)"
-msgstr ""
+msgstr "%g (許容できない)"
 
 msgid "%g (marginally acceptable)"
-msgstr ""
+msgstr "%g (かろうじて許容できる)"
 
 msgid "%g (acceptable)"
-msgstr ""
+msgstr "%g (許容できる)"
 
 msgid "Linearity and bias"
-msgstr ""
+msgstr "直線性と偏り"
 
 msgid "Gauge bias"
-msgstr ""
+msgstr "測定器の偏り"
 
 msgid "Part"
-msgstr ""
+msgstr "部品"
 
 msgid "Reference value"
-msgstr ""
+msgstr "参照値"
 
 msgid "Observed mean"
-msgstr ""
+msgstr "観測された平均"
 
 msgid "Mean bias"
-msgstr ""
+msgstr "平均の偏り"
 
 msgid "<i>p</i>-value"
-msgstr ""
+msgstr "<i>p</i>値"
 
 msgid "Percent bias"
-msgstr ""
+msgstr "偏りの割合"
 
 msgid "Regression model"
-msgstr ""
+msgstr "回帰モデル"
 
 msgid "Predictor"
-msgstr ""
+msgstr "予測変数"
 
 msgid "Std. error"
-msgstr ""
+msgstr "標準誤差"
 
 msgid "<i>t</i>-value"
-msgstr ""
+msgstr "<i>t</i>値"
 
 msgid "Regression equation"
-msgstr ""
+msgstr "回帰式"
 
 msgid "Gauge linearity"
-msgstr ""
+msgstr "測定器の直線性"
 
 msgid "R%1$s"
-msgstr ""
+msgstr "R%1$s"
 
 msgid "Linearity"
-msgstr ""
+msgstr "直線性"
 
 msgid "%% Linearity"
-msgstr ""
+msgstr "%% 直線性"
 
 msgid "Bias and linearity"
-msgstr ""
+msgstr "偏りと直線性"
 
 msgid "Percentage process variation graph"
-msgstr ""
+msgstr "工程変動に対する割合のグラフ"
 
 msgid ""
 "t-test requires more than 1 measurement. %1$i valid measurement(s) detected "
 "in %2$s."
 msgstr ""
+"t検定には2回以上の測定が必要です。%2$s で有効な測定値が %1$i 件検出されました"
+"。"
 
 msgid ""
 "Every unique part must have one corresponding reference value. %1$i "
 "reference values were found for %2$s unique parts."
 msgstr ""
+"各部品には対応する参照値が1つ必要です。%2$s について %1$i 個の参照値が見つか"
+"りました。"
 
 msgid ""
 "t-test requires more than 1 measurement per part. Less than 2 valid "
 "measurement(s) detected in Part(s) %s."
 msgstr ""
+"t検定には1部品につき2回以上の測定が必要です。部品 %s で有効な測定値が2件未満"
+"でした。"
 
 msgid "t-test not possible. No variance detected in Part(s) %s."
-msgstr ""
+msgstr "t検定を行えません。部品 %s に分散がありません。"
 
 msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
-msgstr ""
+msgstr "偏り = %1$.2f %2$s %3$.2f × 参照値"
 
 msgid "Reference"
-msgstr ""
+msgstr "参照"
 
 msgid "Total"
-msgstr ""
+msgstr "合計"
 
 msgid "Gauge r&R"
-msgstr ""
+msgstr "ゲージR&R"
 
 msgid ""
 "Design is not balanced: not every operator measured every part the same "
 "number of times."
 msgstr ""
+"計画が均衡していません。すべての測定者がすべての部品を同じ回数だけ測定してい"
+"ません。"
 
 msgid ""
 "Design is not balanced: not every part was measured the same number of times."
-msgstr ""
+msgstr "計画が均衡していません。すべての部品が同じ回数だけ測定されていません。"
 
 msgid ""
 "The measurements selected seem to be in a 'Single Column' format as every "
 "operator's part is measured %d times."
 msgstr ""
+"選択された測定値は、各測定者の部品が %d 回測定されているため「1列にまとめる」"
+"形式のように見えます。"
 
 msgid "Gauge r&R report"
-msgstr ""
+msgstr "ゲージR&Rレポート"
 
 msgid "No report components selected."
-msgstr ""
+msgstr "レポートに含める要素が選ばれていません。"
 
 msgid "Part name: %s"
-msgstr ""
+msgstr "部品名: %s"
 
 msgid "Gauge name: %s"
-msgstr ""
+msgstr "測定器の名前: %s"
 
 msgid "Characteristic: %s"
-msgstr ""
+msgstr "特性: %s"
 
 msgid "Gauge number: %s"
-msgstr ""
+msgstr "測定器の番号: %s"
 
 msgid "Tolerance: %s"
-msgstr ""
+msgstr "公差: %s"
 
 msgid "Number of distinct categories"
-msgstr ""
+msgstr "区別できるカテゴリの数"
 
 msgid "Gauge r&R Analysis of Variance table"
-msgstr ""
+msgstr "ゲージR&R 分散分析表"
 
 msgid "Range chart by operator"
-msgstr ""
+msgstr "測定者別の範囲管理図"
 
 msgid "Xbar chart by operator"
-msgstr ""
+msgstr "測定者別のXbar管理図"
 
 msgid "Average chart by operator"
-msgstr ""
+msgstr "測定者別の平均管理図"
 
 msgid "Scatterplot operators"
-msgstr ""
+msgstr "測定者の散布図"
 
 msgid "Measurement by part graph"
-msgstr ""
+msgstr "部品別の測定値グラフ"
 
 msgid "Measurements by operator graph"
-msgstr ""
+msgstr "測定者別の測定値グラフ"
 
 msgid "Part by operator interaction graph"
-msgstr ""
+msgstr "部品 × 測定者の交互作用グラフ"
 
 msgid "Traffic light chart"
-msgstr ""
+msgstr "信号灯チャート"
 
 msgid "Gauge r&R study - crossed Analysis of Variance"
-msgstr ""
+msgstr "ゲージR&R調査 - 交差型の分散分析"
 
 msgid "One-way Analysis of Variance table"
-msgstr ""
+msgstr "一元配置分散分析表"
 
 msgid "Two-way Analysis of Variance table with interaction"
-msgstr ""
+msgstr "交互作用ありの二元配置分散分析表"
 
 msgid "Mean squares"
-msgstr ""
+msgstr "平均平方"
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
 msgid "Variance components"
-msgstr ""
+msgstr "分散成分"
 
 msgid "Variance"
-msgstr ""
+msgstr "分散"
 
 msgid "%% Contribution"
-msgstr ""
+msgstr "%% 寄与率"
 
 msgid "Gauge evaluation"
-msgstr ""
+msgstr "測定器の評価"
 
 msgid "Std. dev."
-msgstr ""
+msgstr "標準偏差"
 
 msgid "Study variation"
-msgstr ""
+msgstr "調査変動"
 
 msgid "%% Study variation"
-msgstr ""
+msgstr "%% 調査変動"
 
 msgid "%% Tolerance"
-msgstr ""
+msgstr "%% 公差"
 
 msgid "Total gauge r&R"
-msgstr ""
+msgstr "ゲージR&R合計"
 
 msgid "Repeatability"
-msgstr ""
+msgstr "繰り返し性"
 
 msgid "Part-to-part"
-msgstr ""
+msgstr "部品間"
 
 msgid "Total variation"
-msgstr ""
+msgstr "総変動"
 
 msgid "Reproducibility"
-msgstr ""
+msgstr "再現性"
 
 msgid "*"
-msgstr ""
+msgstr "*"
 
 msgid "Number of distinct categories = %i"
-msgstr ""
+msgstr "区別できるカテゴリの数 = %i"
 
 msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %i"
-msgstr ""
+msgstr "調査変動は 標準偏差 <spam>&#215;</spam> %i として計算されます"
 
 msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
-msgstr ""
+msgstr "調査変動は 標準偏差 <spam>&#215;</spam> %.2f として計算されます"
 
 msgid ""
 "Historical standard deviation is used to calculate some values for std. "
 "dev., study variation, and %%study variation."
 msgstr ""
+"標準偏差・調査変動・%% 調査変動の一部の値の計算に、過去の標準偏差を使っていま"
+"す。"
 
 msgid ""
 "Values for %%process variation are not displayed because they are identical "
 "to values for %%study variation."
-msgstr ""
+msgstr "%% 工程変動の値は %% 調査変動の値と同じであるため表示していません。"
 
 msgid "Two-way Analysis of Variance table without interaction"
-msgstr ""
+msgstr "交互作用なしの二元配置分散分析表"
 
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
-msgstr ""
+msgstr "調査変動は 標準偏差 <spam>&#215;</spam> %i として計算されます"
 
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
-msgstr ""
+msgstr "調査変動は 標準偏差 <spam>&#215;</spam> %.2f として計算されます"
 
 msgid "Components of variation"
-msgstr ""
+msgstr "変動成分"
 
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s."
-msgstr ""
+msgstr "%2$s でグループ化したあと、%1$s の観測数が2未満です。"
 
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
-msgstr ""
+msgstr "%2$s でグループ化したあと、%1$s の観測数が2未満です"
 
 msgid "Measurements by part"
-msgstr ""
+msgstr "部品別の測定値"
 
 msgid "Measurements by operator"
-msgstr ""
+msgstr "測定者別の測定値"
 
 msgid "Part by operator interaction"
-msgstr ""
+msgstr "部品 × 測定者の交互作用"
 
 msgid "Operators measured different number of parts."
-msgstr ""
+msgstr "測定者ごとに測定した部品数が異なります。"
 
 msgid "Scatterplot of operator vs operator"
-msgstr ""
+msgstr "測定者どうしの散布図"
 
 msgid "Cannot plot scatterplot for less than 2 operators."
-msgstr ""
+msgstr "測定者が2名未満の場合、散布図を描けません。"
 
 msgid "Scatterplot of operator  %1$s vs operator %2$s"
-msgstr ""
+msgstr "測定者 %1$s と測定者 %2$s の散布図"
 
 msgid "Matrix plot for operators"
-msgstr ""
+msgstr "測定者の行列プロット"
 
 msgid "%% Study Variation"
-msgstr ""
+msgstr "%% 調査変動"
 
 msgid "Error: Gauge study failed. Could not create traffic light chart."
-msgstr ""
+msgstr "エラー: 測定器の調査に失敗しました。信号灯チャートを作成できませんでした。"
 
 msgid "%.2f"
-msgstr ""
+msgstr "%.2f"
 
 msgid "Gauge r&R - nested"
-msgstr ""
+msgstr "ゲージR&R - 入れ子型"
 
 msgid ""
 "Unbalanced design. Some parts have more repeated measurements than others."
-msgstr ""
+msgstr "均衡していない計画です。部品によって繰り返し測定の回数が異なります。"
 
 msgid "Gauge r&R (non-replicable) report"
-msgstr ""
+msgstr "ゲージR&R(繰り返しのない測定)レポート"
 
 msgid "Gauge r&R tables"
-msgstr ""
+msgstr "ゲージR&Rの表"
 
 msgid "Measurement by part x operator plot"
-msgstr ""
+msgstr "部品 × 測定者ごとの測定値プロット"
 
 msgid "Gauge r&R study - nested Analysis of Variance"
-msgstr ""
+msgstr "ゲージR&R調査 - 入れ子型の分散分析"
 
 msgid "Gauge r&R (nested)"
-msgstr ""
+msgstr "ゲージR&R(入れ子型)"
 
 msgid "p"
-msgstr ""
+msgstr "p"
 
 msgid "Variation"
-msgstr ""
+msgstr "変動"
 
 msgid "No degrees of freedom for %s."
-msgstr ""
+msgstr "%s の自由度がありません。"
 
 msgid "Part-To-part"
-msgstr ""
+msgstr "部品間"
 
 msgid "Study variation is calculated as std. dev. * %i"
-msgstr ""
+msgstr "調査変動は 標準偏差 * %i として計算されます"
 
 msgid "Study variation is calculated as std. dev. * %.2f"
-msgstr ""
+msgstr "調査変動は 標準偏差 * %.2f として計算されます"
 
 msgid "Measurements by part x operator"
-msgstr ""
+msgstr "部品 × 測定者ごとの測定値"
 
 msgid "Operator %s"
-msgstr ""
+msgstr "測定者 %s"
 
 msgid ""
 "Design is not balanced: not all parts were measured the same number of times."
-msgstr ""
+msgstr "計画が均衡していません。すべての部品が同じ回数だけ測定されていません。"
 
 msgid "Scatterplot operators vs parts"
-msgstr ""
+msgstr "測定者と部品の散布図"
 
 msgid "Range method range chart"
-msgstr ""
+msgstr "範囲法による範囲管理図"
 
 msgid "Range chart by part"
-msgstr ""
+msgstr "部品別の範囲管理図"
 
 msgid "Run chart of parts"
-msgstr ""
+msgstr "部品の推移図"
 
 msgid "Short gauge study"
-msgstr ""
+msgstr "簡易ゲージ調査"
 
 msgid "Sample size (n)"
-msgstr ""
+msgstr "サンプルサイズ (n)"
 
 msgid "R-bar"
-msgstr ""
+msgstr "R-bar"
 
 msgid "d2"
-msgstr ""
+msgstr "d2"
 
 msgid "GRR"
-msgstr ""
+msgstr "GRR"
 
 msgid "Process std. dev."
-msgstr ""
+msgstr "工程の標準偏差"
 
 msgid "%%GRR of process std. dev."
-msgstr ""
+msgstr "%%GRR (工程の標準偏差に対して)"
 
 msgid "Tolerance"
-msgstr ""
+msgstr "公差"
 
 msgid "%%GRR of tolerance"
-msgstr ""
+msgstr "%%GRR (公差に対して)"
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
-msgstr ""
+msgstr "1回目と2回目の測定値の散布図"
 
 msgid "Run chart"
-msgstr ""
+msgstr "推移図"
 
 msgid "Bias table"
-msgstr ""
+msgstr "偏りの表"
 
 msgid "t-test bias"
-msgstr ""
+msgstr "偏りのt検定"
 
 msgid "Histogram bias"
-msgstr ""
+msgstr "偏りのヒストグラム"
 
 msgid "Bias and instrument capability table"
-msgstr ""
+msgstr "偏りと測定器能力の表"
 
 msgid "Basic statistics"
-msgstr ""
+msgstr "基本統計量"
 
 msgid "Mean"
 msgstr "平均値"
 
 msgid "Bias"
-msgstr ""
+msgstr "バイアス"
 
 msgid "Std. dev. (<i>s</i>)"
-msgstr ""
+msgstr "標準偏差 (<i>s</i>)"
 
 msgid "Instrument variation"
-msgstr ""
+msgstr "測定器の変動"
 
 msgid "Tolerance bounds"
-msgstr ""
+msgstr "公差の限界"
 
 msgid "%% Bias"
-msgstr ""
+msgstr "%% 偏り"
 
 msgid "The instrument variation is calculated as %i * <i>s</i>."
-msgstr ""
+msgstr "測定器の変動は %i * <i>s</i>として計算されます。"
 
 msgid "Capability"
-msgstr ""
+msgstr "能力"
 
 msgid "Cg"
-msgstr ""
+msgstr "Cg"
 
 msgid "Cgk"
-msgstr ""
+msgstr "Cgk"
 
 msgid "%% Var(repeatability)"
-msgstr ""
+msgstr "%% Var(繰り返し性)"
 
 msgid "%% Var(repeatability and bias)"
-msgstr ""
+msgstr "%% Var(繰り返し性と偏り)"
 
 msgid "t-test of observed bias against 0"
-msgstr ""
+msgstr "観測された偏りが 0 と異なるかのt検定"
 
 msgid "%s CI for bias"
-msgstr ""
+msgstr "偏りの %s 信頼区間"
 
 msgid "<i>t</i>"
-msgstr ""
+msgstr "<i>t</i>"
 
 msgid "Bias histogram"
-msgstr ""
+msgstr "偏りのヒストグラム"
 
 msgid ""
 "Histogram requires more than 1 measurement. %1$i valid measurement(s) "
 "detected in %2$s."
 msgstr ""
+"ヒストグラムには2回以上の測定が必要です。%2$s で有効な測定値が %1$i 件検出さ"
+"れました。"
 
 msgid "Count"
-msgstr ""
+msgstr "カウント"
 
 msgid "Mean - %is"
-msgstr ""
+msgstr "平均 - %is"
 
 msgid "Mean + %is"
-msgstr ""
+msgstr "平均 + %is"
 
 msgid "Ref. - %.2f * tol."
-msgstr ""
+msgstr "参照 - %.2f × 公差"
 
 msgid "Ref. + %.2f * tol."
-msgstr ""
+msgstr "参照 + %.2f × 公差"
 
 msgid "Run chart of %s"
-msgstr ""
+msgstr "%s の推移図"
 
 msgid "No valid measurements in %s."
-msgstr ""
+msgstr "%s に有効な測定値がありません。"
 
 msgid "Ref."
-msgstr ""
+msgstr "参照"
 
 msgid ""
 "The stage variable must have at least two levels to define training and test "
 "phases."
 msgstr ""
+"訓練フェーズと検定フェーズを定めるには、ステージ変数に少なくとも2水準必要です"
+"。"
 
 msgid "Enter at least two variables to start the analysis."
-msgstr ""
+msgstr "分析を始めるには変数を2つ以上入力してください。"
 
 msgid "The training phase must contain at least 3 observations."
-msgstr ""
+msgstr "訓練フェーズには少なくとも3件の観測値が必要です。"
 
 msgid ""
 "The covariance matrix of the training phase is computationally singular. "
 "This typically occurs when variables are linearly dependent or nearly "
 "perfectly correlated. Please remove redundant variables."
 msgstr ""
+"訓練フェーズの共分散行列が計算上特異です。これは通常、変数どうしの相関が非常"
+"に高いか、観測数が変数の数に対して少なすぎる場合に起こります。"
 
 msgid ""
 "The covariance matrix of the selected variables is computationally singular. "
 "This typically occurs when variables are linearly dependent or nearly "
 "perfectly correlated. Please remove redundant variables."
 msgstr ""
+"選択した変数の共分散行列が計算上特異です。これは通常、変数どうしの相関が非常"
+"に高いか、観測数が変数の数に対して少なすぎる場合に起こります。"
 
 msgid "Hotelling T² Control Chart"
-msgstr ""
+msgstr "ホテリングの T² 管理図"
 
 msgid ""
 "Displays the Hotelling T² statistic for each sample with upper and lower "
 "control limits. Points exceeding the UCL are flagged as out of control."
 msgstr ""
+"各標本のホテリングの T² 統計量を、上側・下側の管理限界とあわせて表示します。"
+"限界を超える点は管理外れです。"
 
 msgid "UCL = %s"
-msgstr ""
+msgstr "UCL = %s"
 
 msgid "LCL = %s"
-msgstr ""
+msgstr "LCL = %s"
 
 msgid "Hotelling T²"
-msgstr ""
+msgstr "ホテリングの T²"
 
 msgid "Training (%s)"
-msgstr ""
+msgstr "訓練 (%s)"
 
 msgid "Test"
-msgstr ""
+msgstr "検定"
 
 msgid "Hotelling T² Control Chart Summary"
-msgstr ""
+msgstr "ホテリングの T² 管理図の要約"
 
 msgid ""
 "Summary of the Hotelling T² control chart, including the number of "
 "variables, observations, confidence level, control limits, and the "
 "determinant of the covariance matrix."
-msgstr ""
+msgstr "変数の数・観測数・信頼水準を含む、ホテリングの T² 管理図の要約です。"
 
 msgid "Removed %i observation(s) with missing values."
-msgstr ""
+msgstr "欠測値のある %i 件の観測値を除きました。"
 
 msgid "Phase"
-msgstr ""
+msgstr "フェーズ"
 
 msgid "Number of Variables"
-msgstr ""
+msgstr "変数の数"
 
 msgid "Number of Observations"
-msgstr ""
+msgstr "観測数"
 
 msgid "Confidence Level"
-msgstr ""
+msgstr "信頼水準"
 
 msgid "LCL"
-msgstr ""
+msgstr "LCL"
 
 msgid "UCL"
-msgstr ""
+msgstr "UCL"
 
 msgid "|S|"
-msgstr ""
+msgstr "|S|"
 
 msgid ""
 "Control limits for the training phase use the Beta distribution; test phase "
 "limits use the F distribution (prediction limits)."
 msgstr ""
+"訓練フェーズの管理限界にはベータ分布を、検定フェーズの限界にはF分布を使います"
+"。"
 
 msgid "Variable Centers"
-msgstr ""
+msgstr "変数の中心"
 
 msgid ""
 "Displays the sample mean of each variable used in the multivariate control "
 "chart."
-msgstr ""
+msgstr "多変量管理図に使う各変数の標本平均を表示します。"
 
 msgid "Center"
-msgstr ""
+msgstr "中心"
 
 msgid "Centers estimated from training phase (%s) only."
-msgstr ""
+msgstr "中心は訓練フェーズ (%s) のみから推定されています。"
 
 msgid "Covariance Matrix"
-msgstr ""
+msgstr "共分散行列"
 
 msgid ""
 "Displays the sample covariance matrix of the selected variables, used to "
 "compute the Hotelling T² statistic."
 msgstr ""
+"ホテリングの T² 統計量の計算に使う、選択した変数の標本共分散行列を表示します"
+"。"
 
 msgid "Covariance matrix estimated from training phase (%s) only."
-msgstr ""
+msgstr "共分散行列は訓練フェーズ (%s) のみから推定されています。"
 
 msgid "Hotelling T² Values"
-msgstr ""
+msgstr "ホテリングの T² 値"
 
 msgid ""
 "Lists the Hotelling T² statistic for each sample and indicates whether the "
 "sample is in or out of control."
 msgstr ""
+"各標本のホテリングの T² 統計量と、その標本が管理状態にあるかどうかを示します"
+"。"
 
 msgid "T²"
-msgstr ""
+msgstr "T²"
 
 msgid "Status"
-msgstr ""
+msgstr "状態"
 
 msgid "Training UCL = %1$s, Test UCL = %2$s"
-msgstr ""
+msgstr "訓練の UCL = %1$s、検定の UCL = %2$s"
 
 msgid "Out of control"
-msgstr ""
+msgstr "管理外れ"
 
 msgid "In control"
-msgstr ""
+msgstr "管理状態"
 
 msgid "UCL = %1$s, LCL = %2$s"
-msgstr ""
+msgstr "UCL = %1$s、LCL = %2$s"
 
 msgid "Parameter Estimates"
-msgstr ""
+msgstr "パラメータ推定値"
 
 msgid "Parameter"
-msgstr ""
+msgstr "パラメータ"
 
 msgid "Estimate"
-msgstr ""
+msgstr "推定値"
 
 msgid ""
 "Fitting the model failed with the following error message:\n"
 "%s"
 msgstr ""
+"モデルのあてはめが次のエラーメッセージで失敗しました:\n"
+"%s"
 
 msgid "Intercept"
-msgstr ""
+msgstr "切片"
 
 msgid ""
 "The IWLS algorithm did not converge. Interpret the results with caution."
-msgstr ""
+msgstr "IWLSアルゴリズムが収束しませんでした。結果の解釈には注意してください。"
 
 msgid ""
 "There is only observed category (%s). The results are likely meaningless."
-msgstr ""
+msgstr "観測されたカテゴリが1つ (%s) しかありません。結果はおそらく意味をもちません。"
 
 msgid "Fit Table"
-msgstr ""
+msgstr "適合の表"
 
 msgid "AIC"
-msgstr ""
+msgstr "AIC"
 
 msgid "Detection Plot"
-msgstr ""
+msgstr "検出プロット"
 
 msgid "log(%s)"
-msgstr ""
+msgstr "log(%s)"
 
 msgid ""
 "The detection plot failed with the following error message:\n"
 "%s"
 msgstr ""
+"検出プロットが次のエラーメッセージで失敗しました:\n"
+"%s"
 
 msgid "Asymptotes"
-msgstr ""
+msgstr "漸近線"
 
 msgid "covariate"
-msgstr ""
+msgstr "共変量"
 
 msgid "Horizontal asymptotes"
-msgstr ""
+msgstr "水平の漸近線"
 
 msgid "Vertical asymptotes"
-msgstr ""
+msgstr "垂直の漸近線"
 
 msgid "Label"
-msgstr ""
+msgstr "ラベル"
 
 msgid "<b><em>Warning.</em></b>"
-msgstr ""
+msgstr "<b><em>警告</em></b>"
 
 msgid "Probability of detecting %s"
-msgstr ""
+msgstr "%s を検出する確率"
 
 msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
 msgstr ""
+"群の大きさが5を超えています。結果に偏りが生じる可能性があります。s管理図を推"
+"奨します。"
 
 msgid ""
 "All zero values have been replaced with a value equal to one-half of the "
 "smallest data point."
-msgstr ""
+msgstr "0 の値はすべて、最小のデータ点の半分の値に置き換えられました。"
 
 msgid "Process Capability Report"
-msgstr ""
+msgstr "工程能力レポート"
 
 msgid ""
 "Set at least one specification limit (upper or lower) to start the analysis."
-msgstr ""
+msgstr "分析を始めるには、規格限界(上側または下側)を少なくとも1つ設定してください。"
 
 msgid "Line: %s"
-msgstr ""
+msgstr "ライン: %s"
 
 msgid "Machine: %s"
-msgstr ""
+msgstr "機械: %s"
 
 msgid "Variable: %s"
-msgstr ""
+msgstr "変数: %s"
 
 msgid "Process: %s"
-msgstr ""
+msgstr "工程: %s"
 
 msgid "Reported by: %s"
-msgstr ""
+msgstr "報告者: %s"
 
 msgid "Conclusion: %s"
-msgstr ""
+msgstr "結論: %s"
 
 msgid "X-bar & %s control chart"
-msgstr ""
+msgstr "X-bar & %s 管理図"
 
 msgid ""
 "Subgroup size is >50, R chart calculation is not possible. Use S-chart "
 "instead."
 msgstr ""
+"群の大きさが50を超えているため、R管理図を計算できません。代わりにS管理図を使"
+"ってください。"
 
 msgid ""
 "Subgroup size is 1, calculation of selected control chart not possible. Use "
 "x-mR chart."
 msgstr ""
+"群の大きさが1のため、選択した管理図を計算できません。x-mR管理図を使ってくださ"
+"い。"
 
 msgid "X-mR control chart"
-msgstr ""
+msgstr "X-mR 管理図"
 
 msgid "Capability study"
-msgstr ""
+msgstr "能力調査"
 
 msgid "Process capability study"
-msgstr ""
+msgstr "工程能力調査"
 
 msgid ""
 "Lower specification limit must be smaller than upper specification limit."
-msgstr ""
+msgstr "下側規格限界は上側規格限界より小さくなければなりません。"
 
 msgid "Target outside of specification limits."
-msgstr ""
+msgstr "目標値が規格限界の外にあります。"
 
 msgid ""
 "Dataset contains negative numbers. Not compatible with the selected "
 "distribution."
-msgstr ""
+msgstr "データセットに負の数が含まれています。選択した分布とは両立しません。"
 
 msgid "Process capability"
-msgstr ""
+msgstr "工程能力"
 
 msgid "Process capability (non-normal capability analysis)"
-msgstr ""
+msgstr "工程能力 (非正規分布の能力分析)"
 
 msgid "Data transformation"
-msgstr ""
+msgstr "データの変換"
 
 msgid "Data could not be transformed: %1$s"
-msgstr ""
+msgstr "データを変換できませんでした: %1$s"
 
 msgid ""
 "The data after transformations appears to be invalid. This could be caused "
 "by unsuitable data transformation (transformation type or extreme parameter "
 "used to transform the data)."
 msgstr ""
+"変換後のデータが不正なようです。データ変換が適切でないこと(変換の種類、または"
+"変換に使った極端なパラメータ)が原因かもしれません。"
 
 msgid "Specification limits could not be transformed: %1$s"
-msgstr ""
+msgstr "規格限界を変換できませんでした: %1$s"
 
 msgid "Process summary"
-msgstr ""
+msgstr "工程の要約"
 
 msgid "Stage"
-msgstr ""
+msgstr "ステージ"
 
 msgid "LB"
-msgstr ""
+msgstr "LB"
 
 msgid "LSL"
-msgstr ""
+msgstr "LSL"
 
 msgid "Target"
-msgstr ""
+msgstr "ターゲット"
 
 msgid "UB"
-msgstr ""
+msgstr "UB"
 
 msgid "USL"
-msgstr ""
+msgstr "USL"
 
 msgid "Sample size"
-msgstr ""
+msgstr "サンプルサイズ"
 
 msgid "Std. dev. (total)"
-msgstr ""
+msgstr "標準偏差 (全体)"
 
 msgid "Std. dev. (within)"
-msgstr ""
+msgstr "標準偏差 (群内)"
 
 msgid ""
 "Columns titled 'Change' concern changes of the respective stage in "
 "comparison to baseline (BL)."
 msgstr ""
+"「変化」と書かれた列は、ベースライン (BL) と比べた各ステージの変化を表します"
+"。"
 
 msgid "The within std. dev. could not be calculated."
-msgstr ""
+msgstr "群内標準偏差を計算できませんでした。"
 
 msgid "Change (%s vs. BL)"
-msgstr ""
+msgstr "変化 (%s vs. BL)"
 
 msgid "%s (BL)"
-msgstr ""
+msgstr "%s (BL)"
 
 msgid "The within std. dev. is based on a historical value."
-msgstr ""
+msgstr "群内標準偏差は過去の値にもとづいています。"
 
 msgid "The mean is based on a historical value."
-msgstr ""
+msgstr "平均は過去の値にもとづいています。"
 
 msgid "Capability of the process"
-msgstr ""
+msgstr "工程の能力"
 
 msgid "No valid measurements detected."
-msgstr ""
+msgstr "有効な測定値が検出されませんでした。"
 
 msgid ""
 "Need at least 2 measurements to fit distribution. %1$i measurement(s) "
 "detected."
 msgstr ""
+"分布をあてはめるには2回以上の測定が必要です。%1$i 件の測定値が検出されました"
+"。"
 
 msgid "At least one of the stages contains no valid measurements."
-msgstr ""
+msgstr "有効な測定値を含まないステージがあります。"
 
 msgid "Density"
-msgstr ""
+msgstr "密度"
 
 msgid "Measurement"
-msgstr ""
+msgstr "測定"
 
 msgid ""
 "Normal dist.\n"
 "(std. dev. total)"
 msgstr ""
+"正規分布\n"
+"(標準偏差 全体)"
 
 msgid ""
 "Normal dist.\n"
 "(std. dev. within)"
 msgstr ""
+"正規分布\n"
+"(標準偏差 群内)"
 
 msgid "Weibull dist."
-msgstr ""
+msgstr "ワイブル分布"
 
 msgid ""
 "3-parameter\n"
 "lognormal dist."
 msgstr ""
+"3母数\n"
+"対数正規分布"
 
 msgid "3-parameter Weibull dist."
-msgstr ""
+msgstr "3母数ワイブル分布"
 
 msgid "Gamma dist."
-msgstr ""
+msgstr "ガンマ分布"
 
 msgid "Exponential dist."
-msgstr ""
+msgstr "指数分布"
 
 msgid "Logistic dist."
-msgstr ""
+msgstr "ロジスティック分布"
 
 msgid "Log-logistic dist."
-msgstr ""
+msgstr "対数ロジスティック分布"
 
 msgid "Target = %g"
-msgstr ""
+msgstr "目標 = %g"
 
 msgid "LB = %g"
-msgstr ""
+msgstr "LB = %g"
 
 msgid "UB = %g"
-msgstr ""
+msgstr "UB = %g"
 
 msgid "Lognormal dist."
-msgstr ""
+msgstr "対数正規分布"
 
 msgid "Process capability (within)"
-msgstr ""
+msgstr "工程能力 (群内)"
 
 msgid "Cp"
-msgstr ""
+msgstr "Cp"
 
 msgid "%s CI for Cp"
-msgstr ""
+msgstr "Cp の %s 信頼区間"
 
 msgid "CpL"
-msgstr ""
+msgstr "CpL"
 
 msgid "CpU"
-msgstr ""
+msgstr "CpU"
 
 msgid "Cpk"
-msgstr ""
+msgstr "Cpk"
 
 msgid "%s CI for Cpk"
-msgstr ""
+msgstr "Cpk の %s 信頼区間"
 
 msgid "Z (ST)"
-msgstr ""
+msgstr "Z (ST)"
 
 msgid "Z.bench (ST)"
-msgstr ""
+msgstr "Z.bench (ST)"
 
 msgid ""
 "Statistics displayed as * were not calculated because the relevant "
 "specification limit is not set or set as boundary."
 msgstr ""
+"* と表示された統計量は、該当する規格限界が設定されていないか計算できないため"
+"、計算されていません。"
 
 msgid "Process performance (total)"
-msgstr ""
+msgstr "工程パフォーマンス (全体)"
 
 msgid "Non-conformance statistics"
-msgstr ""
+msgstr "不適合の統計量"
 
 msgid "Pp"
-msgstr ""
+msgstr "Pp"
 
 msgid "%s CI for Pp"
-msgstr ""
+msgstr "Pp の %s 信頼区間"
 
 msgid "PpL"
-msgstr ""
+msgstr "PpL"
 
 msgid "PpU"
-msgstr ""
+msgstr "PpU"
 
 msgid "Ppk"
-msgstr ""
+msgstr "Ppk"
 
 msgid "%s CI for Ppk"
-msgstr ""
+msgstr "Ppk の %s 信頼区間"
 
 msgid "Z (LT)"
-msgstr ""
+msgstr "Z (LT)"
 
 msgid "Z.bench (LT)"
-msgstr ""
+msgstr "Z.bench (LT)"
 
 msgid "Cpm"
-msgstr ""
+msgstr "Cpm"
 
 msgid "%s CI for Cpm"
-msgstr ""
+msgstr "Cpm の %s 信頼区間"
 
 msgid ""
 "Rows titled 'Change' concern changes of the respective stage in comparison "
 "to baseline (BL)."
 msgstr ""
+"「変化」と書かれた行は、ベースライン (BL) と比べた各ステージの変化を表します"
+"。"
 
 msgid "%s vs. BL"
-msgstr ""
+msgstr "%s vs. BL"
 
 msgid "Scale (%1$s)"
-msgstr ""
+msgstr "尺度 (%1$s)"
 
 msgid "Log mean (%1$s)"
-msgstr ""
+msgstr "対数平均 (%1$s)"
 
 msgid "Log std.dev (%1$s)"
-msgstr ""
+msgstr "対数標準偏差 (%1$s)"
 
 msgid "Location"
-msgstr ""
+msgstr "位置"
 
 msgid "Shape (%1$s)"
-msgstr ""
+msgstr "形状 (%1$s)"
 
 msgid "Threshold"
-msgstr ""
+msgstr "しきい値"
 
 msgid "Calculations based on %s distribution."
-msgstr ""
+msgstr "%s 分布にもとづく計算です。"
 
 msgid "Location parameter is log-transformed."
-msgstr ""
+msgstr "位置パラメータは対数変換されています。"
 
 msgid "The shape (%1$s) is based on a historical value."
-msgstr ""
+msgstr "形状 (%1$s) は過去の値にもとづいています。"
 
 msgid "The scale (%1$s) is based on a historical value."
-msgstr ""
+msgstr "尺度 (%1$s) は過去の値にもとづいています。"
 
 msgid "The location parameter is based on a historical value."
-msgstr ""
+msgstr "位置パラメータは過去の値にもとづいています。"
 
 msgid "The log mean (%1$s) is based on a historical value."
-msgstr ""
+msgstr "対数平均 (%1$s) は過去の値にもとづいています。"
 
 msgid "The log std. dev. (%1$s) is based on a historical value."
-msgstr ""
+msgstr "対数標準偏差 (%1$s) は過去の値にもとづいています。"
 
 msgid "The threshold is based on a historical value."
-msgstr ""
+msgstr "しきい値は過去の値にもとづいています。"
 
 msgid "Probability table and plot"
-msgstr ""
+msgstr "確率の表とプロット"
 
 msgid "Probability plot"
-msgstr ""
+msgstr "確率プロット"
 
 msgid ""
 "Probability plot and table for %s distribution are not implemented in "
 "Quality Control module. Please use the Distributions module."
 msgstr ""
+"%s 分布についての確率プロットと表は、品質管理モジュールでは実装されていません"
+"。別の分布を選んでください。"
 
 msgid ""
 "Need at least 2 measurements to calculate probability table/plot. %1$i "
 "measurement(s) detected."
 msgstr ""
+"確率の表とプロットの計算には2回以上の測定が必要です。%1$i 件の測定値が検出さ"
+"れました。"
 
 msgid "Summary of test against the %1$s distribution"
-msgstr ""
+msgstr "%1$s 分布に対する検定の要約"
 
 msgid "N"
-msgstr ""
+msgstr "N"
 
 msgid "Mean (%1$s)"
-msgstr ""
+msgstr "平均 (%1$s)"
 
 msgid "Std. dev. (%1$s)"
-msgstr ""
+msgstr "標準偏差 (%1$s)"
 
 msgid "AD"
-msgstr ""
+msgstr "AD"
 
 msgid ""
 "The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s "
 "distribution."
 msgstr ""
+"アンダーソン・ダーリング統計量 A<i>D</i> は %1$s 分布に対して計算されています"
+"。"
 
 msgid ""
 "Red dotted lines in the probability plot below represent a 95%% confidence "
 "interval."
-msgstr ""
+msgstr "下の確率プロットの赤い点線は 95%% 信頼区間を表します。"
 
 msgid "Probability plot against %1$s distribution"
-msgstr ""
+msgstr "%1$s 分布に対する確率プロット"
 
 msgid ""
 "Could not compute variance-covariance matrix: parameter vector has "
 "unexpected length."
 msgstr ""
+"分散共分散行列を計算できませんでした: パラメータベクトルの長さが想定と異なり"
+"ます。"
 
 msgid ""
 "Could not compute variance-covariance matrix: Hessian contains invalid "
 "values."
-msgstr ""
+msgstr "分散共分散行列を計算できませんでした: ヘッセ行列に不正な値が含まれています。"
 
 msgid ""
 "Fitting lognormal distribution failed, most likely because the observed "
 "distribution of the data are very far away from the selected distribution, "
 "please try one that describes your data more closely."
 msgstr ""
+"対数正規分布のあてはめに失敗しました。観測されたデータの分布が対数正規分布と"
+"大きく異なることが原因と考えられます。"
 
 msgid ""
 "Fitting Weibull distribution failed, most likely because the observed "
 "distribution of the data are very far away from the selected distribution, "
 "please try one that describes your data more closely."
 msgstr ""
+"ワイブル分布のあてはめに失敗しました。観測されたデータの分布がワイブル分布と"
+"大きく異なることが原因と考えられます。"
 
 msgid "Histogram"
-msgstr ""
+msgstr "ヒストグラム"
 
 msgid ""
 "Dataset contains negative numbers. Could not overlay the selected "
 "distribution."
-msgstr ""
+msgstr "データセットに負の数が含まれています。選択した分布を重ねられませんでした。"
 
 msgid "Counts"
-msgstr ""
+msgstr "カウント"
 
 msgid "Normal dist."
-msgstr ""
+msgstr "正規分布"
 
 msgid "Log-normal dist."
-msgstr ""
+msgstr "対数正規分布"
 
 msgid ""
 "3-parameter\n"
 "log-normal dist."
 msgstr ""
+"3母数\n"
+"対数正規分布"
 
 msgid ""
 "Some specification limits or target value are outside of the support of the "
 "Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f)."
 msgstr ""
+"規格限界または目標値の一部が Box-Cox 変換の台の外にあります。Box-Cox 変換の下"
+"限は -shift (%1$f) です。"
 
 msgid ""
 "Some specification limits or target value are outside of the support of the "
 "Johnson (SB) transform. The bounds of the transform were identified to "
 "between %1$f and %2$f."
 msgstr ""
+"規格限界または目標値の一部が Johnson (SB) 変換の台の外にあります。この変換の"
+"境界は %1$f から %2$f と特定されました。"
 
 msgid ""
 "Some specification limits or target value are outside of the support of the "
 "Johnson (SL) transform. The lower bound of the transform was identified as "
 "%1$f."
 msgstr ""
+"規格限界または目標値の一部が Johnson (SL) 変換の台の外にあります。この変換の"
+"下限は %1$f と特定されました。"
 
 msgid ""
 "The measurements, specification limits and target value were transformed "
 "using the %s transformation, with the following formula,"
-msgstr ""
+msgstr "測定値・規格限界・目標値は %s 変換を使って、次の式で変換されました。"
 
 msgid "Parameters of the transform"
-msgstr ""
+msgstr "変換のパラメータ"
 
 msgid "Estimated from data"
-msgstr ""
+msgstr "データから推定"
 
 msgid "All values estimated from data"
-msgstr ""
+msgstr "すべての値をデータから推定"
 
 msgid "Rare event charts"
-msgstr ""
+msgstr "まれな事象の管理図"
 
 msgid ""
 "Date/time conversion returned no valid values. Did you select the correct "
 "date/time format?"
 msgstr ""
+"日付/時刻の変換で有効な値が得られませんでした。日付/時刻の書式は正しく選ばれ"
+"ていますか？"
 
 msgid ""
 "Negative values for time/intervals detected, calculation is not possible."
-msgstr ""
+msgstr "時間・間隔に負の値が検出されました。計算できません。"
 
 msgid "Rare event charts report"
-msgstr ""
+msgstr "まれな事象の管理図のレポート"
 
 msgid "G chart"
-msgstr ""
+msgstr "G管理図"
 
 msgid "T chart"
-msgstr ""
+msgstr "T管理図"
 
 msgid ""
 "<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
-msgstr ""
+msgstr "<i>注.</i> どのステージにも割り当てられていない %i 件の観測値を除きました。"
 
 msgid "Variables Charts for Individuals"
-msgstr ""
+msgstr "個々の値の計量値管理図"
 
 msgid ""
 "Moving range length is larger than the number of observations\n"
 "                                                           in one of the "
 "stages."
 msgstr ""
+"移動範囲の長さが、いずれかのステージの観測数より\n"
+"                                                           大きくなっています"
+"。"
 
 msgid "Variables Chart for Individuals Report"
-msgstr ""
+msgstr "個々の値の計量値管理図レポート"
 
 msgid ""
 "Autocorrelation plot requires uninterrupted series of values. Missing values "
 "detected in %s."
-msgstr ""
+msgstr "自己相関プロットには途切れのない系列が必要です。%s に欠測値が検出されました。"
 
 msgid "Autocorrelation plot"
-msgstr ""
+msgstr "自己相関プロット"
 
 msgid "Autocorrelation"
-msgstr ""
+msgstr "自己相関"
 
 msgid "Lag"
-msgstr ""
+msgstr "ラグ"
 
 msgid "Control charts"
-msgstr ""
+msgstr "管理図"
 
 msgid ""
 "All subgroups are of size 1. Variables charts for subgroups cannot be "
 "calculated. Use variables charts for individuals."
 msgstr ""
+"すべての群の大きさが1です。群の計量値管理図は計算できません。個々の値の計量値"
+"管理図を使ってください。"
 
 msgid "X-bar & %1$s control chart"
-msgstr ""
+msgstr "X-bar & %1$s 管理図"
 
 msgid "Variables Chart for Subgroups Report"
-msgstr ""
+msgstr "群の計量値管理図レポート"
 
 msgid "The following covariate was considered but not included: %1$s."
 msgid_plural "The following covariates were considered but not included: %1$s."
-msgstr[0] ""
+msgstr[0] "次の共変量は検討されましたが、含まれませんでした: %1$s。"
 
 msgid ""
 "The main effect %1$s was retained to respect marginality (its squared term "
@@ -1865,3 +1963,5 @@ msgid_plural ""
 "The main effects %1$s were retained to respect marginality (their squared "
 "terms are in the model)."
 msgstr[0] ""
+"主効果 %1$s は、周辺性を保つために残されました(その2乗項がモデルに含まれてい"
+"るため)。"
