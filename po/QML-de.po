@@ -3,9 +3,15 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Language: de\n"
 "X-Qt-Contexts: true\n"
+"PO-Revision-Date: 2026-08-09 04:51+0000\n"
+"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/de/>\n"
+"Language: de\n"
+"X-Generator: Weblate 2026.9.dev0\n"
 
 msgctxt "Description|"
 msgid "Quality Control"
@@ -403,7 +409,6 @@ msgctxt "Description|"
 msgid "Variables Charts for Individuals"
 msgstr ""
 
-#, fuzzy
 msgctxt "Description|"
 msgid "Probability of Detection"
 msgstr "Wahrscheinlichkeit von Entdeckung"
@@ -432,9 +437,10 @@ msgctxt "probabilityOfDetection|"
 msgid "Show data"
 msgstr "Daten anzeigen"
 
+#, fuzzy
 msgctxt "probabilityOfDetection|"
 msgid "Rugs"
-msgstr ""
+msgstr "Fransen"
 
 msgctxt "probabilityOfDetection|"
 msgid "Points"
@@ -700,7 +706,7 @@ msgstr "Einzelne Spalte"
 
 msgctxt "msaGaugeRR|"
 msgid "Across rows"
-msgstr ""
+msgstr "Über Zeilen"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Data format"
@@ -712,7 +718,7 @@ msgstr "Einzelne Spalte"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Across rows"
-msgstr ""
+msgstr "Über Zeilen"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Name"
@@ -732,7 +738,7 @@ msgstr "Einzelne Spalte"
 
 msgctxt "msaTestRetest|"
 msgid "Across rows"
-msgstr ""
+msgstr "Über Zeilen"
 
 msgctxt "msaTestRetest|"
 msgid "Measurements"
@@ -752,7 +758,7 @@ msgstr "Einzelne Spalte"
 
 msgctxt "processCapabilityStudies|"
 msgid "Across rows"
-msgstr ""
+msgstr "Über Zeilen"
 
 msgctxt "processCapabilityStudies|"
 msgid "Type of data distribution"
@@ -774,7 +780,6 @@ msgctxt "processCapabilityStudies|"
 msgid "Distribution of the process"
 msgstr "Verteilung des Prozesses"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Fit distribution"
 msgstr "Angepasste Verteilung"
@@ -797,7 +802,7 @@ msgstr "Einzelne Spalte"
 
 msgctxt "msaAttribute|"
 msgid "Across rows"
-msgstr ""
+msgstr "Über Zeilen"
 
 msgctxt "msaAttribute|"
 msgid "Cohen's kappa (interrater kappa)"
