@@ -1,12 +1,8 @@
 msgid ""
 msgstr ""
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
-"Language: bo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
@@ -111,10 +107,6 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Weibull"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Lognormal"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
@@ -271,10 +263,6 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Scott"
-msgstr ""
-
-msgctxt "msaType1Gauge|"
-msgid "Doane"
 msgstr ""
 
 msgctxt "msaType1Gauge|"
@@ -705,22 +693,6 @@ msgctxt "msaGaugeRR|"
 msgid "Across rows"
 msgstr ""
 
-msgctxt "msaGaugeRR|"
-msgid "Process variation based on"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Study variation"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Historical standard deviation"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Historical standard deviation:"
-msgstr ""
-
 msgctxt "msaGaugeRRnonrep|"
 msgid "Data format"
 msgstr ""
@@ -783,10 +755,6 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal distribution"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "3-parameter lognormal"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
@@ -1545,10 +1513,6 @@ msgctxt "doeFactorial|"
 msgid "Replications"
 msgstr ""
 
-msgctxt "doeFactorial|"
-msgid "Repetitions"
-msgstr ""
-
 msgctxt "doeFull|"
 msgid "Number of replications"
 msgstr ""
@@ -1663,10 +1627,6 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Contour/surface plot options"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Show legend next to graph"
 msgstr ""
 
 msgctxt "doeAnalysis|"
@@ -2346,10 +2306,6 @@ msgid "Analysis options"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
-msgid "r&R ANOVA table"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
 msgid "Study var. multiplier type"
 msgstr ""
 
@@ -2359,10 +2315,6 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Range charts by operator"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Average chart bys operator"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
@@ -2386,15 +2338,7 @@ msgid "Analysis options"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "Std. dev. reference"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Study std. dev."
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Historical process std. dev."
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
@@ -2403,10 +2347,6 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Tolerance width"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "r&R ANOVA table"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
@@ -3143,10 +3083,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
 msgstr ""
 
-msgctxt "processCapabilityStudies|"
-msgid "Z bench"
-msgstr ""
-
 msgctxt "doeAnalysis|"
 msgid "Low"
 msgstr ""
@@ -3173,4 +3109,379 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Importance"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Multivariate Control Charts"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Method"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid ""
+"Specify the order in which the predictors are entered into the model. A "
+"block of one or more predictors represents one step in the hierarchy. Note "
+"that the present release does not allow for more than one block. The "
+"backward and forward method are based on model AIC."
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Enter"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "All predictors are entered into the model simultaneously."
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Backward"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid ""
+"Starting with the full model, predictors are removed sequentially based on "
+"AIC."
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Forward"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid ""
+"Starting with the intercept-only model, predictors are entered sequentially "
+"based on AIC."
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Stepwise"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid ""
+"Starting with the intercept-only model, predictors are entered or removed "
+"sequentially based on AIC, combining both forward addition and backward "
+"elimination at each step."
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid ""
+"Specify the order in which the predictors are entered into the model. A "
+"block of one or more predictors represents one step in the hierarchy. Note "
+"that the present release does not allow for more than one block."
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Std. dev. source"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Study std. dev."
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Historical std. dev."
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Historical std. dev.:"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "r&R Analysis of Variance table"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Average chart by operator"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Std. dev. source"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Historical std. dev."
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "r&R Analysis of Variance table"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Variables"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid ""
+"Two or more continuous quality characteristics to monitor jointly using a "
+"Hotelling T² chart."
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Timestamp (optional)"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid ""
+"Optional column used as x-axis labels (e.g., a timestamp or row identifier)."
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Stage"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid ""
+"Optional grouping variable that splits the data into a training phase (Phase "
+"I) and a test phase (Phase II). Control limits are estimated from the "
+"training phase and applied to the test phase for anomaly detection."
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Training phase level"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid ""
+"Select which level of the stage variable represents the training (in-"
+"control) phase. Control limits and the covariance matrix are estimated from "
+"this phase only."
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Control Chart"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Automatic confidence level: (1 - 0.0027)ᵖ"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid ""
+"When checked, confidence level is automatically set to (1 - 0.0027)^p, where "
+"p is the number of variables. This is the standard Bonferroni-adjusted level "
+"for multivariate charts."
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Confidence level"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid ""
+"Custom confidence level for the control limits. Only active when automatic "
+"confidence level is unchecked."
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Output"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Variable centers"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Show the mean of each variable."
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Covariance matrix"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Show the sample covariance matrix of the selected variables."
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "T² values table"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid ""
+"Show a table with the T² statistic for each observation, along with the UCL "
+"and in/out-of-control status."
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Add T² values to data"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Adds the computed Hotelling T² values as a new column in the dataset."
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Column name"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "e.g., tsq"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Advanced Options"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Plot color scheme"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Standard (red/blue)"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid "Colorblind-friendly (orange/blue)"
+msgstr ""
+
+msgctxt "multivariateControlCharts|"
+msgid ""
+"Choose colors for limits and out-of-control points. The colorblind-friendly "
+"scheme uses orange instead of red."
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Transform data"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Type"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "None"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Box-Cox"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Box-Cox (auto)"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Yeo-Johnson"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Yeo-Johnson (auto)"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Johnson"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Shift"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Lambda"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Log. Lik"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "SD"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Average moving range"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Continuity Adjustment"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical mean"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical std. dev."
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Log-normal"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Gamma"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Exponential"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Logistic"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Log-logistic"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "3-parameter log-normal"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical shape"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical location"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical scale"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical log mean"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical log std. dev."
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical threshold"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Axis modifications"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Thin x-axis labels"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Compress x-axis"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Z (ST) / Z (LT)"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Z.bench (ST) / Z.bench (LT)"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid ""
+"Sigma level based on total defect probability across both specification "
+"limits, as opposed to Z (ST)/Z (LT) which equal 3·Cpk/3·Ppk (distance to the "
+"nearest bound)."
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Pooled"
 msgstr ""

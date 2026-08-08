@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-07-11 04:41\n"
+"POT-Creation-Date: 2026-08-08 04:00\n"
 "PO-Revision-Date: 2026-07-10 05:01+0000\n"
 "Last-Translator: 陳正昌 <chencc99@gmail.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
@@ -567,6 +567,34 @@ msgid "The design is not exported until 'Export design' is checked."
 msgstr ""
 
 msgid "The design is exported as '%1$s'."
+msgstr ""
+
+msgid ""
+"The selected design is a full factorial; no generators can be specified."
+msgstr ""
+
+msgid ""
+"All generators must either all include a factor name (e.g., D=ABC) or none "
+"should."
+msgstr ""
+
+msgid "Only the final %1$s factor(s) can be defined by a generator: %2$s."
+msgstr ""
+
+msgid "Expected %1$s generator(s) for added factor(s) %2$s, but got %3$s."
+msgstr ""
+
+msgid "Factor(s) defined more than once in generators: %s."
+msgstr ""
+
+msgid ""
+"Generator for %1$s references non-base or unknown factor(s): %2$s. Base "
+"factors are: %3$s."
+msgstr ""
+
+msgid ""
+"Generator %1$s references non-base or unknown factor(s): %2$s. Base factors "
+"are: %3$s."
 msgstr ""
 
 msgid "No aliasing among main effects and 2-factor interactions."

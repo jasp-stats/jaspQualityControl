@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
-"POT-Creation-Date: 2026-07-11 04:41\n"
+"POT-Creation-Date: 2026-08-08 04:00\n"
 "PO-Revision-Date: 2026-03-22 14:09+0000\n"
 "Last-Translator: தமிழ்நேரம் <tamilneram247@gmail.com>\n"
 "Language-Team: Tamil <https://hosted.weblate.org/projects/jasp/"
@@ -529,6 +529,34 @@ msgstr "'ஏற்றுமதி வடிவமைப்பு' சரிப�
 
 msgid "The design is exported as '%1$s'."
 msgstr "வடிவமைப்பு '%1$s' ஆக ஏற்றுமதி செய்யப்பட்டது."
+
+msgid ""
+"The selected design is a full factorial; no generators can be specified."
+msgstr ""
+
+msgid ""
+"All generators must either all include a factor name (e.g., D=ABC) or none "
+"should."
+msgstr ""
+
+msgid "Only the final %1$s factor(s) can be defined by a generator: %2$s."
+msgstr ""
+
+msgid "Expected %1$s generator(s) for added factor(s) %2$s, but got %3$s."
+msgstr ""
+
+msgid "Factor(s) defined more than once in generators: %s."
+msgstr ""
+
+msgid ""
+"Generator for %1$s references non-base or unknown factor(s): %2$s. Base "
+"factors are: %3$s."
+msgstr ""
+
+msgid ""
+"Generator %1$s references non-base or unknown factor(s): %2$s. Base factors "
+"are: %3$s."
+msgstr ""
 
 msgid "No aliasing among main effects and 2-factor interactions."
 msgstr "முக்கிய விளைவுகள் மற்றும் 2-காரணி இடைவினைகளுக்கு இடையே மாற்றுப்பெயர் இல்லை."
