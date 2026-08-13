@@ -644,7 +644,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list(LCL = LCLvector, UCL = UCLvector))
 }
 
-.controlChart <- function(dataset,  plotType        = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
+.controlChart <- function(dataset,  plotType        = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t", "p"),
                           ruleList                  = list(),
                           stages                    = "",
                           xBarSdType                = c("r", "s", "pooled"),
@@ -701,7 +701,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list(plotObject = plotObject, table = table, controlChartData = controlChartData))
 }
 
-.controlChart_calculations <- function(dataset, plotType               = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
+.controlChart_calculations <- function(dataset, plotType               = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t", "p"),
                                        ruleList                        = list(),
                                        stages                          = "",
                                        xBarSdType                      = c("r", "s", "pooled"),
@@ -952,6 +952,27 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       center <- qweibull(p = .5, shape = shape, scale = scale)
       UCL <- qweibull(p = pnorm(3), shape = shape, scale = scale)
       LCL <- qweibull(p = pnorm(-3), shape = shape, scale = scale)
+      ###
+      ### Calculations for p chart
+      ###
+    } else if (plotType == "p") {
+      # expects exactly two columns: number of defectives and number of inspected units per sample
+      D <- dataCurrentStage[[1]]
+      n <- dataCurrentStage[[2]]
+      plotStatistic <- D / n
+      # phase2Mu is a proportion here; only evaluate it when phase 2 is requested, its default is ""
+      center <- if (phase2) as.numeric(phase2Mu) else sum(D, na.rm = TRUE) / sum(n, na.rm = TRUE)
+      se <- sqrt(center * (1 - center) / n)
+      # limits vary per sample and are clamped to the [0, 1] range of a proportion
+      UCL <- pmin(1, center + nSigmasControlLimits * se)
+      LCL <- pmax(0, center - nSigmasControlLimits * se)
+      # the p chart has no process std. dev.; this must be assigned because the returned list always
+      # contains "sd" = sigma and stats::sigma would silently be returned as a function otherwise
+      sigma <- NA_real_
+      # NOTE: because LCL is clamped at 0, the 1-sigma/2-sigma zones that .nelsonLaws derives from the
+      # control limits are not valid here. Zone-based rules (4, 5, 6, 7, 9) are therefore stripped by
+      # .getRuleListSubgroupCharts(type = "p"). If they are ever wanted, compute them from the
+      # unclamped per-point limits instead.
     }
     if (i != 1) {
       if (plotType == "cusum") {
@@ -1065,7 +1086,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 }
 
 .controlChart_table <- function(tableList,
-                                plotType = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
+                                plotType = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t", "p"),
                                 stages   = "",
                                 tableLabels = "",
                                 nPoints = NA) {
@@ -1080,7 +1101,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                         "cusum" = "cumulative sum",
                         "ewma"  = "exponentially weighted moving average",
                         "g"     = "g",
-                        "t"     = "t"
+                        "t"     = "t",
+                        "p"     = "p"
   )
   table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
   table$showSpecifiedColumnsOnly <- TRUE
@@ -1166,7 +1188,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 }
 
 .controlChart_plotting <- function(pointData, clData, stageLabels, clLabels,
-                                   plotType            = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
+                                   plotType            = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t", "p"),
                                    stages              = "",
                                    phase2              = FALSE,
                                    warningLimits       = FALSE,
@@ -1205,7 +1227,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                       "MMR"   = gettext("Moving range of subgroup mean"),
                       "s"     = gettext("Sample std. dev."),
                       "cusum" = gettext("Cumulative sum"),
-                      "ewma"  = gettext("Exponentially weighted moving average"))
+                      "ewma"  = gettext("Exponentially weighted moving average"),
+                      "p"     = gettext("Proportion defective"))
   }
   lineType <- if (phase2) "solid" else "dashed"
   # Create plot
@@ -1711,7 +1734,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list)
 }
 
-.getRuleListSubgroupCharts <- function(options, type = c("xBar", "R", "s")) {
+.getRuleListSubgroupCharts <- function(options, type = c("xBar", "R", "s", "p")) {
   ruleSet <- options[["testSet"]]
   if (ruleSet == "jaspDefault") {
     ruleList <- list("rule1" = list("enabled" = TRUE),
@@ -1760,7 +1783,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     )
   }
 
-  if (type != "xBar") { # never apply rules other than 1,2,3 or 8 to s or R chart
+  # Never apply rules other than 1, 2, 3 or 8 to the s, R or p chart. Those charts are asymmetric
+  # around the center line, so the 1-sigma/2-sigma zones that .nelsonLaws derives from the control
+  # limits do not correspond to actual sigma multiples. On the p chart the lower limit is additionally
+  # clamped at 0, which rescales the lower zones by a different factor for every sample size.
+  if (type != "xBar") {
     ruleList[["rule4"]] <- NULL
     ruleList[["rule5"]] <- NULL
     ruleList[["rule6"]] <- NULL

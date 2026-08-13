@@ -38,6 +38,11 @@ Defects charts: Defects charts are used for products that have multiple defects 
 
 X-mR chart, which charts the process values (individuals) and moving range (mR) over time.
 
+### Relation to *Process Capability Studies*
+The *Process Capability Studies* analysis also produces a p chart, when its data type is set to "Pass/fail counts (attributes)". Use that analysis when you want capability statistics (%Defective, PPM defective, Process Z) alongside the chart. The two p charts do not have to agree:
+- This analysis replaces the stepped control limits with constant limits computed from the mean sample size whenever min(n)/max(n) is at least 0.75; *Process Capability Studies* always computes the limits from the individual sample size, so its limits step whenever the sample size changes.
+- The two use different out-of-control rule engines, so they can flag different points.
+
 
 ### Out-of-control Signals 
 -------

@@ -7,6 +7,12 @@ Rational subgroup: "A subgroup gathered in such a manner as to give the maximum 
 
 ## Input
 -------
+### Data Type
+- **Measurement data (variables)**: each observation is a continuous measurement that is compared against specification limits. This is the analysis described in the rest of this page and produces Cp/Cpk/Pp/Ppk.
+- **Pass/fail counts (attributes)**: each inspected unit is either good or defective, and the data are counts of defective units per sample. There are no specification limits; capability is expressed as %Defective, PPM defective and Process Z. See "Binomial Capability Analysis" below.
+
+Variables that were assigned in the other data type stay assigned when you switch, but they are not used by the active analysis.
+
 ### Data Format
 Data can be in the form of all observations in one column ("Single column") or across rows with a subgroup index ("Across rows").
 
@@ -122,6 +128,53 @@ The size of the subgroups is relevant for the calculation of the process varianc
     - ppm total for expected within performance is the expected number of parts per million (ppm) that have measurements that are outside the specification limits. Expected within performance values are calculated using the within-subgroup standard deviation. ppm total for expected within performance is 1,000,000 times the probability that the measurement of a randomly selected part from the within-subgroup process distribution is outside the specification limits.
 
 
+
+## Binomial Capability Analysis
+-------
+Selected with **Data type → Pass/fail counts (attributes)**. Every inspected unit is classified as either good or defective, and the data consist of the number of defective units $D_i$ found in a sample of $n_i$ inspected units. Because there is no measurement and no specification limit, capability is not expressed as Cp/Cpk/Pp/Ppk but as the percentage of defective units, the equivalent number of defectives per million and the corresponding sigma level.
+
+Stages are not supported in this mode.
+
+### Assignment Box
+- **Defectives**: the number of defective units found in each sample.
+- **Sample size (Total)**: the number of units inspected in each sample. Only used when the sample size is set to "Variable".
+- **Timestamp (optional)**: labels for the samples, used on the x-axis of the p chart and in the test results table.
+
+### Options
+- **Sample size**: choose "Constant" and enter the number of units inspected in every sample, or choose "Variable" and assign a column holding the sample size. This choice also decides which of the two sample-size dependent panels is offered ("Rate of defectives" for variable sizes, "Distribution of defective (%)" for a constant size), so the label of the check box always matches what is drawn.
+- **Historical proportion defective (%)**: use a known proportion as the centre line of the p chart instead of estimating it from the data. This changes the chart only. The summary statistics are always estimated from the observed data, so that the reported estimate stays inside its own confidence interval.
+- **Target defective (%)**: a target percentage, reported in the summary table and drawn as a reference line in the cumulative plot and in the histogram.
+- **Confidence interval** and **Interval method**: the level and the method used for the intervals in the summary table and for the band of the cumulative plot.
+
+### Scale convention
+Everything is reported in percent, with one deliberate exception: the y-axis of the p chart is a proportion, following the usual SPC convention and matching the p chart of the *Control Charts for Attributes* analysis.
+
+### Output
+- **p chart**: the observed proportion defective $\hat{p}_i = D_i / n_i$ per sample with the centre line at $\bar{p} = \sum D_i / \sum n_i$ and control limits at $\bar{p} \pm k\sqrt{\bar{p}(1-\bar{p})/n_i}$, where $k$ is the number of standard deviations set under Advanced options. Because the limits depend on $n_i$, they step up and down whenever the number of inspected units changes: a smaller sample gives a less precise estimate and therefore wider limits. Limits are clamped to the interval $[0, 1]$. Only the run based tests (beyond limit, shift, trend, oscillation) are applied; the zone based tests are not, because the zones of a clamped, asymmetric chart do not correspond to actual sigma multiples.
+- **Cumulative defective (%)**: the running estimate $\sum_{j \le i} D_j / \sum_{j \le i} n_j$ with a confidence band, the overall estimate as a horizontal line and, if set, the target. The band shows whether enough samples were collected for the estimate to settle.
+- **Binomial plot**: the observed number of defectives against the expected number, with the diagonal $y = x$ as reference. The expected number is $n_i$ times the centre line proportion of the p chart, that is $n_i \bar{p}$, or $n_i$ times the historical proportion when one is set. Points scattering around the diagonal support the binomial assumption.
+- **Rate of defectives**: the percentage defective against the sample size. A trend indicates that the percentage defective depends on how many units were inspected.
+- **Distribution of defective (%)**: a histogram of the percentage defective across samples. If a target is set, it is drawn as a dashed vertical line, so a distribution sitting to the right of the line marks samples worse than the target. **Number of bins** sets the suggested number of bins; the boundaries are rounded to readable values, so the histogram can end up with a slightly different number of bins.
+- **Summary statistics**:
+    - **Defective (%)** $= 100\,\bar{p}$
+    - **PPM defective** $= 10^6\,\bar{p}$
+    - **Process Z** $= \Phi^{-1}(1 - \bar{p})$, the standard normal quantile corresponding to the estimated proportion defective. Larger is better. It is unbounded when no defectives, or only defectives, were observed; in that case only the confidence bound is informative.
+    - Confidence intervals are computed on $\bar{p}$ and transformed to the PPM and Z scale. Because Z decreases in $p$, the upper bound of $p$ gives the lower bound of Z. Three methods are available: **exact** (Clopper-Pearson, the default and the most conservative), **Wald** (normal approximation, unreliable for small counts) and **Wilson** score.
+    - A footnote warns when the p chart shows out-of-control points, because a capability estimate from an unstable process is not representative of future output.
+
+### Assumptions
+- Units are inspected independently of one another.
+- The probability that a unit is defective is constant within a sample.
+- The number of inspected units per sample is known.
+- The process is in statistical control. If the p chart flags points, the capability estimate describes the observed data but does not predict future output.
+
+### Relation to *Control Charts for Attributes*
+That analysis also produces a p chart, and the two do not have to agree:
+- This analysis always draws stepped control limits computed from the individual sample size $n_i$.
+- *Control Charts for Attributes* replaces the stepped limits with constant limits computed from the mean sample size whenever $\min(n)/\max(n) \ge 0.75$.
+- The two use different out-of-control rule engines, so they can flag different points.
+
+Use this analysis when you want capability statistics alongside the chart, and *Control Charts for Attributes* when you want np, c, u or Laney charts.
 
 ## References
 -------
