@@ -6,7 +6,7 @@ context("[Quality Control] Binomial Capability Analysis")
 binomialOptions <- function(...) {
   options <- analysisOptions("processCapabilityStudies")
   options$capabilityDataType <- "attributes"
-  options$binomialDefectives  <- "Defectives"
+  options$attributeCounts  <- "Defectives"
   options$testSet             <- "jaspDefault"
   overrides <- list(...)
   for (name in names(overrides))
@@ -18,25 +18,25 @@ binomialDataset      <- function() testthat::test_path("datasets/processCapabili
 binomialMissingData  <- function() testthat::test_path("datasets/processCapabilityStudy/binomialCapabilityMissing.csv")
 binomialEdgeData     <- function() testthat::test_path("datasets/processCapabilityStudy/binomialCapabilityEdgeCases.csv")
 
-binomialCollection <- function(results) results[["results"]][["binomialCapability"]][["collection"]]
+binomialCollection <- function(results) results[["results"]][["attributeCapability"]][["collection"]]
 
 binomialTable <- function(results, key)
-  binomialCollection(results)[[paste0("binomialCapability_", key)]][["data"]]
+  binomialCollection(results)[[paste0("attributeCapability_", key)]][["data"]]
 
 binomialFootnotes <- function(results, key)
-  binomialCollection(results)[[paste0("binomialCapability_", key)]][["footnotes"]]
+  binomialCollection(results)[[paste0("attributeCapability_", key)]][["footnotes"]]
 
 binomialPlot <- function(results, key) {
-  plotName <- binomialCollection(results)[[paste0("binomialCapability_", key)]][["data"]]
+  plotName <- binomialCollection(results)[[paste0("attributeCapability_", key)]][["data"]]
   return(results[["state"]][["figures"]][[plotName]][["obj"]])
 }
 
 binomialChartElement <- function(results, key)
-  binomialCollection(results)[["binomialCapability_pChart"]][["collection"]][[paste0("binomialCapability_pChart_", key)]]
+  binomialCollection(results)[["attributeCapability_controlChart"]][["collection"]][[paste0("attributeCapability_controlChart_", key)]]
 
 # 1. Summary table, constant sample size ####
 
-options <- binomialOptions(binomialSampleSizeType = "constant", binomialSampleSizeValue = 50)
+options <- binomialOptions(attributeSampleSizeType = "constant", attributeSampleSizeValue = 50)
 set.seed(1)
 resultsConstant <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
 
@@ -51,7 +51,7 @@ test_that("B1 Summary statistics table with a constant sample size", {
 
 # 2. Summary table, variable sample size ####
 
-options <- binomialOptions(binomialSampleSizeType = "variable", binomialSampleSizeVariable = "SampleSize")
+options <- binomialOptions(attributeSampleSizeType = "variable", attributeSampleSizeVariable = "SampleSize")
 set.seed(1)
 resultsVariable <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
 
@@ -67,7 +67,7 @@ test_that("B2 Summary statistics table with a variable sample size", {
 # 3. Confidence interval methods ####
 
 test_that("B3 Wald interval bounds", {
-  options <- binomialOptions(binomialSampleSizeType = "constant", binomialSampleSizeValue = 50,
+  options <- binomialOptions(attributeSampleSizeType = "constant", attributeSampleSizeValue = 50,
                              binomialCiMethod = "wald")
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
@@ -79,7 +79,7 @@ test_that("B3 Wald interval bounds", {
 })
 
 test_that("B3 Wilson interval bounds", {
-  options <- binomialOptions(binomialSampleSizeType = "constant", binomialSampleSizeValue = 50,
+  options <- binomialOptions(attributeSampleSizeType = "constant", attributeSampleSizeValue = 50,
                              binomialCiMethod = "wilson")
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
@@ -92,7 +92,7 @@ test_that("B3 Wilson interval bounds", {
 
 test_that("B3 The CI level is read as a proportion, not as a percentage", {
   # regression guard: a CIField delivers 0.95, so alpha must be 1 - 0.95 and the overtitle "95% CI"
-  schema <- binomialCollection(resultsConstant)[["binomialCapability_summaryTable"]][["schema"]][["fields"]]
+  schema <- binomialCollection(resultsConstant)[["attributeCapability_summaryTable"]][["schema"]][["fields"]]
   overtitles <- unique(unlist(lapply(schema, function(field) field[["overTitle"]])))
   expect_true("95% CI" %in% overtitles)
 })
@@ -100,7 +100,7 @@ test_that("B3 The CI level is read as a proportion, not as a percentage", {
 # 4. Historical proportion affects the chart only ####
 
 test_that("B4 A historical proportion moves the centre line but not the statistics", {
-  options <- binomialOptions(binomialSampleSizeType = "constant", binomialSampleSizeValue = 50,
+  options <- binomialOptions(attributeSampleSizeType = "constant", attributeSampleSizeValue = 50,
                              binomialHistoricalProportion = TRUE, binomialHistoricalProportionValue = 2)
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
@@ -137,8 +137,8 @@ test_that("B6 Cumulative defective plot", {
 })
 
 test_that("B6 Binomial plot and rate plot", {
-  options <- binomialOptions(binomialSampleSizeType = "variable", binomialSampleSizeVariable = "SampleSize",
-                             binomialDistributionPlot = TRUE, binomialRatePlot = TRUE)
+  options <- binomialOptions(attributeSampleSizeType = "variable", attributeSampleSizeVariable = "SampleSize",
+                             attributeDistributionPlot = TRUE, attributeRatePlot = TRUE)
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
   jaspTools::expect_equal_plots(binomialPlot(results, "distributionPlot"), "binomial-distribution")
@@ -146,8 +146,8 @@ test_that("B6 Binomial plot and rate plot", {
 })
 
 test_that("B6 Histogram of the percentage defective", {
-  options <- binomialOptions(binomialSampleSizeType = "constant", binomialSampleSizeValue = 50,
-                             binomialHistogram = TRUE)
+  options <- binomialOptions(attributeSampleSizeType = "constant", attributeSampleSizeValue = 50,
+                             attributeHistogram = TRUE)
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
   jaspTools::expect_equal_plots(binomialPlot(results, "histogram"), "binomial-histogram")
@@ -155,8 +155,8 @@ test_that("B6 Histogram of the percentage defective", {
 
 test_that("B6 Histogram with a target", {
   # the target is drawn as a dashed line and, being outside the observed range, also widens the x axis
-  options <- binomialOptions(binomialSampleSizeType = "constant", binomialSampleSizeValue = 50,
-                             binomialHistogram = TRUE, binomialTarget = TRUE, binomialTargetValue = 2)
+  options <- binomialOptions(attributeSampleSizeType = "constant", attributeSampleSizeValue = 50,
+                             attributeHistogram = TRUE, binomialTarget = TRUE, binomialTargetValue = 2)
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
   jaspTools::expect_equal_plots(binomialPlot(results, "histogram"), "binomial-histogram-target")
@@ -164,8 +164,8 @@ test_that("B6 Histogram with a target", {
 
 test_that("B6 The number of bins of the histogram follows the GUI", {
   binWidth <- function(nBins) {
-    options <- binomialOptions(binomialSampleSizeType = "constant", binomialSampleSizeValue = 50,
-                               binomialHistogram = TRUE, binomialHistogramBinNumber = nBins)
+    options <- binomialOptions(attributeSampleSizeType = "constant", attributeSampleSizeValue = 50,
+                               attributeHistogram = TRUE, attributeHistogramBinNumber = nBins)
     set.seed(1)
     results <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
     layer <- ggplot2::layer_data(binomialPlot(results, "histogram"), 1)
@@ -181,43 +181,43 @@ test_that("B6 The number of bins of the histogram follows the GUI", {
 test_that("B7 The two sample-size dependent panels are separate elements", {
   # QML only offers the histogram for a constant sample size and the rate plot for a variable one,
   # so each has its own element key and neither can be silently substituted for the other
-  options <- binomialOptions(binomialSampleSizeType = "constant", binomialSampleSizeValue = 50,
-                             binomialHistogram = TRUE)
+  options <- binomialOptions(attributeSampleSizeType = "constant", attributeSampleSizeValue = 50,
+                             attributeHistogram = TRUE)
   set.seed(1)
   constant <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
-  expect_true("binomialCapability_histogram" %in% names(binomialCollection(constant)))
-  expect_false("binomialCapability_ratePlot" %in% names(binomialCollection(constant)))
+  expect_true("attributeCapability_histogram" %in% names(binomialCollection(constant)))
+  expect_false("attributeCapability_ratePlot" %in% names(binomialCollection(constant)))
 
-  options <- binomialOptions(binomialSampleSizeType = "variable", binomialSampleSizeVariable = "SampleSize",
-                             binomialRatePlot = TRUE)
+  options <- binomialOptions(attributeSampleSizeType = "variable", attributeSampleSizeVariable = "SampleSize",
+                             attributeRatePlot = TRUE)
   set.seed(1)
   variable <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
-  expect_true("binomialCapability_ratePlot" %in% names(binomialCollection(variable)))
-  expect_false("binomialCapability_histogram" %in% names(binomialCollection(variable)))
+  expect_true("attributeCapability_ratePlot" %in% names(binomialCollection(variable)))
+  expect_false("attributeCapability_histogram" %in% names(binomialCollection(variable)))
 })
 
 test_that("B7 A panel that does not match the sample size type is dropped", {
   # QML hides the check box that does not apply but keeps its value, so a histogram ticked under a
   # constant sample size must not survive the switch to a variable one, and vice versa
-  options <- binomialOptions(binomialSampleSizeType = "variable", binomialSampleSizeVariable = "SampleSize",
-                             binomialHistogram = TRUE, binomialRatePlot = TRUE)
+  options <- binomialOptions(attributeSampleSizeType = "variable", attributeSampleSizeVariable = "SampleSize",
+                             attributeHistogram = TRUE, attributeRatePlot = TRUE)
   set.seed(1)
   variable <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
-  expect_false("binomialCapability_histogram" %in% names(binomialCollection(variable)))
-  expect_true("binomialCapability_ratePlot" %in% names(binomialCollection(variable)))
+  expect_false("attributeCapability_histogram" %in% names(binomialCollection(variable)))
+  expect_true("attributeCapability_ratePlot" %in% names(binomialCollection(variable)))
 
-  options <- binomialOptions(binomialSampleSizeType = "constant", binomialSampleSizeValue = 50,
-                             binomialHistogram = TRUE, binomialRatePlot = TRUE)
+  options <- binomialOptions(attributeSampleSizeType = "constant", attributeSampleSizeValue = 50,
+                             attributeHistogram = TRUE, attributeRatePlot = TRUE)
   set.seed(1)
   constant <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
-  expect_false("binomialCapability_ratePlot" %in% names(binomialCollection(constant)))
-  expect_true("binomialCapability_histogram" %in% names(binomialCollection(constant)))
+  expect_false("attributeCapability_ratePlot" %in% names(binomialCollection(constant)))
+  expect_true("attributeCapability_histogram" %in% names(binomialCollection(constant)))
 })
 
 # 8. Error paths ####
 
 test_that("B8 More defectives than inspected units is reported for a single sample", {
-  options <- binomialOptions(binomialSampleSizeType = "constant", binomialSampleSizeValue = 5)
+  options <- binomialOptions(attributeSampleSizeType = "constant", attributeSampleSizeValue = 5)
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
   # regression guard: %i throws on the doubles that come out of the data reader, %s must be used
@@ -226,15 +226,15 @@ test_that("B8 More defectives than inspected units is reported for a single samp
 })
 
 test_that("B8 More defectives than inspected units reports the number of affected samples", {
-  options <- binomialOptions(binomialSampleSizeType = "constant", binomialSampleSizeValue = 2)
+  options <- binomialOptions(attributeSampleSizeType = "constant", attributeSampleSizeValue = 2)
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
   expect_match(results[["results"]][["errorMessage"]], "samples are affected in total", fixed = TRUE)
 })
 
 test_that("B8 Non-integer defectives are rejected", {
-  options <- binomialOptions(binomialDefectives = "DefectivesFractional",
-                             binomialSampleSizeType = "variable", binomialSampleSizeVariable = "SampleSize")
+  options <- binomialOptions(attributeCounts = "DefectivesFractional",
+                             attributeSampleSizeType = "variable", attributeSampleSizeVariable = "SampleSize")
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialEdgeData(), options)
   expect_match(results[["results"]][["errorMessage"]],
@@ -242,8 +242,8 @@ test_that("B8 Non-integer defectives are rejected", {
 })
 
 test_that("B8 A sample size below one is rejected", {
-  options <- binomialOptions(binomialSampleSizeType = "variable",
-                             binomialSampleSizeVariable = "SampleSizeInvalid")
+  options <- binomialOptions(attributeSampleSizeType = "variable",
+                             attributeSampleSizeVariable = "SampleSizeInvalid")
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialEdgeData(), options)
   expect_match(results[["results"]][["errorMessage"]],
@@ -253,8 +253,8 @@ test_that("B8 A sample size below one is rejected", {
 # 9. Degenerate process ####
 
 test_that("B9 Zero observed defectives does not crash and is flagged", {
-  options <- binomialOptions(binomialDefectives = "DefectivesZero",
-                             binomialSampleSizeType = "variable", binomialSampleSizeVariable = "SampleSize")
+  options <- binomialOptions(attributeCounts = "DefectivesZero",
+                             attributeSampleSizeType = "variable", attributeSampleSizeVariable = "SampleSize")
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialEdgeData(), options)
   expect_equal(results[["status"]], "complete")
@@ -265,7 +265,7 @@ test_that("B9 Zero observed defectives does not crash and is flagged", {
 # 10. Missing values keep the sample numbering ####
 
 test_that("B10 A missing sample does not shift the point numbers", {
-  options <- binomialOptions(binomialSampleSizeType = "constant", binomialSampleSizeValue = 50)
+  options <- binomialOptions(attributeSampleSizeType = "constant", attributeSampleSizeValue = 50)
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialMissingData(), options)
   # row 3 is missing and row 7 is out of control; the violation must stay "Point 7"
@@ -279,7 +279,7 @@ test_that("B10 A missing sample does not shift the point numbers", {
 # 11. Zone based rules stay off on a clamped p chart ####
 
 test_that("B11 Rules 4, 5, 6, 7 and 9 do not fire when the lower limit is clamped", {
-  options <- binomialOptions(binomialSampleSizeType = "variable", binomialSampleSizeVariable = "SampleSize",
+  options <- binomialOptions(attributeSampleSizeType = "variable", attributeSampleSizeVariable = "SampleSize",
                              testSet = "nelsonLaws")
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
@@ -296,8 +296,8 @@ test_that("B12 An out-of-control point is flagged on the summary table", {
 })
 
 test_that("B12 A stable process carries no out-of-control footnote", {
-  options <- binomialOptions(binomialDefectives = "Defectives",
-                             binomialSampleSizeType = "variable", binomialSampleSizeVariable = "SampleSize")
+  options <- binomialOptions(attributeCounts = "Defectives",
+                             attributeSampleSizeType = "variable", attributeSampleSizeVariable = "SampleSize")
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialEdgeData(), options)
   footnotes <- unlist(lapply(binomialFootnotes(results, "summaryTable"), `[[`, "text"))
@@ -307,12 +307,12 @@ test_that("B12 A stable process carries no out-of-control footnote", {
 # 13. Empty state ####
 
 test_that("B13 Without an assigned variable the analysis renders empty output", {
-  options <- binomialOptions(binomialDefectives = "")
+  options <- binomialOptions(attributeCounts = "")
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", binomialDataset(), options)
   expect_equal(results[["status"]], "complete")
 
-  summaryTable <- binomialCollection(results)[["binomialCapability_summaryTable"]]
+  summaryTable <- binomialCollection(results)[["attributeCapability_summaryTable"]]
   expect_equal(length(summaryTable[["data"]]), 0)
   expect_equal(length(summaryTable[["schema"]][["fields"]]), 4)
   expect_null(summaryTable[["error"]])
@@ -321,8 +321,8 @@ test_that("B13 Without an assigned variable the analysis renders empty output", 
 # 14. Report ####
 
 test_that("B14 Report", {
-  options <- binomialOptions(binomialSampleSizeType = "variable", binomialSampleSizeVariable = "SampleSize",
-                             report = TRUE, binomialDistributionPlot = TRUE)
+  options <- binomialOptions(attributeSampleSizeType = "variable", attributeSampleSizeVariable = "SampleSize",
+                             report = TRUE, attributeDistributionPlot = TRUE)
   options$reportTitleText     <- "Binomial capability"
   options$reportLocationText  <- "Amsterdam"
   options$reportLineText      <- "Line 1"
@@ -340,7 +340,7 @@ test_that("B14 Report", {
 })
 
 test_that("B14 Report without components selected shows an error", {
-  options <- binomialOptions(binomialSampleSizeType = "variable", binomialSampleSizeVariable = "SampleSize",
+  options <- binomialOptions(attributeSampleSizeType = "variable", attributeSampleSizeVariable = "SampleSize",
                              report = TRUE)
   options$reportProcessStability        <- FALSE
   options$reportProcessCapabilityPlot   <- FALSE

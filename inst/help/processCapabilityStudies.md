@@ -9,7 +9,13 @@ Rational subgroup: "A subgroup gathered in such a manner as to give the maximum 
 -------
 ### Data Type
 - **Measurement data (variables)**: each observation is a continuous measurement that is compared against specification limits. This is the analysis described in the rest of this page and produces Cp/Cpk/Pp/Ppk.
-- **Pass/fail counts (attributes)**: each inspected unit is either good or defective, and the data are counts of defective units per sample. There are no specification limits; capability is expressed as %Defective, PPM defective and Process Z. See "Binomial Capability Analysis" below.
+- **Pass/fail counts (attributes)**: the data are counts per sample rather than measurements. There are no specification limits. See "Attribute Capability Analysis" below.
+
+### Count Type
+In attributes mode a second choice decides how the counts are interpreted. The distinction is between defective *units* and *defects*, and it is the most common source of confusion between the two modes:
+
+- **Defective units (binomial)**: every inspected unit is classified as either good or defective, so the count can never exceed the number of units inspected. Capability is expressed as %Defective, PPM defective and Process Z.
+- **Defects per unit (Poisson)**: a single unit can carry several defects, so the count *can* exceed the number of units inspected. Ten defects found on five inspected units is perfectly legal and means a rate of 2 defects per unit. Capability is expressed as DPU (defects per unit).
 
 Variables that were assigned in the other data type stay assigned when you switch, but they are not used by the active analysis.
 
@@ -129,27 +135,37 @@ The size of the subgroups is relevant for the calculation of the process varianc
 
 
 
-## Binomial Capability Analysis
+## Attribute Capability Analysis
 -------
-Selected with **Data type → Pass/fail counts (attributes)**. Every inspected unit is classified as either good or defective, and the data consist of the number of defective units $D_i$ found in a sample of $n_i$ inspected units. Because there is no measurement and no specification limit, capability is not expressed as Cp/Cpk/Pp/Ppk but as the percentage of defective units, the equivalent number of defectives per million and the corresponding sigma level.
+Selected with **Data type → Pass/fail counts (attributes)**. The data are counts per sample rather than measurements, so there are no specification limits and capability is not expressed as Cp/Cpk/Pp/Ppk. The **Count type** decides which of the two analyses below runs.
 
 Stages are not supported in this mode.
 
-### Assignment Box
+### Scale conventions of the two modes
+The two modes use opposite conventions, so they are stated here side by side:
+
+| | binomial | Poisson |
+|---|---|---|
+| reported throughout | percent | DPU (a rate) |
+| exception | the y-axis of the p chart is a proportion, following the usual SPC convention | the optional yield rows of the summary table are in percent and PPM |
+| historical value | a percentage | a rate |
+| target | a percentage | a rate |
+
+### Binomial Capability Analysis
+Every inspected unit is classified as either good or defective, and the data consist of the number of defective units $D_i$ found in a sample of $n_i$ inspected units. Capability is expressed as the percentage of defective units, the equivalent number of defectives per million and the corresponding sigma level. Because each unit is either good or defective, $D_i$ can never exceed $n_i$; a sample where it does is reported as an error.
+
+#### Assignment Box
 - **Defectives**: the number of defective units found in each sample.
 - **Sample size (Total)**: the number of units inspected in each sample. Only used when the sample size is set to "Variable".
 - **Timestamp (optional)**: labels for the samples, used on the x-axis of the p chart and in the test results table.
 
-### Options
+#### Options
 - **Sample size**: choose "Constant" and enter the number of units inspected in every sample, or choose "Variable" and assign a column holding the sample size. This choice also decides which of the two sample-size dependent panels is offered ("Rate of defectives" for variable sizes, "Distribution of defective (%)" for a constant size), so the label of the check box always matches what is drawn.
 - **Historical proportion defective (%)**: use a known proportion as the centre line of the p chart instead of estimating it from the data. This changes the chart only. The summary statistics are always estimated from the observed data, so that the reported estimate stays inside its own confidence interval.
 - **Target defective (%)**: a target percentage, reported in the summary table and drawn as a reference line in the cumulative plot and in the histogram.
 - **Confidence interval** and **Interval method**: the level and the method used for the intervals in the summary table and for the band of the cumulative plot.
 
-### Scale convention
-Everything is reported in percent, with one deliberate exception: the y-axis of the p chart is a proportion, following the usual SPC convention and matching the p chart of the *Control Charts for Attributes* analysis.
-
-### Output
+#### Output
 - **p chart**: the observed proportion defective $\hat{p}_i = D_i / n_i$ per sample with the centre line at $\bar{p} = \sum D_i / \sum n_i$ and control limits at $\bar{p} \pm k\sqrt{\bar{p}(1-\bar{p})/n_i}$, where $k$ is the number of standard deviations set under Advanced options. Because the limits depend on $n_i$, they step up and down whenever the number of inspected units changes: a smaller sample gives a less precise estimate and therefore wider limits. Limits are clamped to the interval $[0, 1]$. Only the run based tests (beyond limit, shift, trend, oscillation) are applied; the zone based tests are not, because the zones of a clamped, asymmetric chart do not correspond to actual sigma multiples.
 - **Cumulative defective (%)**: the running estimate $\sum_{j \le i} D_j / \sum_{j \le i} n_j$ with a confidence band, the overall estimate as a horizontal line and, if set, the target. The band shows whether enough samples were collected for the estimate to settle.
 - **Binomial plot**: the observed number of defectives against the expected number, with the diagonal $y = x$ as reference. The expected number is $n_i$ times the centre line proportion of the p chart, that is $n_i \bar{p}$, or $n_i$ times the historical proportion when one is set. Points scattering around the diagonal support the binomial assumption.
@@ -162,19 +178,70 @@ Everything is reported in percent, with one deliberate exception: the y-axis of 
     - Confidence intervals are computed on $\bar{p}$ and transformed to the PPM and Z scale. Because Z decreases in $p$, the upper bound of $p$ gives the lower bound of Z. Three methods are available: **exact** (Clopper-Pearson, the default and the most conservative), **Wald** (normal approximation, unreliable for small counts) and **Wilson** score.
     - A footnote warns when the p chart shows out-of-control points, because a capability estimate from an unstable process is not representative of future output.
 
-### Assumptions
+#### Assumptions
 - Units are inspected independently of one another.
 - The probability that a unit is defective is constant within a sample.
 - The number of inspected units per sample is known.
 - The process is in statistical control. If the p chart flags points, the capability estimate describes the observed data but does not predict future output.
 
+### Poisson Capability Analysis
+A single inspected unit can carry any number of defects, and the data consist of the total number of defects $C_i$ found in a sample of $n_i$ inspected units. Capability is expressed as **DPU**, the mean number of defects per unit.
+
+Because a unit can carry several defects, **$C_i$ may exceed $n_i$**. Ten defects on five inspected units is a DPU of 2 and is analysed without complaint; only a negative or non-integer count is rejected.
+
+#### Assignment Box
+- **Defects**: the total number of defects found in each sample.
+- **Sample size (Total)**: the number of units inspected in each sample, or the size of the inspected unit. Only used when the sample size is set to "Variable".
+- **Timestamp (optional)**: labels for the samples, used on the x-axis of the u chart and in the test results table.
+
+The inspected amount need not be a whole number: 2.5 square metres of sheet or 1.5 hours of operation are valid exposures. A **fractional sample size is accepted when it is assigned as a column**, but the *constant* sample size field takes whole numbers only, because the same field serves the binomial mode where a fractional number of inspected units is meaningless. Assign a column when the constant exposure is fractional. A sample with a sample size of zero carries no information and is excluded as a missing sample; it keeps its row, so the point numbering of the chart does not shift.
+
+#### Options
+- **Sample size**: as in the binomial mode, and it likewise decides which of the two sample-size dependent panels is offered.
+- **Historical defects per unit**: use a known defect rate as the centre line of the u chart instead of estimating it from the data. This is a rate, not a percentage. It changes the chart only; the summary statistics are always estimated from the observed data, so that the reported estimate stays inside its own confidence interval.
+- **Target defects per unit**: a target rate, reported in the summary table and drawn as a reference line in the cumulative plot and in the histogram.
+- **Confidence interval** and **Interval method**: the level and the method used for the interval on the mean DPU and for the band of the cumulative plot.
+
+#### Output
+- **u chart**: the observed defect rate $u_i = C_i / n_i$ per sample with the centre line at $\bar{u} = \sum C_i / \sum n_i$ and control limits at $\bar{u} \pm k\sqrt{\bar{u}/n_i}$, where $k$ is the number of standard deviations set under Advanced options. As on the p chart the limits step whenever $n_i$ changes. **Only the lower limit is clamped, at 0**: a defect rate has no upper bound, so there is no upper clamp. Only the run based tests are applied, for the same reason as on the p chart. When every sample inspects exactly one unit ($n \equiv 1$) the u chart is a c chart.
+- **Cumulative defects per unit**: the running estimate $\sum_{j \le i} C_j / \sum_{j \le i} n_j$ with a confidence band, the overall estimate as a horizontal line and, if set, the target.
+- **Poisson plot**: the observed number of defects against the expected number $n_i \bar{u}$, with the diagonal $y = x$ as reference. Points scattering around the diagonal support the Poisson assumption; a systematic spread that grows faster than the diagonal suggests overdispersion, for which a Laney u′ chart in *Control Charts for Attributes* is more appropriate.
+- **Rate of defects**: the defect rate against the sample size. A trend indicates that the rate depends on how much was inspected.
+- **Distribution of defects per unit**: a histogram of the defect rate across samples, with the target as a dashed vertical line if one is set.
+- **Summary statistics**:
+    - **Mean DPU** $= \bar{u} = \sum C_i / \sum n_i$, with a confidence interval. This is the whole analysis by default, matching Minitab's Poisson capability summary.
+    - Writing $C = \sum C_i$, $N = \sum n_i$, $\alpha = 1 - \text{level}$ and $z = \Phi^{-1}(1 - \alpha/2)$, three interval methods are available:
+        - **Exact (Garwood)**, the default and the Poisson analogue of Clopper-Pearson: lower $= F^{-1}_{\Gamma}(\alpha/2;\, C)/N$ and upper $= F^{-1}_{\Gamma}(1-\alpha/2;\, C+1)/N$, with the lower bound taken as 0 when $C = 0$.
+        - **Wald**, the normal approximation: $\bar{u} \pm z\sqrt{\bar{u}/N}$, floored at 0. Unreliable for small counts.
+        - **Score** (Rao), the Poisson analogue of Wilson: $\left(C + z^2/2 \pm z\sqrt{C + z^2/4}\right)/N$, floored at 0.
+    - **Yield statistics** (optional, off by default) add three derived rows. They rest on an assumption that the Poisson model itself does not make, namely that **a unit is conforming exactly when it carries no defect**; a footnote states this whenever they are shown. With that assumption the probability that a unit is free of defects is $e^{-\bar{u}}$, so:
+        - **Defective units (%)** $= 100\left(1 - e^{-\bar{u}}\right)$
+        - **PPM defective** $= 10^6\left(1 - e^{-\bar{u}}\right)$
+        - **Process Z** $= \Phi^{-1}\!\left(e^{-\bar{u}}\right)$
+        All three are monotone in $\bar{u}$, so the DPU interval carries over directly. The percentage and PPM keep the order of the bounds; Z reverses it, because Z decreases as the defect rate rises.
+    - A footnote warns when the u chart shows out-of-control points.
+    - When no defects at all were observed the mean DPU is exactly zero, the control limits collapse onto the centre line and nothing is flagged. A footnote points out that only the upper confidence bound is informative. There is no corresponding upper degenerate case, because a defect rate is unbounded above.
+
+#### Assumptions
+- Defects occur independently of one another.
+- The defect rate is constant within a sample.
+- The inspected amount per sample is known.
+- The process is in statistical control. If the u chart flags points, the capability estimate describes the observed data but does not predict future output.
+
 ### Relation to *Control Charts for Attributes*
-That analysis also produces a p chart, and the two do not have to agree:
+That analysis also produces p and u charts, and the results do not have to agree.
+
+For the **p chart** the limits themselves can differ:
 - This analysis always draws stepped control limits computed from the individual sample size $n_i$.
 - *Control Charts for Attributes* replaces the stepped limits with constant limits computed from the mean sample size whenever $\min(n)/\max(n) \ge 0.75$.
-- The two use different out-of-control rule engines, so they can flag different points.
 
-Use this analysis when you want capability statistics alongside the chart, and *Control Charts for Attributes* when you want np, c, u or Laney charts.
+For the **u chart** the limits agree: both analyses compute $\bar{u} \pm 3\sqrt{\bar{u}/n_i}$ per sample. What differs is:
+- the out-of-control rule engine and the styling, so the two can flag different points;
+- the number of standard deviations, which is fixed at 3 in *Control Charts for Attributes* and configurable here under Advanced options;
+- *Control Charts for Attributes* additionally offers the Laney u′ chart for overdispersed data, which this analysis does not;
+- *Control Charts for Attributes* rejects a sample whose count exceeds the sample size even on a u chart, which this analysis correctly allows.
+
+Use this analysis when you want capability statistics alongside the chart, and *Control Charts for Attributes* when you want np, c or Laney charts.
 
 ## References
 -------

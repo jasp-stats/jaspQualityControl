@@ -39,9 +39,16 @@ Defects charts: Defects charts are used for products that have multiple defects 
 X-mR chart, which charts the process values (individuals) and moving range (mR) over time.
 
 ### Relation to *Process Capability Studies*
-The *Process Capability Studies* analysis also produces a p chart, when its data type is set to "Pass/fail counts (attributes)". Use that analysis when you want capability statistics (%Defective, PPM defective, Process Z) alongside the chart. The two p charts do not have to agree:
+The *Process Capability Studies* analysis also produces p and u charts, when its data type is set to "Pass/fail counts (attributes)". Its count type chooses between them: "Defective units (binomial)" gives a p chart with %Defective, PPM defective and Process Z, and "Defects per unit (Poisson)" gives a u chart with the mean defects per unit (DPU). Use that analysis when you want capability statistics alongside the chart, and this one when you want np, c or Laney charts.
+
+The two **p charts** do not have to agree:
 - This analysis replaces the stepped control limits with constant limits computed from the mean sample size whenever min(n)/max(n) is at least 0.75; *Process Capability Studies* always computes the limits from the individual sample size, so its limits step whenever the sample size changes.
 - The two use different out-of-control rule engines, so they can flag different points.
+
+The two **u charts** compute the same limits, both using the per-sample formula. They can still differ in three ways:
+- The rule engines differ, so they can flag different points.
+- The number of standard deviations is fixed at 3 here and configurable in *Process Capability Studies*.
+- This analysis rejects a sample whose number of defects exceeds the sample size. That restriction is correct for the p and np charts, where each unit is either good or defective, but not for the u and c charts: a single unit can carry several defects, so ten defects on five inspected units is a legitimate rate of 2 defects per unit. *Process Capability Studies* accepts such samples in its Poisson mode.
 
 
 ### Out-of-control Signals 

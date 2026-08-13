@@ -17,10 +17,11 @@
 
 #' @export
 processCapabilityStudies <- function(jaspResults, dataset, options) {
-  # Attribute (pass/fail count) data has its own data entry, charts and statistics and shares
-  # nothing with the continuous pipeline below, so it branches out before any of it.
+  # Attribute (count) data has its own data entry, charts and statistics and shares nothing with the
+  # continuous pipeline below, so it branches out before any of it. Which of the two attribute
+  # analyses runs, binomial or Poisson, is decided there by attributeDistribution.
   if (options[["capabilityDataType"]] == "attributes")
-    return(.qcBinomialCapability(jaspResults, dataset, options))
+    return(.qcAttributeCapability(jaspResults, dataset, options))
 
   wideFormat <- options[["dataFormat"]] == "wideFormat"
   # In wide format we have one subgroup per row, else we need a either a grouping variable or later specify subgroup size manually
