@@ -1,8 +1,3 @@
----
-paths:
-  - "**/R/*.R"
----
-
 # JASP Dependency Management ($dependOn)
 
 How `$dependOn()` controls caching and invalidation of output elements in jaspResults.

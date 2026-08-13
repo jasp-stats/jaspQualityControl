@@ -1,8 +1,3 @@
----
-applyTo: "**/tests/testthat/*.R"
-description: "Test framework, snapshots, and test workflow for JASP analyses"
----
-
 # JASP Testing Instructions
 
 ## 1) Test Framework
@@ -31,6 +26,21 @@ These return a `jaspAgentTestResults` object with fields: `$status`, `$summary`,
 testAll()
 testAnalysis("AnalysisName")
 ```
+
+**MCP timeout for large modules:** `agentTestAll()` can take 180-300+ seconds. If `btw_tool_run_r` times out, fall back to Bash:
+
+```bash
+Rscript --no-init-file -e '
+  renv::load()
+  library(jaspTools)
+  setupJaspTools(pathJaspDesktop="/opt/jasp-desktop", installJaspModules=FALSE, installJaspCorePkgs=FALSE, quiet=TRUE, force=TRUE)
+  setPkgOption("module.dirs", ".")
+  setPkgOption("reinstall.modules", FALSE)
+  agentTestAll()
+'
+```
+
+Do NOT retry via MCP after a timeout -- use the Bash fallback immediately.
 
 **Critical rules:**
 

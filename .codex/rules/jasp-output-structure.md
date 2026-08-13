@@ -1,9 +1,3 @@
----
-paths:
-  - "**/tests/testthat/*.R"
-  - "**/R/*.R"
----
-
 # JASP Analysis Output Structure
 
 Reading and testing the serialized output from `jaspTools::runAnalysis()`.

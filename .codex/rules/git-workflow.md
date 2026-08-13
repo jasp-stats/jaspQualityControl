@@ -1,10 +1,3 @@
----
-paths:
-  - "**"
----
-
-# Git Workflow Instructions
-
 ## Commit Message Style
 
 **Be extremely concise. Sacrifice grammar for concision.**

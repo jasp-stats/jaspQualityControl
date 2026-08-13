@@ -1,6 +1,6 @@
 ---
-paths:
-  - "**"
+applyTo: "**"
+description: "Git workflow: commit style, branch strategy, PR guidelines, safety rules"
 ---
 
 # Git Workflow Instructions

@@ -1,3 +1,12 @@
+---
+name: fix-debug-analysis
+description: >
+  Guide for debugging JASP analysis functions via code inspection and saveRDS
+  state capture. Use when fixing bugs, troubleshooting errors, or debugging R
+  analysis functions in JASP modules through MCP sessions. Also use when a user
+  provides a .jasp file to reproduce an issue.
+---
+
 # Fix & Debug JASP Analysis (MCP Session)
 
 Quick reference for debugging JASP analysis functions through MCP sessions.

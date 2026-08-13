@@ -31,10 +31,12 @@ This project uses the `btw` MCP server (`.claude/mcp-server.R`) to provide a per
 
 ### Available MCP Tools
 
-Use these R-specific tools instead of Bash when possible:
+These are MCP tools — invoke them directly as tool calls, not as R functions or shell commands:
 
 | Tool | Use for |
 |------|---------|
+| `list_r_sessions` | Discover available R sessions (call first) |
+| `select_r_session` | Connect to a session from the list |
 | `btw_tool_run_r` | Execute R code in persistent session (variables persist between calls) |
 | `btw_tool_docs_help_page` | Look up R function documentation |
 | `btw_tool_docs_package_news` | Check package changelogs |
@@ -45,7 +47,7 @@ Use these R-specific tools instead of Bash when possible:
 | `btw_tool_session_platform_info` | Check R version and platform |
 | `btw_tool_session_check_package_installed` | Verify package availability |
 
-**Use Copilot Code native tools** (Read, Edit, Write, Glob, Grep, Bash) for file editing, git operations, and file search -- they are faster than MCP equivalents.
+**Use native tools** (Read, Edit, Write, Glob, Grep, Bash) for file editing, git operations, and file search -- they are faster than MCP equivalents.
 
 ## Working Effectively
 
@@ -68,18 +70,46 @@ This restores dependencies, installs the module, configures jaspTools, and regis
 
 Run via `btw_tool_run_r` in the persistent session:
 
-```r
-# Full test suite (300+ sec, NEVER CANCEL)
-testAll()
+**Agent-optimized** (preferred -- compact output, returns queryable result object):
 
-# Specific analysis tests (for quick iteration)
+```r
+# Full test suite -- returns rich S3 result object
+x <- agentTestAll()
+
+# Specific analysis tests
+x <- agentTestAnalysis("AnalysisName")
+```
+
+These return a `jaspAgentTestResults` object. Console output is a compact one-line summary:
+```
+== Test Results == FAIL: 0 | WARN: 0 | SKIP: 2 | PASS: 72 | Time: 3.6s
+```
+
+Query the result object directly:
+```r
+x$status        # 0 = all passed, 1 = failures
+x$summary       # list(fail, warn, skip, pass, time)
+x$failures      # data.frame: module | file | test | message
+x$warnings      # data.frame: module | file | test | message
+x$skips         # data.frame: module | file | test | reason
+x$tests         # data.frame: all tests with module | file | context | test | passed | failed | ...
+x$errorModules  # named character vector of module-level errors
+x$logFile       # path to detailed JSON log (with backtraces)
+```
+
+**Human-oriented** (verbose output, for interactive use):
+```r
+testAll()
 testAnalysis("AnalysisName")
 ```
 
-- `testAll()` at session start to verify baseline, and after all fixes to check regressions
-- `testAnalysis("Name")` for quick iteration while fixing specific analyses
+**Rules:**
+- Tests take 300+ seconds to complete -- **NEVER CANCEL**
+- Run `agentTestAll()` at session start to verify baseline, and after all fixes
+- Use `agentTestAnalysis("Name")` for quick iteration on specific analyses
 - Analysis names are PascalCase exports from NAMESPACE
-- Some tests may skip on certain platforms (e.g., Windows) -- this is expected
+- Some tests skip on certain platforms (e.g., Windows) -- expected
+- Some stderr noise (ggplot messages, tryCatch errors) may leak through -- expected and minor
 
 **See [testing.instructions.md](.github/instructions/testing.instructions.md) for detailed test writing guidelines, snapshots, and workflows.**
 
@@ -90,7 +120,7 @@ testAnalysis("AnalysisName")
 options <- jaspTools::analysisOptions("AnalysisName")
 options$someOption <- value
 set.seed(1)
-results <- jaspTools::runAnalysis("AnalysisName", "debug.csv", options)
+results <- jaspTools::runAnalysis("AnalysisName", "debug.csv", options, view = FALSE)
 ```
 
 **From a .jasp example file:**
@@ -100,7 +130,7 @@ opts     <- jaspTools::analysisOptions(jaspFile)
 dataset  <- jaspTools::extractDatasetFromJASPFile(jaspFile)
 encoded  <- jaspTools:::encodeOptionsAndDataset(opts, dataset)
 set.seed(1)
-results  <- jaspTools::runAnalysis("AnalysisName", encoded$dataset, encoded$options, encodedDataset = TRUE)
+results  <- jaspTools::runAnalysis("AnalysisName", encoded$dataset, encoded$options, encodedDataset = TRUE, view = FALSE)
 ```
 
 The encoding step is required because JASP internally encodes variable names and options to resolve ambiguities (e.g., same variable used with different types).
@@ -108,6 +138,8 @@ The encoding step is required because JASP internally encodes variable names and
 **From a user-provided .jasp file:** Use the same pattern above. This is the primary way to reproduce bugs reported by users.
 
 ### Inspecting Results
+
+Always set `view = FALSE` when running `runAnalysis()` manually. This avoids HTML generation; inspect the returned R object instead.
 
 After `runAnalysis()`, check:
 - `results$status` -- `"complete"` or `"fatalError"`
@@ -211,7 +243,7 @@ After `runAnalysis()`, check:
 2. Add QML interface in `inst/qml/`
 3. Define analysis in `inst/Description.qml`
 4. Add unit tests in `tests/testthat/`
-5. Run `testAll()` to validate (300+ seconds, NEVER CANCEL)
+5. Run `agentTestAll()` to validate (300+ seconds, NEVER CANCEL)
 
 ### Modifying Existing Analysis
 
@@ -219,7 +251,7 @@ After `runAnalysis()`, check:
 2. Update QML if adding/changing options
 3. Update unit tests and expected results
 4. Add upgrade mapping to `inst/Upgrades.qml` if renaming options
-5. Run tests: `testAll()` (NEVER CANCEL, 300+ seconds)
+5. Run tests: `agentTestAll()` (NEVER CANCEL, 300+ seconds)
 
 ### Detailed Development Process
 - **Step 1**: Create main analysis function with `jaspResults`, `dataset`, `options` arguments
