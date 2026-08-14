@@ -309,7 +309,7 @@
 .qcAttributeRateScale <- function(options) if (.qcAttributeIsPoisson(options)) 1 else 100
 
 .qcAttributeRateLabel <- function(options) {
-  if (.qcAttributeIsPoisson(options)) gettext("Defects per unit") else gettext("Defective (%)")
+  if (.qcAttributeIsPoisson(options)) gettext("Defects per unit") else gettextf("Defective (%%)")
 }
 
 .qcAttributeTargetValue <- function(options) {
@@ -428,7 +428,7 @@
   if (!is.null(container[["cumulativePlot"]]))
     return()
 
-  title <- if (.qcAttributeIsPoisson(options)) gettext("Cumulative defects per unit") else gettext("Cumulative defective (%)")
+  title <- if (.qcAttributeIsPoisson(options)) gettext("Cumulative defects per unit") else gettextf("Cumulative defective (%%)")
   plot  <- createJaspPlot(title = title, width = 600, height = 400)
   plot$position <- 2
   plot$dependOn(c("attributeCumulativePlot", "attributeCiLevel", "binomialCiMethod", "poissonCiMethod"))
@@ -453,7 +453,7 @@
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(na.omit(c(plotData$lower, plotData$upper, plotData$estimate,
                                                        overall, target)))
   yLimits <- range(yBreaks)
-  yTitle  <- if (.qcAttributeIsPoisson(options)) gettext("Cumulative defects per unit") else gettext("Cumulative defective (%)")
+  yTitle  <- if (.qcAttributeIsPoisson(options)) gettext("Cumulative defects per unit") else gettextf("Cumulative defective (%%)")
 
   # colours follow the continuous capability plots: grey/black for the data, red for the estimated
   # process level, darkgreen for the target
@@ -536,7 +536,7 @@
   title <- if (type == "rate") {
     if (poisson) gettext("Rate of defects") else gettext("Rate of defectives")
   } else {
-    if (poisson) gettext("Distribution of defects per unit") else gettext("Distribution of defective (%)")
+    if (poisson) gettext("Distribution of defects per unit") else gettextf("Distribution of defective (%%)")
   }
   plot <- createJaspPlot(title = title, width = 600, height = 400)
   plot$position <- 4
@@ -667,7 +667,7 @@
 
     if (options[["poissonYieldStatistics"]])
       tableDf <- rbind(tableDf,
-                       data.frame(statistic = c(gettext("Defective units (%)"), gettext("PPM defective"),
+                       data.frame(statistic = c(gettextf("Defective units (%%)"), gettext("PPM defective"),
                                                 gettext("Process Z")),
                                   value     = c(state[["percentUnits"]], state[["ppmUnits"]], state[["processZ"]]),
                                   ciLower   = c(state[["percentUnitsCi"]][1], state[["ppmUnitsCi"]][1],
@@ -683,14 +683,14 @@
                                            ciUpper   = NA_real_,
                                            stringsAsFactors = FALSE))
   } else {
-    tableDf <- data.frame(statistic = c(gettext("Defective (%)"), gettext("PPM defective"), gettext("Process Z")),
+    tableDf <- data.frame(statistic = c(gettextf("Defective (%%)"), gettext("PPM defective"), gettext("Process Z")),
                           value     = c(state[["percentDefective"]], state[["ppm"]], state[["processZ"]]),
                           ciLower   = c(state[["percentDefectiveCi"]][1], state[["ppmCi"]][1], state[["processZCi"]][1]),
                           ciUpper   = c(state[["percentDefectiveCi"]][2], state[["ppmCi"]][2], state[["processZCi"]][2]),
                           stringsAsFactors = FALSE)
 
     if (options[["binomialTarget"]])
-      tableDf <- rbind(tableDf, data.frame(statistic = gettext("Target defective (%)"),
+      tableDf <- rbind(tableDf, data.frame(statistic = gettextf("Target defective (%%)"),
                                            value     = options[["binomialTargetValue"]],
                                            ciLower   = NA_real_,
                                            ciUpper   = NA_real_,
