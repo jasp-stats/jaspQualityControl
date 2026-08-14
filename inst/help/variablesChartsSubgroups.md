@@ -29,16 +29,27 @@ The size of the subgroups is relevant for the calculation of the process varianc
 - Assume equal subgroup sizes: the control limits are calculated with the assumption that all subgroups have the same size, and the same control limits are calculated for all groups. In this case, the size of the largest subgroup is used for the calculation.
 - Calculate with actual size: the control limits are calculated per subgroup and the actual subgroup sizes are used for the calculation.
 
+### Control Charts
+-------
+- X-bar & R / X-bar & s: the standard subgroup charts, see Output below.
+- I-MR-R/s (between/within): see Output below. Two additional options are available for this chart:
+    - Within-subgroup chart: whether the within-subgroup variation is monitored with a range (R) or a standard deviation (s) chart.
+    - Moving range length: the number of consecutive subgroup means used for each moving range. The default of 2 uses the difference between two successive subgroup means.
+
 ### Plotting Options
 -------
 - Warning limits: plots limits one and two standard deviations from the central line. 
-- Known parameters: enables the use of historic parameter values (Phase 2). 
+- Known parameters: enables the use of historic parameter values (Phase 2). Not available for the I-MR-R/s chart, because that chart requires a separate between- and within-subgroup standard deviation.
 
 ## Output
 ### Charts
 -------
 - X-bar & R chart: plots the process mean (x-bar) and process range (R) over time.
 - X-bar & s chart: plots the process mean (x-bar) and process standard deviation (s) over time.
+- I-MR-R/s chart (between/within): plots three charts that separate the variation *between* subgroups from the variation *within* subgroups. Use it when the subgroups themselves differ systematically, for instance when each subgroup is a separate batch, cavity or shift. In that situation the X-bar chart is misleading, because it judges the subgroup means against the (small) within-subgroup variation only, which produces control limits that are too narrow and many false alarms.
+    - I chart: monitors the process mean. Each point is a subgroup mean, and the control limits are calculated from the variation *between* the subgroups (the average moving range of the subgroup means), not from the variation within them.
+    - MR chart: monitors the moving range of the subgroup means, and therefore also the variation between subgroups only.
+    - R chart or s chart: monitors the variation *within* the subgroups, calculated exactly as for the X-bar & R and X-bar & s charts.
 
 ### Out-of-control Signals 
 -------
