@@ -25,16 +25,18 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   fit <- .bpcsCapabilityTable(jaspResults, dataset, options, position = 1)
   priorFit <- .bpcsSamplePosteriorOrPrior(jaspResults, dataset, options, prior = TRUE)
 
-  .bpcsCapabilityPlot(jaspResults, options, fit, priorFit, position = 2)
-  .bpcsCapabilityPlot(jaspResults, options, fit, priorFit, position = 3, base = "priorDistributionPlot")
+  .bpcsProcessOverviewPlot(jaspResults, dataset, options, fit, position = 2)
+  .bpcsTimeSeriesPlot(jaspResults, dataset, options, position = 3)
+  .bpcsCapabilityPlot(jaspResults, options, fit, priorFit, position = 4)
+  .bpcsCapabilityPlot(jaspResults, options, fit, priorFit, position = 5, base = "priorDistributionPlot")
 
-  .bpcsIntervalTable(jaspResults, options, fit, position = 4)
+  .bpcsIntervalTable(jaspResults, options, fit, position = 6)
 
-  .bpcsSequentialPointEstimatePlot(   jaspResults, dataset, options, fit, position = 5)
-  .bpcsSequentialIntervalEstimatePlot(jaspResults, dataset, options, fit, position = 6)
+  .bpcsSequentialPointEstimatePlot(   jaspResults, dataset, options, fit, position = 7)
+  .bpcsSequentialIntervalEstimatePlot(jaspResults, dataset, options, fit, position = 8)
 
-  .bpcsPlotPredictive(jaspResults, dataset, options, fit,      position = 7, base = "posteriorPredictiveDistributionPlot")
-  .bpcsPlotPredictive(jaspResults, dataset, options, priorFit, position = 8, base = "priorPredictiveDistributionPlot")
+  .bpcsPlotPredictive(jaspResults, dataset, options, fit,      position = 9, base = "posteriorPredictiveDistributionPlot")
+  .bpcsPlotPredictive(jaspResults, dataset, options, priorFit, position = 10, base = "priorPredictiveDistributionPlot")
 
 }
 
@@ -79,6 +81,15 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   )
 }
 
+.bpcsDistributionFromOptions <- function(options) {
+  switch(
+    options[["capabilityStudyType"]],
+    "normalCapabilityAnalysis" = "normal",
+    "tCapabilityAnalysis" = "t",
+    stop("Unknown capability study type: ", options[["capabilityStudyType"]])
+  )
+}
+
 .bpcsPlotLayoutDeps <- function(base, hasPrior = TRUE, hasEstimate = TRUE, hasCi = TRUE, hasType = FALSE, hasAxes = TRUE) {
   c(
     base,
@@ -97,7 +108,52 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 .bpcsPlotLayoutPriorDeps    <- function(base) { paste0(base, "PriorDistribution") }
 
 .bpcsProcessCriteriaDeps <- function() {
-  c(paste0("interval", 1:4), paste0("intervalLabel", 1:5))
+  "processCriteria"
+}
+
+.bpcsOverviewCriteriaDeps <- function() {
+  .bpcsProcessCriteriaDeps()
+}
+
+.bpcsProcessCriteria <- function(options) {
+  criteria <- options[["processCriteria"]]
+
+  if (is.null(criteria)) {
+    cutoffs <- unlist(options[paste0("interval", 1:4)], use.names = FALSE)
+    labels <- unlist(options[paste0("intervalLabel", 1:5)], use.names = FALSE)
+    if (length(cutoffs) != 4L || length(labels) != 5L)
+      stop("Specify at least two process criteria regions.", call. = FALSE)
+    criteria <- Map(
+      function(lower, label, upper) list(lower = lower, label = label, upper = upper),
+      c(-Inf, cutoffs), labels, c(cutoffs, Inf)
+    )
+  }
+
+  if (!is.list(criteria) || length(criteria) < 2L)
+    stop("Specify at least two process criteria regions.", call. = FALSE)
+
+  lower <- vapply(criteria, function(region) as.numeric(region[["lower"]]), numeric(1))
+  upper <- vapply(criteria, function(region) as.numeric(region[["upper"]]), numeric(1))
+  labels <- vapply(criteria, function(region) as.character(region[["label"]]), character(1))
+
+  if (anyNA(lower) || anyNA(upper) || any(!is.finite(lower) & lower != -Inf) || any(!is.finite(upper) & upper != Inf))
+    stop("Process criteria bounds must be numeric.", call. = FALSE)
+  if (any(lower >= upper))
+    stop("Each process criterion must have a left bound below its right bound.", call. = FALSE)
+  if (lower[1L] != -Inf || upper[length(upper)] != Inf)
+    stop("The first and last process criteria must extend to negative and positive infinity.", call. = FALSE)
+  if (any(lower[-1L] != upper[-length(upper)]))
+    stop("Adjacent process criteria must share a boundary.", call. = FALSE)
+  if (any(!nzchar(labels)))
+    stop("Each process criterion needs a classification label.", call. = FALSE)
+
+  list(
+    lower = lower,
+    upper = upper,
+    labels = make.unique(labels),
+    values = sort(unique(c(lower, upper)[is.finite(c(lower, upper))])),
+    thresholdLabels = make.unique(labels[-length(labels)])
+  )
 }
 
 .bpcsPriorComponentByName <- function(options, name) {
@@ -236,6 +292,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   rawfit <- jaspResults[[paste0(base, "State")]] %setOrRetrieve% (
     qc::bpc(
       x, chains = 1, warmup = 1000, iter = 5000, silent = TRUE, seed = 1,
+      distribution  = .bpcsDistributionFromOptions(options),
       target        = options[["targetValue"]],
       LSL           = options[["lowerSpecificationLimitValue"]],
       USL           = options[["upperSpecificationLimitValue"]],
@@ -291,7 +348,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 .bpcsGetSelectedMetrics <- function(options) {
-  allMetrics <- c("Cp", "CpU", "CpL", "Cpk", "Cpc", "Cpm")
+  allMetrics <- c("Cp", "Cpu", "Cpl", "Cpk", "Cpc", "Cpm")
   selectedMetrics <- allMetrics[c(options[["Cp"]],   options[["Cpu"]],  options[["Cpl"]],
                                   options[["Cpk"]],  options[["Cpc"]],  options[["Cpm"]])]
   return(selectedMetrics)
@@ -332,10 +389,10 @@ getCustomAxisLimits <- function(options, base) {
   selectedMetrics <- .bpcsGetSelectedMetrics(options)
   tryCatch({
 
-    # qc does c(-Inf, interval_probability, Inf)
-    interval_probability <- unlist(options[paste0("interval", 1:4)], use.names = FALSE)
+    criteria <- .bpcsProcessCriteria(options)
+    interval_probability <- criteria$values
     interval_summary <- summary(fit[["rawfit"]], interval_probability = interval_probability)[["interval_summary"]]
-    colnames(interval_summary) <- c("metric", paste0("interval", 1:5))
+    colnames(interval_summary) <- c("metric", paste0("interval", seq_along(criteria$labels)))
     interval_summary <- subset(interval_summary, metric %in% selectedMetrics)
     table$setData(interval_summary)
 
@@ -354,8 +411,9 @@ getCustomAxisLimits <- function(options, base) {
 
   table$addColumnInfo(name = "metric", title = gettext("Capability\nMeasure"), type = "string")
 
-  intervalBounds <- c(-Inf, unlist(options[paste0("interval",      1:4)], use.names = FALSE), Inf)
-  intervalNames  <-         unlist(options[paste0("intervalLabel", 1:5)], use.names = FALSE)
+  criteria <- .bpcsProcessCriteria(options)
+  intervalBounds <- c(criteria$lower[1L], criteria$upper)
+  intervalNames <- criteria$labels
   n <- length(intervalBounds)
 
   # custom format helper. we don't use e.g., %.3f directly because that adds trailing zeros (2.000 instead of 2)
@@ -375,6 +433,300 @@ getCustomAxisLimits <- function(options, base) {
 
 
 # Plots ----
+.bpcsProcessOverviewPlot <- function(jaspResults, dataset, options, fit, position) {
+
+  base <- "processOverview"
+  if (!options[[base]] || !is.null(jaspResults[[base]]))
+    return()
+
+  plot <- createJaspPlot(
+    title = gettext("Process Overview"), width = 1200, height = 800,
+    position = position,
+    dependencies = jaspDeps(c(
+      base, "processOverviewMetric", "processOverviewThreshold", .bpcsDefaultDeps(), .bpcsOverviewCriteriaDeps()
+    ))
+  )
+  jaspResults[[base]] <- plot
+
+  if (!.bpcsIsReady(options) || is.null(fit) || jaspResults$getError())
+    return()
+
+  tryCatch({
+    data <- .bpcsOverviewData(jaspResults, dataset, options, fit)
+    plot$plotObject <- .bpcsMakeProcessOverviewPlot(dataset, options, fit, data)
+  }, error = function(e) {
+    plot$setError(gettextf("Unexpected error in process overview: %s", e$message))
+  })
+}
+
+.bpcsOverviewData <- function(jaspResults, dataset, options, fit) {
+
+  base <- "processOverviewData"
+  jaspResults[[base]] %setOrRetrieve% (
+    .bpcsComputeOverviewData(dataset, options, fit) |>
+      createJaspState(jaspDeps(c("processOverviewMetric", .bpcsDefaultDeps(), .bpcsOverviewCriteriaDeps())))
+  )
+}
+
+.bpcsOverviewCriteria <- function(options) {
+  .bpcsProcessCriteria(options)
+}
+
+.bpcsOverviewThreshold <- function(options, criteria = .bpcsOverviewCriteria(options)) {
+  thresholdOption <- options[["processOverviewThreshold"]]
+  threshold <- suppressWarnings(as.numeric(thresholdOption))
+  if (length(threshold) == 1L && is.finite(threshold) && threshold %in% criteria$values)
+    return(threshold)
+
+  legacyIndex <- match(thresholdOption, paste0("interval", 1:4))
+  if (!is.na(legacyIndex) && legacyIndex <= length(criteria$values))
+    return(criteria$values[[legacyIndex]])
+
+  stop("Unknown process overview threshold.")
+}
+
+.bpcsOverviewRegionColors <- function(criteria) {
+  colors <- qc::default_region_colors()
+  if (length(criteria$labels) > length(colors))
+    colors <- grDevices::hcl.colors(length(criteria$labels), palette = "Set 2")
+  else
+    colors <- colors[seq_len(length(criteria$labels))]
+
+  names(colors) <- criteria$labels
+  colors
+}
+
+.bpcsOverviewSampleSizes <- function(n) {
+  if (!is.finite(n) || n < 3L)
+    stop("Process overview requires at least 3 observations.", call. = FALSE)
+
+  unique(as.integer(round(seq(3L, n, length.out = min(5L, n - 2L)))))
+}
+
+.bpcsOverviewMetric <- function(options) {
+  metric <- options[["processOverviewMetric"]]
+  if (is.null(metric) || !nzchar(metric))
+    metric <- "Cpk"
+  if (!metric %in% c("Cp", "Cpu", "Cpl", "Cpk", "Cpc", "Cpm"))
+    stop("Unknown process overview capability metric.", call. = FALSE)
+  metric
+}
+
+.bpcsMetricExceedanceProbabilities <- function(fit, metric, criteria) {
+  intervals <- summary(fit, interval_probability = criteria)[["interval_summary"]]
+  metricRow <- intervals[as.character(intervals$metric) == metric, -1L, drop = FALSE]
+  if (nrow(metricRow) != 1L)
+    stop(gettextf("The capability metric %s is unavailable.", metric), call. = FALSE)
+
+  intervalProbabilities <- as.numeric(metricRow[1L, ])
+  expectedLength <- length(criteria) + 1L
+  if (length(intervalProbabilities) != expectedLength)
+    stop(
+      gettextf("Expected %d interval probabilities for %s, but received %d.", expectedLength, metric, length(intervalProbabilities)),
+      call. = FALSE
+    )
+
+  probabilities <- rev(cumsum(rev(intervalProbabilities[-1L])))
+  if (length(probabilities) != length(criteria))
+    stop("Could not calculate process overview probabilities.", call. = FALSE)
+  probabilities
+}
+
+.bpcsCpkExceedanceProbabilities <- function(fit, criteria) {
+  .bpcsMetricExceedanceProbabilities(fit, "Cpk", criteria)
+}
+
+.bpcsFit <- function(x, options, prior = .bpcsPriorHelper(options)) {
+  qc::bpc(
+    x, chains = 1, warmup = 1000, iter = 5000, silent = TRUE, seed = 1,
+    distribution = .bpcsDistributionFromOptions(options),
+    target = options[["targetValue"]],
+    LSL = options[["lowerSpecificationLimitValue"]],
+    USL = options[["upperSpecificationLimitValue"]],
+    prior = prior
+  )
+}
+
+.bpcsComputeOverviewData <- function(dataset, options, fit) {
+
+  criteria <- .bpcsOverviewCriteria(options)
+  metric <- .bpcsOverviewMetric(options)
+  sampleSizes <- .bpcsOverviewSampleSizes(nrow(dataset))
+  probabilities <- matrix(NA_real_, nrow = length(sampleSizes), ncol = length(criteria$values))
+  x <- dataset[[1L]]
+
+  jaspBase::startProgressbar(length(sampleSizes), label = gettext("Running process overview"))
+  failed <- 0L
+  for (i in seq_along(sampleSizes)) {
+    fit_i <- tryCatch(
+      .bpcsFit(x[seq_len(sampleSizes[i])], options),
+      error = function(e) NULL
+    )
+
+    if (is.null(fit_i)) {
+      failed <- failed + 1L
+    } else {
+      probabilities[i, ] <- .bpcsMetricExceedanceProbabilities(fit_i, metric, criteria$values)
+    }
+    jaspBase::progressbarTick()
+  }
+
+  if (failed > 0L && failed / length(sampleSizes) > 0.1) {
+    stop(
+      sprintf(
+        "%d of %d cumulative fits failed (%.0f%%). Cannot render process overview.",
+        failed, length(sampleSizes), 100 * failed / length(sampleSizes)
+      ),
+      call. = FALSE
+    )
+  }
+
+  list(
+    sampleSizes = sampleSizes,
+    probabilities = probabilities,
+    sensitivity = .bpcsComputeOverviewSensitivity(dataset, options, fit, metric, criteria$values)
+  )
+}
+
+.bpcsComputeOverviewSensitivity <- function(dataset, options, fit, metric, criteria) {
+
+  activePrior <- .bpcsPriorHelper(options)
+  entries <- stats::setNames(list(fit$rawfit), gettext("Active prior"))
+  unavailable <- character()
+  x <- dataset[[1L]]
+
+  addPrior <- function(label, prior) {
+    priorFit <- tryCatch(.bpcsFit(x, options, prior = prior), error = function(e) NULL)
+    if (is.null(priorFit)) {
+      unavailable <<- c(unavailable, gettextf("%s prior could not be fitted.", label))
+    } else {
+      entries[[label]] <<- priorFit
+    }
+  }
+
+  if (.bpcsDistributionFromOptions(options) == "normal" && !identical(activePrior, "DCSI")) {
+    addPrior(gettext("DCSI"), "DCSI")
+  }
+  if (!identical(activePrior, "Jeffreys")) {
+    addPrior(gettext("Jeffreys"), "Jeffreys")
+  }
+  if (.bpcsDistributionFromOptions(options) == "t") {
+    unavailable <- c(unavailable, gettext("DCSI is unavailable for the Student's t model."))
+  }
+
+  probabilities <- vapply(entries, .bpcsMetricExceedanceProbabilities, numeric(length(criteria)), metric = metric, criteria = criteria)
+  if (is.null(dim(probabilities)))
+    probabilities <- matrix(probabilities, ncol = 1L, dimnames = list(NULL, names(entries)))
+
+  list(probabilities = probabilities, unavailable = paste(unavailable, collapse = "\n"))
+}
+
+.bpcsMakeProcessOverviewPlot <- function(dataset, options, fit, data) {
+
+  criteria <- .bpcsOverviewCriteria(options)
+  metric <- .bpcsOverviewMetric(options)
+  threshold <- .bpcsOverviewThreshold(options, criteria)
+  thresholdIndex <- match(threshold, criteria$values)
+  regionColors <- .bpcsOverviewRegionColors(criteria)
+  rawData <- dataset[[1L]]
+
+  timeSeriesPlot <- qc::plot_time_series(
+    rawData,
+    LSL = options[["lowerSpecificationLimitValue"]],
+    target = options[["targetValue"]],
+    USL = options[["upperSpecificationLimitValue"]]
+  ) +
+    ggplot2::labs(title = gettext("Time series")) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
+
+  densityPlot <- qc::plot_density(
+    fit$summaryObject,
+    what = metric,
+    point_estimate = "none",
+    ci = "none",
+    single_panel = TRUE,
+    show_regions = TRUE,
+    textsize = 8,
+    region_cutoffs = criteria$values,
+    region_colors = regionColors
+  ) +
+    ggplot2::labs(title = gettextf("%s capability regions", metric)) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw(legend.position = "right")
+
+  # hacky, should probably add this in qc
+  densityPlot@layers$geom_line$show.legend  <- FALSE
+  # densityPlot@layers$geom_point$show.legend <- FALSE
+
+  overTimeData <- data.frame(
+    observation = data$sampleSizes,
+    probability = data$probabilities[, thresholdIndex]
+  )
+  overTimePlot <- ggplot2::ggplot(overTimeData, ggplot2::aes(x = observation, y = probability)) +
+    ggplot2::geom_line() +
+    ggplot2::geom_point() +
+    ggplot2::scale_y_continuous(limits = c(0, 1)) +
+    ggplot2::labs(
+      title = gettextf("P(%s > %g) over time", metric, threshold),
+      x = gettext("Number of observations"), y = gettext("Posterior probability")
+    ) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
+
+  sensitivityData <- data.frame(
+    prior = factor(colnames(data$sensitivity$probabilities), levels = colnames(data$sensitivity$probabilities)),
+    probability = data$sensitivity$probabilities[thresholdIndex, ]
+  )
+  sensitivityPlot <- ggplot2::ggplot(sensitivityData, ggplot2::aes(x = prior, y = probability)) +
+    ggplot2::geom_point(size = 3) +
+    ggplot2::scale_y_continuous(limits = c(0, 1)) +
+    ggplot2::labs(
+      title = gettextf("P(%s > %g) by prior", metric, threshold),
+      x = NULL, y = gettext("Posterior probability"), caption = data$sensitivity$unavailable
+    ) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
+
+  patchwork::wrap_plots(timeSeriesPlot, densityPlot, overTimePlot, sensitivityPlot, ncol = 2) +
+    patchwork::plot_layout(guides = 'collect')
+}
+
+.bpcsTimeSeriesPlot <- function(jaspResults, dataset, options, position) {
+
+  base <- "timeSeriesPlot"
+  if (!options[[base]] || !is.null(jaspResults[[base]]))
+    return()
+
+  plot <- createJaspPlot(
+    title = gettext("Time Series Plot"), width = 600, height = 400,
+    position = position,
+    dependencies = jaspDeps(c(
+      base, "measurementLongFormat",
+      "lowerSpecificationLimit", "lowerSpecificationLimitValue",
+      "target", "targetValue",
+      "upperSpecificationLimit", "upperSpecificationLimitValue"
+    ))
+  )
+  jaspResults[[base]] <- plot
+
+  if (ncol(dataset) == 0L || jaspResults$getError())
+    return()
+
+  tryCatch({
+    plot$plotObject <- qc::plot_time_series(
+      dataset[[1L]],
+      LSL = if (options[["lowerSpecificationLimit"]]) options[["lowerSpecificationLimitValue"]] else NULL,
+      target = if (options[["target"]]) options[["targetValue"]] else NULL,
+      USL = if (options[["upperSpecificationLimit"]]) options[["upperSpecificationLimitValue"]] else NULL
+    ) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw()
+  }, error = function(e) {
+    plot$setError(gettextf("Unexpected error in time series plot: %s", e$message))
+  })
+}
+
 .bpcsCapabilityPlot <- function(jaspResults, options, fit, priorFit, position, base = "posteriorDistributionPlot") {
 
   if (!options[[base]] || !is.null(jaspResults[[base]]))
@@ -592,6 +944,7 @@ getCustomAxisLimits <- function(options, base) {
     fit_i <- tryCatch(
       qc::bpc(
         x_i, chains = 1, warmup = 1000, iter = 5000, silent = TRUE, seed = 1,
+        distribution = .bpcsDistributionFromOptions(options),
         target      = options[["targetValue"]],
         LSL         = options[["lowerSpecificationLimitValue"]],
         USL         = options[["upperSpecificationLimitValue"]],
