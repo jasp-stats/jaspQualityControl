@@ -403,7 +403,6 @@ msgctxt "Description|"
 msgid "Variables Charts for Individuals"
 msgstr ""
 
-#, fuzzy
 msgctxt "Description|"
 msgid "Probability of Detection"
 msgstr "Wahrscheinlichkeit von Entdeckung"
@@ -432,9 +431,10 @@ msgctxt "probabilityOfDetection|"
 msgid "Show data"
 msgstr "Daten anzeigen"
 
+#, fuzzy
 msgctxt "probabilityOfDetection|"
 msgid "Rugs"
-msgstr ""
+msgstr "Fransen"
 
 msgctxt "probabilityOfDetection|"
 msgid "Points"
@@ -700,7 +700,7 @@ msgstr "Einzelne Spalte"
 
 msgctxt "msaGaugeRR|"
 msgid "Across rows"
-msgstr ""
+msgstr "Über Zeilen"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Data format"
@@ -712,7 +712,7 @@ msgstr "Einzelne Spalte"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Across rows"
-msgstr ""
+msgstr "Über Zeilen"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Name"
@@ -732,7 +732,7 @@ msgstr "Einzelne Spalte"
 
 msgctxt "msaTestRetest|"
 msgid "Across rows"
-msgstr ""
+msgstr "Über Zeilen"
 
 msgctxt "msaTestRetest|"
 msgid "Measurements"
@@ -752,7 +752,7 @@ msgstr "Einzelne Spalte"
 
 msgctxt "processCapabilityStudies|"
 msgid "Across rows"
-msgstr ""
+msgstr "Über Zeilen"
 
 msgctxt "processCapabilityStudies|"
 msgid "Type of data distribution"
@@ -774,7 +774,6 @@ msgctxt "processCapabilityStudies|"
 msgid "Distribution of the process"
 msgstr "Verteilung des Prozesses"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Fit distribution"
 msgstr "Angepasste Verteilung"
@@ -797,7 +796,7 @@ msgstr "Einzelne Spalte"
 
 msgctxt "msaAttribute|"
 msgid "Across rows"
-msgstr ""
+msgstr "Über Zeilen"
 
 msgctxt "msaAttribute|"
 msgid "Cohen's kappa (interrater kappa)"
@@ -891,9 +890,10 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Single column"
 msgstr "Einzelne Spalte"
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Across rows"
-msgstr ""
+msgstr "Über Zeilen"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Known parameters"
@@ -2715,9 +2715,10 @@ msgctxt "timeWeightedCharts|"
 msgid "Single column"
 msgstr "Einzelne Spalte"
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Across rows"
-msgstr ""
+msgstr "Über Zeilen"
 
 #, fuzzy
 msgctxt "timeWeightedCharts|"

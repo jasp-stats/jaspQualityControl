@@ -37,7 +37,7 @@ msgstr "変更しにくい因子の数"
 
 msgctxt "doeFactorial|"
 msgid "Resolution"
-msgstr "解像度"
+msgstr "レゾリューション"
 
 msgctxt "msaAttribute|"
 msgid "Standard"
@@ -1063,7 +1063,7 @@ msgstr "実行数"
 
 msgctxt "doeModifyDesign|"
 msgid "Resolution"
-msgstr "解像度"
+msgstr "レゾリューション"
 
 msgctxt "doeModifyDesign|"
 msgid "Full"
