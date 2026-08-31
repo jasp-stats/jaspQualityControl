@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "r-mcptools": {
-      "type": "stdio",
-      "command": "Rscript",
-      "args": ["-e", "source('.claude/mcp-server.R')"]
-    }
-  }
-}
