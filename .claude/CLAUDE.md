@@ -129,9 +129,8 @@ After `runAnalysis()`, check:
 /
 ├── R/                           # Backend R analysis functions
 ├── inst/
-│   ├── qml/                     # QML interface definitions
+│   ├── qml/                     # QML interface definitions (help via info/infoBottom)
 │   ├── Descriptions/            # Analysis descriptions (Description.qml)
-│   ├── help/                    # Markdown help files
 │   └── Upgrades.qml             # Version upgrade mappings
 ├── examples/                    # Example .jasp files for testing
 ├── tests/testthat/              # Unit tests using jaspTools
