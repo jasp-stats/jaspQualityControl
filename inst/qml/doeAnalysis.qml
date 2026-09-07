@@ -341,11 +341,12 @@ Form
 		Section
 	{
 		title: qsTr("Plots")
-		columns: 	1
+		columns: 	2
 
 		Group
 		{
 			title:                                  qsTr("Residuals Plots")
+			columns: 	2
 
 			CheckBox
 			{
@@ -380,7 +381,54 @@ Form
 
 		Group
 		{
+			title: 								qsTr("Factorial Plots")
+			columns: 	2
+
+			CheckBox
+			{
+				name: 								"mainEffectsPlot"
+				label: 							qsTr("Main effect plots")
+				checked: 							false
+
+				CheckBox
+				{
+					name: 							"mainEffectsPlotCi"
+					label: 						qsTr("Confidence interval")
+					checked: 					true
+					childrenOnSameRow: 			true
+
+					CIField
+					{
+						name: 						"mainEffectsPlotCiLevel"
+					}
+				}
+			}
+
+			CheckBox
+			{
+				name: 								"interactionPlot"
+				label: 							qsTr("Interaction plots")
+				checked: 							false
+
+				CheckBox
+				{
+					name: 							"interactionPlotCi"
+					label: 						qsTr("Confidence interval")
+					checked: 					true
+					childrenOnSameRow: 			true
+
+					CIField
+					{
+						name: 						"interactionPlotCiLevel"
+					}
+				}
+			}
+		}
+
+		Group
+		{
 			title: qsTr("Other Plots")
+			columns: 	2
 
 			CheckBox
 			{
