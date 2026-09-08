@@ -94,9 +94,13 @@
                       tableTitles = "", # a list with the same layout as the tables list
                       reportTitle = "",
                       tableSize = 6) {
-  lengthAllElements <- length(plots) + length(tables) + (!is.null(text)) + sum(!sapply(plots, ggplot2::is.ggplot)) # length of plots, tables, one for the text and addition tables of nested plots
+  # a nested list of n plots is stacked in a single column and therefore occupies n - 1 slots beyond its own
+  nestedExtraSlots <- sum(vapply(plots, function(plot) if (ggplot2::is.ggplot(plot)) 0L else length(plot) - 1L, integer(1)))
+  # the tallest stack of nested plots determines the minimum number of rows of the two column layout
+  nRowsMinimum <- max(c(1L, vapply(plots, function(plot) if (ggplot2::is.ggplot(plot)) 1L else length(plot), integer(1))))
+  lengthAllElements <- length(plots) + length(tables) + (!is.null(text)) + nestedExtraSlots # length of plots, tables, one for the text and additional slots of nested plots
+  lengthAllElements <- max(lengthAllElements, nRowsMinimum * 2) # the layout has two columns, so every needed row costs two slots
   lengthAllElements <- if (lengthAllElements %% 2 != 0) lengthAllElements + 1 else lengthAllElements # always need even number
-  lengthAllElements <- if (any(!sapply(plots, ggplot2::is.ggplot)) && lengthAllElements < 3) 4 else lengthAllElements # edge case if only a nested plot is given
   plotList <- list()
   plotList[1:lengthAllElements] <- NA
   if (!is.null(text))
@@ -108,8 +112,8 @@
       plotList[[plotPos]] <- currentPlot
     } else { # it should be a list of ggplots
       plot1pos <- min(.indicesOfNAinList(plotList)) # smallest empty index
-      plotList[[plot1pos]] <- currentPlot[[1]]
-      plotList[[plot1pos + 2]] <- currentPlot[[2]] # plus two, so it's always below plot 1
+      for (m in seq_along(currentPlot))
+        plotList[[plot1pos + (m - 1) * 2]] <- currentPlot[[m]] # steps of two, so every plot sits below the previous one
     }
   }
   for (j in seq_along(tables)) {
@@ -644,7 +648,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list(LCL = LCLvector, UCL = UCLvector))
 }
 
-.controlChart <- function(dataset,  plotType        = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
+.controlChart <- function(dataset,  plotType        = c("xBar", "R", "I", "IM", "MR", "MMR", "s", "cusum", "ewma", "g", "t", "p", "u"),
                           ruleList                  = list(),
                           stages                    = "",
                           xBarSdType                = c("r", "s", "pooled"),
@@ -701,7 +705,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list(plotObject = plotObject, table = table, controlChartData = controlChartData))
 }
 
-.controlChart_calculations <- function(dataset, plotType               = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
+.controlChart_calculations <- function(dataset, plotType               = c("xBar", "R", "I", "IM", "MR", "MMR", "s", "cusum", "ewma", "g", "t", "p", "u"),
                                        ruleList                        = list(),
                                        stages                          = "",
                                        xBarSdType                      = c("r", "s", "pooled"),
@@ -753,10 +757,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     ###
-    ### Calculations for I, MR and MMR chart
+    ### Calculations for I, IM, MR and MMR chart
     ###
-    if (plotType == "I" || plotType == "MR" || plotType == "MMR") {
-      if (plotType == "MMR") {
+    if (plotType == "I" || plotType == "IM" || plotType == "MR" || plotType == "MMR") {
+      # IM and MMR are the individuals and moving range chart of the subgroup means (between-subgroup variation)
+      if (plotType == "MMR" || plotType == "IM") {
         subgroupMeans <- apply(dataCurrentStage, 1, mean, na.rm = TRUE)
         dataCurrentStage <- data.frame("subgroupMeans" = subgroupMeans)
       }
@@ -770,11 +775,18 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
       d2 <- KnownControlStats.RS(k)$constants[1]
       sigma <- meanMovingRange/d2
-      if (plotType == "I") {
+      if (plotType == "I" || plotType == "IM") {
         processMean <- mean(dataCurrentStageVector, na.rm = TRUE) # manually calculate mean as package does not remove NAs
         qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sigma, center = processMean, nsigmas = nSigmasControlLimits)
         plotStatistic <- qccObject$statistics
         limits <- qccObject$limits
+
+        # upper and lower warning limits at 1 sd and 2 sd; the limits are symmetric around the center line
+        # because the plot statistic is a location and not a dispersion statistic
+        UWL1 <- processMean + sigma
+        LWL1 <- processMean - sigma
+        UWL2 <- processMean + 2 * sigma
+        LWL2 <- processMean - 2 * sigma
       } else if (plotType == "MR" || plotType == "MMR" ) {
         qccObject <- qcc::qcc(mrMatrix, type = "R", plot = FALSE, std.dev = sigma, center = meanMovingRange, nsigmas = nSigmasControlLimits)
         limits <- unlist(.controlLimits(meanMovingRange, sigma, n = k, k = nSigmasControlLimits, type = "r"))
@@ -952,6 +964,46 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       center <- qweibull(p = .5, shape = shape, scale = scale)
       UCL <- qweibull(p = pnorm(3), shape = shape, scale = scale)
       LCL <- qweibull(p = pnorm(-3), shape = shape, scale = scale)
+      ###
+      ### Calculations for p chart
+      ###
+    } else if (plotType == "p") {
+      # expects exactly two columns: number of defectives and number of inspected units per sample
+      D <- dataCurrentStage[[1]]
+      n <- dataCurrentStage[[2]]
+      plotStatistic <- D / n
+      # phase2Mu is a proportion here; only evaluate it when phase 2 is requested, its default is ""
+      center <- if (phase2) as.numeric(phase2Mu) else sum(D, na.rm = TRUE) / sum(n, na.rm = TRUE)
+      se <- sqrt(center * (1 - center) / n)
+      # limits vary per sample and are clamped to the [0, 1] range of a proportion
+      UCL <- pmin(1, center + nSigmasControlLimits * se)
+      LCL <- pmax(0, center - nSigmasControlLimits * se)
+      # the p chart has no process std. dev.; this must be assigned because the returned list always
+      # contains "sd" = sigma and stats::sigma would silently be returned as a function otherwise
+      sigma <- NA_real_
+      # NOTE: because LCL is clamped at 0, the 1-sigma/2-sigma zones that .nelsonLaws derives from the
+      # control limits are not valid here. Zone-based rules (4, 5, 6, 7, 9) are therefore stripped by
+      # .getRuleListSubgroupCharts(type = "p"). If they are ever wanted, compute them from the
+      # unclamped per-point limits instead.
+      ###
+      ### Calculations for u chart
+      ###
+    } else if (plotType == "u") {
+      # expects exactly two columns: number of defects and number of inspected units per sample
+      C <- dataCurrentStage[[1]]
+      n <- dataCurrentStage[[2]]
+      plotStatistic <- C / n
+      # phase2Mu is a defect rate here; only evaluate it when phase 2 is requested, its default is ""
+      center <- if (phase2) as.numeric(phase2Mu) else sum(C, na.rm = TRUE) / sum(n, na.rm = TRUE)
+      se <- sqrt(center / n)
+      # unlike a proportion, a defect rate has no upper bound, so only the lower limit is clamped
+      UCL <- center + nSigmasControlLimits * se
+      LCL <- pmax(0, center - nSigmasControlLimits * se)
+      # the u chart has no process std. dev.; this must be assigned because the returned list always
+      # contains "sd" = sigma and stats::sigma would silently be returned as a function otherwise
+      sigma <- NA_real_
+      # NOTE: as on the p chart, the clamped LCL invalidates the zones .nelsonLaws derives from the
+      # limits, so zone rules are stripped by .getRuleListSubgroupCharts(type = "u").
     }
     if (i != 1) {
       if (plotType == "cusum") {
@@ -1065,7 +1117,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 }
 
 .controlChart_table <- function(tableList,
-                                plotType = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
+                                plotType = c("xBar", "R", "I", "IM", "MR", "MMR", "s", "cusum", "ewma", "g", "t", "p", "u"),
                                 stages   = "",
                                 tableLabels = "",
                                 nPoints = NA) {
@@ -1074,13 +1126,16 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                         "xBar" = "x-bar",
                         "R" = "range",
                         "I" = "individuals",
+                        "IM" = "subgroup mean",
                         "MR" = "moving range",
                         "MMR" = "moving range",
                         "s" = "s",
                         "cusum" = "cumulative sum",
                         "ewma"  = "exponentially weighted moving average",
                         "g"     = "g",
-                        "t"     = "t"
+                        "t"     = "t",
+                        "p"     = "p",
+                        "u"     = "u"
   )
   table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
   table$showSpecifiedColumnsOnly <- TRUE
@@ -1166,7 +1221,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 }
 
 .controlChart_plotting <- function(pointData, clData, stageLabels, clLabels,
-                                   plotType            = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
+                                   plotType            = c("xBar", "R", "I", "IM", "MR", "MMR", "s", "cusum", "ewma", "g", "t", "p", "u"),
                                    stages              = "",
                                    phase2              = FALSE,
                                    warningLimits       = FALSE,
@@ -1201,11 +1256,14 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                       "xBar"  = gettext("Sample average"),
                       "R"     = gettext("Sample range"),
                       "I"     = gettext("Individual value"),
+                      "IM"    = gettext("Subgroup mean"),
                       "MR"    = gettext("Moving range"),
                       "MMR"   = gettext("Moving range of subgroup mean"),
                       "s"     = gettext("Sample std. dev."),
                       "cusum" = gettext("Cumulative sum"),
-                      "ewma"  = gettext("Exponentially weighted moving average"))
+                      "ewma"  = gettext("Exponentially weighted moving average"),
+                      "p"     = gettext("Proportion defective"),
+                      "u"     = gettext("Defects per unit"))
   }
   lineType <- if (phase2) "solid" else "dashed"
   # Create plot
@@ -1711,7 +1769,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list)
 }
 
-.getRuleListSubgroupCharts <- function(options, type = c("xBar", "R", "s")) {
+.getRuleListSubgroupCharts <- function(options, type = c("xBar", "R", "s", "p", "u")) {
   ruleSet <- options[["testSet"]]
   if (ruleSet == "jaspDefault") {
     ruleList <- list("rule1" = list("enabled" = TRUE),
@@ -1760,7 +1818,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     )
   }
 
-  if (type != "xBar") { # never apply rules other than 1,2,3 or 8 to s or R chart
+  # Never apply rules other than 1, 2, 3 or 8 to the s, R, p or u chart. Those charts are asymmetric
+  # around the center line, so the 1-sigma/2-sigma zones that .nelsonLaws derives from the control
+  # limits do not correspond to actual sigma multiples. On the p and u charts the lower limit is
+  # additionally clamped at 0, which rescales the lower zones by a different factor for every sample
+  # size.
+  if (type != "xBar") {
     ruleList[["rule4"]] <- NULL
     ruleList[["rule5"]] <- NULL
     ruleList[["rule6"]] <- NULL

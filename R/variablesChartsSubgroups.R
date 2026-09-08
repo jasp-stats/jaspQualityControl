@@ -120,11 +120,16 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     return()
   }
 
+  # The I-MR-R/s chart monitors the between-subgroup variation with an I and MR chart of the subgroup means
+  # and the within-subgroup variation with an R or s chart
+  iMrRs <- options[["chartType"]] == "iMrRs"
+  withinChartType <- if (iMrRs) options[["iMrRsWithinChartType"]] else if (options[["chartType"]] == "xBarAndR") "R" else "s"
+
   # Plot note about R/S chart recommendation
-  if (length(measurements) > 5 && options[["chartType"]] == "xBarAndR") # if the subgroup size is above 5, R chart is not recommended
+  if (length(measurements) > 5 && withinChartType == "R") # if the subgroup size is above 5, R chart is not recommended
     plotNotes <- paste0(plotNotes, gettext("Subgroup size is >5, results may be biased. An s-chart is recommended."))
 
-  #X bar & R/s chart
+  #X bar & R/s chart or I-MR-R/s chart
   if (ready) {
 
 
@@ -135,55 +140,99 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
                                                 "report", "reportTitle", "reportMeasurementName", "reportMiscellaneous","reportReportedBy","reportDate", "reportSubtitle",
                                                 "reportChartName", "subgroupSizeUnequal", "axisLabels", "stagesWideFormat", "stagesLongFormat",
                                                 "subgroupSizeType", "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas",
-                                                "groupingVariableMethod", .getDependenciesControlChartRules()))
-      secondPlotType <- ifelse(options[["chartType"]] == "xBarAndR", "R", "s")
-      jaspResults[["controlCharts"]][["plot"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s control chart", secondPlotType), width = 1200, height = 500)
-      if (length(measurements) > 50 && secondPlotType == "R") { # if the subgroup size is above 50, the R package cannot calculate R charts.
+                                                "groupingVariableMethod", "iMrRsWithinChartType", "iMrRsMovingRangeLength",
+                                                .getDependenciesControlChartRules()))
+      chartTitle <- if (iMrRs) gettextf("I-MR-%1$s control chart", withinChartType) else gettextf("X-bar & %1$s control chart", withinChartType)
+      plotHeight <- if (iMrRs) 750 else 500
+      jaspResults[["controlCharts"]][["plot"]] <- createJaspPlot(title = chartTitle, width = 1200, height = plotHeight)
+      if (length(measurements) > 50 && withinChartType == "R") { # if the subgroup size is above 50, the R package cannot calculate R charts.
         jaspResults[["controlCharts"]][["plot"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
         return()
+      }
+      # the I and MR chart of the subgroup means need at least as many subgroups as the moving range is long
+      if (iMrRs) {
+        nSubgroupsPerStage <- if (identical(stages, "")) nrow(dataset) else table(dataset[[stages]])
+        if (any(nSubgroupsPerStage < options[["iMrRsMovingRangeLength"]])) {
+          jaspResults[["controlCharts"]][["plot"]]$setError(gettext("Moving range length is larger than the number of subgroups in one of the stages."))
+          return()
+        }
       }
 
       columnsToPass <- c(measurements, stages)
       columnsToPass <- columnsToPass[columnsToPass != ""]
-      xBarSdType <- tolower(secondPlotType)
+      xBarSdType <- tolower(withinChartType)
       clLabelSize <- if (options[["report"]]) 3.5 else 4.5
       fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
 
-      # Create the rule list for the out-of-control signals
-      ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
-      ruleList2 <- .getRuleListSubgroupCharts(options, type = secondPlotType)
+      if (iMrRs) {
+        # the I and MR chart of the subgroup means have symmetric control limits, so the zone based rules apply
+        # to them as they do to an individuals chart
+        ruleListI      <- .getRuleListIndividualCharts(options, type = "I")
+        ruleListMr     <- .getRuleListIndividualCharts(options, type = "MR")
+        ruleListWithin <- .getRuleListSubgroupCharts(options, type = withinChartType)
 
-      # first chart is always xBar-chart, second is either R- or s-chart
-      xBarChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleList1, plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
-                                 nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], phase2 = options[["knownParameters"]],
-                                 phase2Mu = options[["knownParametersMean"]], phase2Sd = options[["knownParametersSd"]],
-                                 fixedSubgroupSize = fixedSubgroupSize, warningLimits = options[["warningLimits"]],
-                                 xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
-                                 unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
-      secondChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleList2, plotType = secondPlotType,  stages = stages,
-                                   phase2 = options[["knownParameters"]], nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                                   phase2Sd = options[["knownParametersSd"]], fixedSubgroupSize = fixedSubgroupSize,
+        iChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleListI, plotType = "IM", stages = stages,
+                                nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
+                                movingRangeLength = options[["iMrRsMovingRangeLength"]], warningLimits = options[["warningLimits"]],
+                                xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize)
+        mrChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleListMr, plotType = "MMR", stages = stages,
+                                 nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
+                                 movingRangeLength = options[["iMrRsMovingRangeLength"]],
+                                 xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize)
+        withinChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleListWithin, plotType = withinChartType, stages = stages,
+                                     nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], fixedSubgroupSize = fixedSubgroupSize,
+                                     xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
+                                     unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
+        chartsTopToBottom <- list(iChart, mrChart, withinChart)
+      } else {
+        # Create the rule list for the out-of-control signals
+        ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
+        ruleList2 <- .getRuleListSubgroupCharts(options, type = withinChartType)
+
+        # first chart is always xBar-chart, second is either R- or s-chart
+        xBarChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleList1, plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
+                                   nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], phase2 = options[["knownParameters"]],
+                                   phase2Mu = options[["knownParametersMean"]], phase2Sd = options[["knownParametersSd"]],
+                                   fixedSubgroupSize = fixedSubgroupSize, warningLimits = options[["warningLimits"]],
                                    xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
                                    unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
-      jaspResults[["controlCharts"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
+        secondChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleList2, plotType = withinChartType,  stages = stages,
+                                     phase2 = options[["knownParameters"]], nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
+                                     phase2Sd = options[["knownParametersSd"]], fixedSubgroupSize = fixedSubgroupSize,
+                                     xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
+                                     unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
+        chartsTopToBottom <- list(xBarChart, secondChart)
+      }
+      # ggMatrixPlot fills the layout by index, so the plots are passed bottom to top and the layout reverses them
+      nCharts <- length(chartsTopToBottom)
+      plotObjectsBottomToTop <- lapply(rev(chartsTopToBottom), function(chart) chart$plotObject)
+      jaspResults[["controlCharts"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = plotObjectsBottomToTop,
+                                                                                     layout = matrix(nCharts:1, nCharts), removeXYlabels= "x")
       if (!identical(plotNotes, ""))
         jaspResults[["controlCharts"]][["plotNote"]] <- createJaspHtml(paste0("<i>Note.</i> ", plotNotes))
 
       # Nelson tests tables
+      if (iMrRs) {
+        jaspResults[["controlCharts"]][["iTable"]]      <- iChart$table
+        jaspResults[["controlCharts"]][["mrTable"]]     <- mrChart$table
+        jaspResults[["controlCharts"]][["withinTable"]] <- withinChart$table
+      } else {
         jaspResults[["controlCharts"]][["xBarTable"]]  <- xBarChart$table
         jaspResults[["controlCharts"]][["secondTable"]] <- secondChart$table
+      }
 
       # Report
       if (options[["report"]]) {
         jaspResults[["controlCharts"]] <- NULL
         jaspResults[["NelsonTables"]] <- NULL
-        reportPlot <- createJaspPlot(title = gettext("Variables Chart for Subgroups Report"), width = 1250, height = 1000)
+        reportPlot <- createJaspPlot(title = gettext("Variables Chart for Subgroups Report"), width = 1250, height = nCharts * 500)
         jaspResults[["report"]] <- reportPlot
         jaspResults[["report"]]$dependOn(c("chartType", "variables", "warningLimits", "knownParameters", "knownParametersMean", "manualTicks", 'nTicks',
                                            "knownParametersSd", "manualSubgroupSizeValue", "dataFormat", "subgroup", "measurementLongFormat",
                                            "subgroupSizeUnequal", "axisLabels", "stagesWideFormat", "stagesLongFormat",
                                            "subgroupSizeType", "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas",
-                                           "groupingVariableMethod", "report", "reportMetaData", "reportTitle", "reportTitleText",
+                                           "groupingVariableMethod", "iMrRsWithinChartType", "iMrRsMovingRangeLength",
+                                           "report", "reportMetaData", "reportTitle", "reportTitleText",
                                            "reportChartName", "reportChartNameText", "reportSubtitle", "reportSubtitleText",
                                            "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
                                            "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate",
@@ -211,7 +260,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
           text <- NULL
         }
 
-        plots <- list(list(xBarChart$plotObject, secondChart$plotObject))
+        plots <- list(lapply(chartsTopToBottom, function(chart) chart$plotObject))
         reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = 8,
                                       reportTitle = title)
         reportPlot$plotObject <- reportPlotObject

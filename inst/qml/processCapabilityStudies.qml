@@ -24,9 +24,39 @@ Form
 
 	DropDown
 	{
+		name: "capabilityDataType"
+		id: capabilityDataType
+		label: qsTr("Data type")
+		info: qsTr("Choose measurement data (continuous values compared against specification limits) or counts of defective units or defects per sample.")
+		indexDefaultValue: 0
+		values:
+		[
+			{label: qsTr("Measurement data (variables)"),	value: "variables"},
+			{label: qsTr("Pass/fail counts (attributes)"),	value: "attributes"},
+		]
+	}
+
+	DropDown
+	{
+		name: "attributeDistribution"
+		id: attributeDistribution
+		label: qsTr("Count type")
+		info: qsTr("Choose whether each inspected unit is classified as good or defective (binomial), or whether the number of defects found on the inspected units is counted, so that one unit can carry several defects (Poisson).")
+		visible: capabilityDataType.currentValue == "attributes"
+		indexDefaultValue: 0
+		values:
+		[
+			{label: qsTr("Defective units (binomial)"),	value: "binomial"},
+			{label: qsTr("Defects per unit (Poisson)"),	value: "poisson"},
+		]
+	}
+
+	DropDown
+	{
 		name: "dataFormat"
 		label: qsTr("Data format")
 		id: dataFormat
+		visible: capabilityDataType.currentValue == "variables"
 		indexDefaultValue: 0
 		values:
 		[
@@ -43,7 +73,7 @@ Form
 	VariablesForm
 	{
 		id:									variablesFormLongFormat
-		visible:							dataFormat.currentValue == "longFormat"
+		visible:							capabilityDataType.currentValue == "variables" && dataFormat.currentValue == "longFormat"
 
 		AvailableVariablesList
 		{
@@ -82,7 +112,7 @@ Form
 	VariablesForm
 	{
 		id:									variablesFormWideFormat
-		visible:							dataFormat.currentValue == "wideFormat"
+		visible:							capabilityDataType.currentValue == "variables" && dataFormat.currentValue == "wideFormat"
 
 		AvailableVariablesList
 		{
@@ -116,9 +146,52 @@ Form
 		}
 	}
 
+	VariablesForm
+	{
+		id:									variablesFormAttributes
+		visible:							capabilityDataType.currentValue == "attributes"
+
+		AvailableVariablesList
+		{
+			name:							"variablesFormAttributes"
+		}
+
+		AssignedVariablesList
+		{
+			name:							"attributeCounts"
+			title:							attributeDistribution.currentValue == "poisson" ? qsTr("Defects") : qsTr("Defectives")
+			id:								attributeCounts
+			info:							qsTr("For defective units (binomial), the number of defective units found in each inspected sample. For defects per unit (Poisson), the total number of defects found in each inspected sample, which may exceed the number of units inspected.")
+			allowedColumns:					["scale"]
+			singleVariable:					true
+		}
+
+		AssignedVariablesList
+		{
+			name:							"attributeSampleSizeVariable"
+			title:							qsTr("Sample size (Total)")
+			id:								attributeSampleSizeVariable
+			info:							qsTr("The number of units inspected in each sample, or the size of the inspected unit. Only used when the sample size varies between samples. For defects per unit (Poisson) the inspected amount may be fractional, for example 2.5 square metres.")
+			allowedColumns:					["scale"]
+			singleVariable:					true
+			enabled:						attributeSampleSizeType.value == "variable"
+		}
+
+		AssignedVariablesList
+		{
+			name:							"attributeLabels"
+			title:							qsTr("Timestamp (optional)")
+			id:								attributeLabels
+			info:							qsTr("Optional labels for the samples, used on the x-axis of the control chart and in the test results table.")
+			singleVariable:					true
+			allowedColumns:					["nominal"]
+		}
+	}
+
 	Group
 	{
 		columns:							2
+		visible:							capabilityDataType.currentValue == "variables"
 
 		RadioButtonGroup
 		{
@@ -201,6 +274,8 @@ Form
 
 		ColumnLayout
 		{
+			visible: capabilityDataType.currentValue == "variables"
+
 			Group
 			{
 				title: qsTr("Transform data")
@@ -614,6 +689,7 @@ Form
 
 		ColumnLayout
 		{
+			visible: capabilityDataType.currentValue == "variables"
 
 			Group
 			{
@@ -726,6 +802,241 @@ Form
 						name:					"probabilityPlotGridLines"
 						label:					qsTr("Display grid lines")
 					}
+				}
+			}
+		}
+
+		ColumnLayout
+		{
+			visible: capabilityDataType.currentValue == "attributes"
+
+			Group
+			{
+				title:								attributeDistribution.currentValue == "poisson" ? qsTr("Poisson capability") : qsTr("Binomial capability")
+
+				RadioButtonGroup
+				{
+					name:							"attributeSampleSizeType"
+					id:								attributeSampleSizeType
+					title:							qsTr("Sample size")
+					info:							qsTr("Whether every sample contains the same number of inspected units, or the number of inspected units is given by a column in the data. A constant sample size must be a whole number; assign a column when the inspected amount is fractional.")
+
+					RadioButton
+					{
+						value:						"constant"
+						label:						qsTr("Constant")
+						checked:					true
+						childrenOnSameRow:			true
+
+						IntegerField
+						{
+							name:					"attributeSampleSizeValue"
+							id:						attributeSampleSizeValue
+							defaultValue:			50
+							min:					1
+							fieldWidth:				50
+						}
+					}
+
+					RadioButton
+					{
+						value:						"variable"
+						label:						qsTr("Variable (assign a column)")
+					}
+				}
+
+				CheckBox
+				{
+					name:							"binomialHistoricalProportion"
+					label:							qsTr("Historical proportion defective (%)")
+					id:								binomialHistoricalProportion
+					visible:						attributeDistribution.currentValue == "binomial"
+					info:							qsTr("Use a known proportion defective as the centre line of the p chart instead of estimating it from the data. The summary statistics are always estimated from the observed data.")
+					childrenOnSameRow:				true
+
+					DoubleField
+					{
+						name:						"binomialHistoricalProportionValue"
+						id:							binomialHistoricalProportionValue
+						defaultValue:				5
+						min:						0
+						max:						100
+						decimals:					6
+						negativeValues:				false
+					}
+				}
+
+				CheckBox
+				{
+					name:							"poissonHistoricalDpu"
+					label:							qsTr("Historical defects per unit")
+					id:								poissonHistoricalDpu
+					visible:						attributeDistribution.currentValue == "poisson"
+					info:							qsTr("Use a known defect rate as the centre line of the u chart instead of estimating it from the data. The summary statistics are always estimated from the observed data.")
+					childrenOnSameRow:				true
+
+					DoubleField
+					{
+						name:						"poissonHistoricalDpuValue"
+						id:							poissonHistoricalDpuValue
+						defaultValue:				1
+						min:						0
+						decimals:					6
+						negativeValues:				false
+					}
+				}
+
+				CheckBox
+				{
+					name:							"binomialTarget"
+					label:							qsTr("Target defective (%)")
+					id:								binomialTarget
+					visible:						attributeDistribution.currentValue == "binomial"
+					info:							qsTr("Target percentage of defective units. Reported in the summary table and drawn as a reference line in the cumulative plot and the histogram.")
+					childrenOnSameRow:				true
+
+					DoubleField
+					{
+						name:						"binomialTargetValue"
+						id:							binomialTargetValue
+						defaultValue:				0
+						min:						0
+						max:						100
+						decimals:					6
+						negativeValues:				false
+					}
+				}
+
+				CheckBox
+				{
+					name:							"poissonTarget"
+					label:							qsTr("Target defects per unit")
+					id:								poissonTarget
+					visible:						attributeDistribution.currentValue == "poisson"
+					info:							qsTr("Target number of defects per unit. Reported in the summary table and drawn as a reference line in the cumulative plot and the histogram.")
+					childrenOnSameRow:				true
+
+					DoubleField
+					{
+						name:						"poissonTargetValue"
+						id:							poissonTargetValue
+						defaultValue:				0
+						min:						0
+						decimals:					6
+						negativeValues:				false
+					}
+				}
+			}
+
+			Group
+			{
+				title:								qsTr("Output")
+
+				CheckBox
+				{
+					name:							"attributeControlChart"
+					label:							attributeDistribution.currentValue == "poisson" ? qsTr("u chart") : qsTr("p chart")
+					info:							qsTr("Control chart of the proportion defective (binomial) or of the defects per unit (Poisson) per sample. The control limits follow the sample size, so they step whenever the number of inspected units changes.")
+					checked:						true
+				}
+
+				CheckBox
+				{
+					name:							"attributeCumulativePlot"
+					label:							attributeDistribution.currentValue == "poisson" ? qsTr("Cumulative defects per unit") : qsTr("Cumulative defective (%)")
+					info:							qsTr("Running estimate of the percentage defective (binomial) or of the defects per unit (Poisson) as samples accumulate, with a confidence band. Use it to judge whether enough samples were collected for the estimate to settle.")
+					checked:						true
+				}
+
+				CheckBox
+				{
+					name:							"attributeDistributionPlot"
+					label:							attributeDistribution.currentValue == "poisson" ? qsTr("Poisson plot") : qsTr("Binomial plot")
+					info:							qsTr("Observed against expected number of defectives (binomial) or defects (Poisson) per sample. The points scatter around the diagonal when the assumed distribution holds.")
+					checked:						false
+				}
+
+				CheckBox
+				{
+					name:							"attributeRatePlot"
+					label:							attributeDistribution.currentValue == "poisson" ? qsTr("Rate of defects") : qsTr("Rate of defectives")
+					info:							qsTr("Percentage defective (binomial) or defects per unit (Poisson) against sample size. Use it to detect a rate that drifts with the number of units inspected.")
+					checked:						false
+					visible:						attributeSampleSizeType.value == "variable"
+				}
+
+				CheckBox
+				{
+					name:							"attributeHistogram"
+					label:							attributeDistribution.currentValue == "poisson" ? qsTr("Distribution of defects per unit") : qsTr("Distribution of defective (%)")
+					info:							qsTr("Histogram of the percentage defective (binomial) or of the defects per unit (Poisson) across the samples, with the target as a dashed line if one is set.")
+					checked:						false
+					visible:						attributeSampleSizeType.value == "constant"
+
+					DoubleField
+					{
+						name:						"attributeHistogramBinNumber"
+						label:						qsTr("Number of bins")
+						info:						qsTr("Suggested number of bins. The bin boundaries are rounded to readable values, so the histogram can end up with a slightly different number of bins.")
+						defaultValue:				10
+						min:						3;
+						max:						10000;
+					}
+				}
+
+				CheckBox
+				{
+					name:							"attributeSummaryTable"
+					label:							qsTr("Summary statistics")
+					info:							qsTr("Table of %Defective, PPM defective and Process Z (binomial), or of the mean defects per unit (Poisson), with confidence intervals.")
+					checked:						true
+
+					CheckBox
+					{
+						name:						"poissonYieldStatistics"
+						label:						qsTr("Yield statistics")
+						info:						qsTr("Add the percentage of defective units, the PPM defective and the Process Z derived from the mean defects per unit. These assume that a unit is conforming when it carries no defect, which the Poisson model itself does not imply.")
+						checked:					false
+						visible:					attributeDistribution.currentValue == "poisson"
+					}
+				}
+
+				CIField
+				{
+					name:							"attributeCiLevel"
+					label:							qsTr("Confidence interval")
+					info:							qsTr("Confidence level for the intervals in the summary table and for the band of the cumulative plot.")
+					defaultValue:					95
+				}
+
+				DropDown
+				{
+					name:							"binomialCiMethod"
+					label:							qsTr("Interval method")
+					visible:						attributeDistribution.currentValue == "binomial"
+					info:							qsTr("Method used to compute the confidence interval for the proportion defective.")
+					indexDefaultValue:				0
+					values:
+					[
+						{label: qsTr("Exact (Clopper-Pearson)"),		value: "exact"},
+						{label: qsTr("Wald"),						value: "wald"},
+						{label: qsTr("Wilson score"),				value: "wilson"}
+					]
+				}
+
+				DropDown
+				{
+					name:							"poissonCiMethod"
+					label:							qsTr("Interval method")
+					visible:						attributeDistribution.currentValue == "poisson"
+					info:							qsTr("Method used to compute the confidence interval for the mean defects per unit.")
+					indexDefaultValue:				0
+					values:
+					[
+						{label: qsTr("Exact (Garwood)"),			value: "exact"},
+						{label: qsTr("Wald"),						value: "wald"},
+						{label: qsTr("Score"),						value: "score"}
+					]
 				}
 			}
 		}
@@ -903,28 +1214,31 @@ Form
 				CheckBox
 				{
 					name:		"reportProcessStability"
-					label:		qsTr("Show stability of process charts")
+					label:		capabilityDataType.currentValue != "attributes" ? qsTr("Show stability of process charts")
+								: attributeDistribution.currentValue == "poisson" ? qsTr("Show u chart") : qsTr("Show p chart")
 					checked:	true
 				}
-				
+
 								CheckBox
 				{
 					name:		"reportProcessCapabilityPlot"
-					label:		qsTr("Show process capability plot")
+					label:		capabilityDataType.currentValue != "attributes" ? qsTr("Show process capability plot")
+								: attributeDistribution.currentValue == "poisson" ? qsTr("Show Poisson capability plots") : qsTr("Show binomial capability plots")
 					checked:	true
 				}
-				
+
 												CheckBox
 				{
 					name:		"reportProbabilityPlot"
 					label:		qsTr("Show probability plot")
 					checked:	true
+					visible:	capabilityDataType.currentValue == "variables"
 				}
-				
+
 																CheckBox
 				{
 					name:		"reportProcessCapabilityTables"
-					label:		qsTr("Show process capability tables")
+					label:		capabilityDataType.currentValue == "attributes" ? qsTr("Show summary statistics table") : qsTr("Show process capability tables")
 					checked:	true
 				}
 
@@ -946,6 +1260,7 @@ Form
 			{
 				name:					"probabilityPlotRankMethod"
 				label:					qsTr("Rank method for probability plot")
+				visible:				capabilityDataType.currentValue == "variables"
 				indexDefaultValue:		0
 				values:
 				[
@@ -961,7 +1276,8 @@ Form
 					name: 					"histogramBinBoundaryDirection"
 					id: 					histogramBinBoundaryDirection
 					label: 					qsTr("Histogram bin boundaries")
-					values: 
+					visible:				capabilityDataType.currentValue == "variables"
+					values:
 					[
 						{ label: qsTr("Left open"),		value: "left"},
 						{ label: qsTr("Right open"),	value: "right"}
@@ -974,7 +1290,8 @@ Form
 				name: 					"nullDistribution"
 				id: 					nullDistribution
 				label: 					qsTr("Null distribution for probability plot")
-				values: 
+				visible:				capabilityDataType.currentValue == "variables"
+				values:
 				[
 					{ label: qsTr("Normal"),		         value: "normal"		},
 					{ label: qsTr("Log-normal"),	         value: "lognormal"	},
@@ -1006,6 +1323,7 @@ Form
 			{
 				title:			""
 				columns:		2
+				visible:		capabilityDataType.currentValue == "variables"
 
 				DropDown
 				{

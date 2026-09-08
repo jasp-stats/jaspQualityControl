@@ -17,6 +17,12 @@
 
 #' @export
 processCapabilityStudies <- function(jaspResults, dataset, options) {
+  # Attribute (count) data has its own data entry, charts and statistics and shares nothing with the
+  # continuous pipeline below, so it branches out before any of it. Which of the two attribute
+  # analyses runs, binomial or Poisson, is decided there by attributeDistribution.
+  if (options[["capabilityDataType"]] == "attributes")
+    return(.qcAttributeCapability(jaspResults, dataset, options))
+
   wideFormat <- options[["dataFormat"]] == "wideFormat"
   # In wide format we have one subgroup per row, else we need a either a grouping variable or later specify subgroup size manually
   if (wideFormat) {
@@ -127,8 +133,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["zeroWarning"]] <- createJaspHtml(text = gettext("All zero values have been replaced with a value equal to one-half of the smallest data point."), elementType = "p",
                                                      title = "Zero values found in non-normal capability study:",
                                                      position = 1)
-      jaspResults[["zeroWarning"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "capabilityStudyType",
-                                              "nullDistribution"))
+      jaspResults[["zeroWarning"]]$dependOn(c("capabilityDataType", "measurementLongFormat", "measurementsWideFormat",
+                                              "capabilityStudyType", "nullDistribution"))
     }
   }
 
@@ -3882,7 +3888,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 .qcDataOptionNames <- function() {
-  dependencies <- c("dataFormat",
+  dependencies <- c("capabilityDataType", "dataFormat",
                     "measurementLongFormat", "subgroup","stagesLongFormat",
                     "measurementsWideFormat", "stagesWideFormat",
                     "subgroupSizeType", "groupingVariable", "groupingVariableMethod",
