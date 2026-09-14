@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.97.1\n"
 "POT-Creation-Date: 2026-09-05 03:43\n"
-"PO-Revision-Date: 2026-09-14 02:37+0000\n"
+"PO-Revision-Date: 2026-09-15 04:06+0000\n"
 "Last-Translator: Sohrab Delshad <sdel4030@gmail.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/fa/>\n"
@@ -424,7 +424,7 @@ msgid "Histogram of Residuals"
 msgstr ""
 
 msgid "Residuals"
-msgstr ""
+msgstr "باقی‌مانده‌ها"
 
 msgid "Residuals versus Fitted Values"
 msgstr ""
@@ -645,7 +645,7 @@ msgid "Matched"
 msgstr ""
 
 msgid "Percent"
-msgstr ""
+msgstr "درصد"
 
 msgid "Lower"
 msgstr "پایین"
@@ -795,7 +795,7 @@ msgid "Reference"
 msgstr ""
 
 msgid "Total"
-msgstr ""
+msgstr "کل"
 
 msgid "Gauge r&R"
 msgstr ""
@@ -884,7 +884,7 @@ msgid "Variance components"
 msgstr ""
 
 msgid "Variance"
-msgstr ""
+msgstr "واریانس"
 
 msgid "%% Contribution"
 msgstr ""
@@ -1156,7 +1156,7 @@ msgid ""
 msgstr ""
 
 msgid "Count"
-msgstr ""
+msgstr "شمارش"
 
 msgid "Mean - %is"
 msgstr ""
@@ -1718,7 +1718,7 @@ msgid "Summary of test against the %1$s distribution"
 msgstr ""
 
 msgid "N"
-msgstr "N (تعداد)"
+msgstr "N"
 
 msgid "Mean (%1$s)"
 msgstr ""
@@ -1773,7 +1773,7 @@ msgid ""
 msgstr ""
 
 msgid "Counts"
-msgstr ""
+msgstr "شمارش‌ها"
 
 msgid "Normal dist."
 msgstr ""
@@ -1866,7 +1866,7 @@ msgid "Autocorrelation"
 msgstr "خودهمبستگی"
 
 msgid "Lag"
-msgstr ""
+msgstr "تأخیر"
 
 msgid "Control charts"
 msgstr ""
