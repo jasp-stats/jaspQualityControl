@@ -194,10 +194,21 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   columnsToPass <- c(measurements, stages)
   columnsToPass <- columnsToPass[columnsToPass != ""]
   phase2 <- (options[["cumulativeSumChartSdSource"]] == "historical")
+  movingRangeLength <- options[["cumulativeSumChartAverageMovingRangeLength"]]
+  if (!phase2 && .stageHasTooFewObservationsForMovingRange(dataset, stages, movingRangeLength)) {
+    plot$setError(.timeWeightedStagesMovingRangeErrorMessage(
+      chartTitle        = gettext("Cumulative sum chart"),
+      dataset           = dataset,
+      stages            = stages,
+      movingRangeLength = movingRangeLength
+    ))
+    return(list("plot" = plot))
+  }
+
   cusumChart <- .controlChart(dataset[columnsToPass], plotType = "cusum", stages = stages, xBarSdType = options[["cumulativeSumChartSdMethod"]],
                               nSigmasControlLimits = options[["cumulativeSumChartNumberSd"]], xAxisLabels = axisLabels,
                               cusumShiftSize = options[["cumulativeSumChartShiftSize"]], cusumTarget = options[["cumulativeSumChartTarget"]],
-                              movingRangeLength = options[["cumulativeSumChartAverageMovingRangeLength"]], phase2 = phase2,
+                              movingRangeLength = movingRangeLength, phase2 = phase2,
                               phase2Sd = options[["cumulativeSumChartSdValue"]], tableLabels = axisLabels, ruleList = ruleList)
   table <- cusumChart$table
   plot$plotObject <- cusumChart$plotObject
@@ -221,9 +232,20 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   columnsToPass <- c(measurements, stages)
   columnsToPass <- columnsToPass[columnsToPass != ""]
   phase2 <- (options[["exponentiallyWeightedMovingAverageChartSdSource"]] == "historical")
+  movingRangeLength <- options[["exponentiallyWeightedMovingAverageChartMovingRangeLength"]]
+  if (!phase2 && .stageHasTooFewObservationsForMovingRange(dataset, stages, movingRangeLength)) {
+    plot$setError(.timeWeightedStagesMovingRangeErrorMessage(
+      chartTitle        = gettext("Exponentially weighted moving average chart"),
+      dataset           = dataset,
+      stages            = stages,
+      movingRangeLength = movingRangeLength
+    ))
+    return(list("plot" = plot))
+  }
+
   ewmaChart <- .controlChart(dataset[columnsToPass], plotType = "ewma", stages = stages, xBarSdType = options[["exponentiallyWeightedMovingAverageChartSdMethod"]],
                              nSigmasControlLimits = options[["exponentiallyWeightedMovingAverageChartSigmaControlLimits"]],
-                             xAxisLabels = axisLabels, movingRangeLength = options[["exponentiallyWeightedMovingAverageChartMovingRangeLength"]],
+                             xAxisLabels = axisLabels, movingRangeLength = movingRangeLength,
                              ewmaLambda = options[["exponentiallyWeightedMovingAverageChartLambda"]], phase2 = phase2,
                              phase2Sd = options[["exponentiallyWeightedMovingAverageChartSdValue"]], tableLabels = axisLabels,
                              ruleList = ruleList)
@@ -247,3 +269,20 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   return(ruleList)
 }
 
+.stageHasTooFewObservationsForMovingRange <- function(dataset, stages, movingRangeLength) {
+  if (identical(stages, "") || !stages %in% colnames(dataset))
+    return(FALSE)
+
+  stageCounts <- table(dataset[[stages]])
+  any(stageCounts < movingRangeLength)
+}
+
+.timeWeightedStagesMovingRangeErrorMessage <- function(chartTitle, dataset, stages, movingRangeLength) {
+  stageCounts <- table(dataset[[stages]])
+  minObservations <- min(stageCounts)
+  gettextf(paste0(
+    "At least one stage contains only %1$s observation(s). %2$s requires at least %3$s observations per stage ",
+    "for the selected moving range length. This can happen when too many stages are defined (for example one point ",
+    "per stage). Reduce the number of stages or lower the moving range length."
+  ), minObservations, chartTitle, movingRangeLength)
+}
