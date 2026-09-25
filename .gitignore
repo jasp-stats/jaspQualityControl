@@ -70,5 +70,15 @@ Rproj.user
 renv/
 _processedLockFile.lock
 
+# AI files
 .vscode/
 .positai
+.agents/
+.claude/
+.codex/
+.github/instructions/
+.github/copilot-instructions.md
+.mcp.json
+AGENTS.md
+codex.toml
+MIGRATION.md

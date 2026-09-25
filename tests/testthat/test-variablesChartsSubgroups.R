@@ -1464,3 +1464,245 @@ test_that("29.3 Test of all rules for xbar & r chart - Test results for x-bar ch
   jaspTools::expect_equal_tables(table,
                                  list("No test violations occurred."))
 })
+
+# I-MR-R/s chart (between/within) ####
+# The I and MR chart monitor the between-subgroup variation of the subgroup means, the R or s chart the
+# within-subgroup variation. Limits verified against the Minitab formulas: the I chart uses
+# mean(x-bar) +/- 3 * MRbar / d2(mrLength), the MR chart D4 * MRbar, and the R/s chart is unchanged.
+
+## Long / Column format ####
+
+### I-MR-R chart with manual subgroup size ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
+options$measurementLongFormat <- "Diameter"
+options$chartType <- "iMrRs"
+options$iMrRsWithinChartType <- "R"
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
+                       options)
+
+test_that("BW1.1 Basic test to create I-MR-R control chart with manual subgroups", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "i-mr-r-control-chart1")
+})
+
+test_that("BW1.2 I-MR-R control chart - Test results for subgroup mean chart table results match", {
+  table <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_iTable"]][["data"]]
+  jaspTools::expect_equal_tables(table, list("No test violations occurred."))
+})
+
+test_that("BW1.3 I-MR-R control chart - Test results for moving range chart table results match", {
+  table <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_mrTable"]][["data"]]
+  jaspTools::expect_equal_tables(table, list("No test violations occurred."))
+})
+
+test_that("BW1.4 I-MR-R control chart - Test results for range chart table results match", {
+  table <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_withinTable"]][["data"]]
+  jaspTools::expect_equal_tables(table, list("No test violations occurred."))
+})
+
+### I-MR-s chart with manual subgroup size ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
+options$measurementLongFormat <- "Diameter"
+options$chartType <- "iMrRs"
+options$iMrRsWithinChartType <- "s"
+options$xBarAndSUnbiasingConstant <- TRUE
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
+                       options)
+
+test_that("BW2. Basic test to create I-MR-s control chart with manual subgroups", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "i-mr-s-control-chart1")
+})
+
+### I-MR-R chart with stages ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
+options$measurementLongFormat <- "Diameter"
+options$stagesLongFormat <- "Stage"
+options$chartType <- "iMrRs"
+options$iMrRsWithinChartType <- "R"
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
+                       options)
+
+test_that("BW3. I-MR-R control chart with manual subgroups and stages", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "i-mr-r-control-chart2")
+})
+
+### I-MR-R chart with subgroup variable ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
+options$measurementLongFormat <- "Diameter"
+options$subgroup <- "Time"
+options$subgroupSizeType <- "groupingVariable"
+options$chartType <- "iMrRs"
+options$iMrRsWithinChartType <- "R"
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
+                       options)
+
+test_that("BW4. I-MR-R control chart with subgroup variable", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "i-mr-r-control-chart3")
+})
+
+### I-MR-R chart with moving range length of 4 ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
+options$measurementLongFormat <- "Diameter"
+options$chartType <- "iMrRs"
+options$iMrRsWithinChartType <- "R"
+options$iMrRsMovingRangeLength <- 4
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
+                       options)
+
+test_that("BW5. I-MR-R control chart with a moving range length of 4", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "i-mr-r-control-chart4")
+})
+
+## Wide / Row format ####
+
+### I-MR-s chart ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
+options$chartType <- "iMrRs"
+options$iMrRsWithinChartType <- "s"
+options$xBarAndSUnbiasingConstant <- TRUE
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
+
+test_that("BW6. Basic test to create I-MR-s control chart in wide format", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "i-mr-s-control-chart2")
+})
+
+### I-MR-R chart with axis labels and warning limits ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$chartType <- "iMrRs"
+options$iMrRsWithinChartType <- "R"
+options$warningLimits <- TRUE
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
+
+test_that("BW7. I-MR-R control chart with axis labels and warning limits", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "i-mr-r-control-chart5")
+})
+
+### I-MR-R chart with unequal subgroups and fixed group calculation ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1Missing7", "dm2", "dm3", "dm4", "dm5")
+options$chartType <- "iMrRs"
+options$iMrRsWithinChartType <- "R"
+options$subgroupSizeUnequal <- "fixedSubgroupSize"
+options$fixedSubgroupSizeValue <- 5
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
+
+test_that("BW8. I-MR-R control chart with unequal subgroups and fixed subgroup size", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "i-mr-r-control-chart6")
+})
+
+## Edge cases ####
+
+### Moving range length larger than the number of subgroups ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
+options$measurementLongFormat <- "Diameter"
+options$chartType <- "iMrRs"
+options$iMrRsWithinChartType <- "R"
+options$iMrRsMovingRangeLength <- 25
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
+                       options)
+
+test_that("BW9. I-MR-R control chart errors when the moving range is longer than the number of subgroups", {
+  plot <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]]
+  expect_identical(plot[["status"]], "error")
+  expect_match(plot[["error"]][["errorMessage"]], "Moving range length is larger")
+})
+
+## Out of control rules ####
+
+### Zone based rules apply to the subgroup mean chart but not to the moving range or range chart ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "nelsonLaws"
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("V1", "V2", "V3")
+options$chartType <- "iMrRs"
+options$iMrRsWithinChartType <- "R"
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/controlChartRules/violatingAllSubgroupRules.csv",
+                       options)
+
+test_that("BW10.1 All Nelson laws are applied to the subgroup mean chart", {
+  fields <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_iTable"]][["schema"]][["fields"]]
+  expect_identical(vapply(fields, function(field) field[["name"]], character(1)),
+                   c("test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8"))
+})
+
+test_that("BW10.2 The zone based rules are stripped from the moving range chart", {
+  fields <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_mrTable"]][["schema"]][["fields"]]
+  expect_false(any(vapply(fields, function(field) field[["name"]], character(1)) %in%
+                     c("test4", "test5", "test6", "test7")))
+})
+
+test_that("BW10.3 The zone based rules are stripped from the range chart", {
+  fields <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_withinTable"]][["schema"]][["fields"]]
+  expect_false(any(vapply(fields, function(field) field[["name"]], character(1)) %in%
+                     c("test4", "test5", "test6", "test7")))
+})
+
+## Options tests ####
+
+### Report of I-MR-R chart ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
+options$measurementLongFormat <- "Diameter"
+options$chartType <- "iMrRs"
+options$iMrRsWithinChartType <- "R"
+options$report <- TRUE
+options$reportMetaData <- TRUE
+options$reportChartNameText <- "Name of chart"
+options$reportSubtitleText <- "Sub title test"
+options$reportMeasurementNameText <- "Measurement name test"
+options$reportLocationText <- "Place test"
+options$reportDateText <- "01.01.2000"
+options$reportPerformedByText <- "Operator name"
+options$reportPrintDateText <- "02.02.2002"
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
+                       options)
+
+test_that("BW11. Report of the I-MR-R control chart", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "i-mr-r-report1")
+})

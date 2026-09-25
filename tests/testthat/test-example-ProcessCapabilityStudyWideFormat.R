@@ -7,7 +7,11 @@ test_that("processCapabilityStudies results match", {
 
   # Load from JASP example file
   jaspFile <- testthat::test_path("..", "..", "examples", "ProcessCapabilityStudyWideFormat.jasp")
-  opts <- jaspTools::analysisOptions(jaspFile)
+  # A .jasp file only stores the options that existed when it was saved. JASP Desktop fills the rest
+  # in from the QML defaults; jaspTools does not, so options added after the file was saved have to
+  # be merged in here or the analysis is called with an incomplete options list.
+  opts <- modifyList(jaspTools::analysisOptions("processCapabilityStudies"),
+                     jaspTools::analysisOptions(jaspFile))
   dataset <- jaspTools::extractDatasetFromJASPFile(jaspFile)
 
   # Encode and run analysis

@@ -198,6 +198,33 @@ Form
 				value: 							"xBarAndR"
 				label: 							qsTr("X-bar & R")
 			}
+
+			RadioButton
+			{
+				value: 							"iMrRs"
+				label: 							qsTr("I-MR-R/s (between/within)")
+
+				DropDown
+				{
+					name: 						"iMrRsWithinChartType"
+					label: 						qsTr("Within-subgroup chart")
+					indexDefaultValue:			0
+					values:
+					[
+						{ label: qsTr("R"),		value: "R"},
+						{ label: qsTr("s"),		value: "s"}
+					]
+				}
+
+				IntegerField
+				{
+					name: 						"iMrRsMovingRangeLength"
+					label: 						qsTr("Moving range length")
+					fieldWidth:					30
+					defaultValue: 				2
+					min:						2
+				}
+			}
 		}
 
 		CheckBox
@@ -210,6 +237,7 @@ Form
 		{
 			name: 								"knownParameters"
 			label: 								qsTr("Known parameters")
+			visible:							chartType.value != "iMrRs"
 
   			DoubleField
   			{
