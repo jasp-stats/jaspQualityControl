@@ -16,7 +16,7 @@
 #
 
 #' @export
-msaTestRetest <- function(jaspResults, dataset, options, ...) {
+msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
 
   wideFormat <- options[["dataFormat"]] == "wideFormat"
   if (wideFormat) {

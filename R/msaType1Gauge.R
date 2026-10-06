@@ -16,7 +16,7 @@
 #
 
 #' @export
-msaType1Gauge <- function(jaspResults, dataset, options, ...) {
+msaType1GaugeInternal <- function(jaspResults, dataset, options, ...) {
 
   measurements <- unlist(options[["measurement"]])
   measurements <- measurements[measurements != ""]

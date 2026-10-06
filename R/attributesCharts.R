@@ -16,7 +16,7 @@
 #
 
 #' @export
-attributesCharts <- function(jaspResults, dataset, options) {
+attributesChartsInternal <- function(jaspResults, dataset, options) {
 
   # reading variables in from the GUI
   total <- options$total

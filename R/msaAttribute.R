@@ -16,7 +16,7 @@
 #
 
 #' @export
-msaAttribute <- function(jaspResults, dataset, options, ...) {
+msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
   wideFormat <- options[["dataFormat"]] == "wideFormat"
   if (wideFormat){

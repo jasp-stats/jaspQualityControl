@@ -16,7 +16,7 @@
 #
 
 #' @export
-doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
+doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options, ...) {
 
   ready <- options[["selectedRow"]] != -1L && !(options[["designType"]] == "boxBehnkenDesign" && options[["selectedRow"]] > 0) # simple way of stopping box behnken design from crashing if select row is still > 0 from previous CCD selection
 

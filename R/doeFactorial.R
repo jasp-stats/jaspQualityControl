@@ -16,7 +16,7 @@
 #
 
 #' @export
-doeFactorial <- function(jaspResults, dataset, options, ...) {
+doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
 
   # 'repetitions' UI control is currently commented out in the QML; default to 0 so the
   # summary table and design generation don't receive NULL (see doeFactorial.qml).

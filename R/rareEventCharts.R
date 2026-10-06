@@ -16,7 +16,7 @@
 #
 
 #' @export
-rareEventCharts <- function(jaspResults, dataset, options) {
+rareEventChartsInternal <- function(jaspResults, dataset, options) {
   # reading variables in from the GUI
   variable <- unlist(options[["variable"]])
   stages <- unlist(options[["stage"]])

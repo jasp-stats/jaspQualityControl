@@ -16,7 +16,7 @@
 #
 
 #' @export
-msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
+msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
 
   measurements <- unlist(options[["measurement"]])
   parts <- unlist(options[["part"]])
