@@ -21,7 +21,7 @@
 #'
 msaGaugeLinearity <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           biasTable = TRUE,
           linearityAndBiasPlot = TRUE,
           linearityTable = TRUE,

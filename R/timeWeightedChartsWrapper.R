@@ -21,7 +21,7 @@
 #'
 timeWeightedCharts <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           axisLabels = list(types = list(), value = ""),
           cumulativeSumChart = TRUE,
           cumulativeSumChartAverageMovingRangeLength = 2,

@@ -21,7 +21,7 @@
 #'
 msaTestRetest <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           dataFormat = "longFormat",
           manualProcessSd = FALSE,
           manualProcessSdValue = 1,

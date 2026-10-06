@@ -21,7 +21,7 @@
 #'
 rareEventCharts <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           dataType = "dataTypeDates",
           dataTypeDatesFormatDate = "dm",
           dataTypeDatesFormatTime = "HM",

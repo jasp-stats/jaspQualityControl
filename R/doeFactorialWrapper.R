@@ -21,7 +21,7 @@
 #'
 doeFactorial <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           actualExporter = FALSE,
           blocks = "1",
           categoricalNoLevels = 2,

@@ -21,7 +21,7 @@
 #'
 msaAttribute <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           cohensKappa = FALSE,
           dataFormat = "longFormat",
           fleissKappa = FALSE,

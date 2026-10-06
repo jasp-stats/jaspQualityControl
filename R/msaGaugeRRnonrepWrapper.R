@@ -21,7 +21,7 @@
 #'
 msaGaugeRRnonrep <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           anova = TRUE,
           dataFormat = "longFormat",
           historicalSdValue = 3,

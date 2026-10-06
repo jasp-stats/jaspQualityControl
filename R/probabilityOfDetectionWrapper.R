@@ -21,7 +21,7 @@
 #'
 probabilityOfDetection <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           covariate = list(types = list(), value = ""),
           detectionPlotCi = FALSE,
           detectionPlotCiLevel = 0.95,
@@ -38,7 +38,7 @@ probabilityOfDetection <- function(
           plotHeight = 320,
           plotWidth = 480,
           verticalAsymptotes = list(),
-          xAxisTicksType = "dataAndModelBased") {
+          xAxisTicksType = "dataBased") {
 
    defaultArgCalls <- formals(jaspQualityControl::probabilityOfDetection)
    defaultArgs <- lapply(defaultArgCalls, eval)

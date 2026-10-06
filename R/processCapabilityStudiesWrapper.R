@@ -23,7 +23,7 @@
 #'    Defaults to \code{FALSE}.
 processCapabilityStudies <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           axisLabels = list(types = list(), value = ""),
           capabilityStudyType = "normalCapabilityAnalysis",
           controlChart = TRUE,

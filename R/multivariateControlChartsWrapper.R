@@ -37,7 +37,7 @@
 #' @param variables, Two or more continuous quality characteristics to monitor jointly using a Hotelling T² chart.
 multivariateControlCharts <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           addTsqToData = FALSE,
           axisLabels = list(types = list(), value = ""),
           centerTable = FALSE,

@@ -21,7 +21,7 @@
 #'
 variablesChartsSubgroups <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           axisLabels = list(types = list(), value = ""),
           chartType = "xBarAndS",
           controlLimitsNumberOfSigmas = 3,

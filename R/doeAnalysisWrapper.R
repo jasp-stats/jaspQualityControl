@@ -35,7 +35,7 @@
 #' }
 doeAnalysis <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           blocksFactorial = list(types = list(), value = ""),
           blocksResponseSurface = list(types = list(), value = ""),
           codeFactors = TRUE,

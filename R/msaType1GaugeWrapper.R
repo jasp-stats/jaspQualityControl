@@ -21,7 +21,7 @@
 #'
 msaType1Gauge <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           biasTable = TRUE,
           histogram = FALSE,
           histogramBinBoundaryDirection = "left",

@@ -21,7 +21,7 @@
 #'
 msaGaugeRR <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           anova = TRUE,
           anovaAlphaForInteractionRemoval = 0.05,
           anovaModelType = "fixedEffect",

@@ -21,7 +21,7 @@
 #'
 doeResponseSurfaceMethodology <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           actualExporter = FALSE,
           alphaType = "default",
           categoricalNoLevels = 2,

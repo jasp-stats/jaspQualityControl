@@ -21,7 +21,7 @@
 #'
 variablesChartsIndividuals <- function(
           data = NULL,
-          version = "0.97.1",
+          version = "1",
           autocorrelationPlot = FALSE,
           autocorrelationPlotCiLevel = 0.95,
           autocorrelationPlotLagsNumber = 25,
