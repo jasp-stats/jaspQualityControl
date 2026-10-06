@@ -16,7 +16,7 @@
 #
 
 #' @export
-variablesChartsIndividuals <- function(jaspResults, dataset, options) {
+variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
   # reading variables in from the GUI
   variables <- unlist(options[["measurement"]])
   stages <- unlist(options[["stage"]])

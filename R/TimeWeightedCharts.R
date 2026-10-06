@@ -1,5 +1,5 @@
 #' @export
-timeWeightedCharts <- function(jaspResults, dataset, options) {
+timeWeightedChartsInternal <- function(jaspResults, dataset, options) {
   wideFormat <- (options[["dataFormat"]] == "wideFormat")
   # In wide format we have one subgroup per row, else we need a either a grouping variable or later specify subgroup size manually
   if (wideFormat) {

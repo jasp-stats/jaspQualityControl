@@ -67,7 +67,7 @@
 }
 
 #' @export
-doeAnalysis <- function(jaspResults, dataset, options, ...) {
+doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
   if (options[["designType"]] == "factorialDesign") {
     ready <- sum(length(options[["fixedFactorsFactorial"]]), length(options[["continuousFactorsFactorial"]])) >= 1 &&

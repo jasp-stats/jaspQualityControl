@@ -16,7 +16,7 @@
 #
 
 #' @export
-doeFactorial <- function(jaspResults, dataset, options, ...) {
+doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
 
   selectedRow <- options[["selectedRow"]]
   maximumRow <- .getMaximumRow(options)

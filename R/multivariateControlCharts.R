@@ -16,7 +16,7 @@
 #
 
 #' @export
-multivariateControlCharts <- function(jaspResults, dataset, options) {
+multivariateControlChartsInternal <- function(jaspResults, dataset, options) {
 
   variables <- unlist(options[["variables"]])
   variables <- variables[variables != ""]

@@ -16,7 +16,7 @@
 #
 
 #' @export
-msaGaugeRR <- function(jaspResults, dataset, options, ...) {
+msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
   # Reading the data in the correct format
   wideFormat <- options[["dataFormat"]] == "wideFormat"
   if (wideFormat) {
