@@ -1,3 +1,9 @@
+---
+paths:
+  - "**/R/*.R"
+  - "**/inst/qml/*.qml"
+---
+
 # JASP Module Architecture
 
 How QML, JASP Desktop, and R interact. This explains *why* the patterns in the other rule files exist.
@@ -88,6 +94,17 @@ CheckBox {
 ```
 
 Both `showCI` and `ciLevel` appear at the top level of `options`. QML nesting controls UI visibility/enabling but does NOT create nested R structures.
+
+### Strict option contract
+
+The QML `name:` value is the backend API. R must read the current QML names directly and every R-read option must be present in the QML-derived options list.
+
+- Do not add R-side option normalizers, old-name aliases, compatibility maps, or backup defaults for missing GUI options in unreleased work. Missing options should fail so the QML/R mismatch is fixed.
+- Do not use `isTRUE(options[["flag"]])` for checkbox options; use `if (options[["flag"]])` so missing keys are not silently treated as `FALSE`.
+- Put defaults in QML controls, not in R fallback code. R validation should target `dataset`, `TextField`, and `FormulaField` inputs, not ordinary GUI option defaults.
+- Keep `$dependOn()` vectors in current QML names. After renaming options, audit R reads and dependency vectors against `inst/qml/*.qml`.
+- Verify every R-read option exists in the QML source that Desktop loads, including imported components. If `jaspTools::analysisOptions()` misses imported components or dynamic values, use a source-aware audit or explicit GUI-equivalent test options; do not inline components, flatten QML, or add R defaults solely for tooling.
+- Use `Upgrades.qml` only when preserving compatibility for released analyses with existing saved files. Do not add compatibility layers for new unreleased analyses unless explicitly requested.
 
 ### QML control → R value type
 
@@ -245,7 +262,7 @@ export(MyAnalysis)
 
 ### Upgrades.qml
 
-When renaming QML option names, add a migration so old .jasp files load correctly:
+For released analyses, when renaming QML option names, add a migration so old .jasp files load correctly. For unreleased analyses, do not add migration or compatibility layers unless explicitly requested; keep only the current QML/R names.
 ```qml
 Upgrade {
     functionName: "MyAnalysis"
