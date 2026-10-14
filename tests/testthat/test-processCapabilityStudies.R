@@ -4651,3 +4651,31 @@ test_that("Pooled standard deviation matches the textbook pooled-SD formula", {
   testthat::expect_equal(jaspQualityControl:::.sdXbar(df, type = "pooled", unbiasingConstantUsed = TRUE),
                          sqrt(2.5) / c4)
 })
+
+##### X-axis limits of non-normal capability plot ####
+# Without historical params, the axis must not be stretched towards the (default) historical value
+for (distribution in c("weibull", "lognormal")) {
+  options <- analysisOptions("processCapabilityStudies")
+  options$testSet <- "jaspDefault"
+  options$measurementLongFormat <- "x"
+  options$subgroupSizeType <- "manual"
+  options$manualSubgroupSizeValue <- 5
+  options$probabilityPlotRankMethod <- "bernard"
+  options$controlChartType <- "xBarR"
+  options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+  options$nonNormalDistribution <- distribution
+  options$lowerSpecificationLimit <- TRUE
+  options$upperSpecificationLimit <- TRUE
+  options$lowerSpecificationLimitValue <- 980
+  options$upperSpecificationLimitValue <- 1020
+  dataFarFromZero <- data.frame(x = qnorm(ppoints(100), mean = 1000, sd = 5))
+  set.seed(1)
+  results <- runAnalysis("processCapabilityStudies", dataFarFromZero, options)
+
+  test_that(sprintf("(%s) X-axis of capability plot is not stretched towards zero without historical parameters", distribution), {
+    plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+    testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+    xLimits <- testPlot$subplots[[1]]$scales$get_scales("x")$limits
+    testthat::expect_gt(xLimits[1], 900)
+  })
+}

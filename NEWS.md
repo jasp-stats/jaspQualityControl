@@ -26,6 +26,7 @@
 ## Fixed
 * Stepwise model selection in the Response Surface design now respects marginality: a squared term is no longer retained without its corresponding main effect.
 * Process Capability: distribution/fit density curves no longer render flat in interactive (plotly) plots; the curves are now drawn with `geom_line` instead of `stat_function`.
+* Process Capability: the x-axis of the capability plot is no longer stretched towards the default historical scale (Weibull) or log mean (log-normal) when no historical parameter is set, which squeezed the histogram and fitted density into a narrow strip for data far from zero.
 * Attributes agreement analysis: Fleiss' kappa no longer crashes with newer `irr` (>= 0.85) when a within-appraiser input has a single measurement column; returns NaN as before.
 
 ---
