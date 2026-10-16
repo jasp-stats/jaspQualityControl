@@ -257,7 +257,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   posteriorSummaries <- createJaspContainer(title = gettext("Posterior Distributions"))
-  posteriorSummaries$position <- 6
+  posteriorSummaries$position <- 8
   posteriorSummaries$dependOn(c(.varCompTableDependencies(),
                                 .postPlotDependencies()))
   jaspResults[["posteriorSummaries"]] <- posteriorSummaries
@@ -780,7 +780,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   jaspResults[["rChart"]] <- createJaspContainer(gettext("Range chart by operator"))
-  jaspResults[["rChart"]]$position <- 7
+  jaspResults[["rChart"]]$position <- 9
   jaspResults[["rChart"]]$dependOn(c("rChart", "measurementLongFormat",
                                      "measurementsWideFormat", "report",
                                      "operatorWideFormat", "operatorLongFormat",
@@ -806,7 +806,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Average chart by operator"))
-  jaspResults[["xBarChart"]]$position <- 8
+  jaspResults[["xBarChart"]]$position <- 10
   jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "measurementLongFormat",
                                         "measurementsWideFormat", "report",
                                         "operatorWideFormat", "operatorLongFormat",
@@ -835,7 +835,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   jaspResults[["gaugeScatterOperators"]] <- createJaspPlot(title = gettext("Matrix plot for operators"),
                                                            width = 700, height = 700)
-  jaspResults[["gaugeScatterOperators"]]$position <- 9
+  jaspResults[["gaugeScatterOperators"]]$position <- 11
   jaspResults[["gaugeScatterOperators"]]$dependOn(c("scatterPlot", "scatterPlotFitLine", "scatterPlotOriginLine",
                                                     "operatorWideFormat", "operatorLongFormat",
                                                     "partWideFormat", "partLongFormat",
@@ -858,7 +858,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   jaspResults[["gaugeByPart"]] <- createJaspPlot(title = gettext("Measurements by part"),
                                                  width = 700, height = 300)
-  jaspResults[["gaugeByPart"]]$position <- 10
+  jaspResults[["gaugeByPart"]]$position <- 12
   jaspResults[["gaugeByPart"]]$dependOn(c("partMeasurementPlot", "partMeasurementPlotAllValues", "operatorWideFormat",
                                           "operatorLongFormat", "partWideFormat", "partLongFormat",
                                           "measurementsWideFormat", "measurementLongFormat", "report"))
@@ -880,7 +880,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   jaspResults[["gaugeByOperator"]] <- createJaspPlot(title = gettext("Measurements by operator"),
                                                      width = 600, height = 600)
-  jaspResults[["gaugeByOperator"]]$position <- 11
+  jaspResults[["gaugeByOperator"]]$position <- 13
   jaspResults[["gaugeByOperator"]]$dependOn(c("operatorMeasurementPlot", "operatorWideFormat", "operatorLongFormat",
                                             "partWideFormat", "partLongFormat", "measurementsWideFormat",
                                             "measurementLongFormat", "report"))
@@ -901,7 +901,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   jaspResults[["gaugeByInteraction"]] <- createJaspPlot(title = gettext("Part by operator interaction"),
                                                         width = 700, height = 400)
-  jaspResults[["gaugeByInteraction"]]$position <- 12
+  jaspResults[["gaugeByInteraction"]]$position <- 14
   jaspResults[["gaugeByInteraction"]]$dependOn(c("partByOperatorMeasurementPlot", "operatorWideFormat", "operatorLongFormat",
                                                "partWideFormat", "partLongFormat", "measurementsWideFormat",
                                                "measurementLongFormat", "report"))
@@ -921,7 +921,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
       return()
     }
     varCompPlot <- createJaspPlot(title = gettext("Components of variation"), width = 850, height = 500)
-    varCompPlot$position <- 6
+    varCompPlot$position <- 7
     varCompPlot$dependOn(c(.varCompTableDependencies(), "varianceComponentsGraph",
                            "tolerance", "toleranceValue",
                            "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
@@ -983,7 +983,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
 
     trafficPlot <- createJaspContainer(title = gettext("Traffic light chart"))
-    trafficPlot$position <- 12
+    trafficPlot$position <- 15
     trafficPlot$dependOn(c(.varCompTableDependencies(), "trafficLightChart",
                            "tolerance", "toleranceValue",
                            "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
@@ -2094,7 +2094,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     return()
   }
   mcmcDiagnostics <- createJaspContainer(title = gettext("MCMC diagnostics"))
-  mcmcDiagnostics$position <- 5
+  mcmcDiagnostics$position <- 6
   mcmcDiagnostics$dependOn(c(.mcmcDependencies(),
                              "diagnosticsPlots", "diagnosticsPlotType",
                              "diagnosticsTable"))
