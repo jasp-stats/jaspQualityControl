@@ -62,3 +62,15 @@ Rproj.user
 *.Rprofile
 renv/
 _processedLockFile.lock
+
+# Agent instruction files
+.agents/skills/fix-debug-analysis/SKILL.md
+.claude/
+.codex/
+.github/copilot-instructions.md
+.github/instructions/
+.mcp.json
+.vscode/mcp.json
+AGENTS.md
+codex.toml
+MIGRATION.md
