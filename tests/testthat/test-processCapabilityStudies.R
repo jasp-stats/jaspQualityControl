@@ -4653,29 +4653,38 @@ test_that("Pooled standard deviation matches the textbook pooled-SD formula", {
 })
 
 ##### X-axis limits of non-normal capability plot ####
-# Without historical params, the axis must not be stretched towards the (default) historical value
+# Without historical params, the axis must not be stretched towards the (default) historical value.
+# The near-normal columns lie far from zero, where the stretching squeezed histogram and density into a thin strip.
+xAxisCases <- data.frame(column = c("weibull", "nearNormal100", "nearNormal1000", "nearNormal10000"),
+                         lsl    = c(5, 80, 980, 9900),
+                         usl    = c(150, 120, 1020, 10100))
+xAxisData <- read.csv(testthat::test_path("datasets/processCapabilityStudy/processCapabilityWeibullAxisDebug.csv"))
 for (distribution in c("weibull", "lognormal")) {
-  options <- analysisOptions("processCapabilityStudies")
-  options$testSet <- "jaspDefault"
-  options$measurementLongFormat <- "x"
-  options$subgroupSizeType <- "manual"
-  options$manualSubgroupSizeValue <- 5
-  options$probabilityPlotRankMethod <- "bernard"
-  options$controlChartType <- "xBarR"
-  options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
-  options$nonNormalDistribution <- distribution
-  options$lowerSpecificationLimit <- TRUE
-  options$upperSpecificationLimit <- TRUE
-  options$lowerSpecificationLimitValue <- 980
-  options$upperSpecificationLimitValue <- 1020
-  dataFarFromZero <- data.frame(x = qnorm(ppoints(100), mean = 1000, sd = 5))
-  set.seed(1)
-  results <- runAnalysis("processCapabilityStudies", dataFarFromZero, options)
+  for (i in seq_len(nrow(xAxisCases))) {
+    column <- xAxisCases$column[i]
+    options <- analysisOptions("processCapabilityStudies")
+    options$testSet <- "jaspDefault"
+    options$measurementLongFormat <- column
+    options$subgroupSizeType <- "manual"
+    options$manualSubgroupSizeValue <- 5
+    options$probabilityPlotRankMethod <- "bernard"
+    options$controlChartType <- "xBarR"
+    options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+    options$nonNormalDistribution <- distribution
+    options$lowerSpecificationLimit <- TRUE
+    options$upperSpecificationLimit <- TRUE
+    options$lowerSpecificationLimitValue <- xAxisCases$lsl[i]
+    options$upperSpecificationLimitValue <- xAxisCases$usl[i]
+    set.seed(1)
+    results <- runAnalysis("processCapabilityStudies",
+                           testthat::test_path("datasets/processCapabilityStudy/processCapabilityWeibullAxisDebug.csv"), options)
 
-  test_that(sprintf("(%s) X-axis of capability plot is not stretched towards zero without historical parameters", distribution), {
-    plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
-    testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-    xLimits <- testPlot$subplots[[1]]$scales$get_scales("x")$limits
-    testthat::expect_gt(xLimits[1], 900)
-  })
+    test_that(sprintf("(%s) X-axis of capability plot is not stretched towards zero without historical parameters: %s", distribution, column), {
+      plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+      testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+      xLimits <- testPlot$subplots[[1]]$scales$get_scales("x")$limits
+      values <- xAxisData[[column]]
+      testthat::expect_gt(xLimits[1], min(values, xAxisCases$lsl[i]) - 3 * sd(values))
+    })
+  }
 }
