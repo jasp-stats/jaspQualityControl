@@ -3387,11 +3387,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       percentileEstimate <- log(percentileEstimate)
       percentileLower <- log(percentileLower)
       percentileUpper <- log(percentileUpper)
-      labelFrame <- data.frame(labs = label_x, value = dataCurrentStage)
-      index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
-      xBreaks <- labelFrame[index,2]
-      label_x <- labelFrame[index,1]
-      xLimits <- c(min(xBreaks) * 0.8, max(xBreaks) * 1.2)
+      logAxis <- .qcProbabilityPlotLogAxis(label_x)
+      xBreaks <- logAxis$breaks
+      label_x <- logAxis$labels
+      xLimits <- logAxis$limits
     } else if (options[["nullDistribution"]] == "weibull") {
       fit_Weibull <- try(.distributionParameters(dataCurrentStage, distribution = "weibull", fix.arg = NULL))
       if (jaspBase::isTryError(fit_Weibull)) {
@@ -3425,11 +3424,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       percentileEstimate <- log(percentileEstimate)
       percentileLower <- log(percentileLower)
       percentileUpper <- log(percentileUpper)
-      labelFrame <- data.frame(labs = label_x, value = dataCurrentStage)
-      index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
-      xBreaks <- labelFrame[index,2]
-      label_x <- labelFrame[index,1]
-      xLimits <- c(min(xBreaks) * 0.8, max(xBreaks) * 1.2)
+      logAxis <- .qcProbabilityPlotLogAxis(label_x)
+      xBreaks <- logAxis$breaks
+      label_x <- logAxis$labels
+      xLimits <- logAxis$limits
     }
     data1 <- data.frame(x = dataCurrentStage, y = y)
     yLimits <- range(yBreaks)
@@ -3491,6 +3489,24 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
 .qcWeibull <- function(p) {
   return(log(-log(1 - p)))
+}
+
+# x-axis for probability plots drawn on the log scale (lognormal, Weibull): pretty breaks in the original
+# units, placed at their log value, with limits that fit the data (not a multiple of the log values).
+# Breaks closer than minGap (as a fraction of the axis) are dropped, because round numbers bunch up at the high end of a log axis.
+.qcProbabilityPlotLogAxis <- function(x, minGap = 0.12) {
+  x <- x[is.finite(x) & x > 0]
+  breaks <- jaspGraphs::getPrettyAxisBreaks(x)
+  breaks <- breaks[breaks > 0]
+  logBreaks <- log(breaks)
+  xLimits <- range(logBreaks, log(x))
+  xLimits <- xLimits + c(-1, 1) * 0.03 * diff(xLimits) # room for the outer labels
+  keep <- 1
+  for (i in seq_along(breaks)[-1]) {
+    if ((logBreaks[i] - logBreaks[keep[length(keep)]]) / diff(xLimits) >= minGap)
+      keep <- c(keep, i)
+  }
+  list(breaks = logBreaks[keep], labels = breaks[keep], limits = xLimits)
 }
 
 # Functions for distribution plot section ####

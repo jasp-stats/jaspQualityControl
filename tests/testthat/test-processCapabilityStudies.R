@@ -4688,3 +4688,45 @@ for (distribution in c("weibull", "lognormal")) {
     })
   }
 }
+
+##### X-axis of probability plot on the log scale (Weibull, lognormal) ####
+test_that("Log-scale probability plot axis fits the data and has well-spaced breaks", {
+  dataSets <- list(near100 = qnorm(ppoints(100), mean = 100, sd = 5), near10000 = qnorm(ppoints(100), mean = 10000, sd = 20),
+                   wide = qweibull(ppoints(100), shape = 2, scale = 50), small = qweibull(ppoints(100), shape = 2, scale = 0.2))
+  for (x in dataSets) {
+    axis <- jaspQualityControl:::.qcProbabilityPlotLogAxis(x)
+    dataRange <- range(log(x))
+    testthat::expect_lte(axis$limits[1], dataRange[1])
+    testthat::expect_gte(axis$limits[2], dataRange[2])
+    testthat::expect_gt(diff(dataRange) / diff(axis$limits), 0.6) # data fill the axis
+    testthat::expect_true(all(diff(axis$breaks) / diff(axis$limits) >= 0.12 - 1e-8)) # labels do not overlap
+    testthat::expect_equal(axis$breaks, log(axis$labels))
+  }
+})
+
+for (distribution in c("weibull", "lognormal")) {
+  options <- analysisOptions("processCapabilityStudies")
+  options$testSet <- "jaspDefault"
+  options$measurementLongFormat <- "x"
+  options$subgroupSizeType <- "manual"
+  options$manualSubgroupSizeValue <- 5
+  options$probabilityPlotRankMethod <- "bernard"
+  options$controlChartType <- "xBarR"
+  options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+  options$nonNormalDistribution <- distribution
+  options$nullDistribution <- distribution
+  options$lowerSpecificationLimit <- TRUE
+  options$upperSpecificationLimit <- TRUE
+  options$lowerSpecificationLimitValue <- 80
+  options$upperSpecificationLimitValue <- 120
+  dataNearHundred <- data.frame(x = qnorm(ppoints(100), mean = 100, sd = 5))
+  set.seed(1)
+  results <- runAnalysis("processCapabilityStudies", dataNearHundred, options)
+
+  test_that(sprintf("(%s) X-axis of probability plot is not stretched far beyond the data", distribution), {
+    plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+    testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+    xLimits <- testPlot$subplots[[1]]$scales$get_scales("x")$limits
+    testthat::expect_gt(diff(range(log(dataNearHundred$x))) / diff(xLimits), 0.6)
+  })
+}
