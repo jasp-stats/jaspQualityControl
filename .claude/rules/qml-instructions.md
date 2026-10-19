@@ -41,7 +41,9 @@ Error: Expected token `}'  [syntax]
 
 - **Form as root:** Every analysis UI is a `Form { ... }` containing controls, usually a `VariablesForm` block and option controls.
 - **Binding & IDs:** Prefer *property bindings* (reactive JS expressions) over imperative changes; reference other items via `id:` and bind (`enabled: show.checked || useAlt.checked`).
-- **Stable storage names:** The `name:` of a control maps to stored options in JASP files; **avoid renaming**. If you must, handle migrations in `Upgrades.qml`.
+- **Stable storage names:** The `name:` of a control maps to stored options in JASP files; **avoid renaming**. If you must rename a released option, handle migrations in `Upgrades.qml`; for unreleased analyses, keep only the current name.
+- **Exact backend API:** Every `name:` is the exact R option key. When renaming an option, update all R `options[["..."]]` reads and `$dependOn()` vectors to the current name; do not rely on R aliases or normalization for unreleased analyses.
+- **QML/R option contract:** Every option read by R must be defined in the main QML or an imported component loaded by the GUI. Do not inline reusable components solely because `analysisOptions()` cannot discover them; use source-aware audits/explicit test options and fix real name mismatches.
 - **Translation & docs:**
   - Wrap **all user-visible strings** in `qsTr("Text")`.
   - Populate `info:` with a short, user-facing description (also wrapped in `qsTr`) to feed module help.
@@ -93,7 +95,7 @@ Prefer **declarative validation** via built-in field properties:
 - **Two-column rhythm:** Let the grid flow naturally; use `rowSpan/columnSpan` to avoid awkward gaps; avoid long single-column scrollers.
 - **Variables first:** Place `VariablesForm` at the top; align list widths; restrict types with `allowedColumns`.
 - **Defaults & placeholders:** Prefer meaningful `defaultValue`; use `placeholderText` only when input is optional. Don't set both.
-- **Dropdowns:** Use `{label, value}` pairs when R-side value differs; add an explicit empty choice with `addEmptyValue` if "no selection" is valid.
+- **Dropdowns:** Use `{label, value}` pairs when R-side value differs; add an explicit empty choice with `addEmptyValue` if "no selection" is valid. Preserve dynamic `DropDown.values` when they express the intended GUI; use `enabledOptions` only for intended disabled choices, not to expose tooling defaults.
 - **Advanced options:** Tuck rare/expert settings into a `Section` titled "Advanced Options".
 - **Docs:** Fill `info:` succinctly for every major control.
 - **Spacing:** Always use tabs for spacing. Each argument on a new line. (See examples below.)
