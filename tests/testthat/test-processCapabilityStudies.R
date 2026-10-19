@@ -4651,3 +4651,88 @@ test_that("Pooled standard deviation matches the textbook pooled-SD formula", {
   testthat::expect_equal(jaspQualityControl:::.sdXbar(df, type = "pooled", unbiasingConstantUsed = TRUE),
                          sqrt(2.5) / c4)
 })
+
+##### X-axis limits of non-normal capability plot ####
+# Without historical params, the axis must not be stretched towards the (default) historical value.
+# The near-normal columns lie far from zero, where the stretching squeezed histogram and density into a thin strip.
+xAxisCases <- data.frame(column = c("weibull", "nearNormal100", "nearNormal1000", "nearNormal10000"),
+                         lsl    = c(5, 80, 980, 9900),
+                         usl    = c(150, 120, 1020, 10100))
+xAxisData <- read.csv(testthat::test_path("datasets/processCapabilityStudy/processCapabilityWeibullAxisDebug.csv"))
+for (distribution in c("weibull", "lognormal")) {
+  for (i in seq_len(nrow(xAxisCases))) {
+    column <- xAxisCases$column[i]
+    options <- analysisOptions("processCapabilityStudies")
+    options$testSet <- "jaspDefault"
+    options$measurementLongFormat <- column
+    options$subgroupSizeType <- "manual"
+    options$manualSubgroupSizeValue <- 5
+    options$probabilityPlotRankMethod <- "bernard"
+    options$controlChartType <- "xBarR"
+    options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+    options$nonNormalDistribution <- distribution
+    options$lowerSpecificationLimit <- TRUE
+    options$upperSpecificationLimit <- TRUE
+    options$lowerSpecificationLimitValue <- xAxisCases$lsl[i]
+    options$upperSpecificationLimitValue <- xAxisCases$usl[i]
+    set.seed(1)
+    results <- runAnalysis("processCapabilityStudies",
+                           testthat::test_path("datasets/processCapabilityStudy/processCapabilityWeibullAxisDebug.csv"), options)
+
+    test_that(sprintf("(%s) X-axis of capability plot is not stretched towards zero without historical parameters: %s", distribution, column), {
+      plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+      testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+      xLimits <- testPlot$subplots[[1]]$scales$get_scales("x")$limits
+      values <- xAxisData[[column]]
+      testthat::expect_gt(xLimits[1], min(values, xAxisCases$lsl[i]) - 3 * sd(values))
+    })
+  }
+}
+
+##### X-axis of probability plot on the log scale (Weibull, lognormal) ####
+test_that("Log-scale probability plot axis fits the data and has well-spaced breaks", {
+  dataSets <- list(near100 = qnorm(ppoints(100), mean = 100, sd = 5), near10000 = qnorm(ppoints(100), mean = 10000, sd = 20),
+                   wide = qweibull(ppoints(100), shape = 2, scale = 50), small = qweibull(ppoints(100), shape = 2, scale = 0.2))
+  charWidth <- formals(jaspQualityControl:::.qcProbabilityPlotLogAxis)$charWidth
+  for (x in dataSets) {
+    axis <- jaspQualityControl:::.qcProbabilityPlotLogAxis(x)
+    dataRange <- range(log(x))
+    testthat::expect_lte(axis$limits[1], dataRange[1])
+    testthat::expect_gte(axis$limits[2], dataRange[2])
+    testthat::expect_gt(diff(dataRange) / diff(axis$limits), 0.75) # data fill the axis (was 0-11% before)
+    testthat::expect_true(all(axis$labels %in% x)) # ticks are sample values, so never outside the data
+    halfLabel <- charWidth * max(nchar(as.character(round(axis$labels[c(1, length(axis$labels))], 3)))) / 2
+    testthat::expect_gte(diff(c(dataRange[2], axis$limits[2])) / diff(axis$limits), halfLabel - 1e-8) # room for the last label
+    nChar <- nchar(as.character(round(axis$labels, 3)))
+    minGap <- charWidth * ((head(nChar, -1) + tail(nChar, -1)) / 2 + 1)
+    testthat::expect_true(all(diff(axis$breaks) / diff(axis$limits) >= minGap - 1e-8)) # labels do not overlap
+    testthat::expect_equal(axis$breaks, log(axis$labels))
+  }
+})
+
+for (distribution in c("weibull", "lognormal")) {
+  options <- analysisOptions("processCapabilityStudies")
+  options$testSet <- "jaspDefault"
+  options$measurementLongFormat <- "x"
+  options$subgroupSizeType <- "manual"
+  options$manualSubgroupSizeValue <- 5
+  options$probabilityPlotRankMethod <- "bernard"
+  options$controlChartType <- "xBarR"
+  options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+  options$nonNormalDistribution <- distribution
+  options$nullDistribution <- distribution
+  options$lowerSpecificationLimit <- TRUE
+  options$upperSpecificationLimit <- TRUE
+  options$lowerSpecificationLimitValue <- 80
+  options$upperSpecificationLimitValue <- 120
+  dataNearHundred <- data.frame(x = qnorm(ppoints(100), mean = 100, sd = 5))
+  set.seed(1)
+  results <- runAnalysis("processCapabilityStudies", dataNearHundred, options)
+
+  test_that(sprintf("(%s) X-axis of probability plot is not stretched far beyond the data", distribution), {
+    plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+    testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+    xLimits <- testPlot$subplots[[1]]$scales$get_scales("x")$limits
+    testthat::expect_gt(diff(range(log(dataNearHundred$x))) / diff(xLimits), 0.75)
+  })
+}

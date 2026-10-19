@@ -1143,9 +1143,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       # Addition to consider that if distributions are set historically, they may fall outside the usual limits
       if (distribution == "normal" && options[["historicalMean"]])
         xLimits <- range(xLimits, options[["historicalMeanValue"]] - 1.5 * sdo, options[["historicalMeanValue"]] + 1.5 * sdo)
-      if (distribution == "weibull" || distribution == "3ParameterWeibull" && options[["historicalScale"]])
+      if ((distribution == "weibull" || distribution == "3ParameterWeibull") && options[["historicalScale"]])
         xLimits <- range(xLimits, options[["historicalScaleValue"]] - 1.5 * sdo, options[["historicalScaleValue"]] + 1.5 * sdo)
-      if (distribution == "lognormal" || distribution == "3ParameterLognormal" && options[["historicalLogMean"]])
+      if ((distribution == "lognormal" || distribution == "3ParameterLognormal") && options[["historicalLogMean"]])
         xLimits <- range(xLimits, exp(options[["historicalLogMeanValue"]]) - 1.5 * sdo,
                          exp(options[["historicalLogMeanValue"]]) + 1.5 * sdo)
       if (distribution == "exponential")
@@ -1340,9 +1340,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       # Addition to consider that if distributions are set historically, they may fall outside the usual limits
       if (distribution == "normal" && options[["historicalMean"]])
         xLimits <- range(xLimits, options[["historicalMeanValue"]] - 1.5 * sdo, options[["historicalMeanValue"]] + 1.5 * sdo)
-      if (distribution == "weibull" || distribution == "3ParameterWeibull" && options[["historicalScale"]])
+      if ((distribution == "weibull" || distribution == "3ParameterWeibull") && options[["historicalScale"]])
         xLimits <- range(xLimits, options[["historicalScaleValue"]] - 1.5 * sdo, options[["historicalScaleValue"]] + 1.5 * sdo)
-      if (distribution == "lognormal" || distribution == "3ParameterLognormal" && options[["historicalLogMean"]])
+      if ((distribution == "lognormal" || distribution == "3ParameterLognormal") && options[["historicalLogMean"]])
         xLimits <- range(xLimits, exp(options[["historicalLogMeanValue"]]) - 1.5 * sdo,
                          exp(options[["historicalLogMeanValue"]]) + 1.5 * sdo)
       if (distribution == "exponential")
@@ -3387,11 +3387,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       percentileEstimate <- log(percentileEstimate)
       percentileLower <- log(percentileLower)
       percentileUpper <- log(percentileUpper)
-      labelFrame <- data.frame(labs = label_x, value = dataCurrentStage)
-      index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
-      xBreaks <- labelFrame[index,2]
-      label_x <- labelFrame[index,1]
-      xLimits <- c(min(xBreaks) * 0.8, max(xBreaks) * 1.2)
+      logAxis <- .qcProbabilityPlotLogAxis(label_x, decimals = .numDecimals)
+      xBreaks <- logAxis$breaks
+      label_x <- logAxis$labels
+      xLimits <- logAxis$limits
     } else if (options[["nullDistribution"]] == "weibull") {
       fit_Weibull <- try(.distributionParameters(dataCurrentStage, distribution = "weibull", fix.arg = NULL))
       if (jaspBase::isTryError(fit_Weibull)) {
@@ -3425,11 +3424,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       percentileEstimate <- log(percentileEstimate)
       percentileLower <- log(percentileLower)
       percentileUpper <- log(percentileUpper)
-      labelFrame <- data.frame(labs = label_x, value = dataCurrentStage)
-      index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
-      xBreaks <- labelFrame[index,2]
-      label_x <- labelFrame[index,1]
-      xLimits <- c(min(xBreaks) * 0.8, max(xBreaks) * 1.2)
+      logAxis <- .qcProbabilityPlotLogAxis(label_x, decimals = .numDecimals)
+      xBreaks <- logAxis$breaks
+      label_x <- logAxis$labels
+      xLimits <- logAxis$limits
     }
     data1 <- data.frame(x = dataCurrentStage, y = y)
     yLimits <- range(yBreaks)
@@ -3491,6 +3489,35 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
 .qcWeibull <- function(p) {
   return(log(-log(1 - p)))
+}
+
+# x-axis for probability plots drawn on the log scale (lognormal, Weibull). The ticks are the sample values at the
+# minimum and at every 20% of the sorted data (as they always were), placed at their log value. The limits are the
+# data range plus a margin: they used to be a multiple of the logged values, which stretched the axis far beyond the
+# data (the points ended up in a thin strip and the tick labels overlapped). The margin leaves room for half of the
+# outer labels, which sit at the ends of the data.
+# A tick is dropped when it is too close to the previous one for both labels to fit: the sample quantiles bunch up
+# where the data are dense and, with decimals, the labels are wide. charWidth is the width of one character as a
+# fraction of the axis.
+.qcProbabilityPlotLogAxis <- function(x, decimals = 3, charWidth = 0.023) {
+  x <- sort(x[is.finite(x) & x > 0])
+  index <- c(1, jaspGraphs::getPrettyAxisBreaks(seq_along(x), 4)[-1])
+  index <- unique(index[index >= 1 & index <= length(x)])
+  labels <- x[index]
+  logBreaks <- log(labels)
+  nChar <- nchar(as.character(round(labels, decimals)))
+  halfLabel <- charWidth * max(nChar[1], nChar[length(nChar)]) / 2 # as a fraction of the axis
+  margin <- max(0.03, halfLabel / (1 - 2 * halfLabel))             # as a fraction of the data range
+  xLimits <- range(log(x))
+  xLimits <- xLimits + c(-1, 1) * margin * diff(xLimits)
+  keep <- 1
+  for (i in seq_along(labels)[-1]) {
+    last <- keep[length(keep)]
+    minGap <- charWidth * ((nChar[i] + nChar[last]) / 2 + 1)
+    if ((logBreaks[i] - logBreaks[last]) / diff(xLimits) >= minGap)
+      keep <- c(keep, i)
+  }
+  list(breaks = logBreaks[keep], labels = labels[keep], limits = xLimits)
 }
 
 # Functions for distribution plot section ####
