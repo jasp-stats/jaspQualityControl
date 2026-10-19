@@ -3387,7 +3387,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       percentileEstimate <- log(percentileEstimate)
       percentileLower <- log(percentileLower)
       percentileUpper <- log(percentileUpper)
-      logAxis <- .qcProbabilityPlotLogAxis(label_x)
+      logAxis <- .qcProbabilityPlotLogAxis(label_x, decimals = .numDecimals)
       xBreaks <- logAxis$breaks
       label_x <- logAxis$labels
       xLimits <- logAxis$limits
@@ -3424,7 +3424,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       percentileEstimate <- log(percentileEstimate)
       percentileLower <- log(percentileLower)
       percentileUpper <- log(percentileUpper)
-      logAxis <- .qcProbabilityPlotLogAxis(label_x)
+      logAxis <- .qcProbabilityPlotLogAxis(label_x, decimals = .numDecimals)
       xBreaks <- logAxis$breaks
       label_x <- logAxis$labels
       xLimits <- logAxis$limits
@@ -3491,30 +3491,33 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   return(log(-log(1 - p)))
 }
 
-# x-axis for probability plots drawn on the log scale (lognormal, Weibull): round numbers in the original
-# units that lie inside the data range, placed at their log value. The limits follow the data, not the breaks:
-# the round numbers are chosen on the linear scale, so the outermost ones can lie well outside the data, and on a
-# log axis the low end is stretched, which would leave an empty strip with a tick but no data.
-# Breaks closer than minGap (as a fraction of the axis) are dropped, because round numbers bunch up at the high end of a log axis.
-.qcProbabilityPlotLogAxis <- function(x, minGap = 0.12) {
-  x <- x[is.finite(x) & x > 0]
-  breaks <- jaspGraphs::getPrettyAxisBreaks(x)
-  breaks <- breaks[breaks > 0]
-  inside <- breaks[breaks >= min(x) & breaks <= max(x)]
-  if (length(inside) < 3) # very narrow range: keep the breaks that bracket the data
-    xLimits <- range(log(breaks), log(x))
-  else {
-    breaks <- inside
-    xLimits <- range(log(x))
-  }
-  xLimits <- xLimits + c(-1, 1) * 0.03 * diff(xLimits) # room for the outer labels
-  logBreaks <- log(breaks)
+# x-axis for probability plots drawn on the log scale (lognormal, Weibull). The ticks are the sample values at the
+# minimum and at every 20% of the sorted data (as they always were), placed at their log value. The limits are the
+# data range plus a margin: they used to be a multiple of the logged values, which stretched the axis far beyond the
+# data (the points ended up in a thin strip and the tick labels overlapped). The margin leaves room for half of the
+# outer labels, which sit at the ends of the data.
+# A tick is dropped when it is too close to the previous one for both labels to fit: the sample quantiles bunch up
+# where the data are dense and, with decimals, the labels are wide. charWidth is the width of one character as a
+# fraction of the axis.
+.qcProbabilityPlotLogAxis <- function(x, decimals = 3, charWidth = 0.023) {
+  x <- sort(x[is.finite(x) & x > 0])
+  index <- c(1, jaspGraphs::getPrettyAxisBreaks(seq_along(x), 4)[-1])
+  index <- unique(index[index >= 1 & index <= length(x)])
+  labels <- x[index]
+  logBreaks <- log(labels)
+  nChar <- nchar(as.character(round(labels, decimals)))
+  halfLabel <- charWidth * max(nChar[1], nChar[length(nChar)]) / 2 # as a fraction of the axis
+  margin <- max(0.03, halfLabel / (1 - 2 * halfLabel))             # as a fraction of the data range
+  xLimits <- range(log(x))
+  xLimits <- xLimits + c(-1, 1) * margin * diff(xLimits)
   keep <- 1
-  for (i in seq_along(breaks)[-1]) {
-    if ((logBreaks[i] - logBreaks[keep[length(keep)]]) / diff(xLimits) >= minGap)
+  for (i in seq_along(labels)[-1]) {
+    last <- keep[length(keep)]
+    minGap <- charWidth * ((nChar[i] + nChar[last]) / 2 + 1)
+    if ((logBreaks[i] - logBreaks[last]) / diff(xLimits) >= minGap)
       keep <- c(keep, i)
   }
-  list(breaks = logBreaks[keep], labels = breaks[keep], limits = xLimits)
+  list(breaks = logBreaks[keep], labels = labels[keep], limits = xLimits)
 }
 
 # Functions for distribution plot section ####

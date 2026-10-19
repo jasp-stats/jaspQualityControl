@@ -4693,14 +4693,19 @@ for (distribution in c("weibull", "lognormal")) {
 test_that("Log-scale probability plot axis fits the data and has well-spaced breaks", {
   dataSets <- list(near100 = qnorm(ppoints(100), mean = 100, sd = 5), near10000 = qnorm(ppoints(100), mean = 10000, sd = 20),
                    wide = qweibull(ppoints(100), shape = 2, scale = 50), small = qweibull(ppoints(100), shape = 2, scale = 0.2))
+  charWidth <- formals(jaspQualityControl:::.qcProbabilityPlotLogAxis)$charWidth
   for (x in dataSets) {
     axis <- jaspQualityControl:::.qcProbabilityPlotLogAxis(x)
     dataRange <- range(log(x))
     testthat::expect_lte(axis$limits[1], dataRange[1])
     testthat::expect_gte(axis$limits[2], dataRange[2])
-    testthat::expect_gt(diff(dataRange) / diff(axis$limits), 0.9) # data fill the axis, no empty strips
-    testthat::expect_true(all(axis$labels >= min(x) & axis$labels <= max(x))) # no tick outside the data
-    testthat::expect_true(all(diff(axis$breaks) / diff(axis$limits) >= 0.12 - 1e-8)) # labels do not overlap
+    testthat::expect_gt(diff(dataRange) / diff(axis$limits), 0.75) # data fill the axis (was 0-11% before)
+    testthat::expect_true(all(axis$labels %in% x)) # ticks are sample values, so never outside the data
+    halfLabel <- charWidth * max(nchar(as.character(round(axis$labels[c(1, length(axis$labels))], 3)))) / 2
+    testthat::expect_gte(diff(c(dataRange[2], axis$limits[2])) / diff(axis$limits), halfLabel - 1e-8) # room for the last label
+    nChar <- nchar(as.character(round(axis$labels, 3)))
+    minGap <- charWidth * ((head(nChar, -1) + tail(nChar, -1)) / 2 + 1)
+    testthat::expect_true(all(diff(axis$breaks) / diff(axis$limits) >= minGap - 1e-8)) # labels do not overlap
     testthat::expect_equal(axis$breaks, log(axis$labels))
   }
 })
@@ -4728,6 +4733,6 @@ for (distribution in c("weibull", "lognormal")) {
     plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
     testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
     xLimits <- testPlot$subplots[[1]]$scales$get_scales("x")$limits
-    testthat::expect_gt(diff(range(log(dataNearHundred$x))) / diff(xLimits), 0.9)
+    testthat::expect_gt(diff(range(log(dataNearHundred$x))) / diff(xLimits), 0.75)
   })
 }
