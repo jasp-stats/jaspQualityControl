@@ -3491,16 +3491,24 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   return(log(-log(1 - p)))
 }
 
-# x-axis for probability plots drawn on the log scale (lognormal, Weibull): pretty breaks in the original
-# units, placed at their log value, with limits that fit the data (not a multiple of the log values).
+# x-axis for probability plots drawn on the log scale (lognormal, Weibull): round numbers in the original
+# units that lie inside the data range, placed at their log value. The limits follow the data, not the breaks:
+# the round numbers are chosen on the linear scale, so the outermost ones can lie well outside the data, and on a
+# log axis the low end is stretched, which would leave an empty strip with a tick but no data.
 # Breaks closer than minGap (as a fraction of the axis) are dropped, because round numbers bunch up at the high end of a log axis.
 .qcProbabilityPlotLogAxis <- function(x, minGap = 0.12) {
   x <- x[is.finite(x) & x > 0]
   breaks <- jaspGraphs::getPrettyAxisBreaks(x)
   breaks <- breaks[breaks > 0]
-  logBreaks <- log(breaks)
-  xLimits <- range(logBreaks, log(x))
+  inside <- breaks[breaks >= min(x) & breaks <= max(x)]
+  if (length(inside) < 3) # very narrow range: keep the breaks that bracket the data
+    xLimits <- range(log(breaks), log(x))
+  else {
+    breaks <- inside
+    xLimits <- range(log(x))
+  }
   xLimits <- xLimits + c(-1, 1) * 0.03 * diff(xLimits) # room for the outer labels
+  logBreaks <- log(breaks)
   keep <- 1
   for (i in seq_along(breaks)[-1]) {
     if ((logBreaks[i] - logBreaks[keep[length(keep)]]) / diff(xLimits) >= minGap)
