@@ -559,7 +559,7 @@ msgstr ""
 
 msgid "Expected %1$s generator(s) for added factor(s) %2$s, but got %3$s."
 msgstr ""
-"Se esperaban %1$s generadores de los factores añadidos, pero se obtuvieron "
+"Se esperaban %1$s generadores de los factores añadidos %2$s, pero se obtuvieron "
 "%3$s."
 
 msgid "Factor(s) defined more than once in generators: %s."
