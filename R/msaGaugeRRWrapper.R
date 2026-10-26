@@ -97,12 +97,7 @@ msaGaugeRR <- function(
           varianceComponentsGraph = TRUE,
           xBarChart = FALSE) {
 
-   defaultArgCalls <- formals(jaspQualityControl::msaGaugeRR)
-   defaultArgs <- lapply(defaultArgCalls, eval)
-   options <- as.list(match.call())[-1L]
-   options <- lapply(options, eval)
-   defaults <- setdiff(names(defaultArgs), names(options))
-   options[defaults] <- defaultArgs[defaults]
+   options <- mget(names(formals(sys.function())), envir = environment(), inherits = FALSE)
    options[["data"]] <- NULL
    options[["version"]] <- NULL
 
