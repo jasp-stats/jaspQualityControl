@@ -37,7 +37,7 @@ For the ordering of contrasts and to identify the alpha points in a response sur
 
 - Use alias names: Check to assign alias names to factors. Useful when factors have long names.
 - Show regression equation: Check to display the regression coefficients as an equation predicting the response.
-- Display result in coded units: Check to display the results in coded units. This means, all factor levels are standardized between -1 and 1.
+- Display result in coded units: Check to display the results in coded units. This means, the levels of continuous factors and of discrete factors with two levels are standardized between -1 and 1. Discrete factors with more than two levels are not rescaled: they enter the model as factors with one term per level (sum-to-zero contrasts), exactly as in the uncoded model, and the low/high levels are not used for them.
 - Show optimal response: Check to display the factor levels yielding the optimal response.
 
 ## Model options
