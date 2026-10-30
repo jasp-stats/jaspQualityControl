@@ -24,6 +24,32 @@ Form
 {
 	id: form
 	columns: 1
+	info: qsTr("A response surface design is an experimental framework used to optimize and understand the relationships between several explanatory variables and one or more response variables. By systematically varying the input variables, researchers can explore the effects of these variables on the response, identify optimal conditions, and understand the interactions between variables. Response surface designs are particularly useful in situations where the goal is to optimize a process or product, as they provide a detailed map of the response landscape, enabling precise fine-tuning and improvement.")
+	infoBottom: "## " + qsTr("Background") + "\n"
+				+ qsTr("A response surface experiment extends the screening design to allow estimation of quadratic effects. After resolving confounding, the screening experiment allows coefficient estimates for main effects and interactions. The response surface experiment expands this equation by adding quadratic or even cubic terms. The form of the empirical model with quadratic terms is:") + "\n\n"
+				+ "*y = c<sub>0</sub> + c<sub>1</sub>X<sub>1</sub> + c<sub>2</sub>X<sub>2</sub> + ... + c<sub>n</sub>X<sub>n</sub> + c<sub>12</sub>X<sub>1</sub>X<sub>2</sub> + c<sub>13</sub>X<sub>1</sub>X<sub>3</sub> + ... + c<sub>(n-1)(n)</sub>X<sub>n-1</sub>X<sub>n</sub> + c<sub>11</sub>X<sub>1</sub><sup>2</sup> + c<sub>22</sub>X<sub>2</sub><sup>2</sup> + ... + c<sub>nn</sub>X<sub>n</sub><sup>2</sup>*" + "\n\n"
+				+ qsTr("Estimating the coefficients of the model shown in the above equation requires an experiment with at least three factor levels. A full factorial experiment with three levels includes enough trials to estimate all interactions, but quickly becomes large as the number of factors increases.") + "\n\n"
+				+ qsTr("Full factorial experiments include all interactions. The hierarchical ordering principle and the effect heredity principle imply that higher order interactions may be ignored, and that any interaction will not be statistically significant at a level of 5% unless the corresponding main effects are also statistically significant at a level of 5%. This allows accurate predictions with 2nd or 3rd order polynomials which can be created with significantly less trials than a full factorial experiment.") + "\n\n"
+				+ "### " + qsTr("Central composite design") + "\n"
+				+ qsTr("*Central composite designs* (CCD) were first proposed by Box and Wilson for building a second order (quadratic) model for the response variable without needing to use a complete three-level factorial experiment. A central composite design contains an embedded factorial (or fractional factorial of resolution V) design with factorial points and centre points, augmented with a group of star (axial) points that allows estimation of curvature. A central composite design always contains twice as many star (or axial) points (2k) as there are factors (k) in the design. These designs are constructed from three main parts, each of which comprises a set of experimental points:") + "\n\n"
+				+ "- " + qsTr("The 2<sup>k</sup> vertices (±1, ±1, ..., ±1) of a *k*-dimensional \"cube\". This part is simply a 2<sup>k</sup> factorial design or a fractional factorial design. The variable coding is chosen so that the two levels (low and high) are -1 or +1.") + "\n"
+				+ "- " + qsTr("The 2k vertices (±α, 0, ..., 0), (0, ±α, 0, ..., 0), ..., (0, ..., 0, ±α) of a *k*-dimensional \"star\". These are pairs of experimental points on the coordinate axes, all at a distance α from the origin. The quantity α is often a value between 1.4 and 2, but depends on the number of variables and the properties of the design under study. This part is often referred to as \"star\" or \"axial\".") + "\n"
+				+ "- " + qsTr("A number of centre points (0, 0, ..., 0).") + "\n\n"
+				+ "![" + qsTr("The design shapes: cube, star, and cube plus star") + "](%HELP_FOLDER%/images/doeResponseSurfaceMethodology/rsmDesignShapes.JPG)" + "\n\n"
+				+ qsTr("There are three general types of central composite designs:") + "\n\n"
+				+ "- **" + qsTr("Central composite circumscribed (CCC)") + "**: " + qsTr("CCC designs are the original form of the central composite design. The star (or axial) points are located on a circle encompassing the screening design. These designs have circular, spherical, or hyper-spherical symmetry and require five levels for each factor. It may not be possible to augment a screening design, represented by the corners of the square, if the levels of the screening design are absolute minimum and maximum, as the star (or axial) points exceed these values.") + "\n"
+				+ "- **" + qsTr("Face centred central composite (CCF)") + "**: " + qsTr("In the CCF design the star points are located at the centre of each face, i.e. at the middle lines of the square (for two factor designs) or at the centre of the square of the cube (for three factors) formed by the screening design. This variety requires three levels of each factor. This design is not rotatable, and has slightly less precision for coefficient estimation. Its advantage is that star (or axial) points can be added to prior screening designs.") + "\n"
+				+ "- **" + qsTr("Central composite inscribed (CCI)") + "**: " + qsTr("For those situations in which the limits specified for factor settings are truly limits, the CCI design uses star (or axial) points which are set at the minimum and maximum levels. If augmenting a screening design, the levels of the screening design will be within the absolute limits to allow the expanded settings for the star (or axial) points. This design also requires five levels of each factor.") + "\n\n"
+				+ "![" + qsTr("The types of central composite designs: circumscribed, face centred, and inscribed") + "](%HELP_FOLDER%/images/doeResponseSurfaceMethodology/rsmCCDTypes.JPG)" + "\n\n"
+				+ "### " + qsTr("Box-Behnken design") + "\n"
+				+ qsTr("A *Box-Behnken design* (BBD) is an independent quadratic design in that it does not contain an embedded factorial (or fractional factorial) design, i.e. all factors are never set at their high levels simultaneously. In this design the treatment combinations are at the midpoints of edges of the process space and at the centre. These designs are rotatable (or near rotatable) and require three levels of each factor. The designs have limited capability for orthogonal blocking compared to the central composite designs.") + "\n\n"
+				+ "![" + qsTr("A Box-Behnken design") + "](%HELP_FOLDER%/images/doeResponseSurfaceMethodology/rsmBBD.JPG)" + "\n\n"
+				+ qsTr("The Box-Behnken set-up consists of twelve \"edge\" points (shown as red dots) all lying on a single sphere about the centre of the experimental region (shown as a blue dot), plus a few replicates of the centre point, e.g., three (blue) centre points.") + "\n\n"
+				+ "---\n"
+				+ "## " + qsTr("References") + "\n"
+				+ "- Automotive Industry Action Group (2005). *Statistical process control (SPC) - Reference manual*. AIAG." + "\n"
+				+ "- Box, G. E. P., & Wilson, K. B. (1951). On the experimental attainment of optimum conditions. *Journal of the Royal Statistical Society, Series B, 13*(1), 1-45." + "\n"
+				+ "- Dodson, L., Dodson, M., & Klerx, R. (2010). *A study of the hierarchical ordering principle and the effect heredity principle in factorial experimental designs*. 10th Annual Conference of ENBIS, Antwerp." + "\n"
 
 	Common.ShowAndExportDesign {}
 
@@ -31,9 +57,10 @@ Form
 	{
 		name		: "designType"
 		title		: qsTr("Design type")
+		info		: qsTr("Select the type of response surface design to generate. See the background section below.")
 
-		RadioButton { name:	 "centralCompositeDesign";		label: qsTr("Central composite design");	checked: true;		id: centralCompositeDesign	}
-		RadioButton { name:	 "boxBehnkenDesign";			label: qsTr("Box-Behnken design");															}
+		RadioButton { name:	 "centralCompositeDesign";		label: qsTr("Central composite design");	checked: true;		id: centralCompositeDesign;	info: qsTr("Generate a central composite design.")	}
+		RadioButton { name:	 "boxBehnkenDesign";			label: qsTr("Box-Behnken design");										info: qsTr("Generate a Box-Behnken design.")				}
 
 	}
 
@@ -42,14 +69,17 @@ Form
 
 		// Could probably use a custom IntegerField type...
 		IntegerField { id: numberOfContinuous;		label: qsTr("Number of continuous factors");	name: "numberOfContinuous";		min: centralCompositeDesign.checked ? 2 : 3;	defaultValue: centralCompositeDesign.checked ? 2 : 3;	max: centralCompositeDesign.checked ? 10 : 7
+			info: qsTr("Set the total number of continuous factors in the design.")
 			property int intValue: defaultValue
 			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}
 		IntegerField { id: numberOfCategorical;		label: qsTr("Number of discrete factors");	name: "numberOfCategorical";	min: 0;		defaultValue: 0;	max: 10
+			info: qsTr("Set the total number of discrete factors in the design.")
 			property int intValue: defaultValue
 			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}
 		IntegerField { id: numberOfLevels;			label: qsTr("Maximum discrete levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 10
+			info: qsTr("Set the maximum number of levels for the discrete factors in the design. Continuous factors always have two defined levels (low/high). If a discrete factor has fewer levels than the maximum number of levels in the design, leave the remaining level cells empty or add a space.")
 			property int intValue: defaultValue
 			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}
@@ -58,6 +88,8 @@ Form
 		{
 
 			id: continuousVariablesTable
+			infoLabel			: qsTr("Continuous factors")
+			info				: qsTr("Set the names and the low and high levels of the continuous factors.")
 			modelType			: JASP.Simple
 
 			implicitWidth		: form.implicitWidth
@@ -88,6 +120,8 @@ Form
 		{
 			id: categoricalVariables
 			visible: numberOfCategorical.value != 0
+			infoLabel: qsTr("Discrete factors")
+			info: qsTr("Set the names of the discrete factors and give the values for each level.")
 
 			implicitWidth		: form.implicitWidth
 			implicitHeight		: 140 * preferencesModel.uiScale // about 3 rows
@@ -181,6 +215,8 @@ Form
 			}
 
 			id					: selectedDesign2
+			infoLabel			: qsTr("Design table")
+			info				: qsTr("Select one of the pre-set designs by clicking on it in the table.")
 			implicitWidth		: form.implicitWidth
 			implicitHeight		: 250 * preferencesModel.uiScale
 
@@ -301,10 +337,11 @@ Form
 			visible:			centralCompositeDesign.checked
 			name:				"alphaType"
 			title:				qsTr("Alpha")
+			info:				qsTr("Select how the alpha value (distance of the axial points from the centre) in the design is determined.")
 
-			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
-			RadioButton { name:	 "faceCentered";	label: qsTr("Face centred");					}
-			RadioButton { name:	 "custom";			label: qsTr("Custom");
+			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true;	info: qsTr("Use the default alpha value displayed in the design table.")	}
+			RadioButton { name:	 "faceCentered";	label: qsTr("Face centred");					info: qsTr("Use a face centred alpha value, i.e. the axial points lie on the faces of the cube.")	}
+			RadioButton { name:	 "custom";			label: qsTr("Custom");							info: qsTr("Enter a custom alpha value.")
 				childrenOnSameRow: true
 				DoubleField
 				{
@@ -318,20 +355,23 @@ Form
 		{
 			name:								"centerPointType"
 			title:								qsTr("Center points")
+			info:								qsTr("Select how the number of centre points in the design is determined.")
 
-			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
-			RadioButton { name:	 "custom";			label: qsTr("Custom");
+			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true;	info: qsTr("Use the default number of centre points displayed in the design table.")	}
+			RadioButton { name:	 "custom";			label: qsTr("Custom");							info: qsTr("Enter a custom number of centre points.")
 				// TODO: these doublefields should only be enable if the selected element has a nonzero number of cube/ axial points
 				childrenOnSameRow: !centralCompositeDesign.checked
 				DoubleField
 				{
 					label	: centralCompositeDesign.checked ? qsTr("Cube block") : "";
+					info	: centralCompositeDesign.checked ? qsTr("Enter the number of cube centre points.") : qsTr("Enter the number of centre points.")
 					name	: "customCubeBlock"
 					min		: 0
 				}
 				DoubleField
 				{
 					label		: qsTr("Axial block");
+					info		: qsTr("Enter the number of axial centre points.")
 					name		: "customAxialBlock"
 					min			: 0
 					visible		: centralCompositeDesign.checked
@@ -340,8 +380,8 @@ Form
 		}
 
 		// show user labels or just -1, 1?
-		SetSeed{}
-		IntegerField	{ name: "replicates";	label: qsTr("Replicates");			defaultValue: 1; min: 1; max: 100	}
+		SetSeed{ info: qsTr("Set a seed to reproduce a certain random order.") }
+		IntegerField	{ name: "replicates";	label: qsTr("Replicates");			defaultValue: 1; min: 1; max: 100;	info: qsTr("Select the number of replications of the whole design.")	}
 
 	}
 
