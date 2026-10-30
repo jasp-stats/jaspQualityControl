@@ -6,15 +6,46 @@ import JASP
 
 Form
 {
+	info: qsTr("The purpose of analysing factorial and response surface designs is to identify influential factors and optimal response conditions. The analysis shows which factors significantly affect the response and how they interact. This allows to systematically optimize processes and improve product quality.")
+	infoBottom: "## " + qsTr("Analysis of variance table") + "\n"
+				+ qsTr("The analysis of variance (ANOVA) table splits the variation in the response into the parts explained by the terms of the model and the part the model does not explain (Error).") + "\n\n"
+				+ "### " + qsTr("Columns") + "\n"
+				+ "- **" + qsTr("Sum of squares") + "**: " + qsTr("Variation in the response attributed to the source.") + "\n"
+				+ "- **df**: " + qsTr("Degrees of freedom. For a term, the number of model coefficients it contains.") + "\n"
+				+ "- **" + qsTr("Mean square") + "**: " + qsTr("Sum of squares divided by df.") + "\n"
+				+ "- **F**: " + qsTr("Mean square of the source divided by the mean square of Error.") + "\n"
+				+ "- **p**: " + qsTr("Probability of an F-value at least this large if all coefficients of the source are zero.") + "\n\n"
+				+ "### " + qsTr("Rows") + "\n"
+				+ "- **" + qsTr("Model") + "**: " + qsTr("Tests whether the model explains any variation, i.e. whether at least one coefficient besides the intercept differs from zero. Its sum of squares equals Total minus Error and is the same for all sums of squares types.") + "\n"
+				+ "- **" + qsTr("Linear terms, Squared terms, Interaction terms, Covariates") + "**: " + qsTr("Joint test of all terms in the group, e.g. whether all linear effects are zero. The group is treated as one term and adjusted according to the selected sums of squares type.") + "\n"
+				+ "- **" + qsTr("Single terms") + "**: " + qsTr("Test of one term (listed below its group), adjusted according to the selected sums of squares type.") + "\n"
+				+ "- **" + qsTr("Block") + "**: " + qsTr("Test of the differences between blocks.") + "\n"
+				+ "- **" + qsTr("Error") + "**: " + qsTr("Variation the model does not explain. Its mean square estimates the noise variance and is the denominator of all F-tests.") + "\n"
+				+ "- **" + qsTr("Total") + "**: " + qsTr("Total variation of the response around its mean, with df equal to the number of runs minus 1. Model plus Error equals Total.") + "\n\n"
+				+ qsTr("With type I sums of squares, and in balanced (orthogonal) designs, the term rows add up to their group row, and the group rows and Block add up to Model. With type II or III sums of squares in unbalanced designs this is generally not the case: when terms are correlated, part of the variation can be explained by several terms, and this shared part is not attributed to any single term.") + "\n\n"
+				+ "---\n"
+				+ "## " + qsTr("References") + "\n"
+				+ "- Fox, J., & Weisberg, S. (2019). *An R companion to applied regression* (3rd ed.). Sage." + "\n"
+				+ "- Langsrud, Ø. (2003). ANOVA for unbalanced data: Use Type II instead of Type III sums of squares. *Statistics and Computing, 13*(2), 163-167." + "\n"
+				+ "- Montgomery, D. C. (2017). *Design and analysis of experiments* (9th ed.). Wiley." + "\n"
+				+ "\n---\n"
+				+ "## " + qsTr("R Packages") + "\n"
+				+ "- car\n"
+				+ "- ggplot2\n"
+				+ "- jaspGraphs\n"
+				+ "- rsm\n"
+				+ "- stats\n"
+
 	DropDown
 	{
 		id: 									designType
 		name:									"designType"
 		label:									qsTr("Design type")
+		info:									qsTr("Select the type of experimental design you want to analyse.")
 		indexDefaultValue:						0
 		values: [
-				{ label: qsTr("Factorial design"), value: "factorialDesign"},
-				{ label: qsTr("Response surface design"), value: "responseSurfaceDesign"}
+				{ label: qsTr("Factorial design"), value: "factorialDesign", info: qsTr("A factorial design is an experimental setup used to study the effects of multiple factors by varying them simultaneously. Each factor is tested at different levels and in different combinations with other factors. This design allows for the examination of both the main effects of each factor and the interactions between factors.")},
+				{ label: qsTr("Response surface design"), value: "responseSurfaceDesign", info: qsTr("A response surface design is an experimental framework used to optimize and understand the relationships between several explanatory variables and one or more response variables. Besides main effects and interactions, it allows to estimate squared terms, which describe the curvature of the response. This gives a detailed map of the response landscape, which helps to find optimal conditions.")}
 				]
 	}
 
@@ -33,6 +64,7 @@ Form
 			name:								"dependentFactorial"
 			allowedColumns:						["scale"]
 			label:								qsTr("Responses")
+			info:								qsTr("The measured outcome variables of the process under investigation. Each response is analysed separately.")
 			height:								50 * preferencesModel.uiScale
 		}
 		
@@ -55,6 +87,7 @@ Form
 			name:								"fixedFactorsFactorial"
 			allowedColumns:						["nominal"]
 			label:								qsTr("Discrete factors")
+			info:								qsTr("The columns corresponding to the discrete factors in the design.")
 			height:								75 * preferencesModel.uiScale
 		}
 
@@ -64,6 +97,7 @@ Form
 			name:								"continuousFactorsFactorial"
 			allowedColumns:						["scale"]
 			label:								qsTr("Continuous factors")
+			info:								qsTr("The columns corresponding to the continuous factors in the design.")
 			height:								75 * preferencesModel.uiScale
 		}
 
@@ -72,6 +106,7 @@ Form
 			name:								"covariates"
 			id:									covariates
 			label:								qsTr("Covariates")
+			info:								qsTr("The columns corresponding to the covariates in the design. The difference between a covariate and a continuous factor is that the covariate will not be analysed for interaction effects and is excluded from effect plots.")
 			allowedColumns:						["scale"]
 			height:								50 * preferencesModel.uiScale
 		}
@@ -81,6 +116,7 @@ Form
 			name:								"blocksFactorial"
 			singleVariable:						true
 			label:								qsTr("Blocks")
+			info:								qsTr("The column corresponding to the blocks in the design. The difference between a block variable and a discrete factor is that the blocks will not be analysed for interaction effects and are excluded from effect plots.")
 			allowedColumns:						["nominal"]
 		}
 	}
@@ -100,6 +136,7 @@ Form
 			name:								"dependentResponseSurface"
 			allowedColumns:						["scale"]
 			label:								qsTr("Responses")
+			info:								qsTr("The measured outcome variables of the process under investigation. Each response is analysed separately.")
 			height:								50 * preferencesModel.uiScale
 		}
 		
@@ -122,6 +159,7 @@ Form
 			name:								"continuousFactorsResponseSurface"
 			allowedColumns:						["scale"]
 			label:								qsTr("Continuous factors")
+			info:								qsTr("The columns corresponding to the continuous factors in the design.")
 			height:								100 * preferencesModel.uiScale
 		}
 
@@ -131,6 +169,7 @@ Form
 			name:								"fixedFactorsResponseSurface"
 			allowedColumns:						["nominal"]
 			label:								qsTr("Discrete factors")
+			info:								qsTr("The columns corresponding to the discrete factors in the design.")
 			height:								100 * preferencesModel.uiScale
 		}
 
@@ -139,6 +178,7 @@ Form
 			name:								"blocksResponseSurface"
 			singleVariable:						true
 			label:								qsTr("Blocks")
+			info:								qsTr("The column corresponding to the blocks in the design. The difference between a block variable and a discrete factor is that the blocks will not be analysed for interaction effects and are excluded from effect plots.")
 			allowedColumns:						["nominal"]
 		}
 	}
@@ -155,11 +195,13 @@ Form
 				name: 					"codeFactorsMethod"
 				id: 					codeFactorsMethod
 				title:					qsTr("Factor levels")
+				info:					qsTr("For the ordering of contrasts and to identify the alpha points in a response surface design, the low and high levels of all factors need to be specified. There are two options to handle this.")
 
 				RadioButton
 				{
 					name: 				"automatic"
 					label: 				qsTr("Automatically detect low/high")
+					info:				qsTr("Attempts to automatically detect the low and high levels by taking the minimum and maximum for continuous factors, and by ordering discrete factors alphabetically. For response surface designs, this might recognize alpha values as low/high levels. In this case, manual specification is needed.")
 					checked: 			true
 				}
 
@@ -167,6 +209,7 @@ Form
 				{
 					name: 				"manual"
 					label: 				qsTr("Manually specify low/high")
+					info:				qsTr("Shows all factors in the analysis to allow for manual specification of the low and high levels.")
 				}
 
 
@@ -175,6 +218,7 @@ Form
 					id					: codeFactorsManualTable
 					name				: "codeFactorsManualTable"
 					label				: qsTr("Factor")
+					info				: qsTr("Enter the low and high level of each factor.")
 					visible				: codeFactorsMethod.value == "manual"
 					optionKey			: "predictors"
 					source				: designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial", "blocksFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface", "blocksResponseSurface"]
@@ -226,7 +270,8 @@ Form
 			CheckBox
 			{
 				name:								"tableAlias"
-				label:								"Use alias names"
+				label:								qsTr("Use alias names")
+				info:								qsTr("Assign alias names to the factors. Useful when factors have long names.")
 				checked:							true
 			}
 
@@ -235,6 +280,7 @@ Form
 				name:								"tableEquation"
 				checked:							true
 				label:								qsTr("Show regression equation")
+				info:								qsTr("Display the regression coefficients as an equation predicting the response.")
 			}
 
 			CheckBox
@@ -242,6 +288,7 @@ Form
 				name:								"codeFactors"
 				checked:							true
 				label:								qsTr("Display results in coded units")
+				info:								qsTr("Display the results in coded units. This means that all factor levels are rescaled to lie between -1 and 1. For factorial designs, continuous factors are treated as categorical in the ANOVA table when this option is unchecked.")
 			}
 		}
 	}
@@ -249,12 +296,14 @@ Form
 	Section
 	{
 		title: qsTr("Model")
+		info: qsTr("There are different options available to determine the terms that should be added to the model.")
 
 		CheckBox
 		{
 			id:										highestOrder
 			name:									"highestOrder"
 			label:									qsTr("Define by highest order interaction term")
+			info:									qsTr("Include all main effects and all interactions up to the specified order. Uncheck to define the model terms manually.")
 			visible:								designType.currentValue == "factorialDesign"
 			checked:								true
 
@@ -265,6 +314,7 @@ Form
 				min:								1
 				max:								(fixedFactorsFactorial.count + continuousFactorsFactorial.count) > 1 ? (fixedFactorsFactorial.count + continuousFactorsFactorial.count) : 999
 				label:								  qsTr("Highest order interaction term")
+				info:								qsTr("The highest order of the interactions to include. For example, 2 includes all two-way interactions.")
 			}
 		}
 
@@ -273,6 +323,7 @@ Form
 			id:										rsmPredefinedModel
 			name:                                   "rsmPredefinedModel"
 			label:                              	qsTr("Select predefined model")
+			info:									qsTr("Use one of the predefined models offered for analysing response surface designs. Uncheck to define the model terms manually.")
 			visible:								designType.currentValue == "responseSurfaceDesign"
 			checked: 								designType.currentValue == "responseSurfaceDesign"
 
@@ -281,12 +332,13 @@ Form
 					id: 									rsmPredefinedTerms
 					name:									"rsmPredefinedTerms"
 					label:									qsTr("Include following terms")
+					info:									qsTr("The terms of the predefined model.")
 					indexDefaultValue:						3
 					values: [
-							{ label: qsTr("Linear"), value: "linear"},
-							{ label: qsTr("Linear and interaction terms"), value: "linearAndInteractions"},
-							{ label: qsTr("Linear and squared terms"), value: "linearAndSquared"},
-							{ label: qsTr("Full quadratic"), value: "fullQuadratic"}
+							{ label: qsTr("Linear"), value: "linear", info: qsTr("Main effects only.")},
+							{ label: qsTr("Linear and interaction terms"), value: "linearAndInteractions", info: qsTr("Main effects and all two-way interactions.")},
+							{ label: qsTr("Linear and squared terms"), value: "linearAndSquared", info: qsTr("Main effects and the squared terms of all continuous factors.")},
+							{ label: qsTr("Full quadratic"), value: "fullQuadratic", info: qsTr("Main effects, all two-way interactions and the squared terms of all continuous factors.")}
 							]
 					}
 		}
@@ -307,7 +359,8 @@ Form
 			{  
 				name: 					"modelTerms" 
 				id: 					modelTerms 
-				title: 					designType.currentValue == "factorialDesign" ? qsTr("Model terms") : qsTr("Main and interaction terms") 
+				title: 					designType.currentValue == "factorialDesign" ? qsTr("Model terms") : qsTr("Main and interaction terms")
+				info: 					qsTr("Allows manually defining the main effects and interactions in the model.")
 				listViewType: 			JASP.Interaction
 				addInteractionsByDefault: false
 				//rowComponentTitle: 		designType.currentValue == "factorialDesign" ? "" : qsTr("Add squared term")
@@ -330,9 +383,10 @@ Form
 			
 			AssignedVariablesList 
 			{  
-				name: 					"squaredTerms" 
-				id: 					squaredTerms 
-				title: 					qsTr("Squared terms") 
+				name: 					"squaredTerms"
+				id: 					squaredTerms
+				title: 					qsTr("Squared terms")
+				info: 					qsTr("When analysing response surface designs, the continuous factors whose squared terms are included in the manually defined model.")
 			}
 
 		}
@@ -351,30 +405,35 @@ Form
 			{
 				name:                               "plotNorm"
 				label:                              qsTr("Normal probability plot")
+				info:								qsTr("Show a normal probability plot of the residuals.")
 			}
 
 			CheckBox
 			{
 				name:                               "plotHist"
 				label:                              qsTr("Histogram")
+				info:								qsTr("Show a histogram of the residuals.")
 			}
 
 			CheckBox
 			{
 				name:                               "plotFitted"
 				label:                              qsTr("Residuals vs. fitted values")
+				info:								qsTr("Show a plot of the residuals per fitted value.")
 			}
 
 			CheckBox
 			{
 				name:                               "plotRunOrder"
 				label:                              qsTr("Residuals vs. run order")
+				info:								qsTr("Show a plot of the residuals per run order value.")
 			}
 
 			CheckBox
 			{
 				name: 								"fourInOneResidualPlot"
 				label: 								qsTr("Residuals four-in-one plot")
+				info:								qsTr("Show all of the above plots in a 2x2 matrix.")
 			}
 		}
 
@@ -386,19 +445,22 @@ Form
 			{
 				name:									"plotPareto"
 				label:									qsTr("Pareto plot of effects")
+				info:									qsTr("Show a Pareto plot of the standardized effects.")
 			}
 
 			CheckBox
 			{
 				name:									"normalEffectsPlot"
 				label:									qsTr("Normal plot of effects")
+				info:									qsTr("Show a normal probability plot of the standardized effects.")
 			}
 		}
 
 		CheckBox
 		{
-			name:	"contourSurfacePlot"	
+			name:	"contourSurfacePlot"
 			label:	qsTr("Contour/surface plots")
+			info:	qsTr("Show contour (2D) or surface (3D) plots of the predicted response.")
 
 			RadioButtonGroup
 			{
@@ -411,6 +473,7 @@ Form
 					name: 				"contourPlot"
 					id : 				contourPlot
 					label: 				qsTr("Contour plot")
+					info:				qsTr("Two-dimensional plot with the predicted response shown as colored regions.")
 					checked: 			true
 				}
 
@@ -419,6 +482,7 @@ Form
 					name: 				"surfacePlot"
 					id : 				surfacePlot
 					label: 				qsTr("Surface plot")
+					info:				qsTr("Three-dimensional plot of the predicted response.")
 				}
 			}
 
@@ -435,9 +499,10 @@ Form
 
 				AssignedVariablesList
 				{ 
-					name: "contourSurfacePlotVariables" 
-					allowedColumns: ["scale"] 
+					name: "contourSurfacePlotVariables"
+					allowedColumns: ["scale"]
 					title: qsTr("Plotting variables")
+					info: qsTr("The continuous factors to plot. At least two are needed. A plot is shown for each pair of factors.")
 				}
 			}
 
@@ -450,6 +515,7 @@ Form
 				{
 					name:						"contourSurfacePlotResponseDivision"
 					label:						qsTr("Divide response surface into N parts")
+					info:						qsTr("Select the number of divisions of the response in the contour/surface plot.")
 					value:						5
 					min:						2
 					max:						10
@@ -463,6 +529,7 @@ Form
 					{
 						name:						"surfacePlotVerticalRotation"
 						label:						qsTr("Rotating angle (vertical plane)")
+						info:						qsTr("Rotation of the surface plot in the vertical plane, in degrees.")
 						value:						20
 						min:						0
 						max:						360
@@ -474,6 +541,7 @@ Form
 					{
 						name:						"surfacePlotHorizontalRotation"
 						label:						qsTr("Rotating angle (horizontal plane)")
+						info:						qsTr("Rotation of the surface plot in the horizontal plane, in degrees.")
 						value:						330
 						min:						0
 						max:						360
@@ -669,6 +737,7 @@ Form
 			{
 				name:							"histogramBinWidthType"
 				label:							qsTr("Histogram bin width type")
+				info:							qsTr("Select the method used to calculate the bin widths of the residual histogram, or specify a manual number of bins.")
 				id: 							binWidthType
 				indexDefaultValue:				0
 				values: [
@@ -684,6 +753,7 @@ Form
 			{
 				name:							"histogramManualNumberOfBins"
 				label:							qsTr("Number of bins")
+				info:							qsTr("Number of bins when the bin width type is set to manual.")
 				defaultValue:					30
 				min:							3
 				max:							10000
@@ -695,12 +765,13 @@ Form
 		{
 			name:							"sumOfSquaresType"
 			label:							qsTr("Sum of squares type")
+			info:							qsTr("How the sum of squares of each term in the ANOVA table is calculated. The types differ in which other terms a term is adjusted for. In balanced designs, such as complete factorial designs, all types give the same result. In unbalanced designs, e.g. with missing runs, covariates or squared terms, they can differ. The Model, Error and Total rows are the same for all types. See the description of the ANOVA table below.")
 			id: 							sumOfSquaresType
 			indexDefaultValue:				2
 			values: [
-				{ label: qsTr("Type I"), value: "type1"},
-				{ label: qsTr("Type II"), value: "type2"},
-				{ label: qsTr("Type III"), value: "type3"},
+				{ label: qsTr("Type I"), value: "type1", info: qsTr("Sequential sums of squares: each term is adjusted only for the terms entered before it, so the results depend on the order of the terms. The term rows add up to the Model row.")},
+				{ label: qsTr("Type II"), value: "type2", info: qsTr("Each term is adjusted for all other terms, except for higher-order terms that contain it. For example, A is adjusted for B, but not for A✻B.")},
+				{ label: qsTr("Type III"), value: "type3", info: qsTr("Each term is adjusted for all other terms in the model, i.e. it measures what the term adds when it is entered last. Results for lower-order terms depend on how the factors are coded.")},
 			]
 		}
 
@@ -708,6 +779,7 @@ Form
 			{
 				name:						"squaredTermsCoded"
 				label:						qsTr("Use coded data to calculate squared terms")
+				info:						qsTr("Calculate the ANOVA table from the factors in coded units (-1 to 1), so that squared terms are calculated from coded values. Only has an effect when the results are not displayed in coded units. It can change the type II and III sums of squares of the linear terms.")
 				visible:					designType.currentValue == "responseSurfaceDesign"
 			}
 	}

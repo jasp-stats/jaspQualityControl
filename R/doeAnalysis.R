@@ -477,7 +477,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
       anovaFit[["Mean Sq"]] <- anovaFit[["Sum Sq"]] / anovaFit[["Df"]]
       anovaFit <- anovaFit[c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")] # rearrange, so it has the same order as the aov function
-      anovaFit <- .addModelHeaderTerms(anovaFit, unlist(covariates))
+      anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, ssType, unlist(covariates))
     } else {
       result[["regression"]][["s"]] <- NA
       result[["regression"]][["rsq"]] <- 1
@@ -497,7 +497,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       anovaFit <- rbind(anovaFit, errorRow)
       anovaFit$`F value` <- NA # add these empty columns to the saturated design so the anova fit object always has the same format
       anovaFit$`Pr(>F)` <- NA
-      anovaFit <- .addModelHeaderTerms(anovaFit, unlist(covariates))
+      anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, "type1", unlist(covariates)) # aov gives sequential SS
 
     }
 
@@ -1351,25 +1351,31 @@ get_levels <- function(var, num_levels, dataset) {
   return(compoundDesi)
 }
 
-.addModelHeaderTerms <- function(anovaFit, covariates = "") {
+.addModelHeaderTerms <- function(anovaFit, fit, ssType, covariates = "") {
   rownames(anovaFit) <- gsub(" ", "", row.names(anovaFit), fixed = TRUE)
   rownames(anovaFit) <- unname(sapply(rownames(anovaFit), .gsubIdentityFunction)) # remove identity function around squared terms
 
-  # calculate model row
-  modelSS <- sum(anovaFit$`Sum Sq`[-nrow(anovaFit)])
-  modelDf <- sum(anovaFit$Df[-nrow(anovaFit)])
-  modelMS <- if (modelDf != 0) modelSS / modelDf else NA
+  errorDf <- anovaFit$Df[nrow(anovaFit)]
   msError <- anovaFit$`Mean Sq`[nrow(anovaFit)]
-  modelFValue <- if (msError != 0 && modelDf != 0) modelMS / msError else NA
-  modelPValue <- if (!is.na(modelFValue)) pf(modelFValue, modelDf, anovaFit$Df[nrow(anovaFit)], lower.tail = FALSE) else NA
-  modelRow <- data.frame(df = modelDf, ss = modelSS, ms = modelMS, f = modelFValue, p = modelPValue)
-  colnames(modelRow) <- colnames(anovaFit)
-  rownames(modelRow) <- "Model"
+
+  # Model and total SS come from the fit itself. Summing the term rows only works for type I SS;
+  # type II/III SS do not add up to the model SS in non-orthogonal designs.
+  y       <- model.response(model.frame(fit))
+  totalSS <- sum((y - mean(y))^2)
+  modelSS <- totalSS - sum(residuals(fit)^2)
+  modelDf <- sum(anovaFit$Df[-nrow(anovaFit)])
+  modelRow <- .doeAnovaRow(modelSS, modelDf, msError, errorDf, colnames(anovaFit), "Model")
 
   # calculate total row
-  totalRow <- data.frame(df = sum(anovaFit$Df), ss = sum(anovaFit$`Sum Sq`), ms = NA, f = NA, p = NA)
+  totalRow <- data.frame(df = sum(anovaFit$Df), ss = totalSS, ms = NA, f = NA, p = NA)
   colnames(totalRow) <- colnames(anovaFit)
   rownames(totalRow) <- "Total"
+
+  # SS of a group of term rows (e.g., all linear terms), tested jointly
+  groupRow <- function(rowIndices, label) {
+    groupSS <- .doeAnovaGroupSumOfSquares(anovaFit, rowIndices, fit, ssType)
+    .doeAnovaRow(groupSS, sum(anovaFit$Df[rowIndices]), msError, errorDf, colnames(anovaFit), label)
+  }
 
   # calculate block row
   blockTermIndex <- which(rownames(anovaFit) == "Block")
@@ -1383,9 +1389,7 @@ get_levels <- function(var, num_levels, dataset) {
   if (length(covariateTermIndices) > 0) {
     anovaFitCovariate <- anovaFit[covariateTermIndices,]
     rownames(anovaFitCovariate) <- sprintf("\u00A0 \u00A0 %s", rownames(anovaFitCovariate)) # double indent
-    covariateRow <- data.frame(df = sum(anovaFitCovariate$Df), ss = sum(anovaFitCovariate$`Sum Sq`), ms = NA, f = NA, p = NA)
-    colnames(covariateRow) <- colnames(anovaFit)
-    rownames(covariateRow) <- sprintf("\u00A0 %s", "Covariates")
+    covariateRow <- groupRow(covariateTermIndices, sprintf("\u00A0 %s", "Covariates"))
   }
 
   # calculate linear row and get all linear terms
@@ -1394,18 +1398,14 @@ get_levels <- function(var, num_levels, dataset) {
                                !rownames(anovaFit[-nrow(anovaFit),]) %in% covariates)  # all terms without squared symbol or colon or residuals or Block or covariates
   anovaFitLinear <- anovaFit[linearTermIndices,]
   rownames(anovaFitLinear) <- sprintf("\u00A0 \u00A0 %s", rownames(anovaFitLinear)) # double indent
-  linearRow <- data.frame(df = sum(anovaFitLinear$Df), ss = sum(anovaFitLinear$`Sum Sq`), ms = NA, f = NA, p = NA)
-  colnames(linearRow) <- colnames(anovaFit)
-  rownames(linearRow) <- sprintf("\u00A0 %s", "Linear terms")
+  linearRow <- groupRow(linearTermIndices, sprintf("\u00A0 %s", "Linear terms"))
 
   # calculate squared row and get all squared terms
   squaredTermIndices <- which(grepl("\\^2$", rownames(anovaFit)))
   if (length(squaredTermIndices) > 0) {
     anovaFitSquared <- anovaFit[squaredTermIndices,]
     rownames(anovaFitSquared) <- sprintf("\u00A0 \u00A0 %s", rownames(anovaFitSquared)) # double indent
-    squaredRow <- data.frame(df = sum(anovaFitSquared$Df), ss = sum(anovaFitSquared$`Sum Sq`), ms = NA, f = NA, p = NA)
-    colnames(squaredRow) <- colnames(anovaFit)
-    rownames(squaredRow) <- sprintf("\u00A0 %s", "Squared terms")
+    squaredRow <- groupRow(squaredTermIndices, sprintf("\u00A0 %s", "Squared terms"))
   }
 
   # calculate interaction row and get all interaction terms
@@ -1413,9 +1413,7 @@ get_levels <- function(var, num_levels, dataset) {
   if (length(interactionTermIndices) > 0) {
     anovaFitInteraction <- anovaFit[interactionTermIndices, ]
     rownames(anovaFitInteraction) <- sprintf("\u00A0 \u00A0 %s", rownames(anovaFitInteraction)) # double indent
-    interactionRow <- data.frame(df = sum(anovaFitInteraction$Df), ss = sum(anovaFitInteraction$`Sum Sq`), ms = NA, f = NA, p = NA)
-    colnames(interactionRow) <- colnames(anovaFit)
-    rownames(interactionRow) <- sprintf("\u00A0 %s", "Interaction terms")
+    interactionRow <- groupRow(interactionTermIndices, sprintf("\u00A0 %s", "Interaction terms"))
   }
 
   # Model error row
@@ -1435,6 +1433,49 @@ get_levels <- function(var, num_levels, dataset) {
   newAnovaFit <- rbind(newAnovaFit, errorRow, totalRow)
 
   return(newAnovaFit)
+}
+
+.doeAnovaRow <- function(ss, df, msError, errorDf, colNames, label) {
+  ms   <- if (df != 0) ss / df else NA
+  fVal <- if (!is.na(ms) && isTRUE(msError > 0)) ms / msError else NA
+  pVal <- if (!is.na(fVal)) pf(fVal, df, errorDf, lower.tail = FALSE) else NA
+  row  <- data.frame(df = df, ss = ss, ms = ms, f = fVal, p = pVal)
+  colnames(row) <- colNames
+  rownames(row) <- label
+  return(row)
+}
+
+# Joint SS for a group of ANOVA term rows. Type I: sum of sequential SS (these add up correctly).
+# Type II/III: extra SS from dropping all terms of the group at once, mirroring car::Anova for single terms.
+.doeAnovaGroupSumOfSquares <- function(anovaFit, rowIndices, fit, ssType) {
+  if (length(rowIndices) == 0)
+    return(0)
+  if (ssType == "type1")
+    return(sum(anovaFit$`Sum Sq`[rowIndices]))
+
+  termLabels      <- attr(terms(fit), "term.labels")
+  cleanTermLabels <- unname(sapply(gsub(" ", "", termLabels, fixed = TRUE), .gsubIdentityFunction))
+  groupTerms      <- match(rownames(anovaFit)[rowIndices], cleanTermLabels)
+  if (anyNA(groupTerms))
+    return(NA)
+
+  modelMatrix <- model.matrix(fit)
+  termAssign  <- attr(modelMatrix, "assign")
+  y           <- model.response(model.frame(fit))
+  rss <- function(dropTerms) {
+    keep <- !(termAssign %in% dropTerms)
+    sum(lm.fit(modelMatrix[, keep, drop = FALSE], y)$residuals^2)
+  }
+
+  if (ssType == "type3")
+    return(rss(groupTerms) - rss(integer(0)))
+
+  # type II: adjust for all terms except the group and its higher-order relatives (terms containing a group term)
+  factors    <- attr(terms(fit), "factors") > 0
+  contains   <- function(outer, inner) all(!(factors[, inner] & !factors[, outer]))
+  otherTerms <- setdiff(seq_along(termLabels), groupTerms)
+  relatives  <- otherTerms[vapply(otherTerms, function(j) any(vapply(groupTerms, function(i) contains(j, i), logical(1))), logical(1))]
+  return(rss(c(groupTerms, relatives)) - rss(relatives))
 }
 
 .removeAppendedFactorLevels <- function(predictorNames, terms, interactionSymbol = "✻"){
