@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2026-09-05 03:43\n"
-"PO-Revision-Date: 2026-07-10 05:01+0000\n"
-"Last-Translator: 陳正昌 <chencc99@gmail.com>\n"
+"PO-Revision-Date: 2026-10-26 12:51+0000\n"
+"Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
 "projects/jasp/jaspprocesscontrol-r/zh_Hans/>\n"
 "Language: zh_Hans\n"
@@ -11,45 +11,39 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.7.1.dev0\n"
+"X-Generator: Weblate 2026.11.dev0\n"
 
-#, fuzzy
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
 "is considered.<br>"
-msgstr "一个或多个子组被分配到多个阶段，但仅考虑第一阶段。<br>"
+msgstr "一个或多个子组被分配到多个阶段，仅考虑第一个阶段。<br>"
 
 msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
-msgstr ""
+msgstr "已移除未分配到任何阶段的 %1$i 个%2$s。<br>"
 
 msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
-msgstr ""
+msgstr "已移除未分配到任何子组的 %i 个观测。<br>"
 
 msgid "Sample"
 msgstr "样本"
 
-#, fuzzy
 msgid "Time weighted charts report"
-msgstr "单值控制图"
+msgstr "时间加权控制图报告"
 
-#, fuzzy
 msgid "Chart name: %s"
-msgstr "量具名称 : %s"
+msgstr "图名称：%s"
 
 msgid "Sub-title: %s"
 msgstr "副标题：%s"
 
-#, fuzzy
 msgid "Measurement name: %s"
-msgstr "测量系统: %s"
+msgstr "测量名称：%s"
 
-#, fuzzy
 msgid "Footnote: %s"
-msgstr "日期：%s"
+msgstr "脚注：%s"
 
-#, fuzzy
 msgid "Location: %s"
-msgstr "位置 (%1$s)"
+msgstr "位置：%s"
 
 msgid "Date: %s"
 msgstr "日期：%s"
@@ -57,9 +51,8 @@ msgstr "日期：%s"
 msgid "Performed by: %s"
 msgstr "执行者 : %s"
 
-#, fuzzy
 msgid "Print date: %s"
-msgstr "日期：%s"
+msgstr "打印日期：%s"
 
 msgid "Cumulative sum chart"
 msgstr "累积和控制图"
@@ -97,31 +90,29 @@ msgstr "单值移动极差控制图"
 msgid "Report for Attribute Control Charts"
 msgstr "属性控制图报告"
 
-#, fuzzy
 msgid "ID: %s"
-msgstr "日期：%s"
+msgstr "ID：%s"
 
 msgid "Appraiser: %s"
-msgstr "评估者: %s"
+msgstr "评估者：%s"
 
 msgid "Measurement system: %s"
-msgstr "测量系统: %s"
+msgstr "测量系统：%s"
 
-#, fuzzy
 msgid "Subgroup size: %s"
-msgstr "子组"
+msgstr "子组大小：%s"
 
 msgid "Time: %s"
 msgstr "时间: %s"
 
 msgid "Frequency: %s"
-msgstr "频度: %s"
+msgstr "频率：%s"
 
 msgid "CL = %g"
 msgstr "CL = %g"
 
 msgid "Proportion"
-msgstr "比率"
+msgstr "比例"
 
 msgid "UCL = %g"
 msgstr "UCL = %g"
@@ -160,87 +151,70 @@ msgid "Test 6: Bimodal distribution"
 msgstr "检验 6：双峰分布"
 
 msgid "Points where a test failed."
-msgstr ""
+msgstr "检验失败的点。"
 
-#, fuzzy
 msgid "Test results for %1$s chart"
-msgstr "%s 图检验结果"
+msgstr "%1$s 控制图的检验结果"
 
 msgid "Point"
-msgstr ""
+msgstr "点"
 
-#, fuzzy
 msgid "- upper"
-msgstr "上界"
+msgstr "- 上限"
 
-#, fuzzy
 msgid "- lower"
-msgstr "下界"
+msgstr "- 下限"
 
-#, fuzzy
 msgid "Test 7: Slightly increasing variation"
-msgstr "检验 4：变异增加"
+msgstr "检验 7：变异略微增大"
 
-#, fuzzy
 msgid "Test 8: Oscillation"
-msgstr "检验 5：变异降低"
+msgstr "检验 8：振荡"
 
-#, fuzzy
 msgid "Test 9: Benneyan test"
-msgstr "检验 1：超控制限"
+msgstr "检验 9：Benneyan 检验"
 
-#, fuzzy
 msgid "Tests"
-msgstr "偏倚的 t 检验"
+msgstr "检验"
 
-#, fuzzy
 msgid "No test violations occurred."
-msgstr "数字表示发生违反检验准则的数据点。"
+msgstr "未发生检验违规。"
 
 msgid "%1$s between events"
-msgstr ""
+msgstr "事件之间的%1$s"
 
-#, fuzzy
 msgid "Sample average"
-msgstr "样本量"
+msgstr "样本均值"
 
-#, fuzzy
 msgid "Sample range"
-msgstr "样本量"
+msgstr "样本极差"
 
-#, fuzzy
 msgid "Individual value"
-msgstr "单值控制图"
+msgstr "单值"
 
-#, fuzzy
 msgid "Moving range"
 msgstr "移动极差"
 
 msgid "Moving range of subgroup mean"
-msgstr ""
+msgstr "子组均值的移动极差"
 
-#, fuzzy
 msgid "Sample std. dev."
-msgstr "标准差"
+msgstr "样本标准差"
 
 msgid "Cumulative sum"
 msgstr "累积和"
 
-#, fuzzy
 msgid "Exponentially weighted moving average"
-msgstr "指数加权移动平均控制图"
+msgstr "指数加权移动平均"
 
-#, fuzzy
 msgid "LSL = %g"
-msgstr "LCL = %g"
+msgstr "LSL = %g"
 
-#, fuzzy
 msgid "Tar. = %g"
-msgstr "CL = %g"
+msgstr "目标值 = %g"
 
-#, fuzzy
 msgid "USL = %g"
-msgstr "UCL = %g"
+msgstr "USL = %g"
 
 msgid ""
 "The parameters could not be estimated for the selected distribution, most "
@@ -248,79 +222,80 @@ msgid ""
 "the selected distribution, please try one that describes your data more "
 "closely."
 msgstr ""
+"无法为所选分布估计参数，很可能是因为数据的观测分布与所选分布相差很远，请尝试"
+"更贴近数据描述的分布。"
 
 msgid "Design of Experiments - Analysis"
-msgstr ""
+msgstr "实验设计 - 分析"
 
 msgid "Error"
-msgstr ""
+msgstr "错误"
 
 msgid ""
 "Stepwise method failed. Please consider a different method or starting model."
-msgstr ""
+msgstr "逐步方法失败。请考虑使用其他方法或起始模型。"
 
 msgid "The specified low/high levels for %1$s are not distinct."
-msgstr ""
+msgstr "%1$s 指定的低/高水平不唯一。"
 
 msgid ""
 "The specified low/high level(s) %1$s for %2$s do not match the levels in the "
 "dataset."
-msgstr ""
+msgstr "为 %2$s 指定的低/高水平 %1$s 与数据集中的水平不匹配。"
 
 msgid "Terms removed from Regression:"
-msgstr ""
+msgstr "从回归中移除的项："
 
 msgid "and from ANOVA:"
-msgstr ""
+msgstr "以及从方差分析中移除的项："
 
 msgid "Terms removed from ANOVA:"
-msgstr ""
+msgstr "从方差分析中移除的项："
 
 msgid "Response Optimizer Settings"
-msgstr ""
+msgstr "响应优化器设置"
 
 msgid "lower and upper bounds and target are"
-msgstr ""
+msgstr "下界和上界以及目标为"
 
-#, fuzzy
 msgid "lower and upper bounds are"
-msgstr "公差 : %s"
+msgstr "下界和上界为"
 
-#, fuzzy
 msgid "target is"
-msgstr "目标"
+msgstr "目标为"
 
 msgid "The %s estimated from data."
-msgstr ""
+msgstr "从数据估计的%s。"
 
 msgid "Response Optimizer Solution"
-msgstr ""
+msgstr "响应优化器解"
 
 msgid "%s fit"
-msgstr ""
+msgstr "%s 拟合"
 
-#, fuzzy
 msgid "Optimization Plot"
-msgstr "检测图"
+msgstr "优化图"
 
 msgid ""
 "Enter values for all predictors to create an optimization Plot with manual "
 "input parameters."
-msgstr ""
+msgstr "为所有预测变量输入值，以使用手动输入参数创建优化图。"
 
 msgid "Summary Plot"
-msgstr ""
+msgstr "汇总图"
 
 msgid ""
 "Enter plausible values for all discrete predictors.\n"
 "                                   Value %1$s is not a possible for the "
 "discrete predictor %2$s. Allowed values:"
 msgstr ""
+"为所有离散预测变量输入合理的值。\n"
+" 值 %1$s 不是离散预测变量 %2$s 的可能取值。允许的值："
 
 msgid ""
 "Enter plausible values for all continuous predictors. Only numeric values "
 "are allowed."
-msgstr ""
+msgstr "为所有连续预测变量输入合理的值。仅允许数值。"
 
 #, fuzzy
 msgid "Comp. desirability"
@@ -331,10 +306,10 @@ msgid "Ind. desirability ("
 msgstr "合意度"
 
 msgid "Optimization Plot Summary (Manual Predictor Values)"
-msgstr ""
+msgstr "优化图摘要（手动预测变量值）"
 
 msgid "Optimization Plot Summary"
-msgstr ""
+msgstr "优化图摘要"
 
 #, fuzzy
 msgid "Composite desirability"
@@ -346,56 +321,50 @@ msgid ""
 "                           Extrapolation beyond the design space might not "
 "be valid."
 msgstr ""
+"连续预测变量的一个或多个输入参数位于设计空间之外。\n"
+"超出设计空间的外推可能无效。"
 
 msgid "Model Summary"
 msgstr "模型摘要"
 
-#, fuzzy
 msgid "Adjusted %s"
-msgstr "调整 R 平方"
+msgstr "校正 %s"
 
-#, fuzzy
 msgid "Predictive %s"
-msgstr "预测变量"
+msgstr "预测 %s"
 
 msgid "The following aliased terms were removed: %s."
 msgstr ""
 
-#, fuzzy
 msgid "Analysis of Variance"
 msgstr "方差分析"
 
 msgid "Source"
 msgstr "变异源"
 
-#, fuzzy
 msgid "Sum of squares"
 msgstr "平方和"
 
 msgid "df"
-msgstr "自由度"
+msgstr "df"
 
-#, fuzzy
 msgid "Mean square"
 msgstr "均方"
 
-#, fuzzy
 msgid "Type I sums of squares."
-msgstr "平方和"
+msgstr "I 型平方和。"
 
-#, fuzzy
 msgid "Type II sums of squares."
-msgstr "平方和"
+msgstr "II 型平方和。"
 
-#, fuzzy
 msgid "Type III sums of squares."
-msgstr "平方和"
+msgstr "III 型平方和。"
 
 msgid "Coded"
-msgstr ""
+msgstr "已编码"
 
 msgid "Uncoded"
-msgstr ""
+msgstr "未编码"
 
 msgid "%s Coefficients"
 msgstr "%s 系数"
@@ -406,38 +375,35 @@ msgstr ""
 msgid "Term"
 msgstr "项"
 
-#, fuzzy
 msgid "Effect"
-msgstr "有效性"
+msgstr "效应"
 
 msgid "Coefficient"
 msgstr "系数"
 
-#, fuzzy
 msgid "Standard error"
 msgstr "标准误"
 
 msgid "Discrete Predictor Levels"
-msgstr ""
+msgstr "离散预测变量水平"
 
 msgid "Name"
 msgstr "名称"
 
 msgid "Level"
-msgstr ""
+msgstr "水平"
 
-#, fuzzy
 msgid "Regression equation in %s Units"
-msgstr "以 %s 单位表达的回归方程"
+msgstr "以%s单位的回归方程"
 
 msgid "Stepwise results"
-msgstr ""
+msgstr "逐步结果"
 
 msgid "Step"
-msgstr ""
+msgstr "步"
 
 msgid "Formula"
-msgstr ""
+msgstr "公式"
 
 msgid "Pareto Chart of Standardized Effects"
 msgstr "标准化效果的帕累托图"
@@ -449,21 +415,19 @@ msgid "Normal Plot of Standardized Effects"
 msgstr "标准化效应正态图"
 
 msgid "Significant"
-msgstr ""
+msgstr "显著"
 
 msgid "Not Significant"
-msgstr ""
+msgstr "不显著"
 
 msgid "Normal Probability Plot of Residuals"
 msgstr "残差的正态概率图"
 
-#, fuzzy
 msgid "Theoretical quantiles"
-msgstr "垂直渐近线"
+msgstr "理论分位数"
 
-#, fuzzy
 msgid "Observed quantiles"
-msgstr "观测值"
+msgstr "观测分位数"
 
 msgid "Histogram of Residuals"
 msgstr "残差直方图"
@@ -471,53 +435,52 @@ msgstr "残差直方图"
 msgid "Residuals"
 msgstr "残差"
 
-#, fuzzy
 msgid "Residuals versus Fitted Values"
-msgstr "残差 vs.拟合值"
+msgstr "残差与拟合值"
 
 msgid "Fitted values"
 msgstr "拟合值"
 
-#, fuzzy
 msgid "Residuals versus Run Order"
-msgstr "残差 vs. 运行顺序"
+msgstr "残差与运行顺序"
 
 msgid "Run order"
 msgstr "运行序"
 
 msgid "Matrix residual plot"
-msgstr ""
+msgstr "矩阵残差图"
 
 msgid "Contour plot"
-msgstr ""
+msgstr "等高线图"
 
 msgid "Surface plot"
-msgstr ""
+msgstr "曲面图"
 
 msgid "Contour plots"
-msgstr ""
+msgstr "等高线图"
 
 msgid "Surface plots"
-msgstr ""
+msgstr "曲面图"
 
 msgid "and"
-msgstr ""
+msgstr "和"
 
 msgid "%1$s of %2$s vs %3$s"
-msgstr ""
+msgstr "%2$s 对 %3$s 的%1$s"
 
 msgid ""
 "Could not plot because the following selected variable(s) were not included "
 "in the final model: %1$s. They might have been removed during model "
 "selection."
 msgstr ""
+"无法绘图，因为以下所选变量未包含在最终模型中：%1$s。它们可能在模型选择过程中"
+"被移除。"
 
 msgid "The analysis failed with the following error message: %s"
 msgstr "分析失败，出现以下错误消息：%s"
 
-#, fuzzy
 msgid "Design Summary"
-msgstr "模型摘要"
+msgstr "设计摘要"
 
 msgid "Variable"
 msgstr "变量"
@@ -532,70 +495,66 @@ msgstr ""
 msgid "Base blocks"
 msgstr "区组"
 
-#, fuzzy
 msgid "Centre points per block"
-msgstr "中心点/星号区组数"
+msgstr "每个区组的中心点"
 
-#, fuzzy
 msgid "Replications"
 msgstr "复制"
 
-#, fuzzy
 msgid "Repetitions"
 msgstr "重复"
 
-#, fuzzy
 msgid "Total runs"
-msgstr "总变异"
+msgstr "总运行数"
 
 msgid "Total blocks"
-msgstr ""
+msgstr "总区组数"
 
 msgid "Value"
 msgstr "值"
 
 msgid "Please select a row in the design table."
-msgstr ""
+msgstr "请在设计表中选择一行。"
 
 msgid "Cannote create designs with more than 100000 total runs."
-msgstr ""
+msgstr "无法创建总运行数超过 100000 的设计。"
 
 msgid "Click 'Display design' to show the design."
-msgstr ""
+msgstr "点击“显示设计”以显示设计。"
 
 msgid "The design is not exported until 'Export design' is checked."
-msgstr ""
+msgstr "在勾选“导出设计”之前，设计不会被导出。"
 
 msgid "The design is exported as '%1$s'."
-msgstr ""
+msgstr "设计将导出为“%1$s”。"
 
 msgid ""
 "The selected design is a full factorial; no generators can be specified."
-msgstr ""
+msgstr "所选设计为全因子设计；无法指定生成元。"
 
 msgid ""
 "All generators must either all include a factor name (e.g., D=ABC) or none "
 "should."
-msgstr ""
+msgstr "所有生成元必须全部包含因子名称（例如 D=ABC），或者全部不包含。"
 
 msgid "Only the final %1$s factor(s) can be defined by a generator: %2$s."
-msgstr ""
+msgstr "只有最后的 %1$s 个因子可以由生成元定义：%2$s。"
 
 msgid "Expected %1$s generator(s) for added factor(s) %2$s, but got %3$s."
-msgstr ""
+msgstr "对于添加的因子 %2$s，预期需要 %1$s 个生成元，但实际得到 %3$s 个。"
 
 msgid "Factor(s) defined more than once in generators: %s."
-msgstr ""
+msgstr "在生成元中多次定义的因子：%s。"
 
 msgid ""
 "Generator for %1$s references non-base or unknown factor(s): %2$s. Base "
 "factors are: %3$s."
-msgstr ""
+msgstr "%1$s 的生成元引用了非基本或未知因子：%2$s。基本因子为：%3$s。"
 
 msgid ""
 "Generator %1$s references non-base or unknown factor(s): %2$s. Base factors "
 "are: %3$s."
-msgstr ""
+msgstr "生成元 %1$s 引用了非基本或未知因子：%2$s。基本因子为：%3$s。"
 
 msgid "No aliasing among main effects and 2-factor interactions."
 msgstr ""
@@ -603,9 +562,8 @@ msgstr ""
 msgid "Alias Structure"
 msgstr "别名结构"
 
-#, fuzzy
 msgid "Factorial Design"
-msgstr "可用因子设计"
+msgstr "因子设计"
 
 msgid "Run Order"
 msgstr "运行序"
@@ -617,11 +575,10 @@ msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
 msgid "Continuous factors"
-msgstr ""
+msgstr "连续因子"
 
-#, fuzzy
 msgid "Discrete factors"
-msgstr "因子"
+msgstr "离散因子"
 
 msgid "Replicates"
 msgstr "复制"
@@ -638,76 +595,62 @@ msgid "Centre points"
 msgstr "中心点"
 
 msgid "Box-BehnkenDesign are not supported for 8 variables."
-msgstr ""
+msgstr "8 个变量不支持 Box-Behnken 设计。"
 
-#, fuzzy
 msgid "Response Surface Design - Central Composite Design"
-msgstr "中心复合设计"
+msgstr "响应曲面设计 - 中心复合设计"
 
 msgid "Response Surface Design - Box-Behnken design"
-msgstr ""
+msgstr "响应曲面设计 - Box-Behnken 设计"
 
 msgid "Standard order"
 msgstr "标准序"
 
-#, fuzzy
 msgid "Reference tables and plots"
-msgstr "参考值表和图形"
+msgstr "参考表和参考图"
 
 msgid "Please insert a reference value before specifying a positive reference."
 msgstr "在指定正参考值之前先插入参考值。"
 
-#, fuzzy
 msgid "Attributes agreement analysis"
 msgstr "属性一致性分析"
 
-#, fuzzy
 msgid "Cohen's kappa"
-msgstr "Cohen's Kappa"
+msgstr "Cohen's kappa"
 
-#, fuzzy
 msgid "Kendall's tau"
-msgstr "Kendall's Tau"
+msgstr "Kendall's tau 相关系数"
 
-#, fuzzy
 msgid "Cohen's kappa for appraiser vs standard"
-msgstr "评估者 vs. 标准的Cohen's Kappa值"
+msgstr "评估者与标准比较的 Cohen's kappa"
 
 msgid "Appraiser"
 msgstr "评估者"
 
-#, fuzzy
 msgid "Cohen's kappa correlations summary"
-msgstr "Cohen's Kappa 相关汇总"
+msgstr "Cohen's kappa 相关性摘要"
 
-#, fuzzy
 msgid ""
 "Please inseret a vaild positive reference as used in the results variables."
-msgstr "如同在 '结果' 变量中的应用，请插入有效的正参考值。"
+msgstr "请输入与结果变量中使用的有效正值参考值。"
 
-#, fuzzy
 msgid "Fleiss' kappa"
-msgstr "Fleiss' Kappa"
+msgstr "Fleiss' kappa"
 
-#, fuzzy
 msgid "Within appraisers"
-msgstr "评估者内部"
+msgstr "评估者内"
 
-#, fuzzy
 msgid "Appraiser vs standard"
-msgstr "评估者 vs. 标准"
+msgstr "评估者与标准"
 
-#, fuzzy
 msgid "Between appraisers"
-msgstr "评估者之间"
+msgstr "评估者间"
 
-#, fuzzy
 msgid "Each appraiser vs standard"
-msgstr "每个评估者 vs. 标准"
+msgstr "每位评估者与标准"
 
-#, fuzzy
 msgid "All appraisers vs standard"
-msgstr "所有评估者 vs. 标准"
+msgstr "所有评估者与标准"
 
 msgid "Inspected"
 msgstr "检查的"
@@ -719,24 +662,22 @@ msgid "Percent"
 msgstr "百分比"
 
 msgid "Lower"
-msgstr "下界"
+msgstr "下限"
 
 msgid "Confidence interval of 95%%"
 msgstr "95%% 置信区间"
 
 msgid "Upper"
-msgstr "上界"
+msgstr "上限"
 
-#, fuzzy
 msgid "Invalid reference and/or results were inserted."
-msgstr "插入无效参考值和/或结果。"
+msgstr "插入了无效的参考值和/或结果。"
 
 msgid "Invalid values (NA) found in appraiser %s."
 msgstr "评估者%s中发现无效值。"
 
-#, fuzzy
 msgid "More than 1 measurement per operator required."
-msgstr "每个操作者需要多于1次测量。"
+msgstr "每位操作者需要超过 1 次测量。"
 
 msgid "Study effectiveness summary"
 msgstr "研究有效性汇总"
@@ -750,56 +691,45 @@ msgstr "漏报率"
 msgid "False alarm rate"
 msgstr "误报率"
 
-#, fuzzy
 msgid ""
 "Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false "
 "alarm rate)"
-msgstr "可接受 : x >= 90%% (有效性), x =< 2%% (漏报率), x =< 5%% (误报率)"
+msgstr "可接受：x ≥ 90%%（有效性），x ≤ 2%%（漏检率），x ≤ 5%%（误报率）"
 
-#, fuzzy
 msgid ""
 "Marginally acceptable: x >= 80%% (effectiveness), x =< 5%% (miss rate), x =< "
 "10%% (false alarm rate)"
-msgstr "勉强可接受 : x >= 80%% (有效性), x =< 5%% (漏报率), x =< 10%% (误报率)"
+msgstr "勉强可接受：x ≥ 80%%（有效性），x ≤ 5%%（漏检率），x ≤ 10%%（误报率）"
 
-#, fuzzy
 msgid ""
 "Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false "
 "alarm rate)"
-msgstr "不可接受 : x < 80%% (有效性), x > 5%% (漏报率), x > 10%% (误报率)"
+msgstr "不可接受：x < 80%%（有效性），x > 5%%（漏检率），x > 10%%（误报率）"
 
-#, fuzzy
 msgid "More than one measurement per operator required."
-msgstr "每个操作者需要多于1次测量。"
+msgstr "每位操作者需要超过 1 次测量。"
 
-#, fuzzy
 msgid "Kendall's tau is only available for numeric measurements."
-msgstr "Kendall's Tau仅用于数字测量。"
+msgstr "Kendall's tau 仅适用于数值测量。"
 
-#, fuzzy
 msgid "Kendall's tau is only available for non-binary measurements."
-msgstr "Kendall's Tau 仅用于非二元测量。"
+msgstr "Kendall's tau 仅适用于非二值测量。"
 
 msgid "Operator"
 msgstr "操作者"
 
-#, fuzzy
 msgid "%g (unacceptable)"
-msgstr "%g (不可接受)"
+msgstr "%g（不可接受）"
 
-#, fuzzy
 msgid "%g (marginally acceptable)"
-msgstr "%g (勉强可接受)"
+msgstr "%g（勉强可接受）"
 
-#, fuzzy
 msgid "%g (acceptable)"
-msgstr "%g (不可接受)"
+msgstr "%g（可接受）"
 
-#, fuzzy
 msgid "Linearity and bias"
 msgstr "线性和偏倚"
 
-#, fuzzy
 msgid "Gauge bias"
 msgstr "量具偏倚"
 
@@ -809,22 +739,18 @@ msgstr "零件"
 msgid "Reference value"
 msgstr "参考值"
 
-#, fuzzy
 msgid "Observed mean"
-msgstr "观测值"
+msgstr "观测均值"
 
-#, fuzzy
 msgid "Mean bias"
-msgstr "均方"
+msgstr "平均偏倚"
 
 msgid "<i>p</i>-value"
 msgstr "<i>p</i>- 值"
 
-#, fuzzy
 msgid "Percent bias"
-msgstr "百分比"
+msgstr "偏倚百分比"
 
-#, fuzzy
 msgid "Regression model"
 msgstr "回归模型"
 
@@ -834,15 +760,12 @@ msgstr "预测变量"
 msgid "Std. error"
 msgstr "标准误"
 
-#, fuzzy
 msgid "<i>t</i>-value"
-msgstr "<i>p</i>- 值"
+msgstr "<i>t</i> 值"
 
-#, fuzzy
 msgid "Regression equation"
-msgstr "以 %s 单位表达的回归方程"
+msgstr "回归方程"
 
-#, fuzzy
 msgid "Gauge linearity"
 msgstr "量具线性"
 
@@ -855,38 +778,32 @@ msgstr "线性"
 msgid "%% Linearity"
 msgstr "%% 线性"
 
-#, fuzzy
 msgid "Bias and linearity"
-msgstr "偏倚和线性"
+msgstr "偏倚与线性"
 
-#, fuzzy
 msgid "Percentage process variation graph"
 msgstr "过程变异百分比图"
 
-#, fuzzy
 msgid ""
 "t-test requires more than 1 measurement. %1$i valid measurement(s) detected "
 "in %2$s."
-msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
+msgstr "t 检验需要超过 1 次测量。在 %2$s 中检测到 %1$i 次有效测量。"
 
-#, fuzzy
 msgid ""
 "Every unique part must have one corresponding reference value. %1$i "
 "reference values were found for %2$s unique parts."
-msgstr ""
-"每一个零件必须有一个对应的参考值。找到了 %2$s 每一个零件的 %1$i 参考值。"
+msgstr "每个唯一零件必须有一个对应的参考值。为 %2$s 个唯一零件找到了 %1$i 个参考值。"
 
-#, fuzzy
 msgid ""
 "t-test requires more than 1 measurement per part. Less than 2 valid "
 "measurement(s) detected in Part(s) %s."
-msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
+msgstr "t 检验要求每个零件有超过 1 次测量。在零件 %s 中检测到的有效测量少于 2 次。"
 
 msgid "t-test not possible. No variance detected in Part(s) %s."
-msgstr ""
+msgstr "无法进行 t 检验。在零件 %s 中未检测到方差。"
 
 msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
-msgstr ""
+msgstr "偏倚 = %1$.2f %2$s %3$.2f * 参考值"
 
 msgid "Reference"
 msgstr "参考值"
@@ -897,105 +814,86 @@ msgstr "总计"
 msgid "Gauge r&R"
 msgstr "量具 r&R"
 
-#, fuzzy
 msgid ""
 "Design is not balanced: not every operator measured every part the same "
 "number of times."
-msgstr "设计不平衡：不是每个操作者都测量每个零件。使用不可重复量具 r&R。"
+msgstr "设计不平衡：并非每位操作者对每个零件的测量次数相同。"
 
-#, fuzzy
 msgid ""
 "Design is not balanced: not every part was measured the same number of times."
-msgstr "设计不平衡：不是每个操作者都测量每个零件。使用不可重复量具 r&R。"
+msgstr "设计不平衡：并非每个零件的测量次数相同。"
 
 msgid ""
 "The measurements selected seem to be in a 'Single Column' format as every "
 "operator's part is measured %d times."
 msgstr "选择的测量值是“单列”格式，而每个操作者的零件都被测量%d次。"
 
-#, fuzzy
 msgid "Gauge r&R report"
 msgstr "量具 r&R 报告"
 
 msgid "No report components selected."
-msgstr ""
+msgstr "未选择报告组件。"
 
-#, fuzzy
 msgid "Part name: %s"
-msgstr "过程名称：%s"
+msgstr "零件名称：%s"
 
 msgid "Gauge name: %s"
 msgstr "量具名称 : %s"
 
 msgid "Characteristic: %s"
-msgstr ""
+msgstr "特性：%s"
 
-#, fuzzy
 msgid "Gauge number: %s"
-msgstr "量具名称 : %s"
+msgstr "量具编号：%s"
 
 msgid "Tolerance: %s"
 msgstr "公差 : %s"
 
-#, fuzzy
 msgid "Number of distinct categories"
-msgstr "可区分类别数 = %i"
+msgstr "可区分类别数"
 
-#, fuzzy
 msgid "Gauge r&R Analysis of Variance table"
-msgstr "方差分析"
+msgstr "量具 r&R 方差分析表"
 
-#, fuzzy
 msgid "Range chart by operator"
-msgstr "极差图（按操作者）"
+msgstr "按操作者的极差图"
 
-#, fuzzy
 msgid "Xbar chart by operator"
-msgstr "均值图（按操作者）"
+msgstr "按操作者的 X̄ 图"
 
-#, fuzzy
 msgid "Average chart by operator"
-msgstr "极差图（按操作者）"
+msgstr "按操作者的均值图"
 
-#, fuzzy
 msgid "Scatterplot operators"
 msgstr "操作者散点图"
 
-#, fuzzy
 msgid "Measurement by part graph"
-msgstr "按零件测量值图"
+msgstr "按零件的测量图"
 
-#, fuzzy
 msgid "Measurements by operator graph"
-msgstr "按操作者测量值图"
+msgstr "按操作者的测量图"
 
-#, fuzzy
 msgid "Part by operator interaction graph"
-msgstr "零件和操作者交互作用图"
+msgstr "零件与操作者交互图"
 
 msgid "Traffic light chart"
 msgstr "红绿灯图"
 
-#, fuzzy
 msgid "Gauge r&R study - crossed Analysis of Variance"
-msgstr "量具 r&R（嵌套）"
+msgstr "量具 r&R 研究 - 交叉方差分析"
 
-#, fuzzy
 msgid "One-way Analysis of Variance table"
-msgstr "方差分析"
+msgstr "单因素方差分析表"
 
-#, fuzzy
 msgid "Two-way Analysis of Variance table with interaction"
-msgstr "双向方差分析表带交互作用"
+msgstr "有交互作用的双因素方差分析表"
 
-#, fuzzy
 msgid "Mean squares"
 msgstr "均方"
 
 msgid "F"
 msgstr "F"
 
-#, fuzzy
 msgid "Variance components"
 msgstr "方差分量"
 
@@ -1005,36 +903,30 @@ msgstr "方差"
 msgid "%% Contribution"
 msgstr "%% 贡献"
 
-#, fuzzy
 msgid "Gauge evaluation"
 msgstr "量具评估"
 
-#, fuzzy
 msgid "Std. dev."
 msgstr "标准差"
 
 msgid "Study variation"
 msgstr "研究变异"
 
-#, fuzzy
 msgid "%% Study variation"
-msgstr "%% 研究变异"
+msgstr "研究变异百分比"
 
 msgid "%% Tolerance"
 msgstr "%% 公差"
 
-#, fuzzy
 msgid "Total gauge r&R"
-msgstr "总量具 r&R"
+msgstr "量具 r&R 总计"
 
 msgid "Repeatability"
 msgstr "重复性"
 
-#, fuzzy
 msgid "Part-to-part"
-msgstr "部件间"
+msgstr "零件间"
 
-#, fuzzy
 msgid "Total variation"
 msgstr "总变异"
 
@@ -1055,21 +947,18 @@ msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %i"
 msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
 msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %.2f"
 
-#, fuzzy
 msgid ""
 "Historical standard deviation is used to calculate some values for std. "
 "dev., study variation, and %%study variation."
-msgstr "历史标准差用于计算一些值：标准差、研究变异和 %% 研究变异。"
+msgstr "使用历史标准差计算标准差、研究变异和研究变异百分比的某些值。"
 
-#, fuzzy
 msgid ""
 "Values for %%process variation are not displayed because they are identical "
 "to values for %%study variation."
-msgstr "未显示 %%过程偏差的值，因为它们与 %%研究偏差的值相同。"
+msgstr "不显示过程变异百分比的值，因为其与研究变异百分比的值相同。"
 
-#, fuzzy
 msgid "Two-way Analysis of Variance table without interaction"
-msgstr "双向方差分析表不带交互作用"
+msgstr "无交互作用的双因素方差分析表"
 
 #, fuzzy
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
@@ -1079,44 +968,36 @@ msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %i"
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
 msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %.2f"
 
-#, fuzzy
 msgid "Components of variation"
-msgstr "方差分量"
+msgstr "变异分量"
 
-#, fuzzy
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s."
-msgstr "在 %2$s中分组后，%1$s 中观测值数量 < 2"
+msgstr "按 %2$s 分组后，%1$s 中的观测数小于 2。"
 
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
-msgstr "在 %2$s中分组后，%1$s 中观测值数量 < 2"
+msgstr "按 %2$s 分组后，%1$s 中的观测数小于 2"
 
-#, fuzzy
 msgid "Measurements by part"
-msgstr "测量值按零件"
+msgstr "按零件的测量"
 
-#, fuzzy
 msgid "Measurements by operator"
-msgstr "测量值按操作者"
+msgstr "按操作者的测量"
 
-#, fuzzy
 msgid "Part by operator interaction"
-msgstr "零件与操作者交互作用"
+msgstr "零件与操作者交互"
 
 msgid "Operators measured different number of parts."
 msgstr "操作者测量不同数量零件。"
 
-#, fuzzy
 msgid "Scatterplot of operator vs operator"
-msgstr "操作者 vs. 操作者散点图"
+msgstr "操作者与操作者的散点图"
 
 msgid "Cannot plot scatterplot for less than 2 operators."
 msgstr "少于 2 位操作者不能绘制散点图。"
 
-#, fuzzy
 msgid "Scatterplot of operator  %1$s vs operator %2$s"
-msgstr "操作者  %1$s vs 操作者 %2$s 散点图"
+msgstr "操作者 %1$s 与操作者 %2$s 的散点图"
 
-#, fuzzy
 msgid "Matrix plot for operators"
 msgstr "操作者矩阵图"
 
@@ -1129,30 +1010,25 @@ msgstr ""
 msgid "%.2f"
 msgstr "%.2f"
 
-#, fuzzy
 msgid "Gauge r&R - nested"
-msgstr "量具 r&R（嵌套）"
+msgstr "量具 r&R - 嵌套"
 
 msgid ""
 "Unbalanced design. Some parts have more repeated measurements than others."
-msgstr ""
+msgstr "设计不平衡。某些零件的重复测量次数多于其他零件。"
 
-#, fuzzy
 msgid "Gauge r&R (non-replicable) report"
-msgstr "量具 r&R 报告"
+msgstr "量具 r&R（不可重复）报告"
 
-#, fuzzy
 msgid "Gauge r&R tables"
-msgstr "量具 r&R表"
+msgstr "量具 r&R 表"
 
 msgid "Measurement by part x operator plot"
 msgstr "测量值图（按零件x操作者）"
 
-#, fuzzy
 msgid "Gauge r&R study - nested Analysis of Variance"
-msgstr "量具 r&R（嵌套）"
+msgstr "量具 r&R 研究 - 嵌套方差分析"
 
-#, fuzzy
 msgid "Gauge r&R (nested)"
 msgstr "量具 r&R（嵌套）"
 
@@ -1163,19 +1039,16 @@ msgid "Variation"
 msgstr "方差"
 
 msgid "No degrees of freedom for %s."
-msgstr ""
+msgstr "%s 没有自由度。"
 
-#, fuzzy
 msgid "Part-To-part"
-msgstr "部件间"
+msgstr "零件间"
 
-#, fuzzy
 msgid "Study variation is calculated as std. dev. * %i"
-msgstr "研究变异的计算为标准差* %i"
+msgstr "研究变异按标准差 * %i 计算"
 
-#, fuzzy
 msgid "Study variation is calculated as std. dev. * %.2f"
-msgstr "研究变异的计算为标准差* %.2f"
+msgstr "研究变异按标准差 * %.2f 计算"
 
 msgid "Measurements by part x operator"
 msgstr "测量值按零件 x 操作者"
@@ -1183,18 +1056,15 @@ msgstr "测量值按零件 x 操作者"
 msgid "Operator %s"
 msgstr "操作者 %s"
 
-#, fuzzy
 msgid ""
 "Design is not balanced: not all parts were measured the same number of times."
-msgstr "设计不平衡：不是每个操作者都测量每个零件。使用不可重复量具 r&R。"
+msgstr "设计不平衡：并非所有零件的测量次数相同。"
 
-#, fuzzy
 msgid "Scatterplot operators vs parts"
-msgstr "操作者 vs. 零件散点图"
+msgstr "操作者与零件的散点图"
 
-#, fuzzy
 msgid "Range method range chart"
-msgstr "极差法极差图"
+msgstr "极差法的极差图"
 
 msgid "Range chart by part"
 msgstr "极差图（按零件）"
@@ -1206,7 +1076,7 @@ msgid "Short gauge study"
 msgstr "快速量具研究"
 
 msgid "Sample size (n)"
-msgstr "样本容量 (n)"
+msgstr "样本量 (n)"
 
 msgid "R-bar"
 msgstr "R 均值"
@@ -1217,47 +1087,38 @@ msgstr "d2"
 msgid "GRR"
 msgstr "GRR"
 
-#, fuzzy
 msgid "Process std. dev."
 msgstr "过程标准差"
 
-#, fuzzy
 msgid "%%GRR of process std. dev."
-msgstr "%GRR 过程标准差"
+msgstr "过程标准差的 GRR 百分比"
 
 msgid "Tolerance"
-msgstr "公差"
+msgstr "容忍度"
 
-#, fuzzy
 msgid "%%GRR of tolerance"
-msgstr "%GRR 公差"
+msgstr "公差的 GRR 百分比"
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
 msgstr "第1次测量 vs. 第2次测量散点图"
 
-#, fuzzy
 msgid "Run chart"
 msgstr "运行图"
 
-#, fuzzy
 msgid "Bias table"
 msgstr "偏倚表"
 
-#, fuzzy
 msgid "t-test bias"
-msgstr "偏倚的 t 检验"
+msgstr "t 检验偏倚"
 
-#, fuzzy
 msgid "Histogram bias"
-msgstr "偏倚直方图"
+msgstr "直方图偏倚"
 
-#, fuzzy
 msgid "Bias and instrument capability table"
 msgstr "偏倚和量具能力表"
 
-#, fuzzy
 msgid "Basic statistics"
-msgstr "基本统计"
+msgstr "基本统计量"
 
 msgid "Mean"
 msgstr "均值"
@@ -1265,24 +1126,20 @@ msgstr "均值"
 msgid "Bias"
 msgstr "偏倚"
 
-#, fuzzy
 msgid "Std. dev. (<i>s</i>)"
-msgstr "标准差(<i>s</i>)"
+msgstr "标准差（<i>s</i>）"
 
-#, fuzzy
 msgid "Instrument variation"
-msgstr "研究变异"
+msgstr "仪器变异"
 
-#, fuzzy
 msgid "Tolerance bounds"
-msgstr "公差 : %s"
+msgstr "公差界限"
 
 msgid "%% Bias"
 msgstr "%% 偏倚"
 
-#, fuzzy
 msgid "The instrument variation is calculated as %i * <i>s</i>."
-msgstr "研究变异的计算为%i * <i>s</i>."
+msgstr "仪器变异按 %i * <i>s</i> 计算。"
 
 msgid "Capability"
 msgstr "能力"
@@ -1293,208 +1150,193 @@ msgstr "Cg"
 msgid "Cgk"
 msgstr "Cgk"
 
-#, fuzzy
 msgid "%% Var(repeatability)"
-msgstr "%% 变异（重复性）"
+msgstr "方差百分比（重复性）"
 
-#, fuzzy
 msgid "%% Var(repeatability and bias)"
-msgstr "%% 变异（重复性和偏倚）"
+msgstr "方差百分比（重复性和偏倚）"
 
-#, fuzzy
 msgid "t-test of observed bias against 0"
-msgstr "观测的偏倚与0的 t 检验"
+msgstr "观测偏倚对 0 的 t 检验"
 
-#, fuzzy
 msgid "%s CI for bias"
 msgstr "偏倚的 %s 置信区间"
 
 msgid "<i>t</i>"
 msgstr "<i>t</i>"
 
-#, fuzzy
 msgid "Bias histogram"
 msgstr "偏倚直方图"
 
-#, fuzzy
 msgid ""
 "Histogram requires more than 1 measurement. %1$i valid measurement(s) "
 "detected in %2$s."
-msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
+msgstr "直方图需要超过 1 次测量。在 %2$s 中检测到 %1$i 次有效测量。"
 
-#, fuzzy
 msgid "Count"
 msgstr "计数"
 
-#, fuzzy
 msgid "Mean - %is"
-msgstr "均值 (%1$s)"
+msgstr "均值 - %is"
 
-#, fuzzy
 msgid "Mean + %is"
-msgstr "均值 (%1$s)"
+msgstr "均值 + %is"
 
 msgid "Ref. - %.2f * tol."
-msgstr ""
+msgstr "参考值 - %.2f * 公差"
 
 msgid "Ref. + %.2f * tol."
-msgstr ""
+msgstr "参考值 + %.2f * 公差"
 
-#, fuzzy
 msgid "Run chart of %s"
-msgstr "%s 运行图"
+msgstr "%s 的运行图"
 
 msgid "No valid measurements in %s."
 msgstr "%s 中无有效测量值。"
 
 msgid "Ref."
-msgstr ""
+msgstr "参考值"
 
 msgid ""
 "The stage variable must have at least two levels to define training and test "
 "phases."
-msgstr ""
+msgstr "阶段变量必须至少有两个水平，以定义训练阶段和测试阶段。"
 
 msgid "Enter at least two variables to start the analysis."
-msgstr ""
+msgstr "至少输入两个变量以开始分析。"
 
 msgid "The training phase must contain at least 3 observations."
-msgstr ""
+msgstr "训练阶段必须至少包含 3 个观测。"
 
 msgid ""
 "The covariance matrix of the training phase is computationally singular. "
 "This typically occurs when variables are linearly dependent or nearly "
 "perfectly correlated. Please remove redundant variables."
 msgstr ""
+"训练阶段的协方差矩阵在计算上奇异。这通常发生在变量线性相关或几乎完全相关时。"
+"请移除冗余变量。"
 
 msgid ""
 "The covariance matrix of the selected variables is computationally singular. "
 "This typically occurs when variables are linearly dependent or nearly "
 "perfectly correlated. Please remove redundant variables."
 msgstr ""
+"所选变量的协方差矩阵在计算上奇异。这通常发生在变量线性相关或几乎完全相关时。"
+"请移除冗余变量。"
 
-#, fuzzy
 msgid "Hotelling T² Control Chart"
-msgstr "控制图"
+msgstr "Hotelling T² 控制图"
 
 msgid ""
 "Displays the Hotelling T² statistic for each sample with upper and lower "
 "control limits. Points exceeding the UCL are flagged as out of control."
-msgstr ""
+msgstr "显示每个样本的 Hotelling T² 统计量及上下控制限。超过 UCL 的点被标记为失控。"
 
-#, fuzzy
 msgid "UCL = %s"
-msgstr "UCL = %g"
+msgstr "UCL = %s"
 
-#, fuzzy
 msgid "LCL = %s"
-msgstr "LCL = %g"
+msgstr "LCL = %s"
 
 msgid "Hotelling T²"
-msgstr ""
+msgstr "Hotelling T²"
 
 msgid "Training (%s)"
-msgstr ""
+msgstr "训练（%s）"
 
-#, fuzzy
 msgid "Test"
-msgstr "偏倚的 t 检验"
+msgstr "检验"
 
 msgid "Hotelling T² Control Chart Summary"
-msgstr ""
+msgstr "Hotelling T² 控制图摘要"
 
 msgid ""
 "Summary of the Hotelling T² control chart, including the number of "
 "variables, observations, confidence level, control limits, and the "
 "determinant of the covariance matrix."
 msgstr ""
+"Hotelling T² 控制图摘要，包括变量数、观测数、置信水平、控制限以及协方差矩阵的"
+"行列式。"
 
 msgid "Removed %i observation(s) with missing values."
-msgstr ""
+msgstr "已移除 %i 个含缺失值的观测。"
 
 msgid "Phase"
-msgstr ""
+msgstr "阶段"
 
-#, fuzzy
 msgid "Number of Variables"
-msgstr "缺陷品数"
+msgstr "变量数"
 
-#, fuzzy
 msgid "Number of Observations"
-msgstr "观测值"
+msgstr "观测数"
 
-#, fuzzy
 msgid "Confidence Level"
-msgstr "95%% 置信区间"
+msgstr "置信水平"
 
-#, fuzzy
 msgid "LCL"
-msgstr "LSL"
+msgstr "LCL"
 
-#, fuzzy
 msgid "UCL"
-msgstr "USL"
+msgstr "UCL"
 
 msgid "|S|"
-msgstr ""
+msgstr "|S|"
 
 msgid ""
 "Control limits for the training phase use the Beta distribution; test phase "
 "limits use the F distribution (prediction limits)."
-msgstr ""
+msgstr "训练阶段的控制限使用 Beta 分布；测试阶段的控制限使用 F 分布（预测限）。"
 
-#, fuzzy
 msgid "Variable Centers"
-msgstr "变量"
+msgstr "变量中心"
 
 msgid ""
 "Displays the sample mean of each variable used in the multivariate control "
 "chart."
-msgstr ""
+msgstr "显示多变量控制图中使用的每个变量的样本均值。"
 
 msgid "Center"
-msgstr ""
+msgstr "中心"
 
 msgid "Centers estimated from training phase (%s) only."
-msgstr ""
+msgstr "中心仅从训练阶段（%s）估计。"
 
 msgid "Covariance Matrix"
-msgstr ""
+msgstr "协方差矩阵"
 
 msgid ""
 "Displays the sample covariance matrix of the selected variables, used to "
 "compute the Hotelling T² statistic."
-msgstr ""
+msgstr "显示所选变量的样本协方差矩阵，用于计算 Hotelling T² 统计量。"
 
 msgid "Covariance matrix estimated from training phase (%s) only."
-msgstr ""
+msgstr "协方差矩阵仅从训练阶段（%s）估计。"
 
 msgid "Hotelling T² Values"
-msgstr ""
+msgstr "Hotelling T² 值"
 
 msgid ""
 "Lists the Hotelling T² statistic for each sample and indicates whether the "
 "sample is in or out of control."
-msgstr ""
+msgstr "列出每个样本的 Hotelling T² 统计量，并指示样本处于受控还是失控状态。"
 
 msgid "T²"
-msgstr ""
+msgstr "T²"
 
 msgid "Status"
-msgstr ""
+msgstr "状态"
 
 msgid "Training UCL = %1$s, Test UCL = %2$s"
-msgstr ""
+msgstr "训练 UCL = %1$s，测试 UCL = %2$s"
 
-#, fuzzy
 msgid "Out of control"
-msgstr "失控信号"
+msgstr "失控"
 
 msgid "In control"
-msgstr ""
+msgstr "受控"
 
 msgid "UCL = %1$s, LCL = %2$s"
-msgstr ""
+msgstr "UCL = %1$s，LCL = %2$s"
 
 msgid "Parameter Estimates"
 msgstr "参数估计"
@@ -1564,112 +1406,103 @@ msgid "Probability of detecting %s"
 msgstr "检测的概率 %s"
 
 msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
-msgstr ""
+msgstr "子组大小大于 5，结果可能有偏。建议使用 s 控制图。"
 
 msgid ""
 "All zero values have been replaced with a value equal to one-half of the "
 "smallest data point."
 msgstr "所有零值都已替换为等于最小数据点的二分之一的值。"
 
-#, fuzzy
 msgid "Process Capability Report"
-msgstr "过程能力"
+msgstr "过程能力报告"
 
 msgid ""
 "Set at least one specification limit (upper or lower) to start the analysis."
-msgstr ""
+msgstr "至少设置一个规格限（上限或下限）以开始分析。"
 
-#, fuzzy
 msgid "Line: %s"
-msgstr "时间: %s"
+msgstr "生产线：%s"
 
-#, fuzzy
 msgid "Machine: %s"
-msgstr "时间: %s"
+msgstr "机器：%s"
 
-#, fuzzy
 msgid "Variable: %s"
-msgstr "变量"
+msgstr "变量：%s"
 
-#, fuzzy
 msgid "Process: %s"
-msgstr "过程名称：%s"
+msgstr "过程：%s"
 
 msgid "Reported by: %s"
 msgstr "报告人 : %s"
 
 msgid "Conclusion: %s"
-msgstr ""
+msgstr "结论：%s"
 
-#, fuzzy
 msgid "X-bar & %s control chart"
-msgstr "均值和标准差控制图"
+msgstr "X̄ 与 %s 控制图"
 
 msgid ""
 "Subgroup size is >50, R chart calculation is not possible. Use S-chart "
 "instead."
-msgstr ""
+msgstr "子组大小大于 50，无法计算 R 控制图。请改用 S 控制图。"
 
 msgid ""
 "Subgroup size is 1, calculation of selected control chart not possible. Use "
 "x-mR chart."
-msgstr ""
+msgstr "子组大小为 1，无法计算所选控制图。请使用 x-mR 控制图。"
 
 msgid "X-mR control chart"
 msgstr "单值-移动极差控制图"
 
-#, fuzzy
 msgid "Capability study"
 msgstr "能力研究"
 
-#, fuzzy
 msgid "Process capability study"
-msgstr "过程能力"
+msgstr "过程能力研究"
 
 msgid ""
 "Lower specification limit must be smaller than upper specification limit."
-msgstr ""
+msgstr "规格下限必须小于规格上限。"
 
-#, fuzzy
 msgid "Target outside of specification limits."
-msgstr "错误：目标超出规格限。"
+msgstr "目标值位于规格限之外。"
 
 msgid ""
 "Dataset contains negative numbers. Not compatible with the selected "
 "distribution."
 msgstr "数据集包含负数。与所选分布不兼容。"
 
-#, fuzzy
 msgid "Process capability"
 msgstr "过程能力"
 
-#, fuzzy
 msgid "Process capability (non-normal capability analysis)"
 msgstr "过程能力（非正态能力分析）"
 
 msgid "Data transformation"
-msgstr ""
+msgstr "数据变换"
 
 msgid "Data could not be transformed: %1$s"
-msgstr ""
+msgstr "无法变换数据：%1$s"
 
 msgid ""
 "The data after transformations appears to be invalid. This could be caused "
 "by unsuitable data transformation (transformation type or extreme parameter "
 "used to transform the data)."
 msgstr ""
+"变换后的数据似乎无效。这可能是由不适当的数据变换（变换类型或用于变换数据的极"
+"端参数）引起的。"
 
 msgid "Specification limits could not be transformed: %1$s"
-msgstr ""
+msgstr "无法变换规格限：%1$s"
 
 msgid "Process summary"
 msgstr "过程汇总"
 
 msgid "Stage"
-msgstr ""
+msgstr "阶段"
 
 msgid "LB"
-msgstr ""
+msgstr "下限"
 
 msgid "LSL"
 msgstr "LSL"
@@ -1678,7 +1511,7 @@ msgid "Target"
 msgstr "目标"
 
 msgid "UB"
-msgstr ""
+msgstr "上限"
 
 msgid "USL"
 msgstr "USL"
@@ -1686,50 +1519,45 @@ msgstr "USL"
 msgid "Sample size"
 msgstr "样本量"
 
-#, fuzzy
 msgid "Std. dev. (total)"
-msgstr "标准差（整体）"
+msgstr "标准差（总）"
 
-#, fuzzy
 msgid "Std. dev. (within)"
 msgstr "标准差（组内）"
 
 msgid ""
 "Columns titled 'Change' concern changes of the respective stage in "
 "comparison to baseline (BL)."
-msgstr ""
+msgstr "标题为“变化”的列涉及各阶段相对于基线（BL）的变化。"
 
-#, fuzzy
 msgid "The within std. dev. could not be calculated."
-msgstr "组内标准差无法计算。"
+msgstr "无法计算组内标准差。"
 
 msgid "Change (%s vs. BL)"
-msgstr ""
+msgstr "变化（%s 对 BL）"
 
 msgid "%s (BL)"
-msgstr ""
+msgstr "%s（BL）"
 
 msgid "The within std. dev. is based on a historical value."
-msgstr ""
+msgstr "组内标准差基于历史值。"
 
 msgid "The mean is based on a historical value."
-msgstr ""
+msgstr "均值基于历史值。"
 
 msgid "Capability of the process"
 msgstr "过程的能力"
 
-#, fuzzy
 msgid "No valid measurements detected."
-msgstr "%s 中无有效测量值。"
+msgstr "未检测到有效测量。"
 
-#, fuzzy
 msgid ""
 "Need at least 2 measurements to fit distribution. %1$i measurement(s) "
 "detected."
-msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
+msgstr "至少需要 2 次测量才能拟合分布。检测到 %1$i 次测量。"
 
 msgid "At least one of the stages contains no valid measurements."
-msgstr ""
+msgstr "至少有一个阶段不包含有效测量。"
 
 msgid "Density"
 msgstr "密度"
@@ -1741,49 +1569,52 @@ msgid ""
 "Normal dist.\n"
 "(std. dev. total)"
 msgstr ""
+"正态分布\n"
+"（标准差：总）"
 
 msgid ""
 "Normal dist.\n"
 "(std. dev. within)"
 msgstr ""
+"正态分布\n"
+"（标准差：组内）"
 
 msgid "Weibull dist."
-msgstr ""
+msgstr "Weibull 分布"
 
 msgid ""
 "3-parameter\n"
 "lognormal dist."
 msgstr ""
+"三参数\n"
+"对数正态分布"
 
 msgid "3-parameter Weibull dist."
-msgstr ""
+msgstr "三参数 Weibull 分布"
 
 msgid "Gamma dist."
-msgstr ""
+msgstr "Gamma 分布"
 
 msgid "Exponential dist."
-msgstr ""
+msgstr "指数分布"
 
 msgid "Logistic dist."
-msgstr ""
+msgstr "Logistic 分布"
 
 msgid "Log-logistic dist."
-msgstr ""
+msgstr "对数 Logistic 分布"
 
-#, fuzzy
 msgid "Target = %g"
-msgstr "CL = %g"
+msgstr "目标 = %g"
 
-#, fuzzy
 msgid "LB = %g"
-msgstr "CL = %g"
+msgstr "下限 = %g"
 
-#, fuzzy
 msgid "UB = %g"
-msgstr "UCL = %g"
+msgstr "上限 = %g"
 
 msgid "Lognormal dist."
-msgstr ""
+msgstr "对数正态分布"
 
 msgid "Process capability (within)"
 msgstr "过程能力（组内）"
@@ -1807,15 +1638,15 @@ msgid "%s CI for Cpk"
 msgstr "Cpk 的 %s 置信区间"
 
 msgid "Z (ST)"
-msgstr ""
+msgstr "Z（短期）"
 
 msgid "Z.bench (ST)"
-msgstr ""
+msgstr "Z.bench（短期）"
 
 msgid ""
 "Statistics displayed as * were not calculated because the relevant "
 "specification limit is not set or set as boundary."
-msgstr ""
+msgstr "显示为 * 的统计量未计算，因为相关规格限未设置或设置为边界。"
 
 msgid "Process performance (total)"
 msgstr "过程性能（整体）"
@@ -1842,10 +1673,10 @@ msgid "%s CI for Ppk"
 msgstr "Ppk 的 %s 置信区间"
 
 msgid "Z (LT)"
-msgstr ""
+msgstr "Z（长期）"
 
 msgid "Z.bench (LT)"
-msgstr ""
+msgstr "Z.bench（长期）"
 
 msgid "Cpm"
 msgstr "Cpm"
@@ -1856,10 +1687,10 @@ msgstr "Cpm 的 %s 置信区间"
 msgid ""
 "Rows titled 'Change' concern changes of the respective stage in comparison "
 "to baseline (BL)."
-msgstr ""
+msgstr "标题为“变化”的行涉及各阶段相对于基线（BL）的变化。"
 
 msgid "%s vs. BL"
-msgstr ""
+msgstr "%s 对 BL"
 
 msgid "Scale (%1$s)"
 msgstr "尺度 (%1$s)"
@@ -1870,9 +1701,8 @@ msgstr "Log 均值 (%1$s)"
 msgid "Log std.dev (%1$s)"
 msgstr "对数标准差 (%1$s)"
 
-#, fuzzy
 msgid "Location"
-msgstr "位置 (%1$s)"
+msgstr "位置"
 
 msgid "Shape (%1$s)"
 msgstr "形状 (%1$s)"
@@ -1884,43 +1714,41 @@ msgid "Calculations based on %s distribution."
 msgstr "基于%s 分布的计算。"
 
 msgid "Location parameter is log-transformed."
-msgstr ""
+msgstr "位置参数已进行对数变换。"
 
 msgid "The shape (%1$s) is based on a historical value."
-msgstr ""
+msgstr "形状（%1$s）基于历史值。"
 
 msgid "The scale (%1$s) is based on a historical value."
-msgstr ""
+msgstr "尺度（%1$s）基于历史值。"
 
 msgid "The location parameter is based on a historical value."
-msgstr ""
+msgstr "位置参数基于历史值。"
 
 msgid "The log mean (%1$s) is based on a historical value."
-msgstr ""
+msgstr "对数均值（%1$s）基于历史值。"
 
 msgid "The log std. dev. (%1$s) is based on a historical value."
-msgstr ""
+msgstr "对数标准差（%1$s）基于历史值。"
 
 msgid "The threshold is based on a historical value."
-msgstr ""
+msgstr "阈值基于历史值。"
 
-#, fuzzy
 msgid "Probability table and plot"
 msgstr "概率表和概率图"
 
-#, fuzzy
 msgid "Probability plot"
-msgstr "概率表和概率图"
+msgstr "概率图"
 
 msgid ""
 "Probability plot and table for %s distribution are not implemented in "
 "Quality Control module. Please use the Distributions module."
-msgstr ""
+msgstr "质量控制模块未实现 %s 分布的概率图和表。请使用“分布”模块。"
 
 msgid ""
 "Need at least 2 measurements to calculate probability table/plot. %1$i "
 "measurement(s) detected."
-msgstr ""
+msgstr "至少需要 2 次测量才能计算概率表/图。检测到 %1$i 次测量。"
 
 msgid "Summary of test against the %1$s distribution"
 msgstr "针对 %1$s 分布的检验汇总"
@@ -1931,120 +1759,126 @@ msgstr "N"
 msgid "Mean (%1$s)"
 msgstr "均值 (%1$s)"
 
-#, fuzzy
 msgid "Std. dev. (%1$s)"
-msgstr "标准差 (%1$s)"
+msgstr "标准差（%1$s）"
 
 msgid "AD"
 msgstr "AD"
 
-#, fuzzy
 msgid ""
 "The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s "
 "distribution."
-msgstr "Anderson-Darling 统计量 A<i>D</i> 是根据 %2$s 分布计算的。"
+msgstr "Anderson-Darling 统计量 A<i>D</i> 是基于 %1$s 分布计算的。"
 
 msgid ""
 "Red dotted lines in the probability plot below represent a 95%% confidence "
 "interval."
 msgstr "下面概率图中的红色虚线表示 95%% 的置信区间。"
 
-#, fuzzy
 msgid "Probability plot against %1$s distribution"
-msgstr "针对 %1$s 分布的检验汇总"
+msgstr "基于 %1$s 分布的概率图"
 
 msgid ""
 "Could not compute variance-covariance matrix: parameter vector has "
 "unexpected length."
-msgstr ""
+msgstr "无法计算方差-协方差矩阵：参数向量长度异常。"
 
 msgid ""
 "Could not compute variance-covariance matrix: Hessian contains invalid "
 "values."
-msgstr ""
+msgstr "无法计算方差-协方差矩阵：Hessian 矩阵包含无效值。"
 
 msgid ""
 "Fitting lognormal distribution failed, most likely because the observed "
 "distribution of the data are very far away from the selected distribution, "
 "please try one that describes your data more closely."
 msgstr ""
+"拟合对数正态分布失败，很可能是因为数据的观测分布与所选分布相差很远，请尝试更"
+"贴近数据描述的分布。"
 
 msgid ""
 "Fitting Weibull distribution failed, most likely because the observed "
 "distribution of the data are very far away from the selected distribution, "
 "please try one that describes your data more closely."
 msgstr ""
+"拟合 Weibull 分布失败，很可能是因为数据的观测分布与所选分布相差很远，请尝试更"
+"贴近数据描述的分布。"
 
 msgid "Histogram"
 msgstr "直方图"
 
-#, fuzzy
 msgid ""
 "Dataset contains negative numbers. Could not overlay the selected "
 "distribution."
-msgstr "数据集包含负数。与所选分布不兼容。"
+msgstr "数据集包含负数。无法叠加所选分布。"
 
 msgid "Counts"
 msgstr "计数"
 
 msgid "Normal dist."
-msgstr ""
+msgstr "正态分布"
 
 msgid "Log-normal dist."
-msgstr ""
+msgstr "对数正态分布"
 
 msgid ""
 "3-parameter\n"
 "log-normal dist."
 msgstr ""
+"三参数\n"
+"对数正态分布"
 
 msgid ""
 "Some specification limits or target value are outside of the support of the "
 "Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f)."
 msgstr ""
+"某些规格限或目标值位于 Box-Cox 变换的支持范围之外。Box-Cox 变换的下界为 -"
+"shift（%1$f）。"
 
 msgid ""
 "Some specification limits or target value are outside of the support of the "
 "Johnson (SB) transform. The bounds of the transform were identified to "
 "between %1$f and %2$f."
 msgstr ""
+"某些规格限或目标值位于 Johnson (SB) 变换的支持范围之外。该变换的边界被确定为"
+"介于 %1$f 和 %2$f 之间。"
 
 msgid ""
 "Some specification limits or target value are outside of the support of the "
 "Johnson (SL) transform. The lower bound of the transform was identified as "
 "%1$f."
 msgstr ""
+"某些规格限或目标值位于 Johnson (SL) 变换的支持范围之外。该变换的下界被确定为 "
+"%1$f。"
 
 msgid ""
 "The measurements, specification limits and target value were transformed "
 "using the %s transformation, with the following formula,"
-msgstr ""
+msgstr "测量值、规格限和目标值已使用%s变换进行转换，公式如下，"
 
 msgid "Parameters of the transform"
-msgstr ""
+msgstr "变换的参数"
 
 msgid "Estimated from data"
-msgstr ""
+msgstr "从数据估计"
 
 msgid "All values estimated from data"
-msgstr ""
+msgstr "所有值均从数据估计"
 
-#, fuzzy
 msgid "Rare event charts"
-msgstr "运行图"
+msgstr "稀有事件控制图"
 
 msgid ""
 "Date/time conversion returned no valid values. Did you select the correct "
 "date/time format?"
-msgstr ""
+msgstr "日期/时间转换未返回有效值。您是否选择了正确的日期/时间格式？"
 
 msgid ""
 "Negative values for time/intervals detected, calculation is not possible."
-msgstr ""
+msgstr "检测到时间/间隔为负值，无法计算。"
 
-#, fuzzy
 msgid "Rare event charts report"
-msgstr "单值控制图"
+msgstr "稀有事件控制图报告"
 
 msgid "G chart"
 msgstr "G 控制图"
@@ -2054,7 +1888,7 @@ msgstr "T 控制图"
 
 msgid ""
 "<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
-msgstr ""
+msgstr "<i>注。</i>已移除未分配到任何阶段的 %i 个观测。"
 
 msgid "Variables Charts for Individuals"
 msgstr "单值图"
@@ -2063,20 +1897,18 @@ msgid ""
 "Moving range length is larger than the number of observations\n"
 "                                                           in one of the "
 "stages."
-msgstr ""
+msgstr "移动极差长度大于其中一个阶段的观测数。"
 
-#, fuzzy
 msgid "Variables Chart for Individuals Report"
-msgstr "单值图"
+msgstr "单值变量控制图报告"
 
 msgid ""
 "Autocorrelation plot requires uninterrupted series of values. Missing values "
 "detected in %s."
-msgstr ""
+msgstr "自相关图需要不间断的数值序列。在 %s 中检测到缺失值。"
 
-#, fuzzy
 msgid "Autocorrelation plot"
-msgstr "自相关"
+msgstr "自相关图"
 
 msgid "Autocorrelation"
 msgstr "自相关"
@@ -2084,26 +1916,23 @@ msgstr "自相关"
 msgid "Lag"
 msgstr "滞后"
 
-#, fuzzy
 msgid "Control charts"
 msgstr "控制图"
 
 msgid ""
 "All subgroups are of size 1. Variables charts for subgroups cannot be "
 "calculated. Use variables charts for individuals."
-msgstr ""
+msgstr "所有子组大小均为 1。无法计算子组变量控制图。请使用单值变量控制图。"
 
-#, fuzzy
 msgid "X-bar & %1$s control chart"
-msgstr "均值和标准差控制图"
+msgstr "X̄ 与 %1$s 控制图"
 
-#, fuzzy
 msgid "Variables Chart for Subgroups Report"
-msgstr "单值图"
+msgstr "子组变量控制图报告"
 
 msgid "The following covariate was considered but not included: %1$s."
 msgid_plural "The following covariates were considered but not included: %1$s."
-msgstr[0] ""
+msgstr[0] "以下协变量已考虑但未纳入：%1$s。"
 
 msgid ""
 "The main effect %1$s was retained to respect marginality (its squared term "
@@ -2111,7 +1940,7 @@ msgid ""
 msgid_plural ""
 "The main effects %1$s were retained to respect marginality (their squared "
 "terms are in the model)."
-msgstr[0] ""
+msgstr[0] "为保持边际性，保留了主效应 %1$s（其平方项在模型中）。"
 
 #~ msgid "ANOVA"
 #~ msgstr "方差分析"
