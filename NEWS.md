@@ -29,6 +29,8 @@
 * Process Capability: the x-axis of the capability plot is no longer stretched towards the default historical scale (Weibull) or log mean (log-normal) when no historical parameter is set, which squeezed the histogram and fitted density into a narrow strip for data far from zero.
 * Process Capability: the x-axis of the Weibull and log-normal probability plots no longer stretches far beyond the data, which squeezed the points into a thin strip and made the tick labels overlap. The axis now follows the data, and ticks that would crowd each other are dropped.
 * Attributes agreement analysis: Fleiss' kappa no longer crashes with newer `irr` (>= 0.85) when a within-appraiser input has a single measurement column; returns NaN as before.
+* DOE Analysis: the Effect column of the coefficients table is now 2 × coefficient (on the −1/+1 scale) for main effects and interactions of every order. Previously 2-way and 3-way interactions were inflated (4× and 6×), effects depended on the factor level labels, and uncoded continuous predictors and manual coding beyond ±1 gave wrong values. Effects are left blank for squared terms and factors with more than two levels, and a footnote explains the definition ([PR #525](https://github.com/jasp-stats/jaspQualityControl/pull/525)).
+* DOE Analysis: no longer crashes when a discrete factor is fully removed from the model due to aliasing ([PR #525](https://github.com/jasp-stats/jaspQualityControl/pull/525)).
 
 ---
 
