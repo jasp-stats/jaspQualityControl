@@ -700,7 +700,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
 get_levels <- function(var, num_levels, dataset) {
   levels_var <- levels(dataset[[var]])
-  levels_var[1:(num_levels)]
+  levels_var[seq_len(num_levels)] # seq_len: a factor fully removed due to aliasing has 0 levels, 1:0 would return one
 }
 
 .getVIF <- function(regressionFit, predictors) {
