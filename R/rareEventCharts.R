@@ -23,7 +23,7 @@ rareEventChartsInternal <- function(jaspResults, dataset, options) {
   variable <- variable[variable != ""]
   stages <- stages[stages != ""]
 
-  if (options[["dataType"]] == "dataTypeDates" || options[["dataType"]] ==  "dataTypeInterval" && options[["dataTypeIntervalType"]] == "dataTypeIntervalTypeTime") {
+  if (options[["dataType"]] == "dataTypeDates" || options[["dataType"]] ==  "dataTypeInterval" && options[["dataTypeIntervalType"]] == "time") {
     numericVariables <- NULL
     factorVariables <- c(variable, stages)
   } else {
