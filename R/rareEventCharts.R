@@ -69,7 +69,7 @@ rareEventChartsInternal <- function(jaspResults, dataset, options) {
       timepoints <- dataset[[variable]]
       timeFormat <- options[["dataTypeIntervalTimeFormat"]]
       timepoints <- lubridate::parse_date_time(timepoints, orders = timeFormat) # returns all data in HMS format
-      intervalsMinutes <- as.numeric(timepoints - lubridate::as_datetime("0000-01-01 UTC")) # transform to minutes
+      intervalsMinutes <- as.numeric(difftime(timepoints, lubridate::as_datetime("0000-01-01 UTC"), units = "mins")) # transform to minutes
       intervalsHours <- intervalsMinutes/60
     }
 
