@@ -25,6 +25,7 @@
 
 ## Fixed
 * Time weighted charts: the exponentially weighted moving average chart now offers S-bar and R-bar as std. dev. estimation method for data in wide format ("Across rows"), instead of only X-mR, which stopped the analysis with two or more measurement columns.
+* Rare event charts: the interval type "Time" no longer always fails with "Date/time conversion returned no valid values", and its intervals are always converted to minutes, so the chart no longer labels intervals given in hours as minutes.
 * Stepwise model selection in the Response Surface design now respects marginality: a squared term is no longer retained without its corresponding main effect.
 * Process Capability: distribution/fit density curves no longer render flat in interactive (plotly) plots; the curves are now drawn with `geom_line` instead of `stat_function`.
 * Process Capability: the x-axis of the capability plot is no longer stretched towards the default historical scale (Weibull) or log mean (log-normal) when no historical parameter is set, which squeezed the histogram and fitted density into a narrow strip for data far from zero.
