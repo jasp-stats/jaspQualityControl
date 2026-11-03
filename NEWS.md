@@ -24,6 +24,7 @@
 * DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
 ## Fixed
+* Time weighted charts: the exponentially weighted moving average chart now offers S-bar and R-bar as std. dev. estimation method for data in wide format ("Across rows"), instead of only X-mR, which stopped the analysis with two or more measurement columns.
 * Stepwise model selection in the Response Surface design now respects marginality: a squared term is no longer retained without its corresponding main effect.
 * Process Capability: distribution/fit density curves no longer render flat in interactive (plotly) plots; the curves are now drawn with `geom_line` instead of `stat_function`.
 * Process Capability: the x-axis of the capability plot is no longer stretched towards the default historical scale (Weibull) or log mean (log-normal) when no historical parameter is set, which squeezed the histogram and fitted density into a narrow strip for data far from zero.
