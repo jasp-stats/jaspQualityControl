@@ -274,7 +274,7 @@ Form
 					visible:								exponentiallyWeightedMovingAverageChartSdSource.currentValue == "data"
 					label:									qsTr("Std. dev. estimation method")
 					id: 									exponentiallyWeightedMovingAverageChartSdMethod
-					values: subgroupSizeType.value == "individual" ?
+					values: (subgroupSizeType.value == "individual" & dataFormat.currentValue == "longFormat") ?
 					[
 						{ label: qsTr("X-mR"), value: "averageMovingRange"}
 					] :

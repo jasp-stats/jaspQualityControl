@@ -507,3 +507,66 @@ test_that("15.2 Test of all rules for G chart table", {
                                       "", "", "Point 29", "", "", "", "", "Point 30", "", "", "",
                                       "", "Point 31", "", "", "", "", "Point 32", "", "", ""))
 })
+
+# Time input in H:MM format (equals the same intervals in decimal hours) ####
+.rareEventPlotData <- function(results, chart) {
+  plotName <- results[["results"]][[chart]][["collection"]][[paste0(chart, "_plot")]][["data"]]
+  ggplot2::ggplot_build(results[["state"]][["figures"]][[plotName]][["obj"]])$data
+}
+
+## One interval below one hour ####
+options <- analysisOptions("rareEventCharts")
+options$variable <- "timeMixed"
+options$dataType <- "dataTypeInterval"
+options$dataTypeIntervalType <- "time"
+options$dataTypeIntervalTimeFormat <- "HM"
+options$gChart <- TRUE
+options$tChart <- TRUE
+resultsTime <- runAnalysis("rareEventCharts", "datasets/rareEventCharts/rareEventChartsTime.csv", options)
+
+options$variable <- "hoursMixed"
+options$dataTypeIntervalType <- "hours"
+resultsHours <- runAnalysis("rareEventCharts", "datasets/rareEventCharts/rareEventChartsTime.csv", options)
+
+test_that("16.1 Test of interval type time is read as time (no date/time conversion error)", {
+  expect_null(resultsTime[["results"]][["errorPlot"]])
+  expect_false(is.null(resultsTime[["results"]][["gChart"]]))
+  expect_false(is.null(resultsTime[["results"]][["tChart"]]))
+})
+
+test_that("16.2 Test of G chart with interval type time equals the chart of the same intervals in decimal hours", {
+  expect_equal(.rareEventPlotData(resultsTime, "gChart"), .rareEventPlotData(resultsHours, "gChart"))
+})
+
+test_that("16.3 Test of T chart with interval type time equals the chart of the same intervals in decimal hours", {
+  expect_equal(.rareEventPlotData(resultsTime, "tChart"), .rareEventPlotData(resultsHours, "tChart"))
+})
+
+## All intervals at least one hour (the values are in hours, not minutes) ####
+options <- analysisOptions("rareEventCharts")
+options$variable <- "timeLong"
+options$dataType <- "dataTypeInterval"
+options$dataTypeIntervalType <- "time"
+options$dataTypeIntervalTimeFormat <- "HM"
+options$gChart <- TRUE
+options$tChart <- TRUE
+resultsTimeLong <- runAnalysis("rareEventCharts", "datasets/rareEventCharts/rareEventChartsTime.csv", options)
+
+options$variable <- "hoursLong"
+options$dataTypeIntervalType <- "hours"
+resultsHoursLong <- runAnalysis("rareEventCharts", "datasets/rareEventCharts/rareEventChartsTime.csv", options)
+
+.rareEventYLabel <- function(results, chart) {
+  plotName <- results[["results"]][[chart]][["collection"]][[paste0(chart, "_plot")]][["data"]]
+  as.character(ggplot2::get_labs(results[["state"]][["figures"]][[plotName]][["obj"]])$y)
+}
+
+test_that("16.4 Test of G chart with interval type time and intervals of at least one hour", {
+  expect_equal(.rareEventPlotData(resultsTimeLong, "gChart"), .rareEventPlotData(resultsHoursLong, "gChart"))
+  expect_identical(.rareEventYLabel(resultsTimeLong, "gChart"), .rareEventYLabel(resultsHoursLong, "gChart"))
+})
+
+test_that("16.5 Test of T chart with interval type time and intervals of at least one hour", {
+  expect_equal(.rareEventPlotData(resultsTimeLong, "tChart"), .rareEventPlotData(resultsHoursLong, "tChart"))
+  expect_identical(.rareEventYLabel(resultsTimeLong, "tChart"), .rareEventYLabel(resultsHoursLong, "tChart"))
+})
