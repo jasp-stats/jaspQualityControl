@@ -572,18 +572,20 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["coefficients"]][["terms"]] <- termNamesCoded
 
     # calculate effects, but not for blocks, covariates or intercept
-    coefEffects <- .doeCoefficientEffects(regressionFit)
-    coefEffectsCoded <- .doeCoefficientEffects(regressionFitCoded)
-    if (length(blocks) > 0 && !identical(blocks, "")) {
-      blockNameIndices <- which(termNamesRemoved == blocks) # get the indices of the block variables
-      blockNameIndicesCoded <- which(termNamesRemovedCoded == blocks)
-      coefEffects[blockNameIndices] <- NA
-      coefEffectsCoded[blockNameIndicesCoded] <- NA
-    }
-    if (length(covariates) > 0 && !identical(covariates, "")) {
-      coefEffects[names(coefEffects) %in% unlist(covariates)] <- NA
-      coefEffectsCoded[names(coefEffectsCoded) %in% unlist(covariates)] <- NA
-    }
+    # Effects do not depend on the coding, so for the uncoded table they are taken from a fit with the continuous predictors
+    # on the -1/+1 scale. Discrete predictors are left as they are, so terms and signs match the uncoded coefficients.
+    continuousVars <- unlist(continuousPredictors)
+    continuousVars <- continuousVars[continuousVars != ""]
+    datasetEffects <- dataset
+    datasetEffects[continuousVars] <- datasetCoded[continuousVars]
+    effectsFit <- lm(formula, data = datasetEffects)
+
+    excludeFromEffects <- unlist(c(blocks, covariates))
+    excludeFromEffects <- excludeFromEffects[excludeFromEffects != ""]
+    coefEffects      <- .doeCoefficientEffects(effectsFit, excludeFromEffects)
+    coefEffectsCoded <- .doeCoefficientEffects(regressionFitCoded, excludeFromEffects)
+    if (length(coefEffects) != length(regressionFit$coefficients)) # should not happen, but never show effects of mismatched terms
+      coefEffects <- rep(NA_real_, length(regressionFit$coefficients))
 
     result[["regression"]][["coefficients"]][["effects"]] <- coefEffects
     result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
@@ -698,7 +700,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
 get_levels <- function(var, num_levels, dataset) {
   levels_var <- levels(dataset[[var]])
-  levels_var[1:(num_levels)]
+  levels_var[seq_len(num_levels)] # seq_len: a factor fully removed due to aliasing has 0 levels, 1:0 would return one
 }
 
 .getVIF <- function(regressionFit, predictors) {
@@ -1461,21 +1463,26 @@ get_levels <- function(var, num_levels, dataset) {
   }
 }
 
-.doeCoefficientEffects <- function(regressionFit) {
-  effectVector <- c()
-  for (i in seq_along(regressionFit$coefficients)) {
-    termName <- names(regressionFit$coefficients)[i]
-    if (termName == "(Intercept)") {
-      effect <- NA
-    } else {
-      coef <- regressionFit$coefficients[i]
-      coefLevels <- unique(unlist(regressionFit$model[which(sapply(colnames(regressionFit$model), function(v) grepl(v, termName)))]))
-      factorRange <- if (is.numeric(coefLevels)) max(coefLevels) - min(coefLevels) else length(coefLevels)
-      effect <- coef * factorRange
-    }
-    effectVector <- c(effectVector, effect)
-  }
-  return(effectVector)
+# Factorial effect: change in mean response from the -1 to the +1 setting of a term, i.e., 2 * coefficient.
+# Holds for main effects and interactions of any order, as long as the predictors are on a -1/+1 scale
+# (coded numeric predictors or 2-level factors with sum-to-zero contrasts).
+# NA for the intercept, squared terms, terms with a factor of more than 2 levels, and terms with excluded variables (blocks, covariates).
+.doeCoefficientEffects <- function(regressionFit, excludeVars = character(0)) {
+  termFactors <- attr(stats::terms(regressionFit), "factors") # variables x terms
+  if (length(termFactors) == 0) # intercept-only model
+    return(rep(NA_real_, length(stats::coef(regressionFit))))
+  modelFrame  <- regressionFit[["model"]]
+  noEffectVar <- vapply(rownames(termFactors), function(v) {
+    x <- modelFrame[[v]]
+    (is.factor(x) && nlevels(x) > 2) || grepl("^I\\(.*\\^2\\)$", v) || v %in% excludeVars
+  }, logical(1))
+  noEffectTerm <- colSums(termFactors[noEffectVar, , drop = FALSE]) > 0
+  termIndex    <- regressionFit[["assign"]] # maps each coefficient to its term, 0 = intercept
+
+  effects <- 2 * unname(stats::coef(regressionFit))
+  effects[termIndex == 0] <- NA
+  effects[termIndex > 0][noEffectTerm[termIndex[termIndex > 0]]] <- NA
+  return(effects)
 }
 
 .createHighestOrderInteractionFormula <- function(dependentVariable, independentVariables, interactionOrder) {
@@ -1579,6 +1586,7 @@ get_levels <- function(var, num_levels, dataset) {
       return()
     }
     result <- if (coded) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]][["coefficients"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]][["coefficients"]]
+    tb$addFootnote(gettext("Effect = 2 \u00D7 coefficient in coded (\u22121/+1) units: the change in the response when a term goes from its \u22121 to its +1 setting. Not shown for squared terms, discrete predictors with more than two levels, blocks, and covariates."))
     rows <- data.frame(
       terms = result[["terms"]], effects = result[["effects"]], coef = result[["est"]],
       se = result[["se"]], tval = result[["t"]], pval = result[["p"]], vif = result[["vif"]]
