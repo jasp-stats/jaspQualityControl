@@ -6,7 +6,10 @@ import JASP
 
 Form
 {
-	info:		qsTr("Analyse a factorial or response surface design to identify influential factors and optimal response conditions. This uncovers which variables significantly impact the outcome and how they interact, supporting systematic process optimisation and quality improvement.")
+	info:		qsTr("The purpose of analysing both factorial and response surface designs is to identify influential factors and optimal response conditions. This analysis helps uncover which variables significantly impact the outcome and how they interact. It allows researchers to systematically optimise processes and improve product quality. Ultimately, it enables the achievement of better performance and efficiency.")
+		+ "\n\n## " + qsTr("Design type") + "\n"
+		+ "- **" + qsTr("Factorial design") + "**: " + qsTr("an experimental setup used to study the effects of multiple factors by varying them simultaneously. Each factor is tested at different levels and in different combinations with other factors. This design allows for the examination of both the main effects of each factor and the interactions between factors. It provides a systematic approach to understanding how different variables influence the outcome.") + "\n"
+		+ "- **" + qsTr("Response surface design") + "**: " + qsTr("an experimental framework used to optimise and understand the relationships between several explanatory variables and one or more response variables. By systematically varying the input variables, researchers can explore the effects of these variables on the response, identify optimal conditions, and understand the interactions between variables. Response surface designs are particularly useful in situations where the goal is to optimise a process or product, as they provide a detailed map of the response landscape, enabling precise fine-tuning and improvement.")
 
 	infoBottom: "## " + qsTr("References") + "\n"
 		+ "- " + qsTr("Box, G. E. P., & Wilson, K. B. (1951). On the experimental attainment of optimum conditions. Journal of the Royal Statistical Society, 13(1), 1-45.") + "\n"

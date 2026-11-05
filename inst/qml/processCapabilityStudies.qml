@@ -22,18 +22,21 @@ Form
 {
 	columns:								2
 
-	info:									qsTr("A process capability study analyses a process to determine whether it is capable of producing good quality products, using data from an initial run of parts to predict whether the manufacturing process can repeatably produce parts that meet specifications. A subgroup is a group of parts produced under the same set of conditions.")
+	info:									qsTr("A process capability study analyses a process to determine whether it is capable of producing good quality products, using data from an initial run of parts to predict whether the manufacturing process can repeatably produce parts that meet specifications. A subgroup is a group of parts that are produced under the same set of conditions.") + "\n\n"
+		+ qsTr("Rational subgroup: \"A subgroup gathered in such a manner as to give the maximum chance for the measurements in each subgroup to be alike and the maximum chance for the subgroups to differ from the other. This subgrouping scheme enables a determination of whether the process variation includes special cause variation.\" [1]")
 
-	infoBottom: 							"## " + qsTr("Output") + "\n"
-		+ "- " + qsTr("Control charts (X-bar & R, X-bar & s, X-mR, X-bar & mR) showing process average and dispersion over time, used to assess stability.") + "\n"
-		+ "- " + qsTr("Histogram of the values with an optional fitted distribution.") + "\n"
-		+ "- " + qsTr("Probability table and plot: number of observations, mean, standard deviation, Anderson-Darling statistic and p-value, plotting the data against a theoretical distribution.") + "\n"
-		+ "- " + qsTr("Capability tables: process summary, capability of the process plot, process capability (within: Cp, CpL, CpU, Cpk), process performance (overall: Pp, PpL, PpU, Ppk, Cpm), and non-conformance (observed and expected ppm).") + "\n"
-		+ "\n" + qsTr("Note: capability reports are only meaningful when the process is in a state of statistical control.") + "\n"
+	infoBottom: 							"## " + qsTr("Data transformation") + "\n"
+		+ "- **" + qsTr("None") + "**: " + qsTr("the data is analysed as is.") + "\n"
+		+ "- **" + qsTr("Box-Cox") + "**: " + qsTr("the data is transformed using the equation $y = (x+\\text{shift})^\\lambda$ if $\\lambda \\neq 0$, otherwise $y = \\ln(x + \\text{shift})$.") + "\n"
+		+ "- **" + qsTr("Box-Cox (auto)") + "**: " + qsTr("the data is transformed using the Box-Cox transformation, but with the $\\lambda$ parameter automatically estimated using the specified method (see 'Method').") + "\n"
+		+ "- **" + qsTr("Continuity adjustment") + "**: " + qsTr("if enabled, the Box-Cox transform includes the adjustment term $y = \\frac{(x+\\text{shift})^\\lambda-1}{\\lambda}$.") + "\n"
+		+ "- **" + qsTr("Yeo-Johnson") + "**: " + qsTr("the data is transformed using the Yeo-Johnson transform as described in Yeo & Johnson (2000) [2]. It can be used for unbounded data.") + "\n"
+		+ "- **" + qsTr("Yeo-Johnson (auto)") + "**: " + qsTr("the data is transformed using the Yeo-Johnson transform, but with the $\\lambda$ parameter automatically estimated using the profile likelihood of a normal distribution. This procedure allows only process performance results (no process capability).") + "\n"
+		+ "- **" + qsTr("Johnson") + "**: " + qsTr("the data is transformed using the Johnson transform. It can be used for unbounded data (but some forms of the transform impose restrictions on the specification limits). The transform is fully automatic, as described in Chou, Polansky, & Mason (1998) [3]. This procedure allows only process performance results (no process capability).") + "\n"
 		+ "\n---\n## " + qsTr("References") + "\n"
-		+ "- " + qsTr("Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual (2nd ed.). AIAG.") + "\n"
-		+ "- " + qsTr("Yeo, I. K., & Johnson, R. A. (2000). A new family of power transformations to improve normality or symmetry. Biometrika, 87(4), 954-959.") + "\n"
-		+ "- " + qsTr("Chou, Y. M., Polansky, A. M., & Mason, R. L. (1998). Transforming non-normal data to normality in statistical process control. Journal of Quality Technology, 30(2), 133-141.") + "\n"
+		+ "1. " + qsTr("Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual (2nd ed.). AIAG.") + "\n"
+		+ "2. " + qsTr("Yeo, I. K., & Johnson, R. A. (2000). A new family of power transformations to improve normality or symmetry. Biometrika, 87(4), 954-959.") + "\n"
+		+ "3. " + qsTr("Chou, Y. M., Polansky, A. M., & Mason, R. L. (1998). Transforming non-normal data to normality in statistical process control. Journal of Quality Technology, 30(2), 133-141.") + "\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- ggplot2\n- qcc\n- jaspGraphs\n- ggrepel\n- FAdist\n- goftest\n- fitdistrplus\n- tidyr\n- tibble\n- EnvStats\n- weibullness\n"
 
@@ -94,7 +97,7 @@ Form
 			title:								qsTr("Stages")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
-			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup.")
+			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup. Only the first specified stage of each subgroup is considered.")
 		}
 	}
 
@@ -134,7 +137,7 @@ Form
 			title:								qsTr("Stages")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
-			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup row.")
+			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup row. Only one stage per subgroup is possible.")
 		}
 	}
 
@@ -156,7 +159,7 @@ Form
 				label: 							qsTr("Subgroup size")
 				checked:		 				true
 				childrenOnSameRow:				true
-				info:							qsTr("Assign observations in order of appearance to subgroups of the specified size. If the count is not divisible, the last subgroup holds the remaining observations.")
+				info:							qsTr("Assign observations in order of appearance (from top to bottom) to subgroups of the specified size. If the number of observations cannot be equally divided into subgroups of the specified size, the last subgroup has the size of the remaining observations.")
 
 				DoubleField
 				{
@@ -180,7 +183,7 @@ Form
 					name: 					"groupingVariableMethod"
 					id: 					groupingVariable
 					label: 					"Grouping method"
-					info:					qsTr("How to group when identical subgroup values are not adjacent. \"Subgroup value change\" groups only adjacent identical values; \"Same subgroup value\" groups all identical values regardless of adjacency.")
+					info:					qsTr("How to group when identical subgroup values are not adjacent in the dataset (top to bottom). \"Subgroup value change\" groups only series of identical and adjacent values; \"Same subgroup value\" groups all identical values regardless of adjacency. For instance, for the subgroup values [A, A, B, B, A], \"Subgroup value change\" yields three groups, [A, A], [B, B] and [A], whereas \"Same subgroup value\" yields two groups, [A, A, A] and [B, B].")
 					values:
 					[
 						{ label: qsTr("Subgroup value change"),			value: "newLabel"},
@@ -196,14 +199,14 @@ Form
 			name:								"subgroupSizeUnequal"
 			title: 								qsTr("Unequal subgroup sizes")
 			id:									subgroupSizeUnequal
-			info:								qsTr("How to handle subgroups of differing sizes when computing the process variance and control limits.")
+			info:								qsTr("The size of the subgroups is relevant for the calculation of the process variance and subsequently the control limits. If not all subgroups have the same size, choose how this is handled.")
 
 			RadioButton
 			{
 				value: 								"actualSizes"
 				label: 								qsTr("Use actual sizes")
 				checked: 							true
-				info:								qsTr("Compute control limits per subgroup using the actual subgroup sizes.")
+				info:								qsTr("Calculate the control limits per subgroup, using the actual subgroup sizes.")
 			}
 
 			RadioButton
@@ -211,7 +214,7 @@ Form
 				value: 								"fixedSubgroupSize"
 				label: 								qsTr("Use fixed subgroup size")
 				childrenOnSameRow:		 			true
-				info:								qsTr("Assume a single fixed subgroup size, producing the same control limits for all groups.")
+				info:								qsTr("Assume that all subgroups have the same size, producing the same control limits for all groups. The size of the largest subgroup is used for the calculation.")
 
 				IntegerField
 				{
@@ -239,7 +242,7 @@ Form
 					name:		"dataTransformation"
 					id:			dataTransformation
 					label:		qsTr("Type")
-					info:		qsTr("Transformation applied to the data. Box-Cox and Yeo-Johnson can estimate lambda automatically; Yeo-Johnson (auto) and Johnson allow only process performance results (no process capability). Johnson is fully automatic.")
+					info:		qsTr("Transformation applied to the data before any analysis. The available transformations are described under Data transformation below.")
 					values:
 					[
 						{label: qsTr("None"),					value: "none"},
@@ -258,7 +261,7 @@ Form
 					negativeValues:	true
 					defaultValue: 0
 					enabled: ["boxCox", "boxCoxAuto"].includes(dataTransformation.value)
-					info:	qsTr("Value of the shift parameter for transforms accepting bounded data. Disabled for unbounded transforms (Yeo-Johnson, Johnson).")
+					info:	qsTr("Numerical value of the shift parameter used for transforms that accept bounded data. This option is disabled for unbounded transforms (Yeo-Johnson, Johnson).")
 				}
 				DoubleField
 				{
@@ -267,13 +270,13 @@ Form
 					negativeValues:	true
 					defaultValue: 0
 					enabled: ["boxCox", "yeoJohnson"].includes(dataTransformation.value)
-					info:	qsTr("Value of the lambda parameter of the transform. Disabled for transforms that estimate their parameter automatically.")
+					info:	qsTr("Numerical value of the lambda parameter of the transforms. This option is disabled for transforms which automatically estimate their parameter(s).")
 				}
 				DropDown
 				{
 					name:		"dataTransformationMethod"
 					label:		qsTr("Type")
-					info:		qsTr("Method for selecting the best lambda. Log-Lik maximises the normal likelihood; SD minimises the sum of squares; Average moving range minimises variability based on the moving range (appropriate for individuals data).")
+					info:		qsTr("Method for selecting the best lambda value. 'Log-Lik' maximises the normal likelihood of the transformed variable. 'SD' minimises the sums of squares of the power-transformed variable. 'Average moving range' minimises the estimate of variability based on the average moving range of the power-transformed variable. 'Log-Lik' and 'SD' are appropriate for grouped data, 'Average moving range' is appropriate for individuals data.")
 					values:
 					[
 						{label: qsTr("Log. Lik"),					value: "loglik"},
@@ -288,7 +291,7 @@ Form
 					name: "dataTransformationContinuityAdjustment"
 					checked: false
 					enabled: ["boxCox", "boxCoxAuto"].includes(dataTransformation.value)
-					info:	qsTr("Include the continuity adjustment term in the Box-Cox transform.")
+					info:	qsTr("If enabled, the Box-Cox transform includes a continuity adjustment term (see Data transformation below).")
 				}
 			}
 			Group
@@ -492,7 +495,7 @@ Form
 							name:					"nonNormalMethod"
 							label:					qsTr("Non-normal capability statistics")
 							indexDefaultValue:		0
-							info:					qsTr("Method used to calculate the capability statistics for non-normally distributed data. Historical parameter fields below let you fix selected distribution parameters instead of estimating them.")
+							info:					qsTr("Method used to calculate the capability statistics for non-normally distributed data. Historical parameter fields below let you fix selected distribution parameters instead of estimating them. If not all parameters are set historically, JASP keeps the historical parameters fixed while estimating the remaining parameters freely.")
 							values:
 								[
 								{label: qsTr("Percentile"),				value: "percentile"},
@@ -651,14 +654,14 @@ Form
 					{
 						name: "processCapabilityTableZ"
 						label: qsTr("Z (ST) / Z (LT)")
-						info:	qsTr("Display the short-term Z (ST) and long-term Z (LT) sigma-level statistics.")
+						info:	qsTr("Display the short-term Z (ST) and long-term Z (LT) sigma-level statistics. Z (ST) is equal to 3 * Cpk and Z (LT) is equal to 3 * Ppk; they correspond to the distance of the process mean to the nearest bound in standard deviation units.")
 					}
 
 					CheckBox
 					{
 						name: "processCapabilityTableZBench"
 						label: qsTr("Z.bench (ST) / Z.bench (LT)")
-						info:  qsTr("Sigma level based on total defect probability across both specification limits, as opposed to Z (ST)/Z (LT) which equal 3·Cpk/3·Ppk (distance to the nearest bound).")
+						info:  qsTr("Short-term and long-term sigma level computed from the total expected defect probability across both specification limits (based on the within and overall standard deviation, respectively), i.e., the standard normal quantile of one minus that probability. It equals Z (ST) / Z (LT) only for one-sided tolerances; for two-sided tolerances it is smaller because both tails contribute.")
 					}
 
 				}

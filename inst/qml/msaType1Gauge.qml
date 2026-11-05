@@ -23,13 +23,7 @@ Form
 
 	info:										qsTr("A Type 1 Instrument Capability Study (Type 1 Gauge) is performed before a Gauge r&R study to assess the capability of a measurement instrument using bias and repeatability. A single part with a known reference value is measured repeatedly by one operator.")
 
-	infoBottom: 								"## " + qsTr("Output") + "\n"
-		+ "- " + qsTr("Run chart: plots the measurement values across observations.") + "\n"
-		+ "- " + qsTr("Basic statistics table: reference value, mean, bias, standard deviation, study variation (measurement SD times the study variance multiplier), tolerance, and bias as a percentage of the tolerance.") + "\n"
-		+ "- " + qsTr("Capability table: Cg, CgK, and the percentage of variation due to repeatability and to repeatability plus bias.") + "\n"
-		+ "- " + qsTr("T-test of observed bias: degrees of freedom, bias, confidence interval limits, t-statistic, and p-value for the test of the observed bias against zero.") + "\n"
-		+ "- " + qsTr("Bias histogram: histogram of the measurements.") + "\n"
-		+ "\n---\n## " + qsTr("References") + "\n"
+	infoBottom: 								"## " + qsTr("References") + "\n"
 		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- jaspGraphs\n- jaspDescriptives\n- tidyr\n- ggplot2\n- ggrepel\n"

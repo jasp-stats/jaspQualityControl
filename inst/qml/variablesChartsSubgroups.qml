@@ -8,12 +8,13 @@ Form
 {
 	columns:									2
 
-	info:										qsTr("Control charts model the variation of a process, indicating its stability and establishing a state of statistical control. Variable charts for subgroups monitor the behaviour of a dimensional (continuous) variable, using either historical data (Phase 2) or new data (Phase 1).")
+	info:										qsTr("Control charts are a set of tools used to model the variation of a process, thereby indicating its stability and establishing a state of statistical control. Variable charts for subgroups are used to monitor the behaviour of a dimensional (continuous) variable. Depending on the data collected from a given process, the analysis can be executed using historical data (Phase 2) or new data (Phase 1).")
 
-	infoBottom: 								"## " + qsTr("Output") + "\n"
-		+ "- " + qsTr("X-bar & R chart: plots the process mean (X-bar) and process range (R) over time.") + "\n"
-		+ "- " + qsTr("X-bar & s chart: plots the process mean (X-bar) and process standard deviation (s) over time.") + "\n"
-		+ "- " + qsTr("Out-of-control signals are flagged using the tests selected under Advanced Options.") + "\n"
+	infoBottom: 								"## " + qsTr("Out-of-control signals") + "\n"
+		+ qsTr("Out-of-control signals are flagged using the tests selected under Advanced Options. The JASP default test set consists of (Statistical process control handbook, page 23):") + "\n"
+		+ "- " + qsTr("Test 1: Beyond limit - one point beyond the control limits (sporadic issue).") + "\n"
+		+ "- " + qsTr("Test 2: Shift - seven consecutive points above or below the central line (mean shift).") + "\n"
+		+ "- " + qsTr("Test 3: Trend - a run up or down of seven consecutive points (trend).") + "\n"
 		+ "\n---\n## " + qsTr("References") + "\n"
 		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
@@ -70,7 +71,7 @@ Form
 			title:								qsTr("Stages")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
-			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup.")
+			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup. Only the first specified stage of each subgroup is considered.")
 		}
 	}
 
@@ -113,7 +114,7 @@ Form
 			title:								qsTr("Stages")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
-			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup (one stage per subgroup row).")
+			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup. Only one stage per subgroup (row) is possible.")
 		}
 	}
 
@@ -155,7 +156,7 @@ Form
 					name: 					"groupingVariableMethod"
 					id: 					groupingVariable
 					label: 					"Grouping method"
-					info:					qsTr("How to group when identical subgroup values are not adjacent. \"Subgroup value change\" groups only adjacent identical values; \"Same subgroup value\" groups all identical values regardless of adjacency.")
+					info:					qsTr("How to group when identical subgroup values are not adjacent in the dataset (top to bottom). \"Subgroup value change\" groups only series of identical and adjacent values; \"Same subgroup value\" groups all identical values regardless of adjacency. For instance, for the subgroup values [A, A, B, B, A], \"Subgroup value change\" yields three groups, [A, A], [B, B] and [A], whereas \"Same subgroup value\" yields two groups, [A, A, A] and [B, B].")
 					values:
 					[
 						{ label: qsTr("Subgroup value change"),			value: "newLabel"},
@@ -173,14 +174,14 @@ Form
 			name:								"subgroupSizeUnequal"
 			title: 								qsTr("Unequal subgroup sizes")
 			id:									subgroupSizeUnequal
-			info:								qsTr("How to handle subgroups of differing sizes when computing the process variance and control limits.")
+			info:								qsTr("The size of the subgroups is relevant for the calculation of the process variance and subsequently the control limits. If not all subgroups have the same size, choose how this is handled.")
 
 			RadioButton
 			{
 				value: 								"actualSizes"
 				label: 								qsTr("Use actual sizes")
 				checked: 							true
-				info:								qsTr("Compute control limits per subgroup using the actual subgroup sizes.")
+				info:								qsTr("Calculate the control limits per subgroup, using the actual subgroup sizes.")
 			}
 
 			RadioButton
@@ -188,7 +189,7 @@ Form
 				value: 								"fixedSubgroupSize"
 				label: 								qsTr("Use fixed subgroup size")
 				childrenOnSameRow:		 			true
-				info:								qsTr("Assume a single fixed subgroup size, producing the same control limits for all groups.")
+				info:								qsTr("Assume that all subgroups have the same size, producing the same control limits for all groups. The size of the largest subgroup is used for the calculation.")
 
 				IntegerField
 				{
@@ -239,7 +240,7 @@ Form
 		{
 			name: 								"knownParameters"
 			label: 								qsTr("Known parameters")
-			info:								qsTr("Use known historical parameter values (Phase 2) for the mean and standard deviation.")
+			info:								qsTr("Enables the use of known historical parameter values (Phase 2) for the mean and standard deviation.")
 
   			DoubleField
   			{

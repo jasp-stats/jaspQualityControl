@@ -335,6 +335,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (ready && is.null(jaspResults[["xBar"]][["plot"]])) {
         jaspResults[["xBar"]][["plot"]] <- createJaspPlot(title = gettextf("X-bar & %s control chart", secondPlotTitle),
                                                           width = 1200, height = 500)
+        jaspResults[["xBar"]][["plot"]]$info <- switch(secondPlotTitle,
+          "R"  = gettext("Charts the process average (X-bar) and process range (R = maximum - minimum) over time."),
+          "s"  = gettext("Charts the process average (X-bar) and standard deviation (s) over time."),
+          "mR" = gettext("Charts the process average (X-bar) and the moving range (mR) of two consecutive subgroup means over time.")
+        )
         # Error conditions
         if (secondPlotType == "R" && length(measurements) > 50) { # if the subgroup size is above 50, the R package cannot calculate R charts.
           jaspResults[["xBar"]][["plot"]]$setError(gettext("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
@@ -377,6 +382,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
+        jaspResults[["xmr"]][["plot"]]$info <- gettext("Charts the individual measurement and the moving range (mR) of two consecutive measurements over time.")
         columnsToPass <- c(measurements, stages)
         columnsToPass <- columnsToPass[columnsToPass != ""]
         if (options[["xmrChartSpecificationLimits"]]) {
@@ -566,6 +572,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     nStages <- length(unique(dataset[[stages]]))
   }
   table <- createJaspTable(title = gettext("Process summary"))
+  table$info <- .infoProcessSummary()
   footnotes <- c()
   table$position <- 1
   if (nStages > 1) {
@@ -715,6 +722,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   plotWidth <- nCol * 800
   plotHeight <- nRow * 500
   plot <- createJaspPlot(title = gettext("Capability of the process"), width = plotWidth, height = plotHeight)
+  plot$info <- gettext("Plots the frequency distribution with the fitted distribution based on the overall (total) process variation and the inherent (within) process variation. It compares the process spread to the customer requirements (the upper and lower specification limits displayed as red vertical lines). The two curved lines indicate how well the selected distribution fits the data. The two distributions are based on the within (red curve) and overall (blue curve) process variation.")
   plot$dependOn(c("processCapabilityPlotBinNumber", "histogramBinBoundaryDirection", "processCapabilityPlotXAxisModification"))
   plot$position <- 2
   container[["capabilityPlot"]] <- plot
@@ -1592,6 +1600,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 .qcProcessCapabilityTableWithin <- function(options, dataset, ready, container, measurements, stages, returnDataframe = FALSE) {
   if (!options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]) {
     table <- createJaspTable(title = gettext("Process capability (within)"))
+    table$info <- .infoCapabilityWithin()
     table$addFootnote(gettext("Set at least one specification limit (upper or lower) to start the analysis."))
     container[["capabilityTableWithin"]] <- table
     return()
@@ -1607,6 +1616,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     nStages <- length(unique(dataset[[stages]]))
   }
   table <- createJaspTable(title = gettext("Process capability (within)"))
+  table$info <- .infoCapabilityWithin()
   sourceVector <- c()
   if (nStages > 1) {
     table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
@@ -1818,8 +1828,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   if (!options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]) {
     table <- createJaspTable(title = gettext("Process performance (total)"))
+    table$info <- .infoPerformanceTotal()
     table$addFootnote(gettext("Set at least one specification limit (upper or lower) to start the analysis."))
     table2 <- createJaspTable(title = gettext("Non-conformance statistics"))
+    table2$info <- .infoNonConformance()
     table2$addFootnote(gettext("Set at least one specification limit (upper or lower) to start the analysis."))
     container[["capabilityTableOverall"]] <- table
     container[["capabilityTablePerformance"]] <- table2
@@ -1835,6 +1847,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     nStages <- length(unique(dataset[[stages]]))
   }
   table <- createJaspTable(title = gettext("Process performance (total)"))
+  table$info <- .infoPerformanceTotal()
   sourceVector1 <- c()
   if (nStages > 1) {
     table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
@@ -2087,6 +2100,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   }
 
   table2 <- createJaspTable(title = gettext("Non-conformance statistics"))
+  table2$info <- .infoNonConformance()
   table2$addColumnInfo(name = "rowNames", type = "string", title = "")
   table2$showSpecifiedColumnsOnly <- TRUE
   if (nStages > 1) {
@@ -2268,6 +2282,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     nStages <- length(unique(dataset[[stages]]))
   }
   table <- createJaspTable(title = gettextf("Process summary"))
+  table$info <- .infoProcessSummary()
   footnotes <- c()
   if (nStages > 1) {
     table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
@@ -2431,6 +2446,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   }
 
   table2 <- createJaspTable(title = gettextf("Process performance (total)"))
+  table2$info <- .infoPerformanceTotal()
   table2$showSpecifiedColumnsOnly <- TRUE
   sourceVector2 <- c()
   if (nStages > 1) {
@@ -2789,6 +2805,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   }
 
   table3 <- createJaspTable(title = gettextf("Non-conformance statistics"))
+  table3$info <- .infoNonConformance()
   table3$addColumnInfo(name = "rowNames", type = "string", title = "")
   if (nStages > 1) {
     table3$transpose <- TRUE
@@ -3126,6 +3143,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     nStages <- length(unique(dataset[[stages]]))
   }
   table <- createJaspTable(title = gettextf("Summary of test against the %1$s distribution", distributionTitle))
+  table$info <- gettext("The number of observations, the process's mean, the process's standard deviation, the Anderson-Darling statistic, and the p-value associated with the former.")
   table$position <- 1
   if (nStages > 1) {
     table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
@@ -3233,6 +3251,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   plotHeight <- nRow * 600
   plot <- createJaspPlot(width = plotWidth, height = plotHeight,
                          title = gettextf("Probability plot against %1$s distribution", distributionTitle))
+  plot$info <- gettext("Plots the data against a theoretical distribution in such a way that the plotted points should form approximately a straight line.")
   if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull"
        || options[["nullDistribution"]] == "3ParameterLognormal"|| options[["nullDistribution"]] == "3ParameterWeibull") &&
       any(na.omit(unlist(dataset[measurements])) < 0)) {
@@ -3549,6 +3568,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   plotWidth <- nCol * 600
   plotHeight <- nRow * 400
   plot <- createJaspPlot(title = gettext("Histogram"), width = plotWidth, height = plotHeight)
+  plot$info <- gettext("Plots the frequency of the values in classes. A histogram is a graphical representation of data points organized into user-specified ranges. Similar in appearance to a bar graph, the histogram condenses a data series into an easily interpreted visual by taking many data points and grouping them into logical classes or bins.")
   plot$dependOn(c(
     "histogram", "histogramDensityLine", "histogramBinNumber",
     "report", "nullDistribution", "histogramBinBoundaryDirection",
@@ -3942,4 +3962,50 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   # - those that have only fixed parameters (Box-Cox and Yeo-Johnson with manually fixed params)
   # - Box-Cox auto (normalizes within groups, not across groups)
   return(options[["dataTransformation"]] %in% c("none", "boxCox", "boxCoxAuto", "yeoJohnson"))
+}
+
+
+# Help texts (shown in the help of the analysis through the `info` of the output elements)
+.infoProcessSummary <- function() {
+  gettext("Only displayed if one or both specification limits are filled in. Produces a table of statistics consisting of the lower specification limit, target, upper specification limit, sample size, overall average, overall (total) standard deviation, and the within (subgroup) standard deviation. The within standard deviation is estimated according to the selected method (R-bar, S-bar, or Pooled). The pooled standard deviation is a common default for capability analysis and is the most efficient estimate of the within-subgroup variation, especially for larger or unequal subgroups.")
+}
+
+.infoCapabilityWithin <- function() {
+  paste(
+    gettext("The Cp and its confidence interval, CpL, CpU, and Cpk and its confidence interval."),
+    gettext("Process capability is determined by the variation that comes from common causes. It generally represents the best (potential) performance of the process. This is demonstrated when the process is being operated in a state of statistical control regardless of the specifications [1]."),
+    gettext("The capability index Cp compares the process capability to the maximum allowable variation as indicated by the tolerance. Cp is not impacted by the process location. This index can be calculated only for bilateral (two-sided) tolerances; it has no meaning for the one-sided situation (unilateral tolerance, with only one specification limit)."),
+    gettext("The capability index Cpk takes the process location as well as the capability into account. Cpk will always be less than or equal to Cp. Z (ST) is equal to 3 * Cpk and corresponds to the distance of the process mean to the nearest bound in standard deviation units. Z.bench (ST) is the short-term sigma level computed from the total expected defect probability across both specification limits (based on the within standard deviation), i.e., the standard normal quantile of one minus that probability. It equals Z (ST) only for one-sided tolerances; for two-sided tolerances it is smaller because both tails contribute."),
+    gettext("Note: capability study reports contain meaningless numbers if processes are not in a state of statistical control."),
+    sep = "\n\n"
+  )
+}
+
+.infoPerformanceTotal <- function() {
+  paste(
+    gettext("The Pp and its confidence interval, PpL, PpU, Ppk and its confidence interval, and Cpm and its confidence interval."),
+    gettext("Process performance is the overall output of the process and how it relates to the requirements (defined by specifications)."),
+    gettext("The performance index Pp compares the process performance to the maximum allowable variation as indicated by the tolerance [1]. Pp is not impacted by the process location. This index can be calculated only for bilateral (two-sided) tolerances; it has no meaning for the one-sided situation (unilateral tolerance, with only one specification limit)."),
+    gettext("The performance index Ppk takes the process location as well as the performance into account. Ppk will always be less than or equal to Pp. Z (LT) is equal to 3 * Ppk and corresponds to the distance of the process mean to the nearest bound in standard deviation units. Z.bench (LT) is the long-term sigma level computed from the total expected defect probability across both specification limits (based on the overall standard deviation), i.e., the standard normal quantile of one minus that probability. It equals Z (LT) only for one-sided tolerances; for two-sided tolerances it is smaller because both tails contribute."),
+    gettext("The Cpm index indicates how well the process can produce within specifications. Its calculation is similar to Cp, except that the standard deviation is calculated using the target value instead of the mean. The larger the Cpm, the more likely the process will produce output that meets specifications and is close to the target value."),
+    sep = "\n\n"
+  )
+}
+
+.infoNonConformance <- function() {
+  paste(
+    gettext("The observed ppm outside the specification limits, and the expected ppm outside the specification limits based on the overall standard deviation and on the within standard deviation."),
+    paste0("- ", c(
+      gettext("ppm < LSL for observed performance is the actual number of parts per million (ppm) that have measurements that are less than the lower specification limit (LSL)."),
+      gettext("ppm > USL for observed performance is the actual number of parts per million (ppm) that have measurements that are greater than the upper specification limit (USL)."),
+      gettext("ppm total for observed performance is the actual number of parts per million (ppm) that have measurements that are outside the specification limits. ppm total equals the sum of ppm < LSL and ppm > USL."),
+      gettext("ppm < LSL for expected overall performance is the expected number of parts per million (ppm) that have measurements that are less than the lower specification limit (LSL). Expected overall performance values are calculated using the overall standard deviation. It is 1,000,000 times the probability that the measurement of a randomly selected part from the overall process distribution is less than LSL."),
+      gettext("ppm > USL for expected overall performance is the expected number of parts per million (ppm) that have measurements that are greater than the upper specification limit (USL). Expected overall performance values are calculated using the overall standard deviation. It is 1,000,000 times the probability that the measurement of a randomly selected part from the overall process distribution is greater than USL."),
+      gettext("ppm total for expected overall performance is the expected number of parts per million (ppm) that are outside the specification limits. Expected overall performance values are calculated using the overall standard deviation. It is 1,000,000 times the probability that the measurement of a randomly selected part from the overall process distribution is outside the specification limits."),
+      gettext("ppm < LSL for expected within performance is the expected number of parts per million (ppm) that have measurements that are less than the lower specification limit (LSL). Expected within performance values are calculated using the within-subgroup standard deviation. It is 1,000,000 times the probability that the measurement of a randomly selected part from the within-subgroup process distribution is less than LSL."),
+      gettext("ppm > USL for expected within performance is the expected number of parts per million (ppm) that have measurements that are greater than the upper specification limit (USL). Expected within performance values are calculated using the within-subgroup standard deviation. It is 1,000,000 times the probability that the measurement of a randomly selected part from the within-subgroup process distribution is greater than USL."),
+      gettext("ppm total for expected within performance is the expected number of parts per million (ppm) that are outside the specification limits. Expected within performance values are calculated using the within-subgroup standard deviation. It is 1,000,000 times the probability that the measurement of a randomly selected part from the within-subgroup process distribution is outside the specification limits.")
+    ), collapse = "\n"),
+    sep = "\n"
+  )
 }

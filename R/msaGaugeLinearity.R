@@ -52,6 +52,7 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
   tablesAndGraphs <- createJaspContainer(gettext("Linearity and bias"))
 
   tableGaugeBias <- createJaspTable(title = gettext("Gauge bias"))
+  tableGaugeBias$info <- gettext("Per part: the reference values, the mean per reference value, the bias per reference value, and a t-test of the bias against zero.")
   tableGaugeBias$addColumnInfo(name = "part",  title = gettext("Part"), type = "string")
   tableGaugeBias$addColumnInfo(name = "referenceValue",  title = gettext("Reference value"), type = "number")
   tableGaugeBias$addColumnInfo(name = "observedMean", title = gettext("Observed mean"), type = "number")
@@ -61,6 +62,7 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
     tableGaugeBias$addColumnInfo(name = "percentBias", title = gettext("Percent bias"), type = "number")
 
   tableRegression <- createJaspTable(title = gettext("Regression model"))
+  tableRegression$info <- gettext("The regression coefficients (intercept and slope), with their t-statistics, standard errors, and p-values.")
   tableRegression$addColumnInfo(name = "predictor",  title = gettext("Predictor"), type = "string")
   tableRegression$addColumnInfo(name = "coefficient", title = gettext("Coefficient"), type = "number")
   tableRegression$addColumnInfo(name = "SEcoefficient", title = gettext("Std. error"), type = "number")
@@ -71,6 +73,7 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
   tableEquation$addColumnInfo(name = "formula", title = "", type = "string")
 
   tableGaugeLinearity <- createJaspTable(title = gettext("Gauge linearity"))
+  tableGaugeLinearity$info <- gettext("The regression sigma (S), the absolute coefficient values multiplied by the process variation (linearity), R-squared, and the linearity as a percentage of the process variation.")
 
   tableGaugeLinearity$addColumnInfo(name = "S",  title = gettext("Std. error"), type = "number")
   tableGaugeLinearity$addColumnInfo(name = "rsq",       title = gettextf("R%1$s", "\u00B2"), type = "number")
@@ -80,7 +83,9 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
   }
 
   plotBias <- createJaspPlot(title = gettext("Bias and linearity"), width = 500, height = 500)
+  plotBias$info <- gettext("The linear relationship between the bias and the reference values, the reference values' means (red dots), and the values (black axes) given the linear equation.")
   plotProcessVar <- createJaspPlot(title = gettext("Percentage process variation graph"), width = 500, height = 500)
+  plotProcessVar$info <- gettext("The percentage of linearity and bias relative to the process variation.")
 
 
   if (options[["biasTable"]])

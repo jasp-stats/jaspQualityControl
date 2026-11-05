@@ -23,13 +23,7 @@ Form
 
 	info:										qsTr("The Test-retest (range method) study approximates an overall picture of the measurement system's variability. It does not separate the variability into its repeatability and reproducibility components.")
 
-	infoBottom: 								"## " + qsTr("Output") + "\n"
-		+ "- " + qsTr("Short gauge study table: sample size, R-bar, historical standard deviation, tolerance, GRR, and GRR as a percentage of the standard deviation and tolerance.") + "\n"
-		+ "- " + qsTr("Traffic light graph: GRR as a percentage of the standard deviation and tolerance.") + "\n"
-		+ "- " + qsTr("Run chart of parts: all measurement values per part.") + "\n"
-		+ "- " + qsTr("Range chart by part: range chart for the measurements using the parts as subgroups.") + "\n"
-		+ "- " + qsTr("Scatter plot of the measurements.") + "\n"
-		+ "\n---\n## " + qsTr("References") + "\n"
+	infoBottom: 								"## " + qsTr("References") + "\n"
 		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- jaspGraphs\n- tidyr\n- ggplot2\n"

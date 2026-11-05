@@ -20,7 +20,12 @@ import JASP
 Group
 {
 	title:		qsTr("Tests for control charts")
-	info:		qsTr("Out-of-control tests used to flag special-cause variation. Choose a predefined test set (JASP defaults, Nelson laws, or Western Electric rules) or a custom selection in which each test can be individually enabled and its parameter adjusted.")
+	info:		qsTr("Out-of-control tests used to flag special-cause variation. Choose a predefined test set (JASP defaults, Nelson laws, or Western Electric rules) or a custom selection in which each test can be individually enabled and its parameter adjusted.") + " "
+		+ qsTr("JASP: the default set of tests. For charts of subgroups (e.g., X-bar & R or X-bar & s): Test 1; Test 2 (7 points); Test 3 (7 points). For charts of individuals (X-mR): additionally Test 4 (2 out of 3 points); Test 5 (15 points); Test 6 (8 points).") + " "
+		+ qsTr("Nelson laws: Test 1; Test 2 (9 points); Test 3 (6 points); Test 4 (2 out of 3 points); Test 5 (15 points); Test 6 (8 points); Test 7 (4 out of 5 points); Test 8 (14 points).") + " "
+		+ qsTr("Western Electric rules: Test 1; Test 2 (8 points); Test 4 (2 out of 3 points); Test 7 (4 out of 5 points).") + " "
+		+ qsTr("Custom: select the tests to apply and modify the number of points N of each test.") + " "
+		+ qsTr("Tests 4 to 7 are only applied to the chart of the central tendency (e.g., the X-bar chart); the range, standard deviation and moving range charts only use tests 1, 2, 3 and 8.")
 
 	DropDown
 	{

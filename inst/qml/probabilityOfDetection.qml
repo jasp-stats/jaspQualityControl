@@ -24,7 +24,7 @@ Form
 {
 	columns: 1
 
-	info:		qsTr("Probability of Detection (POD) models the probability that an inspection detects a flaw as a function of a covariate such as flaw size. A binary detection outcome is regressed on the covariate using a logistic or probit link, producing a detection curve from which detection thresholds (e.g. the size detected with 90%% probability) can be read.")
+	info:		qsTr("Probability of Detection (POD) models the probability that an inspection detects a flaw as a function of a covariate such as flaw size. A binary detection outcome is regressed on the covariate using a logistic or probit link, producing a detection curve from which detection thresholds (e.g. the size detected with 90% probability) can be read.")
 
 	VariablesForm
 	{

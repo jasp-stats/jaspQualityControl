@@ -357,6 +357,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
   anovaTables$position <- 1
 
   anovaTable1 <- createJaspTable(title = ifelse(Type3, gettext("One-way Analysis of Variance table"), gettext("Two-way Analysis of Variance table with interaction")))
+  anovaTable1$info <- gettext("The analysis of variance table for the input variables, repeatability, reproducibility, and total Gauge r&R.")
   anovaTable1$addColumnInfo(title = gettext("Source"),       name = "source",   type = "string" )
   anovaTable1$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
   anovaTable1$addColumnInfo(title = gettext("Sum of squares"), name = "Sum Sq",  type = "number")
@@ -365,6 +366,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
   anovaTable1$addColumnInfo(title = gettext("<i>p</i>-value"),              name = "Pr(>F)",  type = "pvalue")
 
   RRtable1 <- createJaspTable(title = gettext("Variance components"))
+  RRtable1$info <- gettext("The variance and percentage contribution of the input variables, repeatability, reproducibility, and total Gauge r&R.")
   RRtable1$dependOn(c("anova", "operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
                       "measurementLongFormat"))
   RRtable1$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
@@ -372,6 +374,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
   RRtable1$addColumnInfo(name = "Percent", title = gettextf("%% Contribution"), type = "integer")
 
   RRtable2 <- createJaspTable(title = gettext("Gauge evaluation"))
+  RRtable2$info <- gettext("The standard deviations, study variations, and percentage of study variation and tolerance for the input variables, repeatability, reproducibility, and total Gauge r&R.")
   RRtable2$dependOn(c("anova", "operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat",
                       "measurementsWideFormat", "measurementLongFormat"))
   RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
@@ -574,6 +577,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     } else {
 
       anovaTable2 <- createJaspTable(title = gettext("Two-way Analysis of Variance table without interaction"))
+      anovaTable2$info <- gettext("The analysis of variance table, without the interaction, for the input variables, repeatability, reproducibility, and total Gauge r&R.")
       anovaTable2$addColumnInfo(title = gettext("Source"),        name = "source",   type = "string" )
       anovaTable2$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
       anovaTable2$addColumnInfo(title = gettext("Sum of squares"), name = "Sum Sq",  type = "number")

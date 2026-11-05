@@ -25,11 +25,15 @@ Form
 
 	info:										qsTr("Gauge Repeatability and Reproducibility for non-replicable (destructive) measurements quantifies the variation in measurements attributable to the measurement system, split into repeatability (equipment variation) and reproducibility (operator variation). This is the version of the analysis for measurements that cannot be replicated, using a nested model.")
 
-	infoBottom: 								"## " + qsTr("Output") + "\n"
-		+ "- " + qsTr("Gauge r&R (nested): nested analysis of variance table for the input variables, repeatability, reproducibility, and total Gauge r&R.") + "\n"
-		+ "- " + qsTr("Gauge r&R variance components: variance and percentage contribution of the input variables, repeatability, reproducibility, and total Gauge r&R.") + "\n"
-		+ "- " + qsTr("Gauge evaluation: standard deviations, study variations, and percentage of study variation and tolerance for the input variables, repeatability, reproducibility, and total Gauge r&R.") + "\n"
-		+ "\n" + qsTr("Acceptance guideline: %r&R ≤ 10%% is generally acceptable, 10–30%% may be acceptable for some applications, and > 30%% is considered unacceptable.") + "\n"
+	infoBottom: 								"## " + qsTr("General guideline for acceptance of measurement systems") + "\n"
+		+ qsTr("If the total gauge r&R contribution in the %Study Var. column (%Tolerance, %Process) is:") + "\n"
+		+ "- " + qsTr("%r&R ≤ 10%: the measurement system is generally considered to be acceptable;") + "\n"
+		+ "- " + qsTr("10% < %r&R ≤ 30%: the measurement system may be acceptable for some applications;") + "\n"
+		+ "- " + qsTr("%r&R > 30%: the measurement system is considered to be unacceptable.") + "\n\n"
+		+ qsTr("If you are looking at the %Contribution column, the corresponding standards are:") + "\n"
+		+ "- " + qsTr("less than 1%: the measurement system is acceptable;") + "\n"
+		+ "- " + qsTr("between 1% and 9%: the measurement system is acceptable depending on the application, the cost of the measuring device, cost of repair, or other factors;") + "\n"
+		+ "- " + qsTr("greater than 9%: the measurement system is unacceptable and should be improved.") + "\n"
 		+ "\n---\n## " + qsTr("References") + "\n"
 		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"

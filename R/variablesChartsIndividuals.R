@@ -80,6 +80,7 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
                                        "reportMeasurementName", "reportMiscellaneous","reportReportedByBy","reportDate", "report",
                                        "stage", "controlLimitsNumberOfSigmas", .getDependenciesControlChartRules()))
     jaspResults[["Ichart"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
+    jaspResults[["Ichart"]][["plot"]]$info <- gettext("Plots the process value and the moving range (MR) over time.")
     if (ready) {
       # Error conditions for stages
       if(!identical(stages, "") && any(table(dataset[[stages]]) < options[["xmrChartMovingRangeLength"]])) {
@@ -180,6 +181,7 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
 
 .autocorrelationPlot <- function(dataset = dataset, options = options, variable, lags = NULL, CI = 0.95) {
   ppPlot <- createJaspPlot(width = 1200, height = 500, title = gettext("Autocorrelation plot"))
+  ppPlot$info <- gettext("Plots the autocorrelation of the measurements across the lags.")
   ppPlot$dependOn(optionContainsValue = list(variables = variable))
 
   if (anyNA(dataset[[variable]])) {

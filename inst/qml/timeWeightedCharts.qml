@@ -6,16 +6,28 @@ Form
 {
 	columns:									2
 
-	info:										qsTr("Time-weighted control charts are alternatives to the Shewhart chart for detecting small process shifts in Phase II monitoring. The cumulative sum (CUSUM) chart plots a running total of deviations from a target, while the exponentially weighted moving average (EWMA) chart weights recent observations more heavily. Both monitor the process mean using previous values at each point.")
+	info:										qsTr("Two very effective alternatives to the Shewhart control chart may be used when small process shifts are of interest: the cumulative sum (CUSUM) control chart and the exponentially weighted moving average (EWMA) control chart. CUSUM and EWMA control charts are excellent alternatives to the Shewhart control chart for Phase II process monitoring situations. Collectively, they are sometimes called time-weighted control charts. Like X-bar charts, they monitor the mean of the process, but, unlike X-bar charts, they take the previous values into account at each point. Moreover, these charts are considered a reliable estimate when the correct standard deviation is available.")
 
-	infoBottom: 								"## " + qsTr("Assumptions") + "\n"
-		+ "- " + qsTr("Sequential (time-ordered) measurements, independent of one another, and approximately normally distributed (or large enough subgroups for the average to be approximately normal).") + "\n"
-		+ "\n---\n## " + qsTr("Output") + "\n"
-		+ "- " + qsTr("CUSUM chart: cumulative deviations from the target, plotting the upper and lower CUSUM statistics versus the sample number.") + "\n"
-		+ "- " + qsTr("EWMA chart: the exponentially weighted moving average of the process mean over time.") + "\n"
+	infoBottom: 								"## " + qsTr("CUSUM control chart") + "\n"
+		+ "### " + qsTr("Features") + "\n"
+		+ qsTr("A CUSUM control chart is essentially a running total of deviations from some preselected reference value. The mean of any group of consecutive values is represented visually by the current slope of the graph. The basic advantage of a CUSUM chart is that it is more sensitive to small shifts of the process mean compared to the Shewhart control charts.") + "\n"
+		+ "### " + qsTr("When to use") + "\n"
+		+ "- " + qsTr("The false alarm rate of a Shewhart control chart is too high.") + "\n"
+		+ "- " + qsTr("The process rate is so high that false alarms are hardly acceptable.") + "\n"
+		+ "- " + qsTr("Small process changes (less than one sigma) must be detected quickly.") + "\n"
+		+ "- " + qsTr("Automation is available to update the chart in real time.") + "\n\n"
+		+ qsTr("In general, the underlying distribution is supposed to be normal, but CUSUM control charts can also be used for binomial and Poisson distributions for modelling nonconformities and fraction nonconforming.") + "\n"
+		+ "### " + qsTr("Recommendations for CUSUM design") + "\n"
+		+ qsTr("The tabular CUSUM is designed by choosing values for the reference value k and the decision interval h. It is usually recommended that these parameters be selected to provide good average run length (ARL) performance. The ARL is the number of plotted points until special cause variation is signalled; it is a function of the process mean shift. Based on many analytical studies of CUSUM ARL performance, general recommendations for selecting h and k can be given. Define H = h\u03C3 and K = k\u03C3, where \u03C3 is the standard deviation of the sample variable used in forming the CUSUM. Using h = 4 or h = 5 and k = \u00BD will generally provide a CUSUM that has good ARL properties against a shift of about 1\u03C3 in the process mean.") + "\n"
+		+ "\n---\n## " + qsTr("Assumptions") + "\n"
+		+ qsTr("The basic assumptions for a CUSUM control chart are:") + "\n"
+		+ "1. " + qsTr("the measurements must be sequential or time sequenced;") + "\n"
+		+ "2. " + qsTr("the measurements are independent of each other: one data point does not determine or impact the next data point;") + "\n"
+		+ "3. " + qsTr("the measurements are approximately normally distributed, or the sample size of each plotted point is large enough so that the average yields an approximate normal distribution.") + "\n"
 		+ "\n---\n## " + qsTr("References") + "\n"
 		+ "- " + qsTr("Page, E. S. (1954). Continuous inspection schemes. Biometrika, 41(1-2), 100-115.") + "\n"
 		+ "- " + qsTr("Roberts, S. W. (1959). Control chart tests based on geometric moving averages. Technometrics, 1(3), 239-250.") + "\n"
+		+ "- " + qsTr("Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
 		+ "- " + qsTr("Montgomery, D. C. (2013). Introduction to statistical quality control (7th ed.). John Wiley & Sons.") + "\n"
 		+ "- " + qsTr("International Organization for Standardization (2021). Control charts – Part 4: Cumulative sum charts. ISO 7870-4:2021.") + "\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
@@ -72,7 +84,7 @@ Form
 			title:								qsTr("Stages")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
-			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup.")
+			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup. Only the first specified stage of each subgroup is considered.")
 		}
 	}
 
@@ -116,7 +128,7 @@ Form
 			title:								qsTr("Stages")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
-			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup row.")
+			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup row. Only one stage per subgroup is possible.")
 		}
 	}
 
@@ -144,7 +156,7 @@ Form
 				value: 							"manual"
 				label: 							qsTr("Subgroup size")
 				childrenOnSameRow:				true
-				info:							qsTr("Assign observations in order of appearance to subgroups of the specified size.")
+				info:							qsTr("Assign observations in order of appearance (from top to bottom) to subgroups of the specified size. If the number of observations cannot be equally divided into subgroups of the specified size, the last subgroup has the size of the remaining observations.")
 
 				IntegerField
 				{
@@ -165,7 +177,7 @@ Form
 					name: 					"groupingVariableMethod"
 					id: 					groupingVariable
 					label: 					"Grouping method"
-					info:					qsTr("How to group when identical subgroup values are not adjacent. \"Subgroup value change\" groups only adjacent identical values; \"Same subgroup value\" groups all identical values regardless of adjacency.")
+					info:					qsTr("How to group when identical subgroup values are not adjacent in the dataset (top to bottom). \"Subgroup value change\" groups only series of identical and adjacent values; \"Same subgroup value\" groups all identical values regardless of adjacency. For instance, for the subgroup values [A, A, B, B, A], \"Subgroup value change\" yields three groups, [A, A], [B, B] and [A], whereas \"Same subgroup value\" yields two groups, [A, A, A] and [B, B].")
 					values:
 					[
 						{ label: qsTr("Subgroup value change"),			value: "newLabel"},
@@ -195,7 +207,7 @@ Form
 				name:							"cumulativeSumChartNumberSd"
 				label:							qsTr("Number of std. dev. for control limits")
 				defaultValue:					4
-				info:							qsTr("Standardised decision interval (h), the number of standard deviations defining the control limits. Typically 4 or 5.")
+				info:							qsTr("Standardised decision interval (h), the number of standard deviations defining the control limits. The choice of h and k has a substantial impact on the performance of the CUSUM. The decision interval is generally set to 4 (sometimes 5) standard deviations.")
 			}
 
 			DoubleField
@@ -203,7 +215,7 @@ Form
 				name:							"cumulativeSumChartShiftSize"
 				label:							qsTr("Shift size")
 				defaultValue:					0.5
-				info:							qsTr("Reference value (k, or allowable slack), usually about halfway between the target and the shift to detect. Typically 0.5.")
+				info:							qsTr("Reference value (k, also called the allowance or slack value), often chosen about halfway between the target (\u03BC0) and the out-of-control value of the mean (\u03BC1) that should be detected quickly. Since the CUSUM chart is used to monitor small shifts, generally 0.5 to 1 standard deviation is used (k = 0.5).")
 			}
 
 			DoubleField
@@ -211,7 +223,7 @@ Form
 				name:							"cumulativeSumChartTarget"
 				label:							qsTr("Target")
 				defaultValue:					0
-				info:							qsTr("Value used as the target (nominal) from which cumulative deviations are computed.")
+				info:							qsTr("Value used as the target (nominal) from which cumulative deviations are computed. CUSUM statistics are cumulative deviations from the target.")
 			}
 
 			Group

@@ -24,7 +24,7 @@ Form
 {
 	columns:									1
 
-	info:										qsTr("A factorial design studies the effects of multiple factors by varying them simultaneously. Each factor is tested at different levels and in different combinations, allowing the examination of both the main effects of each factor and the interactions between factors. This analysis creates a factorial worksheet that can be exported and filled in with measured responses.")
+	info:										qsTr("A factorial design is an experimental setup used to study the effects of multiple factors by varying them simultaneously. Each factor is tested at different levels and in different combinations with other factors. This design allows for the examination of both the main effects of each factor and the interactions between factors. It provides a systematic approach to understanding how different variables influence the outcome. This analysis creates a factorial worksheet that can be exported and filled in with measured responses.")
 
 	Common.ShowAndExportDesign {}
 
@@ -343,6 +343,7 @@ Form
 
 			modelType			: JASP.Simple
 			name				: "selectedDesign2"
+			info				: qsTr("Select one of the preset designs by clicking on it in the table.")
 
 			columnNames			: [qsTr("Runs"), qsTr("Resolution")]
 			cornerText			: qsTr("Design")
@@ -446,7 +447,7 @@ Form
 		IntegerField { name: "selectedRow"; label: qsTr("debug selected row"); defaultValue: selectedDesign2.rowSelected; negativeValues: true; visible: false }
 		IntegerField { name: "selectedCol"; label: qsTr("debug selected col"); defaultValue: selectedDesign2.colSelected; negativeValues: true; visible: false }
 		CheckBox { name: "showAliasStructure"; label: qsTr("Alias structure"); enabled: factorialTypeDefault.checked; info: qsTr("Display the alias structure of the generated design.")}
-		SetSeed{}
+		SetSeed{ info: qsTr("Set a seed to reproduce a certain random order.") }
 
 	}
 

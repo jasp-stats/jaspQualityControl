@@ -59,7 +59,7 @@ Form
 			name:								"runOrderRandom"
 			label:								qsTr("Random")
 			checked:							true
-			SetSeed								{ }
+			SetSeed { info: qsTr("Set a seed to reproduce a certain random order.") }
 		}
 	}
 

@@ -6,12 +6,20 @@ Form
 {
 	columns:									2
 
-	info:										qsTr("Rare event control charts (g chart and t chart) are alternatives to the Shewhart chart for monitoring events that occur infrequently, where the number of opportunities or the time between events is more meaningful than tracking continuous data. The g chart monitors the number of opportunities between rare events; the t chart monitors the time between rare events.")
+	info:										qsTr("Two very effective alternatives to the Shewhart control chart may be used when monitoring rare events or when small process shifts are of interest: the g chart and the t chart. These charts are particularly useful for situations where events occur infrequently and traditional Shewhart control charts may not be as effective. The g and t charts belong to the broader category of rare event control charts and are designed to handle scenarios where monitoring the time between events or the number of opportunities between events is more meaningful than tracking continuous data points.") + "\n"
+		+ "- **" + qsTr("G chart") + "**: " + qsTr("used to monitor the number of opportunities (such as units produced or time intervals) between rare events. It is particularly effective in processes where defects are infrequent and the main interest is in the distance between these occurrences.") + "\n"
+		+ "- **" + qsTr("T chart") + "**: " + qsTr("used to monitor the time between rare events. This chart is suitable for processes where time intervals are of interest, such as monitoring the time between machine breakdowns, customer complaints, or other rare events.") + "\n\n"
+		+ qsTr("The g and t charts are essential tools in Statistical Quality Control (SQC) when dealing with rare events, providing a more sensitive approach to detect shifts in processes where events do not occur frequently enough for traditional methods to be effective.")
 
-	infoBottom: 								"## " + qsTr("Output") + "\n"
-		+ "- " + qsTr("G chart: the number of time units or opportunities between rare events, highlighting deviations from expected intervals.") + "\n"
-		+ "- " + qsTr("T chart: the time intervals between rare events, for identifying process shifts.") + "\n"
-		+ "- " + qsTr("Out-of-control signals are flagged using the tests selected under Advanced Options.") + "\n"
+	infoBottom: 								"## " + qsTr("Out-of-control signals") + "\n"
+		+ qsTr("Out-of-control signals are flagged using the tests selected under Advanced Options. The JASP default test set consists of:") + "\n"
+		+ "- " + qsTr("Test 1: Beyond limit - one point beyond the control limits (sporadic issue).") + "\n\n"
+		+ qsTr("In a custom selection, the following tests are available:") + "\n"
+		+ "- " + qsTr("Test 1: Beyond limit - one point beyond the control limits (sporadic issue).") + "\n"
+		+ "- " + qsTr("Test 2: Shift - N consecutive points above or below the central line (mean shift).") + "\n"
+		+ "- " + qsTr("Test 3: Trend - a run up or down of N consecutive points (trend).") + "\n"
+		+ "- " + qsTr("Test 8: Oscillation - N points in a row alternating increase and decrease (oscillation).") + "\n"
+		+ "- " + qsTr("Test 9: Benneyan test - N points in a row equal to 0 (Benneyan test).") + "\n"
 		+ "\n---\n## " + qsTr("References") + "\n"
 		+ "- " + qsTr("Montgomery, D. C. (2009). Introduction to statistical quality control. John Wiley & Sons.") + "\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"

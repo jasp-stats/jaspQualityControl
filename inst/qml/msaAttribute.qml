@@ -21,16 +21,9 @@ Form
 {
 	columns:									1
 
-	info:										qsTr("Attribute Agreement Analysis assesses the agreement between the operators' ratings and a known standard's ratings. One aim is to determine the accuracy of the investigated operators.")
+	info:										qsTr("Attribute Agreement Analysis assesses the agreement between the operators' ratings and a known standard's ratings. One of the aims is thus to determine the accuracy of the investigated operators.")
 
-	infoBottom: 								"## " + qsTr("Output") + "\n"
-		+ "- " + qsTr("Study effectiveness summary: effectiveness, miss rate, and false alarm rate per operator with an acceptance evaluation.") + "\n"
-		+ "- " + qsTr("Within appraisers: agreement between the inspected items and operators, with a 95%% confidence interval.") + "\n"
-		+ "- " + qsTr("Each appraiser vs standard: agreement between the known standard and inspected items per operator, with a 95%% confidence interval.") + "\n"
-		+ "- " + qsTr("Between appraisers: agreement between the different operators, with a 95%% confidence interval.") + "\n"
-		+ "- " + qsTr("All appraisers vs standard: agreement between all operators and the known standard, with a 95%% confidence interval.") + "\n"
-		+ "- " + qsTr("Plots of the agreement percentages and their confidence intervals (within appraisers and each appraiser vs standard).") + "\n"
-		+ "\n---\n## " + qsTr("References") + "\n"
+	infoBottom: 								"## " + qsTr("References") + "\n"
 		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- jaspGraphs\n- ggplot2\n- tidyr\n- psych\n- irr\n"

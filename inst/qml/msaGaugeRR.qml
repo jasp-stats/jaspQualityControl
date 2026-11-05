@@ -24,11 +24,7 @@ Form
 
 	info:										qsTr("Gauge Repeatability and Reproducibility (Gauge r&R) quantifies the variation in measurements attributable to the measurement system. The variation is split into repeatability (equipment variation) and reproducibility (operator variation). Both variable and attribute measurement data can be used.")
 
-	infoBottom: 								"## " + qsTr("Output") + "\n"
-		+ "- " + qsTr("Analysis of Variance table: two-way analysis of variance tables with and without interaction for the input variables, repeatability, reproducibility, and total Gauge r&R.") + "\n"
-		+ "- " + qsTr("Gauge r&R variance components: variance and percentage contribution of the input variables, repeatability, reproducibility, and total Gauge r&R.") + "\n"
-		+ "- " + qsTr("Gauge evaluation: standard deviations, study variations, and percentage of study variation and tolerance for the input variables, repeatability, reproducibility, and total Gauge r&R.") + "\n"
-		+ "\n---\n## " + qsTr("References") + "\n"
+	infoBottom: 								"## " + qsTr("References") + "\n"
 		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- jaspGraphs\n- ggplot2\n- tidyr\n- qcc\n- cowplot\n"
