@@ -3787,30 +3787,61 @@ results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3
 test_that("39.1 Data example 3 (response surface, coded) - Coded Coefficients table results match", {
   table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("(Intercept)", 6.44444444444445, "", 0.484927425170916, 9.15600413357823,
-                                      "(Intercept)", 0.703849009942061, "", "A", 6.25, 12.5, 0.218712178465279,
-                                      5.01495000057134, "Speed", 1.246273641669, 1, "B", 3.33333333333334,
-                                      6.66666666666667, 0.509436522509468, 5.01495000057134, "Pressure",
-                                      0.664679275556802, 1, "A^2", 70.5833333333334, 141.166666666667,
-                                      1.42166789351505e-10, 8.68614819840713, "Speed^2", 8.12596466478398,
-                                      "", "B^2", -75.6666666666667, -151.333333333333, 1.89456734041113e-11,
-                                      8.68614819840713, "Pressure^2", -8.7111876217519, "", "C", -3.11111111111111,
-                                      -6.22222222222222, 0.537950398940527, 5.01495000057134, "Nozzle",
-                                      -0.620367323853014, 1))
+                                 list("(Intercept)", 6.44444444444447, "", 0.48632159622245,
+                                      9.18393912021244, "(Intercept)", 0.701708097156397, "",
+                                      "A", 6.25, 12.5, 0.220222088292383, 5.0302506228945,
+                                      "Speed", 1.24248282412689, 1, "B", 3.33333333333333,
+                                      6.66666666666666, 0.510786668206293, 5.0302506228945,
+                                      "Pressure", 0.662657506201006, 1, "A^2",
+                                      70.5833333333333, 141.166666666667, 1.79939446191901e-10,
+                                      8.71264965365827, "Speed^2", 8.10124774197672, "", "B^2",
+                                      -75.6666666666667, -151.333333333333,
+                                      2.47083118352122e-11, 8.71264965365827, "Pressure^2",
+                                      -8.68469061359488, "", "C1", 5.55555555555555,
+                                      16.6666666666667, 0.343732111495397, 5.80843310243885,
+                                      "Nozzle1", 0.956463723964193, 1, "C2", -4.88888888888889,
+                                      -14.6666666666667, 0.404224960398943, 5.80843310243885,
+                                      "Nozzle2", -0.84168807708849, 1))
 })
 
 test_that("39.2 Data example 3 (response surface, coded) - Regression equation in Coded Units table results match", {
   table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Syruploss = 6.44 + 6.25 A + 3.33 B + 70.58 A^2 <unicode> 75.67 B^2 <unicode> 3.11 C"
-                                 ))
+                                 list("Syruploss = 6.44 + 6.25 A + 3.33 B + 70.58 A^2 <unicode> 75.67 B^2 + 5.56 C1 <unicode> 4.89 C2"))
 })
 
 test_that("39.3 Data example 3 (response surface, coded) - Model Summary table results match", {
   table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.724383161749979, 0.684844597925649, 0.750384750264132, 30.089700003428
-                                 ))
+                                 list(0.722698781107443, 0.675387252392334, 0.754091371925468,
+                                      30.181503737367))
+})
+
+test_that("39.4 Data example 3 (response surface, coded) - ANOVA table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(21881.5740740741, 131289.444444444, 6, 24.0213168864188,
+                                      8.79552139809566e-13, "Model", "", 2800.02777777778, 4,
+                                      "", "", "<unicode> Linear terms", 1406.25, 1406.25, 1,
+                                      1.54376356825033, 0.220222088292383,
+                                      "<unicode> <unicode> Speed", 400, 400, 1,
+                                      0.439114970524537, 0.510786668206293,
+                                      "<unicode> <unicode> Pressure", 496.88888888889,
+                                      993.777777777781, 2, 0.545478374496038,
+                                      0.583189042988656, "<unicode> <unicode> Nozzle", "",
+                                      128489.416666667, 2, "", "", "<unicode> Squared terms",
+                                      59784.0833333333, 59784.0833333333, 1, 65.6302149768829,
+                                      1.79939446191901e-10, "<unicode> <unicode> Speed^2",
+                                      68705.3333333334, 68705.3333333334, 1, 75.423851053863,
+                                      2.47083118352122e-11, "<unicode> <unicode> Pressure^2",
+                                      910.9231678487, 42813.3888888889, 47, "", "", "Error",
+                                      "", 174102.833333333, 53, "", "", "Total"))
+})
+
+test_that("39.5 Data example 3 (response surface, coded) - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "C1", 2, "C2"))
 })
 
 
@@ -4760,20 +4791,28 @@ results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3
 test_that("48.1 Response Optimizer Response Surface No Squares - ANOVA table results match", {
   table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(821.824074074068, 4930.94444444441, 6, 0.228322398804983, 0.965437895274988,
-                                      "Model", "", 2154.69444444444, 3, "", "", "<unicode> Linear terms",
-                                      1406.25, 1406.25, 1, 0.390689909736777, 0.534960055678213, "<unicode> <unicode> Speed",
-                                      400, 400, 1, 0.111129574325128, 0.740344432372881, "<unicode> <unicode> Pressure",
-                                      348.444444444438, 348.444444444438, 1, 0.0968062069676649, 0.757072343791272,
-                                      "<unicode> <unicode> Nozzle", "", 2776.24999999997, 3, "", "",
-                                      "<unicode> Interaction terms", 425.041666666657, 425.041666666657,
-                                      1, 0.118086748717771, 0.732651462637135, "<unicode> <unicode> Speed<unicode><unicode><unicode>Pressure",
-                                      1700.16666666666, 1700.16666666666, 1, 0.472346994871092, 0.49528697987493,
+                                 list(1362.15586419753, 12259.4027777778, 9, 0.370326171528585,
+                                      0.943148145471871, "Model", "", 2800.02777777778, 4, "",
+                                      "", "<unicode> Linear terms", 1406.25, 1406.25, 1,
+                                      0.382313942478872, 0.539555179504656,
+                                      "<unicode> <unicode> Speed", 400, 400, 1,
+                                      0.108747076971768, 0.743139968831927,
+                                      "<unicode> <unicode> Pressure", 496.88888888889,
+                                      993.777777777781, 2, 0.135088035616041,
+                                      0.873999932388243, "<unicode> <unicode> Nozzle", "",
+                                      9459.37499999997, 5, "", "",
+                                      "<unicode> Interaction terms", 425.041666666657,
+                                      425.041666666657, 1, 0.115555097103019,
+                                      0.735523726381218,
+                                      "<unicode> <unicode> Speed<unicode><unicode><unicode>Pressure",
+                                      2006.08333333333, 4012.16666666666, 2, 0.545389246654451,
+                                      0.583483724168855,
                                       "<unicode> <unicode> Speed<unicode><unicode><unicode>Nozzle",
-                                      651.041666666657, 651.041666666657, 1, 0.180874958211468, 0.672563404439722,
+                                      2511.08333333333, 5022.16666666666, 2, 0.682682431331308,
+                                      0.510530747580814,
                                       "<unicode> <unicode> Pressure<unicode><unicode><unicode>Nozzle",
-                                      3599.40189125296, 169171.888888889, 47, "", "", "Error", "",
-                                      174102.833333333, 53, "", "", "Total"))
+                                      3678.25978535354, 161843.430555556, 44, "", "", "Error",
+                                      "", 174102.833333333, 53, "", "", "Total"))
 })
 
 test_that("48.2 Response Optimizer Response Surface No Squares - Uncoded Coefficients table results match", {
@@ -5218,4 +5257,161 @@ test_that("54.1 Contour plot matches", {
   plotName <- results[["results"]][["Result"]][["collection"]][["Result_contourSurfacePlot"]][["collection"]][["Result_contourSurfacePlot_Contour plot of Result vs A and B"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "contour-plot54")
+})
+
+### Discrete factor with 3 levels, coded units (verified against lm) ####
+# In coded units, a discrete factor with more than 2 levels must stay a factor (2 df),
+# not become a numeric -1/0/1 column (1 df)
+
+#### Factorial design, aliases ####
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- "Result"
+options$continuousFactorsFactorial <- "Concentration"
+options$fixedFactorsFactorial <- c("Membrane", "Filtration")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "Concentration"),
+  list(components = "Membrane"),
+  list(components = "Filtration")
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/1cont2disc3levelText.csv", options)
+
+test_that("55.1 Discrete factor with 3 levels (factorial, coded) - ANOVA table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(4.26627977083333, 17.0651190833333, 4, 565.636988239056,
+                                      1.8318195394956e-19, "Model", "", 17.0651190833333, 4,
+                                      "", "", "<unicode> Linear terms", 6.3099015, 6.3099015,
+                                      1, 836.586879497578, 3.57198458813293e-17,
+                                      "<unicode> <unicode> Filtration", 0.0893039999999995,
+                                      0.0893039999999995, 1, 11.8402093418814,
+                                      0.00273843312405773, "<unicode> <unicode> Concentration",
+                                      5.33295679166667, 10.6659135833333, 2, 707.060432058382,
+                                      1.45704320902352e-18, "<unicode> <unicode> Membrane",
+                                      0.00754243421052633, 0.14330625, 19, "", "", "Error", "",
+                                      17.2084253333333, 23, "", "", "Total"))
+})
+
+test_that("55.2 Discrete factor with 3 levels (factorial, coded) - Coded Coefficients table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 2.01933333333333, "",
+                                      2.11184257497371e-28, 0.0177276081890723, "(Intercept)",
+                                      113.90895555657, "", "C", 0.51275, 1.0255,
+                                      3.57198458813296e-17, 0.0177276081890723, "Filtration",
+                                      28.9238116350107, 1, "A", 0.0609999999999998, 0.122,
+                                      0.00273843312405773, 0.0177276081890723, "Concentration",
+                                      3.44096052605684, 1, "B1", 0.624291666666667, 1.872875,
+                                      5.73040409359203e-16, 0.0250706239294224, "Membrane1",
+                                      24.9013214997817, 1, "B2", 0.299666666666667, 0.899,
+                                      2.76875059853092e-10, 0.0250706239294224, "Membrane2",
+                                      11.9529002353621, 1))
+})
+
+test_that("55.3 Discrete factor with 3 levels (factorial, coded) - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("PES", "B1", "PTFE", "B2"))
+})
+
+test_that("55.4 Discrete factor with 3 levels (factorial, coded) - Regression equation in Coded Units table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 2.02 + 0.51 C + 0.061 A + 0.62 B1 + 0.3 B2"))
+})
+
+test_that("55.5 Discrete factor with 3 levels (factorial, coded) - Model Summary table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.989919124877389, 0.986712622264019, 0.991672320550887,
+                                      0.0868471888464234))
+})
+
+#### Response surface design, no aliases ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- "Concentration"
+options$fixedFactorsResponseSurface <- c("Membrane", "Filtration")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- FALSE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linear"
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/1cont2disc3levelText.csv", options)
+
+test_that("56.1 Discrete factor with 3 levels (response surface, coded) - ANOVA table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(4.26627977083333, 17.0651190833333, 4, 565.636988239056,
+                                      1.83181953949558e-19, "Model", "", 17.0651190833333, 4,
+                                      "", "", "<unicode> Linear terms", 0.0893039999999999,
+                                      0.0893039999999999, 1, 11.8402093418814,
+                                      0.00273843312405767, "<unicode> <unicode> Concentration",
+                                      5.33295679166667, 10.6659135833333, 2, 707.060432058382,
+                                      1.45704320902351e-18, "<unicode> <unicode> Membrane",
+                                      6.3099015, 6.3099015, 1, 836.586879497579,
+                                      3.57198458813293e-17, "<unicode> <unicode> Filtration",
+                                      0.00754243421052632, 0.14330625, 19, "", "", "Error", "",
+                                      17.2084253333333, 23, "", "", "Total"))
+})
+
+test_that("56.2 Discrete factor with 3 levels (response surface, coded) - Coded Coefficients table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2.01933333333333, "", 2.1118425749737e-28,
+                                      0.0177276081890723, "(Intercept)", 113.908955556571, "",
+                                      0.061, 0.122, 0.00273843312405767, 0.0177276081890723,
+                                      "Concentration", 3.44096052605685, 1, 0.624291666666667,
+                                      1.872875, 5.73040409359199e-16, 0.0250706239294224,
+                                      "Membrane1", 24.9013214997817, 1, 0.299666666666667,
+                                      0.899, 2.76875059853091e-10, 0.0250706239294224,
+                                      "Membrane2", 11.9529002353621, 1, 0.51275, 1.0255,
+                                      3.57198458813293e-17, 0.0177276081890723, "Filtration",
+                                      28.9238116350107, 1))
+})
+
+test_that("56.3 Discrete factor with 3 levels (response surface, coded) - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("PES", "Membrane1", "PTFE", "Membrane2"))
+})
+
+test_that("56.4 Discrete factor with 3 levels (response surface, coded) - Model Summary table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.989919124877389, 0.986712622264019, 0.991672320550887,
+                                      0.0868471888464234))
+})
+
+options$codeFactors <- FALSE
+set.seed(123)
+resultsUncoded <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/1cont2disc3levelText.csv", options)
+
+test_that("56.5 Discrete factor with 3 levels - coded and uncoded ANOVA and Model Summary tables are identical", {
+  for (tableName in c("Result_tableAnova", "Result_tableSummary")) {
+    expect_equal(results[["results"]][["Result"]][["collection"]][[tableName]][["data"]],
+                 resultsUncoded[["results"]][["Result"]][["collection"]][[tableName]][["data"]])
+  }
+})
+
+#### Response surface design, forward stepwise ####
+options$codeFactors <- TRUE
+options$stepwiseMethodResponseSurface <- "forward"
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/1cont2disc3levelText.csv", options)
+
+test_that("56.6 Discrete factor with 3 levels (response surface, coded, forward stepwise) keeps 2 df for the factor", {
+  anovaTable <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
+  dfs <- vapply(anovaTable, function(row) as.numeric(row[["df"]]), numeric(1))
+  terms <- vapply(anovaTable, function(row) row[["terms"]], character(1))
+  expect_equal(unname(dfs[grepl("Membrane", terms)]), 2)
+  expect_equal(length(results[["results"]][["Result"]][["collection"]][["Result_tableCoefficientsLegend"]][["data"]]), 2)
 })

@@ -181,6 +181,12 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
 .scaleDOEvariable <- function(x){2*(x-min(x))/(max(x)-min(x))-1}
 
+.doeMultiLevelDiscretePredictors <- function(dataset, discretePredictors) {
+  discreteVars <- unlist(discretePredictors)
+  discreteVars <- discreteVars[discreteVars != ""]
+  discreteVars[vapply(discreteVars, function(var) length(unique(dataset[[var]])) > 2, logical(1))]
+}
+
 .doeAnalysisMakeState <- function(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, stepwiseMethod, ready) {
   if (!ready || jaspResults$getError()) {
     return()
@@ -206,11 +212,16 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     # Transform to coded, -1 to 1 coding.
     allVars <- c(unlist(continuousPredictors), unlist(discretePredictors))
     allVars <- allVars[allVars != ""]
+    # Discrete factors with more than 2 levels cannot be put on a -1 to 1 scale without forcing a linear trend over
+    # their levels (and dropping df), so they are left as factors (sum-to-zero contrasts), as in the uncoded model.
+    multiLevelVars <- .doeMultiLevelDiscretePredictors(dataset, discretePredictors)
     datasetCoded <- dataset
     if (options[["codeFactorsMethod"]] == "manual")
       manualCodingTable <- do.call(rbind.data.frame, options[["codeFactorsManualTable"]])
     for (i in seq_along(allVars)) {
       var <- allVars[i]
+      if (var %in% multiLevelVars)
+        next
       varData <- datasetCoded[[var]]
       levels <- sort(unique(varData)) # get levels before transforming to char to preserve possible order
       varData <- as.character(varData) # transform to char, otherwise you cannot add coded values to this variable as "factor level does not exist"
@@ -564,7 +575,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     discretePredictorsIndices <- which(termNamesRemoved %in% discretePredictors)
     nDiscretePredictorLevels <- sapply(discretePredictors, function(x) sum(termNamesRemoved == x))
 
-    # Coded terms never have appended factor levels, so just remove whitespace
+    # Only terms of discrete factors with more than 2 levels have appended factor levels in the coded model, so just remove whitespace
     termNames <- gsub("\\s", "", termNames)
     termNamesCoded <- gsub("\\s", "", termNamesCoded)
 
@@ -637,6 +648,14 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     discretePredictorLevels <- unlist(lapply(names(nDiscretePredictorLevels), function(x) get_levels(x, nDiscretePredictorLevels[x], dataset)))
     result[["regression"]][["factorLevels"]][["levels"]] <- discretePredictorLevels
 
+    # In the coded model, only discrete factors with more than 2 levels have level-specific terms
+    multiLevelIndicesCoded <- which(termNamesRemovedCoded %in% multiLevelVars)
+    nMultiLevelLevelsCoded <- sapply(multiLevelVars, function(x) sum(termNamesRemovedCoded == x))
+    resultCoded[["regression"]][["factorLevels"]] <- list()
+    resultCoded[["regression"]][["factorLevels"]][["factorNamesAliased"]] <- termNamesAliasedCoded[multiLevelIndicesCoded]
+    resultCoded[["regression"]][["factorLevels"]][["factorNames"]] <- termNamesCoded[multiLevelIndicesCoded]
+    resultCoded[["regression"]][["factorLevels"]][["levels"]] <- unlist(lapply(names(nMultiLevelLevelsCoded), function(x) get_levels(x, nMultiLevelLevelsCoded[x], dataset)))
+
 
     if (!result[["regression"]][["saturated"]]) {
       result[["regression"]][["coefficients"]][["se"]] <- coefs[["Std. Error"]][valid_coefs]
@@ -698,7 +717,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
 get_levels <- function(var, num_levels, dataset) {
   levels_var <- levels(dataset[[var]])
-  levels_var[1:(num_levels)]
+  levels_var[seq_len(num_levels)] # seq_len: factor without terms in the model (e.g., removed by stepwise) gives no levels
 }
 
 .getVIF <- function(regressionFit, predictors) {
@@ -1587,14 +1606,15 @@ get_levels <- function(var, num_levels, dataset) {
       rows["alias"] <- result[["termsAliased"]]
     tb$addRows(rows)
 
-    if ((length(options[["fixedFactorsFactorial"]]) > 0 | length(options[["fixedFactorsResponseSurface"]])) && !coded) {
+    # coded: only discrete factors with more than 2 levels have level-specific terms that need a legend
+    result2 <- if (coded) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]][["factorLevels"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]][["factorLevels"]]
+    if ((length(options[["fixedFactorsFactorial"]]) > 0 | length(options[["fixedFactorsResponseSurface"]])) && (!coded || length(result2[["factorNames"]]) > 0)) {
       tb2 <- createJaspTable(gettext("Discrete Predictor Levels"))
       tb2$addColumnInfo(name = "factorName", title = gettext("Name"), type = "string")
       tb2$addColumnInfo(name = "factorLevel", title = gettext("Level"), type = "string")
       tb$dependOn(options = c("codeFactors", "codeFactorsManualTable", "codeFactorsMethod", "tableEquation", "tableAlias", .doeAnalysisBaseDependencies()))
       tb2$position <- 4
       jaspResults[[dep]][["tableCoefficientsLegend"]] <- tb2
-      result2 <- jaspResults[[dep]][["doeResult"]]$object[["regression"]][["factorLevels"]]
       factorName <- if (options[["tableAlias"]]) result2[["factorNamesAliased"]] else result2[["factorNames"]]
       if (length(factorName) > 0) {
         rows2 <- data.frame(
