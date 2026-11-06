@@ -22,13 +22,21 @@ Form
 {
 	columns:									1
 
+	info:										qsTr("Gauge Repeatability and Reproducibility (Gauge r&R) quantifies the variation in measurements attributable to the measurement system. The variation is split into repeatability (equipment variation) and reproducibility (operator variation). Both variable and attribute measurement data can be used.")
+
+	infoBottom: 								"## " + qsTr("References") + "\n"
+		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
+		+ "\n---\n## " + qsTr("R Packages") + "\n"
+		+ "- jaspGraphs\n- ggplot2\n- tidyr\n- qcc\n- cowplot\n"
+
 	DropDown
 	{
 		name: 									"dataFormat"
 		label: 									qsTr("Data format")
 		id: 									dataFormat
 		indexDefaultValue: 						0
-		values: 
+		info:									qsTr("Layout of the measurement data: all observations in one column (\"Single column\") or spread across rows with a subgroup index (\"Across rows\").")
+		values:
 		[
 			{ label: qsTr("Single column"), value: "longFormat"},
 			{ label: qsTr("Across rows"), value: "wideFormat"},
@@ -57,6 +65,7 @@ Form
 			id:									measurementLongFormat
 			singleVariable:						true
 			allowedColumns:						["scale"]
+			info:								qsTr("The observations/data collected from the process.")
 		}
 
 		AssignedVariablesList
@@ -67,6 +76,7 @@ Form
 			singleVariable:						true
 			allowedColumns:						["nominal"]
 			enabled: 							!type3.checked
+			info:								qsTr("The operators in the measurement system.")
 		}
 
 		AssignedVariablesList
@@ -75,6 +85,7 @@ Form
 			title:								qsTr("Part")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The parts of the measurement system.")
 		}
 	}
 
@@ -95,6 +106,7 @@ Form
 			id:									measurementsWideFormat
 			singleVariable:						false
 			allowedColumns:						["scale"]
+			info:								qsTr("The measurement columns (one per repeated observation) collected from the process.")
 		}
 
 		AssignedVariablesList
@@ -105,6 +117,7 @@ Form
 			singleVariable:						true
 			allowedColumns:						["nominal"]
 			enabled: 							!type3.checked
+			info:								qsTr("The operators in the measurement system.")
 		}
 
 		AssignedVariablesList
@@ -113,6 +126,7 @@ Form
 			title:								qsTr("Part")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The parts of the measurement system.")
 		}
 	}
 
@@ -121,6 +135,7 @@ Form
 		name:								"type3"
 		id:									type3
 		label:								qsTr("Type 3 study (automatic equipment)")
+		info:								qsTr("Treat the study as a Type 3 study for automatic equipment, where there is no operator effect; the operator variable is then ignored.")
 		onCheckedChanged:
 		{
 			operatorLongFormat.itemDoubleClicked(0)
@@ -142,7 +157,8 @@ Form
 				label: 							qsTr("Std. dev. source")
 				id: 							variationReference
 				indexDefaultValue: 				0
-				values: 
+				info:							qsTr("Source of the process standard deviation: estimated from the data (Study std. dev.) or a historically known value (Historical std. dev.).")
+				values:
 				[
 					{ label: qsTr("Study std. dev."), value: "studySd" },
 					{ label: qsTr("Historical std. dev."), value: "historicalSd" }
@@ -157,6 +173,7 @@ Form
 				min: 							0.000000001
 				decimals: 						9
 				enabled:						variationReference.currentValue == "historicalSd"
+				info:							qsTr("The historically known process standard deviation. Only used when the std. dev. source is set to Historical.")
 			}
 
 			CheckBox
@@ -164,6 +181,7 @@ Form
 				name: 							"tolerance"
 				label: 							qsTr("Tolerance width")
 				childrenOnSameRow: 				true
+				info:							qsTr("Include a tolerance (specification) width in the analysis.")
 
 				DoubleField
 				{
@@ -180,12 +198,14 @@ Form
 				name: 							"anova"
 				label: 							qsTr("r&R Analysis of Variance table")
 				checked: 						true
+				info:							qsTr("Display the Gauge r&R tables based on an analysis of variance.")
 
 				DropDown
 				{
 					name: 						"anovaModelType"
 					label: 						qsTr("Type of model for F-statistic")
-					values: 
+					info:						qsTr("Whether the operator and part effects are treated as fixed or random effects when computing the F-statistic.")
+					values:
 					[
 						{ label: qsTr("Fixed effects"), value: "fixedEffect"},
 						{ label: qsTr("Random effects"), value: "randomEffect"}
@@ -202,6 +222,7 @@ Form
 					defaultValue: 				0.05
 					max: 						1
 					decimals: 					3
+					info:						qsTr("Alpha level above which the part × operator interaction is removed from the model.")
 				}
 
 				DropDown
@@ -210,7 +231,8 @@ Form
 					label: 						qsTr("Study var. multiplier type")
 					id: 						studyVarianceMultiplierType
 					indexDefaultValue: 			0
-					values: 
+					info:						qsTr("Whether the study variation multiplier is expressed in standard deviations or as a percentage.")
+					values:
 					[
 						{ label: qsTr("Std. Deviation"), value: "sd" },
 						{ label: qsTr("Percent"), value: "percent" }
@@ -226,6 +248,7 @@ Form
 					min:						0.001
 					max:						99.999
 					decimals: 					3
+					info:						qsTr("Value of the study variation multiplier.")
 				}
 			}
 		}
@@ -239,6 +262,7 @@ Form
 				name: 						"varianceComponentsGraph"
 				label: 						qsTr("Components of variation")
 				checked: 					true
+				info:						qsTr("Display the components of variation (contribution, study variation, and tolerance) plot.")
 			}
 
 			CheckBox
@@ -246,6 +270,7 @@ Form
 				name: 							"rChart"
 				label: 							qsTr("Range charts by operator")
 				enabled:						!type3.checked
+				info:							qsTr("Display the range chart across operators by part.")
 			}
 
 			CheckBox
@@ -253,6 +278,7 @@ Form
 				name:							"xBarChart"
 				label:							qsTr("Average chart by operator")
 				enabled:						!type3.checked
+				info:							qsTr("Display the average (X-bar) chart across operators by part.")
 			}
 
 			CheckBox
@@ -260,17 +286,20 @@ Form
 				name: 							"scatterPlot"
 				label:							qsTr("Scatter plots operators")
 				enabled:						!type3.checked
+				info:							qsTr("Display a matrix of scatter plots of the relationship between operators.")
 
 				CheckBox
 				{
 					name:						"scatterPlotFitLine"
 					label:						qsTr("Fit line")
+					info:						qsTr("Fit a linear line to the data points.")
 				}
 
 				CheckBox
 				{
 					name:						"scatterPlotOriginLine"
 					label:						qsTr("Show origin line")
+					info:						qsTr("Display the origin line of the data points.")
 				}
 			}
 
@@ -278,11 +307,13 @@ Form
 			{
 				name:							"partMeasurementPlot"
 				label:							qsTr("Measurements by part plot")
+				info:							qsTr("Display a plot of the mean measurement across parts.")
 
 				CheckBox
 				{
 					name:						"partMeasurementPlotAllValues"
 					label:						qsTr("Display all measurements")
+					info:						qsTr("Display all measurement values across parts.")
 				}
 			}
 
@@ -291,6 +322,7 @@ Form
 				name:							"operatorMeasurementPlot"
 				label:							qsTr("Measurements by operator plot")
 				enabled:						!type3.checked
+				info:							qsTr("Display a box plot of the measurement values across operators.")
 			}
 
 			CheckBox
@@ -298,12 +330,14 @@ Form
 				name: 							"partByOperatorMeasurementPlot"
 				label: 							qsTr("Part × operator interaction plot")
 				enabled:						!type3.checked
+				info:							qsTr("Display the mean measurement across parts per operator.")
 			}
 
 			CheckBox
 			{
 				name: 							"trafficLightChart"
 				label: 							qsTr("Traffic light chart")
+				info:							qsTr("Display the total Gauge r&R in relation to the tolerance and process variation as a percentage.")
 			}
 		}
 	}
@@ -318,13 +352,15 @@ Form
 			label: qsTr("Show Report")
 			id:		anovaGaugeReport
 			columns: 1
-				
+			info:	qsTr("Display a formatted Gauge r&R report combining the selected metadata and output components.")
+
 			CheckBox
 			{
 				name:		"reportMetaData"
 				label:		qsTr("Show report metadata")
 				checked:	true
 				columns: 2
+				info:		qsTr("Include a metadata header (title, part, gauge, operator, date, etc.) in the report.")
 
 				CheckBox
 				{
@@ -475,6 +511,7 @@ Form
 			Group
 			{
 				title:			qsTr("Select Report Components")
+				info:			qsTr("Choose which tables and plots are included in the report.")
 
 				CheckBox
 				{

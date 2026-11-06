@@ -23,6 +23,21 @@ Form
 {
 	columns:									1
 
+	info:										qsTr("Gauge Repeatability and Reproducibility for non-replicable (destructive) measurements quantifies the variation in measurements attributable to the measurement system, split into repeatability (equipment variation) and reproducibility (operator variation). This is the version of the analysis for measurements that cannot be replicated, using a nested model.")
+
+	infoBottom: 								"## " + qsTr("General guideline for acceptance of measurement systems") + "\n"
+		+ qsTr("If the total gauge r&R contribution in the %Study Var. column (%Tolerance, %Process) is:") + "\n"
+		+ "- " + qsTr("%r&R ≤ 10%: the measurement system is generally considered to be acceptable;") + "\n"
+		+ "- " + qsTr("10% < %r&R ≤ 30%: the measurement system may be acceptable for some applications;") + "\n"
+		+ "- " + qsTr("%r&R > 30%: the measurement system is considered to be unacceptable.") + "\n\n"
+		+ qsTr("If you are looking at the %Contribution column, the corresponding standards are:") + "\n"
+		+ "- " + qsTr("less than 1%: the measurement system is acceptable;") + "\n"
+		+ "- " + qsTr("between 1% and 9%: the measurement system is acceptable depending on the application, the cost of the measuring device, cost of repair, or other factors;") + "\n"
+		+ "- " + qsTr("greater than 9%: the measurement system is unacceptable and should be improved.") + "\n"
+		+ "\n---\n## " + qsTr("References") + "\n"
+		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
+		+ "\n---\n## " + qsTr("R Packages") + "\n"
+		+ "- jaspGraphs\n- ggplot2\n- tidyr\n- qcc\n- cowplot\n"
 
 	DropDown
 	{
@@ -30,6 +45,7 @@ Form
 		label:									qsTr("Data format")
 		id: 									dataFormat
 		indexDefaultValue:						0
+		info:									qsTr("Layout of the measurement data: all observations in one column (\"Single column\") or spread across rows with a part identification (\"Across rows\").")
 		values: [
 			{ label: qsTr("Single column"), value: "longFormat"},
 			{ label: qsTr("Across rows"), value: "wideFormat" }
@@ -52,6 +68,7 @@ Form
 			title:								qsTr("Measurements")
 			singleVariable:						true
 			allowedColumns:						["scale"]
+			info:								qsTr("The repeated measurements of each part.")
 		}
 
 		AssignedVariablesList
@@ -60,6 +77,7 @@ Form
 			title:								qsTr("Operators")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The appraisers using the measurement system.")
 		}
 
 		AssignedVariablesList
@@ -68,6 +86,7 @@ Form
 			title:								qsTr("Parts")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The parts selected from the process, representing its entire operating range.")
 		}
 	}
 
@@ -87,6 +106,7 @@ Form
 			title:								qsTr("Measurements")
 			singleVariable:						false
 			allowedColumns:						["scale"]
+			info:								qsTr("The measurement columns (repeated measurements of each part).")
 		}
 
 		AssignedVariablesList
@@ -95,6 +115,7 @@ Form
 			title:								qsTr("Operators")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The appraisers using the measurement system.")
 		}
 
 		AssignedVariablesList
@@ -103,6 +124,7 @@ Form
 			title:								qsTr("Parts")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The parts selected from the process, representing its entire operating range.")
 		}
 	}
 
@@ -116,6 +138,7 @@ Form
 			label: 							qsTr("Std. dev. source")
 			id: 							variationReference
 			indexDefaultValue: 				0
+			info:							qsTr("Source of the process standard deviation: estimated from the data (Study std. dev.) or a historically known value (Historical std. dev.).")
 			values: [
 				{ label: qsTr("Study std. dev."), value: "studySd"},
 				{ label: qsTr("Historical std. dev."), value: "historicalSd"}
@@ -128,6 +151,7 @@ Form
 			label:							qsTr("Std. dev. value")
 			defaultValue:					3
 			enabled:						variationReference.currentValue == "historicalSd"
+			info:							qsTr("The historically known process standard deviation. Only used when the std. dev. source is set to Historical.")
 		}
 
 		CheckBox
@@ -135,6 +159,7 @@ Form
 			name:							"tolerance"
 			label:							qsTr("Tolerance width")
 			childrenOnSameRow:				true
+			info:							qsTr("Include a tolerance (specification) width in the analysis.")
 
 			DoubleField
 			{
@@ -151,6 +176,7 @@ Form
 			name: 							"anova"
 			label: 							qsTr("r&R Analysis of Variance table")
 			checked:						true
+			info:							qsTr("Display the Gauge r&R tables based on a nested analysis of variance.")
 
 			DropDown
 			{
@@ -158,7 +184,8 @@ Form
 				label:						qsTr("Study var. multiplier type")
 				id: 						studyVarMultiplierType
 				indexDefaultValue:			0
-				values: 
+				info:						qsTr("Whether the study variation multiplier is expressed in standard deviations or as a percentage.")
+				values:
 				[
 					{ label: qsTr("Std. dev."), value: "sd"},
 					{ label: qsTr("Percent"), value: "percent"}
@@ -174,6 +201,7 @@ Form
 				min:						0.001
 				max:						99.999
 				decimals:					3
+				info:						qsTr("Value of the study variation multiplier.")
 			}
 		}
 	}
@@ -187,29 +215,34 @@ Form
 			name:						"varianceComponentsGraph"
 			label:						qsTr("Graph variation components")
 			checked:					true
+			info:						qsTr("Display the components of variation (contribution, study variation, and tolerance) plot.")
 		}
 
 		CheckBox
 		{
 			name: 							"rChart"
 			label: 							qsTr("Range charts by operator")
+			info:							qsTr("Display the variation in the measurements made by each operator, for comparison across operators.")
 		}
 
 		CheckBox
 		{
 			name: 							"xBarChart"
 			label: 							qsTr("Average charts by operator")
+			info:							qsTr("Display the measurements relative to the overall average for each operator, for comparison across operators.")
 		}
 
 		CheckBox
 		{
 			name: 							"partMeasurementPlot"
 			label: 							qsTr("Measurements by part plot")
+			info:							qsTr("Display the main effect for the parts (average measurement per part).")
 
 			CheckBox
 			{
 				name: 						"partMeasurementPlotAllValues"
 				label: 						qsTr("Display all measurements")
+				info:						qsTr("Display all measurement values across parts.")
 			}
 		}
 
@@ -217,12 +250,14 @@ Form
 		{
 			name: 							"operatorMeasurementPlot"
 			label: 							qsTr("Measurements by operator plot")
+			info:							qsTr("Display the main effect for the operators (average measurement per operator).")
 		}
 
 		CheckBox
 		{
 			name: 							"trafficLightChart"
 			label: 							qsTr("Traffic light chart")
+			info:							qsTr("Display the total Gauge r&R in relation to the tolerance and process variation as a percentage.")
 		}
 	}
 
@@ -237,13 +272,15 @@ Form
 			label: 								qsTr("Show report")
 			id:		anovaGaugeReport
 			columns: 1
-			
+			info:	qsTr("Display a formatted Gauge r&R report combining the selected metadata and output components.")
+
 			CheckBox
 			{
 				name:		"reportMetaData"
 				label:		qsTr("Show report metadata")
 				checked:	true
 				columns: 2
+				info:		qsTr("Include a metadata header (title, part, gauge, operator, date, etc.) in the report.")
 
 				CheckBox
 				{
@@ -394,7 +431,8 @@ Form
 			Group
 			{
 				title:			qsTr("Select Report Components")
-			
+				info:			qsTr("Choose which tables and plots are included in the report.")
+
 				CheckBox
 				{
 					name:		"reportGaugeTable"

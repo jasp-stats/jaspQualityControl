@@ -284,9 +284,13 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
   if (standards != "") {
     tableWithin <- createJaspTable(title = gettext("Within appraisers"))
+    tableWithin$info <- gettext("The agreement between the inspected items and operators, with a 95% confidence interval.")
     tableBetween <- createJaspTable(title = gettext("Between appraisers"))
+    tableBetween$info <- gettext("The agreement between the different operators, with a 95% confidence interval.")
     tableEachVsStandard <- createJaspTable(title = gettext("Each appraiser vs standard"))
+    tableEachVsStandard$info <- gettext("The agreement between the known standard and the inspected items per operator, with a 95% confidence interval.")
     tableAllVsStandard <- createJaspTable(title = gettext("All appraisers vs standard"))
+    tableAllVsStandard$info <- gettext("The agreement between all operators and the known standard, with a 95% confidence interval.")
 
 
     allTables <- list(tableWithin, tableBetween, tableEachVsStandard, tableAllVsStandard)
@@ -357,6 +361,7 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
         tableWithin$setError(gettext("More than 1 measurement per operator required."))
       }else{
         tableDecisions <- createJaspTable(title = gettext("Study effectiveness summary"))
+        tableDecisions$info <- gettext("The effectiveness, miss rate, and false alarm rate per operator, with an acceptance evaluation.")
         tableDecisions$addColumnInfo(name = "Appraiser", title = gettext("Appraiser"), type = "string")
         tableDecisions$addColumnInfo(name = "Effectiveness", title = gettext("Effectiveness"), type = "string")
         tableDecisions$addColumnInfo(name = "Miss", title = gettext("Miss rate"), type = "string")
@@ -429,6 +434,7 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
       if (length(measurements) > 1) {
         plotWithin <- createJaspPlot(title = "Within Appraisers", width = 500, height = 500)
+        plotWithin$info <- gettext("The agreement percentages within appraisers and their confidence intervals.")
 
         withinDataframe <- data.frame(x = appraiserVector, y = percentWithin)
 
@@ -447,6 +453,7 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
       }
 
       plotVs <- createJaspPlot(title = "Each Appraiser vs Standard", width = 500, height = 500)
+      plotVs$info <- gettext("The agreement percentages of each appraiser versus the standard and their confidence intervals.")
 
       vsDataframe <- data.frame(x = appraiserVector, y = percentEachVsStandard)
 
@@ -467,7 +474,9 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
   } else{
     tableWithin <- createJaspTable(title = gettext("Within appraisers"))
+    tableWithin$info <- gettext("The agreement between the inspected items and operators, with a 95% confidence interval.")
     tableBetween <- createJaspTable(title = gettext("Between appraisers"))
+    tableBetween$info <- gettext("The agreement between the different operators, with a 95% confidence interval.")
 
 
     allTables <- list(tableWithin, tableBetween)
@@ -544,6 +553,7 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
       if (length(measurements) > 1) {
         plotWithin <- createJaspPlot(title = "Within Appraisers", width = 500, height = 500)
+        plotWithin$info <- gettext("The agreement percentages within appraisers and their confidence intervals.")
 
         withinDataframe <- data.frame(x = appraiserVector, y = percentWithin)
 

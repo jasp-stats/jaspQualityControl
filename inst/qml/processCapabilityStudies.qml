@@ -22,12 +22,31 @@ Form
 {
 	columns:								2
 
+	info:									qsTr("A process capability study analyses a process to determine whether it is capable of producing good quality products, using data from an initial run of parts to predict whether the manufacturing process can repeatably produce parts that meet specifications. A subgroup is a group of parts that are produced under the same set of conditions.") + "\n\n"
+		+ qsTr("Rational subgroup: \"A subgroup gathered in such a manner as to give the maximum chance for the measurements in each subgroup to be alike and the maximum chance for the subgroups to differ from the other. This subgrouping scheme enables a determination of whether the process variation includes special cause variation.\" [1]")
+
+	infoBottom: 							"## " + qsTr("Data transformation") + "\n"
+		+ "- **" + qsTr("None") + "**: " + qsTr("the data is analysed as is.") + "\n"
+		+ "- **" + qsTr("Box-Cox") + "**: " + qsTr("the data is transformed using the equation $y = (x+\\text{shift})^\\lambda$ if $\\lambda \\neq 0$, otherwise $y = \\ln(x + \\text{shift})$.") + "\n"
+		+ "- **" + qsTr("Box-Cox (auto)") + "**: " + qsTr("the data is transformed using the Box-Cox transformation, but with the $\\lambda$ parameter automatically estimated using the specified method (see 'Method').") + "\n"
+		+ "- **" + qsTr("Continuity adjustment") + "**: " + qsTr("if enabled, the Box-Cox transform includes the adjustment term $y = \\frac{(x+\\text{shift})^\\lambda-1}{\\lambda}$.") + "\n"
+		+ "- **" + qsTr("Yeo-Johnson") + "**: " + qsTr("the data is transformed using the Yeo-Johnson transform as described in Yeo & Johnson (2000) [2]. It can be used for unbounded data.") + "\n"
+		+ "- **" + qsTr("Yeo-Johnson (auto)") + "**: " + qsTr("the data is transformed using the Yeo-Johnson transform, but with the $\\lambda$ parameter automatically estimated using the profile likelihood of a normal distribution. This procedure allows only process performance results (no process capability).") + "\n"
+		+ "- **" + qsTr("Johnson") + "**: " + qsTr("the data is transformed using the Johnson transform. It can be used for unbounded data (but some forms of the transform impose restrictions on the specification limits). The transform is fully automatic, as described in Chou, Polansky, & Mason (1998) [3]. This procedure allows only process performance results (no process capability).") + "\n"
+		+ "\n---\n## " + qsTr("References") + "\n"
+		+ "1. " + qsTr("Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual (2nd ed.). AIAG.") + "\n"
+		+ "2. " + qsTr("Yeo, I. K., & Johnson, R. A. (2000). A new family of power transformations to improve normality or symmetry. Biometrika, 87(4), 954-959.") + "\n"
+		+ "3. " + qsTr("Chou, Y. M., Polansky, A. M., & Mason, R. L. (1998). Transforming non-normal data to normality in statistical process control. Journal of Quality Technology, 30(2), 133-141.") + "\n"
+		+ "\n---\n## " + qsTr("R Packages") + "\n"
+		+ "- ggplot2\n- qcc\n- jaspGraphs\n- ggrepel\n- FAdist\n- goftest\n- fitdistrplus\n- tidyr\n- tibble\n- EnvStats\n- weibullness\n"
+
 	DropDown
 	{
 		name: "dataFormat"
 		label: qsTr("Data format")
 		id: dataFormat
 		indexDefaultValue: 0
+		info:	qsTr("Layout of the data: all observations in one column (\"Single column\") or one subgroup per row (\"Across rows\").")
 		values:
 		[
 			{label: qsTr("Single column"),				value: "longFormat"},
@@ -57,6 +76,7 @@ Form
 			id:								measurementLongFormat
 			allowedColumns:					["scale"]
 			singleVariable:					true
+			info:							qsTr("The observations/data collected from a process parameter.")
 		}
 
 		AssignedVariablesList
@@ -67,6 +87,7 @@ Form
 			singleVariable:		 			true
 			allowedColumns:					["nominal"]
 			enabled: 						subgroupSizeType.value == "groupingVariable"
+			info:							qsTr("The subgroup each observation is assigned to, when all observations are in a single column.")
 		}
 
 		AssignedVariablesList
@@ -76,6 +97,7 @@ Form
 			title:								qsTr("Stages")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup. Only the first specified stage of each subgroup is considered.")
 		}
 	}
 
@@ -95,6 +117,7 @@ Form
 			title:							qsTr("Measurements")
 			id:								measurementsWideFormat
 			allowedColumns:					["scale"]
+			info:							qsTr("The measurement columns, with one subgroup per row.")
 		}
 
 		AssignedVariablesList
@@ -104,6 +127,7 @@ Form
 			title:								qsTr("Timestamp (optional)")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("Optional subgroup names for each row, used as x-axis labels.")
 		}
 
 		AssignedVariablesList
@@ -113,6 +137,7 @@ Form
 			title:								qsTr("Stages")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("A column that splits the analysis into multiple stages by assigning a stage to each subgroup row. Only one stage per subgroup is possible.")
 		}
 	}
 
@@ -126,6 +151,7 @@ Form
 			title: 								qsTr("Specify subgroups")
 			id:									subgroupSizeType
 			visible:							dataFormat.currentValue == "longFormat"
+			info:								qsTr("How subgroups are formed from a single column of observations.")
 
 			RadioButton
 			{
@@ -133,7 +159,8 @@ Form
 				label: 							qsTr("Subgroup size")
 				checked:		 				true
 				childrenOnSameRow:				true
-				
+				info:							qsTr("Assign observations in order of appearance (from top to bottom) to subgroups of the specified size. If the number of observations cannot be equally divided into subgroups of the specified size, the last subgroup has the size of the remaining observations.")
+
 				DoubleField
 				{
 					name: 									"manualSubgroupSizeValue"
@@ -144,18 +171,20 @@ Form
 					defaultValue:							(dataSetInfo.rowCount < 5)? dataSetInfo.rowCount : 5
 				}
 			}
-			
+
 			RadioButton
 			{
 				value: 							"groupingVariable"
 				label: 							qsTr("Through grouping variable")
+				info:							qsTr("Use a single-column subgroup variable that assigns each observation to a subgroup.")
 
 				DropDown
 				{
 					name: 					"groupingVariableMethod"
 					id: 					groupingVariable
 					label: 					"Grouping method"
-					values: 
+					info:					qsTr("How to group when identical subgroup values are not adjacent in the dataset (top to bottom). \"Subgroup value change\" groups only series of identical and adjacent values; \"Same subgroup value\" groups all identical values regardless of adjacency. For instance, for the subgroup values [A, A, B, B, A], \"Subgroup value change\" yields three groups, [A, A], [B, B] and [A], whereas \"Same subgroup value\" yields two groups, [A, A, A] and [B, B].")
+					values:
 					[
 						{ label: qsTr("Subgroup value change"),			value: "newLabel"},
 						{ label: qsTr("Same subgroup value"),			value: "sameLabel"}
@@ -170,21 +199,24 @@ Form
 			name:								"subgroupSizeUnequal"
 			title: 								qsTr("Unequal subgroup sizes")
 			id:									subgroupSizeUnequal
+			info:								qsTr("The size of the subgroups is relevant for the calculation of the process variance and subsequently the control limits. If not all subgroups have the same size, choose how this is handled.")
 
 			RadioButton
 			{
 				value: 								"actualSizes"
 				label: 								qsTr("Use actual sizes")
 				checked: 							true
+				info:								qsTr("Calculate the control limits per subgroup, using the actual subgroup sizes.")
 			}
-			
+
 			RadioButton
 			{
 				value: 								"fixedSubgroupSize"
 				label: 								qsTr("Use fixed subgroup size")
 				childrenOnSameRow:		 			true
+				info:								qsTr("Assume that all subgroups have the same size, producing the same control limits for all groups. The size of the largest subgroup is used for the calculation.")
 
-				IntegerField 
+				IntegerField
 				{
 					name: 								"fixedSubgroupSizeValue"
 					fieldWidth: 						30
@@ -204,11 +236,13 @@ Form
 			Group
 			{
 				title: qsTr("Transform data")
+				info:	qsTr("Transform the data before analysis to improve normality.")
 				DropDown
 				{
 					name:		"dataTransformation"
 					id:			dataTransformation
 					label:		qsTr("Type")
+					info:		qsTr("Transformation applied to the data before any analysis. The available transformations are described under Data transformation below.")
 					values:
 					[
 						{label: qsTr("None"),					value: "none"},
@@ -227,6 +261,7 @@ Form
 					negativeValues:	true
 					defaultValue: 0
 					enabled: ["boxCox", "boxCoxAuto"].includes(dataTransformation.value)
+					info:	qsTr("Numerical value of the shift parameter used for transforms that accept bounded data. This option is disabled for unbounded transforms (Yeo-Johnson, Johnson).")
 				}
 				DoubleField
 				{
@@ -235,11 +270,13 @@ Form
 					negativeValues:	true
 					defaultValue: 0
 					enabled: ["boxCox", "yeoJohnson"].includes(dataTransformation.value)
+					info:	qsTr("Numerical value of the lambda parameter of the transforms. This option is disabled for transforms which automatically estimate their parameter(s).")
 				}
 				DropDown
 				{
 					name:		"dataTransformationMethod"
 					label:		qsTr("Type")
+					info:		qsTr("Method for selecting the best lambda value. 'Log-Lik' maximises the normal likelihood of the transformed variable. 'SD' minimises the sums of squares of the power-transformed variable. 'Average moving range' minimises the estimate of variability based on the average moving range of the power-transformed variable. 'Log-Lik' and 'SD' are appropriate for grouped data, 'Average moving range' is appropriate for individuals data.")
 					values:
 					[
 						{label: qsTr("Log. Lik"),					value: "loglik"},
@@ -254,11 +291,13 @@ Form
 					name: "dataTransformationContinuityAdjustment"
 					checked: false
 					enabled: ["boxCox", "boxCoxAuto"].includes(dataTransformation.value)
+					info:	qsTr("If enabled, the Box-Cox transform includes a continuity adjustment term (see Data transformation below).")
 				}
 			}
 			Group
 			{
 				title:					qsTr("Type of data distribution")
+				info:					qsTr("Whether the data approximate a normal distribution or another distribution.")
 
 
 				RadioButtonGroup
@@ -272,6 +311,7 @@ Form
 						id : 				normalCapabilityAnalysis
 						label: 				qsTr("Normal distribution")
 						checked: 			true
+						info:				qsTr("Assume the data are approximately normally distributed.")
 
 
 						CheckBox
@@ -280,6 +320,7 @@ Form
 							label: 						qsTr("Historical mean")
 							id:							historicalMean
 							childrenOnSameRow:			true
+							info:						qsTr("Use a fixed historical mean instead of estimating it from the data.")
 
 							DoubleField
 							{
@@ -297,6 +338,7 @@ Form
 							label: 						qsTr("Historical std. dev.")
 							id:							historicalStdDev
 							childrenOnSameRow:			true
+							info:						qsTr("Use a fixed historical standard deviation instead of estimating it from the data.")
 
 							DoubleField
 							{
@@ -315,12 +357,14 @@ Form
 						name:				"nonNormalCapabilityAnalysis"
 						id :				nonNormalCapabilityAnalysis
 						label:				qsTr("Non-normal distribution")
+						info:				qsTr("Assume the data follow a specified non-normal distribution.")
 
 						DropDown
 						{
 							name: 					"nonNormalDistribution"
 							id: 					nonNormalDistribution
 							label:					qsTr("Specify a distribution")
+							info:					qsTr("The non-normal distribution used to model the data.")
 							values:
 							[
 								{label: qsTr("Weibull"),					value: "weibull"},
@@ -451,6 +495,7 @@ Form
 							name:					"nonNormalMethod"
 							label:					qsTr("Non-normal capability statistics")
 							indexDefaultValue:		0
+							info:					qsTr("Method used to calculate the capability statistics for non-normally distributed data. Historical parameter fields below let you fix selected distribution parameters instead of estimating them. If not all parameters are set historically, JASP keeps the historical parameters fixed while estimating the remaining parameters freely.")
 							values:
 								[
 								{label: qsTr("Percentile"),				value: "percentile"},
@@ -471,6 +516,7 @@ Form
 					label: 						qsTr("Lower specification limit")
 					id:							lowerSpecificationLimit
 					childrenOnSameRow:			true
+					info:						qsTr("The value used as the lower tolerance limit.")
 
 					DoubleField
 					{
@@ -486,6 +532,7 @@ Form
 					name: 						"lowerSpecificationLimitBoundary"
 					label: 						qsTr("Boundary")
 					id:							lowerSpecificationLimitBoundary
+					info:						qsTr("Whether the lower specification limit is a physical boundary that cannot be exceeded.")
 					}
 				}
 
@@ -495,6 +542,7 @@ Form
 					label: 						qsTr("Target value")
 					id:							target
 					childrenOnSameRow:			true
+					info:						qsTr("The value used as the target.")
 
 					DoubleField
 					{
@@ -512,6 +560,7 @@ Form
 					label: 						qsTr("Upper specification limit")
 					id:							upperSpecificationLimit
 					childrenOnSameRow:			true
+					info:						qsTr("The value used as the upper tolerance limit.")
 
 					DoubleField
 					{
@@ -527,6 +576,7 @@ Form
 					name: 						"upperSpecificationLimitBoundary"
 					label: 						qsTr("Boundary")
 					id:							upperSpecificationLimitBoundary
+					info:						qsTr("Whether the upper specification limit is a physical boundary that cannot be exceeded.")
 					}
 				}
 
@@ -536,6 +586,7 @@ Form
 					label: 						qsTr("Process capability plot")
 					checked: 					true
 					enabled:					upperSpecificationLimit.checked || lowerSpecificationLimit.checked
+					info:						qsTr("Plot the frequency distribution with the fitted distribution based on the overall and within process variation, compared to the specification limits.")
 
 					DoubleField
 					{
@@ -545,6 +596,7 @@ Form
 						min:						3;
 						max:						10000;
 						enabled:					csBinWidthType.currentValue === "manual"
+						info:						qsTr("Number of classes (bins) plotted in the process capability plot.")
 					}
 
 					CheckBox
@@ -552,6 +604,7 @@ Form
 						name: 								"processCapabilityPlotDistributions"
 						label: 								qsTr("Overlay distribution")
 						checked: 							true
+						info:								qsTr("Overlay the fitted distribution curves (within and overall) on the plot.")
 					}
 
 					CheckBox
@@ -559,12 +612,14 @@ Form
 						name: 								"processCapabilityPlotSpecificationLimits"
 						label: 								qsTr("Display specification limits")
 						checked: 							true
+						info:								qsTr("Display the specification limits as vertical lines on the plot.")
 					}
 
 					RadioButtonGroup
 					{
 						name:	"processCapabilityPlotXAxisModification"
 						title:	qsTr("Axis modifications")
+						info:	qsTr("Optional modifications to the x-axis labelling of the plot.")
 
 						RadioButton { value: "none";     label: qsTr("None");              checked: true }
 						RadioButton { value: "thin";     label: qsTr("Thin x-axis labels") }
@@ -578,16 +633,18 @@ Form
 					label: 							qsTr("Process capability tables")
 					checked: 						true
 					enabled:						upperSpecificationLimit.checked || lowerSpecificationLimit.checked
+					info:							qsTr("Display the process capability and performance tables (Cp, Cpk, Pp, Ppk, Cpm, and non-conformance statistics).")
 
 					CheckBox
 					{
-						name: "processCapabilityTableCi";	
+						name: "processCapabilityTableCi";
 						label: qsTr("Confidence intervals")
 						checked: capabilityStudyType.value == "normalCapabilityAnalysis"
 						enabled: capabilityStudyType.value == "normalCapabilityAnalysis"
 						childrenOnSameRow: true
+						info:	qsTr("Display confidence intervals for the capability statistics (normal distribution only); set the confidence level alongside.")
 
-						CIField 
+						CIField
 						{
 							name: "processCapabilityTableCiLevel"
 							defaultValue: 90}
@@ -597,13 +654,14 @@ Form
 					{
 						name: "processCapabilityTableZ"
 						label: qsTr("Z (ST) / Z (LT)")
+						info:	qsTr("Display the short-term Z (ST) and long-term Z (LT) sigma-level statistics. Z (ST) is equal to 3 * Cpk and Z (LT) is equal to 3 * Ppk; they correspond to the distance of the process mean to the nearest bound in standard deviation units.")
 					}
 
 					CheckBox
 					{
 						name: "processCapabilityTableZBench"
 						label: qsTr("Z.bench (ST) / Z.bench (LT)")
-						info:  qsTr("Sigma level based on total defect probability across both specification limits, as opposed to Z (ST)/Z (LT) which equal 3·Cpk/3·Ppk (distance to the nearest bound).")
+						info:  qsTr("Short-term and long-term sigma level computed from the total expected defect probability across both specification limits (based on the within and overall standard deviation, respectively), i.e., the standard normal quantile of one minus that probability. It equals Z (ST) / Z (LT) only for one-sided tolerances; for two-sided tolerances it is smaller because both tails contribute.")
 					}
 
 				}
@@ -618,6 +676,7 @@ Form
 			Group
 			{
 				title:			qsTr("Stability of the process")
+				info:			qsTr("Control charts used to assess whether the process is in a state of statistical control.")
 
 				CheckBox
 				{
@@ -626,7 +685,8 @@ Form
 					checked: 					true
 					childrenOnSameRow:			true
 					columns:					1
-					
+					info:						qsTr("Display a control chart of the process to assess its stability; select the chart type below.")
+
 
 					DropDown
 					{
@@ -691,18 +751,21 @@ Form
 			Group
 			{
 				title: 							qsTr("Distribution of the process")
+				info:							qsTr("Visualisations of the distribution of the process data.")
 
 				CheckBox
 				{
 					name: 						"histogram"
 					label: 						qsTr("Histogram")
 					checked: 					true
+					info:						qsTr("Display a histogram of the process values.")
 
 					CheckBox
 					{
 						name:					"histogramDensityLine"
 						label:					qsTr("Fit distribution")
 						checked:				true
+						info:					qsTr("Add a line representing the fitted distribution to the histogram.")
 					}
 
 					DoubleField
@@ -712,6 +775,7 @@ Form
 						defaultValue:			10
 						min:					3;
 						max:					10000;
+						info:					qsTr("Number of bins used for the histogram.")
 					}
 				}
 
@@ -720,11 +784,13 @@ Form
 					name:						"probabilityPlot"
 					label:						qsTr("Probability table and plot")
 					checked: 					true
+					info:						qsTr("Display the probability table and plot, examining whether the data follow the chosen distribution.")
 
 					CheckBox
 					{
 						name:					"probabilityPlotGridLines"
 						label:					qsTr("Display grid lines")
+						info:					qsTr("Add grid lines to the probability plot.")
 					}
 				}
 			}
@@ -742,14 +808,16 @@ Form
 			name: "report"
 			label: qsTr("Show Report")
 			columns: 1
-			
-			
+			info:	qsTr("Display a formatted process capability report combining the selected metadata and components.")
+
+
 			CheckBox
 			{
 				name:		"reportMetaData"
 				label:		qsTr("Show report metadata")
 				checked:	true
 				columns: 2
+				info:		qsTr("Include a metadata header (title, location, machine, variable, date, etc.) in the report.")
 
 				CheckBox
 				{
@@ -899,7 +967,8 @@ Form
 			Group
 			{
 				title:			qsTr("Select report components")
-			
+				info:			qsTr("Choose which charts and tables are included in the report.")
+
 				CheckBox
 				{
 					name:		"reportProcessStability"
@@ -947,6 +1016,7 @@ Form
 				name:					"probabilityPlotRankMethod"
 				label:					qsTr("Rank method for probability plot")
 				indexDefaultValue:		0
+				info:					qsTr("Method used to calculate the rank of the data in the probability plot. Benard's median rank is the most common and very close to the exact method.")
 				values:
 				[
 					{ value: "bernard",			label: qsTr("Median Rank (Benard)")			},
@@ -955,17 +1025,18 @@ Form
 					{ value: "hazen",			label: qsTr("Modified Kaplan-Meier (Hazen)")}
 				]
 			}
-					
+
 			DropDown
 				{
 					name: 					"histogramBinBoundaryDirection"
 					id: 					histogramBinBoundaryDirection
 					label: 					qsTr("Histogram bin boundaries")
-					values: 
+					info:					qsTr("Whether the histogram bin intervals are left-open or right-open.")
+					values:
 					[
 						{ label: qsTr("Left open"),		value: "left"},
 						{ label: qsTr("Right open"),	value: "right"}
-						
+
 					]
 				}
 
@@ -974,7 +1045,8 @@ Form
 				name: 					"nullDistribution"
 				id: 					nullDistribution
 				label: 					qsTr("Null distribution for probability plot")
-				values: 
+				info:					qsTr("The distribution used to examine the data in the probability plot.")
+				values:
 				[
 					{ label: qsTr("Normal"),		         value: "normal"		},
 					{ label: qsTr("Log-normal"),	         value: "lognormal"	},
@@ -1012,7 +1084,8 @@ Form
 					name: 					"controlChartSdEstimationMethodGroupSize"
 					id: 					controlChartSdEstimationMethodGroupSize
 					label: 					qsTr("Method for estimating within subgroup std. dev. for subgroup size")
-					values: 
+					info:					qsTr("Whether the within-subgroup standard deviation is estimated for subgroups larger than one or for individual observations (size of one).")
+					values:
 					[
 						{ label: qsTr(" > 1"),		value: "largerThanOne"},
 						{ label: qsTr("= 1"),		value: "equalOne"}
@@ -1027,6 +1100,7 @@ Form
 					id: 					controlChartSdEstimationMethodGroupSizeLargerThanOne
 					visible:				controlChartSdEstimationMethodGroupSize.currentValue == "largerThanOne"
 					label: 					""
+					info:					qsTr("Estimator for the within-subgroup standard deviation. Pooled is a common default for capability analysis and is the most efficient estimate of the within-subgroup variation, especially for larger or unequal subgroups.")
 					values: 
 					[
 						{ label: qsTr("R-bar"),			value: "rBar"},
@@ -1058,6 +1132,7 @@ Form
 					defaultValue:					2
 					min: 							2
 					max: 							dataSetModel.rowCount()
+					info:							qsTr("Number of consecutive observations spanned by each moving range when estimating the standard deviation for individuals data.")
 				}
 
 				CheckBox
@@ -1066,6 +1141,7 @@ Form
 					label: 								qsTr("Use unbiasing constant")
 					visible:							controlChartSdEstimationMethodGroupSize.currentIndex == 1 ? false : true
 					checked:							true
+					info:								qsTr("Apply the unbiasing constant when estimating the standard deviation.")
 				}
 			}
 
@@ -1076,6 +1152,7 @@ Form
 				fieldWidth: 						30
 				defaultValue: 						3
 				min:								.000001
+				info:								qsTr("Number of standard deviations from the central line used to compute the control limits.")
 			}
 		}
 

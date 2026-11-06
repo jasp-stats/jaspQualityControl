@@ -283,6 +283,7 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
   gaugeRRNonRepTables$position <- 1
 
   gaugeRRNonRepTable1 <- createJaspTable(title = gettext("Gauge r&R (nested)"))
+  gaugeRRNonRepTable1$info <- gettext("The nested analysis of variance table for the input variables, repeatability, reproducibility, and total Gauge r&R.")
   gaugeRRNonRepTable1$addColumnInfo(title = gettext("Source"),       name = "sources",   type = "string" )
   gaugeRRNonRepTable1$addColumnInfo(title = gettext("df"),             name = "DF",      type = "integer")
   gaugeRRNonRepTable1$addColumnInfo(title = gettext("Sum of squares"), name = "SS",  type = "number")
@@ -291,11 +292,13 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
   gaugeRRNonRepTable1$addColumnInfo(title = gettext("p"),              name = "p.value",  type = "pvalue")
 
   gaugeRRNonRepTable2 <- createJaspTable(title = gettext("Variance components"))
+  gaugeRRNonRepTable2$info <- gettext("The variance and percentage contribution of the input variables, repeatability, reproducibility, and total Gauge r&R.")
   gaugeRRNonRepTable2$addColumnInfo(title = gettext("Source"),       name = "sources",   type = "string" )
   gaugeRRNonRepTable2$addColumnInfo(title = gettext("Variation"), name = "Var",  type = "number")
   gaugeRRNonRepTable2$addColumnInfo(title = gettextf("%% Contribution"),    name = "percentVar", type = "number")
 
   gaugeRRNonRepTable3 <- createJaspTable(title = gettext("Gauge evaluation"))
+  gaugeRRNonRepTable3$info <- gettext("The standard deviations, study variations, and percentage of study variation and tolerance for the input variables, repeatability, reproducibility, and total Gauge r&R.")
   gaugeRRNonRepTable3$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
   gaugeRRNonRepTable3$addColumnInfo(name = "SD", title = gettext("Std. dev."), type = "number")
   gaugeRRNonRepTable3$addColumnInfo(name = "studyVar", title = gettextf("Study variation"), type = "number")

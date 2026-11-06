@@ -21,6 +21,8 @@ Form
 {
 	columns:									1
 
+	info:										qsTr("Modify an existing factorial design: reassign factors and run order, change the display units, and generate a desired two-level factorial design from the assigned factors.")
+
 	VariablesForm
 	{
 		AvailableVariablesList
@@ -34,6 +36,7 @@ Form
 			name:								"responseVariable"
 			singleVariable:						true
 			label:								qsTr("Response variable")
+			info:								qsTr("The measured response variable of the design.")
 		}
 
 		AssignedVariablesList
@@ -41,6 +44,7 @@ Form
 			name:								"assignedFactors"
 			label:								qsTr("Assigned factors")
 			id:									assignedFactors
+			info:								qsTr("The factor columns of the design.")
 		}
 
 //		AssignedVariablesList
@@ -57,6 +61,7 @@ Form
 			label:								qsTr("Run order")
 			id:									runOrder
 			singleVariable:						true
+			info:								qsTr("The column specifying the run order of the design.")
 		}
 	}
 
@@ -64,6 +69,7 @@ Form
 	{
 		name:									"unitDisplay"
 		title:									qsTr("Unit Display")
+		info:									qsTr("Whether the factor levels are displayed in coded or uncoded (given) units.")
 
 		RadioButton
 		{
@@ -86,6 +92,7 @@ Form
 		name:									"displayedRunOrder"
 		title:									qsTr("Run Order")
 		enabled:								!factorialTypeSplit.checked
+		info:									qsTr("Whether the runs are displayed in random or standard order.")
 
 		RadioButton
 		{
@@ -105,6 +112,7 @@ Form
 	{
 		title: 									qsTr("Desired Two-level Factorial Design Options")
 		columns:								2
+		info:									qsTr("Options for generating a desired two-level factorial design from the assigned factors.")
 
 		Group
 		{
@@ -113,6 +121,7 @@ Form
 			RadioButtonGroup
 			{
 				name:							"designOptionsType"
+				info:							qsTr("How the desired design is specified: by number of runs, by resolution, or by fraction.")
 
 				RadioButton
 				{
@@ -120,6 +129,7 @@ Form
 					label:						qsTr("Number of runs")
 					childrenOnSameRow:			true
 					checked:					true
+					info:						qsTr("Specify the design by the number of runs.")
 
 					DropDown
 					{
@@ -142,6 +152,7 @@ Form
 					label:						qsTr("Resolution")
 					id:							resolution
 					childrenOnSameRow:			true
+					info:						qsTr("Specify the design by its resolution.")
 
 					DropDown
 					{
@@ -165,6 +176,7 @@ Form
 					name:						"fraction"
 					label:						qsTr("Fraction")
 					childrenOnSameRow:			true
+					info:						qsTr("Specify the design by the fraction of the full factorial.")
 
 					DropDown
 					{
@@ -213,6 +225,7 @@ Form
 				defaultValue:					0
 				min:							0
 				max:							2**(numberOfFactorsForTable.value - 1)
+				info:							qsTr("Number of centre points to add to the design.")
 			}
 
 			IntegerField
@@ -222,6 +235,7 @@ Form
 				defaultValue:					0
 				min:							0
 				max:							10
+				info:							qsTr("Number of randomly selected runs to repeat.")
 			}
 		}
 	}
@@ -230,6 +244,7 @@ Form
 	{
 		name:									"desiredDesignTable"
 		label:									qsTr("Show desired design")
+		info:									qsTr("Display the generated desired design in the output.")
 	}
 
 	IntegerField

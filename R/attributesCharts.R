@@ -67,6 +67,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     #P chart
     if (options[["attributesChartDefectivesChartType"]] == "pChart" && is.null(jaspResults[["PchartPlot"]])) {
       jaspResults[["PchartPlot"]] <- createJaspPlot(title =  gettext("p Chart"), width = 1200, height = 500)
+      jaspResults[["PchartPlot"]]$info <- gettext("Charts the proportion of non-conforming (defective) products, rejects or unacceptable outcomes, or conforming/accepted items in each subgroup.")
       jaspResults[["PchartPlot"]]$dependOn(dependedDefectives)
       jaspResults[["PchartPlot"]]$position <- 1
       Pchart <- .Pchart(dataset = dataset, options = options, timeStamp = timeStamp)
@@ -83,6 +84,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     #NP chart
     if (options[["attributesChartDefectivesChartType"]] == "npChart" && is.null(jaspResults[["NPchartPlot"]])) {
       jaspResults[["NPchartPlot"]] <- createJaspPlot(title =  gettext("np Chart"), width = 1200, height = 500)
+      jaspResults[["NPchartPlot"]]$info <- gettext("Charts the number of non-conforming (defective) products or only the conforming items in each subgroup. The subgroup size is constant.")
       jaspResults[["NPchartPlot"]]$dependOn(dependedDefectives)
       jaspResults[["NPchartPlot"]]$position <- 1
       NPchart <- .NPchart(dataset = dataset, options = options, timeStamp = timeStamp)
@@ -100,6 +102,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     #Laney P chart
     if (options[["attributesChartDefectivesChartType"]] == "laneyPPrimeChart" && is.null(jaspResults[["LaneyPPlot"]])) {
       jaspResults[["LaneyPPlot"]] <- createJaspPlot(title =  gettext("Laney p' Chart"), width = 1200, height = 500, position = 1)
+      jaspResults[["LaneyPPlot"]]$info <- gettext("Charts the proportion of non-conforming (defective) products in each subgroup with control limits adjusted for overdispersion.")
       Lanychart <- .LanyP(dataset = dataset, options = options, timeStamp = timeStamp)
       jaspResults[["LaneyPPlot"]]$plotObject <- Lanychart$p
       jaspResults[["LaneyPPlot"]]$dependOn(dependedDefectives)
@@ -117,6 +120,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     #Cchart
     if (options[["attributesChartDefectsChartType"]] == "cChart" && is.null(jaspResults[["CchartPlot"]])) {
       jaspResults[["CchartPlot"]] <- createJaspPlot(title =  gettext("c Chart"), width = 1200, height = 500)
+      jaspResults[["CchartPlot"]]$info <- gettext("Charts the number of defects or non-conformities in each subgroup. The subgroup size is constant.")
       jaspResults[["CchartPlot"]]$dependOn(dependedDefects)
       jaspResults[["CchartPlot"]]$position <- 1
       Cchart <- .Cchart(dataset = dataset, options = options, timeStamp = timeStamp)
@@ -133,6 +137,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     #Uchart
     if (options[["attributesChartDefectsChartType"]] == "uChart" && is.null(jaspResults[["UchartPlot"]])) {
       jaspResults[["UchartPlot"]] <- createJaspPlot(title =  gettext("u Chart"), width = 1200, height = 500)
+      jaspResults[["UchartPlot"]]$info <- gettext("Charts the proportion of defects or non-conformities in each subgroup. The subgroup size is variable.")
       jaspResults[["UchartPlot"]]$dependOn(dependedDefects)
       jaspResults[["UchartPlot"]]$position <- 1
       Uchart <- .Uchart(dataset = dataset, options = options, timeStamp = timeStamp)
@@ -150,6 +155,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     #Laney U chart
     if (options[["attributesChartDefectsChartType"]] == "laneyUPrimeChart" && is.null(jaspResults[["LaneyUPlot"]])) {
       jaspResults[["LaneyUPlot"]] <- createJaspPlot(title = gettext("Laney u' Chart"), width = 1200, height = 500, position = 1)
+      jaspResults[["LaneyUPlot"]]$info <- gettext("Charts the proportion of defects or non-conformities in each subgroup with control limits adjusted for overdispersion.")
       jaspResults[["LaneyUPlot"]]$dependOn(dependedDefects)
       LanyUchart <- .LanyU(dataset = dataset, options = options, timeStamp = timeStamp)
       jaspResults[["LaneyUPlot"]]$plotObject <- PlotReport <- LanyUchart$p
@@ -162,6 +168,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   #ImRchart for attributes
   if (options[["attributesChart"]] == "xmr" && !identical(D, "")) {
     jaspResults[["IPlotA"]] <- createJaspPlot(title = gettext("Individuals and Moving Range Chart"), width = 1200, height = 500, position = 1)
+    jaspResults[["IPlotA"]]$info <- gettext("Charts the process values (individuals) and the moving range (mR) over time, using empirical control limits.")
     IMRchart <- .Ichart_attributes(dataset = dataset, options = options, timeStamp = timeStamp)
     jaspResults[["IPlotA"]]$plotObject <- PlotReport <- IMRchart$p
     jaspResults[["IPlotA"]]$dependOn(c("defectiveOrDefect", "total", "attributesChart", "timeStamp"))
