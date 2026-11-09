@@ -991,10 +991,6 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue") # TODO: try out if the new function can handle single value, if yes remove this whole logic
       dotColor[is.na(dotColor)] <- "blue"
     }
-    # if more than half of the dots are violations, do not show red dots.
-    nOutOfLimits <- sum(dotColor[!is.na(dotColor)] == "red")
-    if (nOutOfLimits > length(plotStatistic)/2)
-      dotColor <- "blue"
 
     stagePlotData <- data.frame("plotStatistic" = plotStatistic,
                                 "subgroup" = subgroups,
