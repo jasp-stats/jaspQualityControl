@@ -760,9 +760,9 @@ test_that("LF10.1 (Normal) Missing value test of Process performance (total) tab
 test_that("LF10.2 (Normal) Missing value test of Non-conformance statistics table with all but one missing value in measurement", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("*", "*", "*", 0, "*", "*", "*", "*", "*", "ppm &lt; LSL", "*",
-                                      "*", "*", 0, "*", "*", "*", "*", "*", "ppm &gt; USL", "*", "*",
-                                      "*", 0, "*", "*", "*", "*", "*", "ppm total"))
+                                 list("*", "*", "*", 0, "*", "*", 0, "*", "*", "ppm &lt; LSL", "*",
+                                      "*", "*", 0, "*", "*", 0, "*", "*", "ppm &gt; USL", "*", "*",
+                                      "*", 0, "*", "*", 0, "*", "*", "ppm total"))
 })
 
 test_that("LF10.3 (Normal) Missing value test of Process capability (within) with all but one missing value in measurement", {
