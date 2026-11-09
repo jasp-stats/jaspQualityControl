@@ -1,5 +1,4 @@
 context("[Quality Control] MSA Test Retest")
-.numDecimals <- 2
 
 # Long Format ####
 

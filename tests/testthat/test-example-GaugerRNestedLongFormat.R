@@ -10,10 +10,9 @@ test_that("msaGaugeRRnonrep results match", {
   opts <- jaspTools::analysisOptions(jaspFile)
   dataset <- jaspTools::extractDatasetFromJASPFile(jaspFile)
 
-  # Encode and run analysis
-  encoded <- jaspTools:::encodeOptionsAndDataset(opts, dataset)
+  # Run analysis
   set.seed(1)
-  results <- jaspTools::runAnalysis("msaGaugeRRnonrep", encoded$dataset, encoded$options, encodedDataset = TRUE)
+  results <- jaspTools::runAnalysis("msaGaugeRRnonrep", dataset, opts)
 
   plotName <- results[["results"]][["gaugeRRNonRep"]][["collection"]][["gaugeRRNonRep_Plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
@@ -21,11 +20,11 @@ test_that("msaGaugeRRnonrep results match", {
 
   table <- results[["results"]][["gaugeRRNonRep"]][["collection"]][["gaugeRRNonRep_Table1"]][["data"]]
   jaspTools::expect_equal_tables(table,
-    list(2, 0.092585866870024, 0.868619975635812, 1.73723995127162, 0.911859074638568,
-     "jaspColumn2", 27, 9.99997705926056, 9.38177720855838, 253.307984631076,
-     1.1128747856415e-13, "jaspColumn3(jaspColumn2)", 60, "", 0.93817987310984,
-     56.2907923865904, "", "Repeatability", 89, "", "", 311.336016968938,
-     "", "Total"))
+    list(2, 0.092585866870024, 0.868619975635812, 1.73723995127162,
+     0.911859074638568, "Operator", 27, 9.99997705926056, 9.38177720855838,
+     253.307984631076, 1.1128747856415e-13, "Part(Operator)", 60, "",
+     0.93817987310984, 56.2907923865904, "", "Repeatability", 89, "", "",
+     311.336016968938, "", "Total"))
 
   table <- results[["results"]][["gaugeRRNonRep"]][["collection"]][["gaugeRRNonRep_Table2"]][["data"]]
   jaspTools::expect_equal_tables(table,
