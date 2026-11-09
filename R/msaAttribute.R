@@ -673,19 +673,28 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
 }
 
-.AAACI <- function(m,N){
-  v1_L <- m * 2
-  v2_L <- 2 * (N - m + 1)
+.AAACI <- function(m, N) {
+  count <- max(length(m), length(N))
+  if (!length(m) || !length(N))
+    return(list(lower = rep(NA_real_, count), upper = rep(NA_real_, count)))
+  if (!(length(m) %in% c(1L, count)) || !(length(N) %in% c(1L, count)))
+    stop(gettext("Agreement counts and totals must have compatible lengths."))
+  m <- rep_len(m, count)
+  N <- rep_len(N, count)
+  valid <- is.finite(m) & is.finite(N) & N > 0 & N == floor(N) &
+    m >= 0 & m <= N & m == floor(m)
+  lower <- upper <- rep(NA_real_, count)
 
-  v1_U <- 2*(m + 1)
-  v2_U <- 2*(N - m)
+  # Fixed 95% Clopper-Pearson interval, equivalent to the interior F-quantile formula.
+  # No interval is defined for zero observations or invalid binomial counts.
+  lower[valid & m == 0] <- 0
+  upper[valid & m == N] <- 1
+  lowerIndex <- valid & m > 0
+  upperIndex <- valid & m < N
+  lower[lowerIndex] <- stats::qbeta(0.025, m[lowerIndex], N[lowerIndex] - m[lowerIndex] + 1)
+  upper[upperIndex] <- stats::qbeta(0.975, m[upperIndex] + 1, N[upperIndex] - m[upperIndex])
 
-  return(
-    list(
-      lower = round((v1_L * qf(0.025,v1_L,v2_L))/(v2_L + v1_L*qf(0.025,v1_L,v2_L)) * 100,3) ,
-      upper = round((v1_U * qf(0.975, v1_U,v2_U))/(v2_U + v1_U*qf(0.975,v1_U,v2_U)) * 100,3)
-    )
-  )
+  return(list(lower = round(lower * 100, 3), upper = round(upper * 100, 3)))
 }
 
 .decisionNote <- function(vec, type = "Effectiveness") {
