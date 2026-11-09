@@ -39,24 +39,37 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   # Checking if the analysis is ready
   ready <- options[["defectiveOrDefect"]] != "" && options$total != ""
 
-  #Checking for errors in the dataset
-  .hasErrors(dataset, type = c('infinity', 'missingValues', 'negativeValues'),
-             all.target = c(options[["defectiveOrDefect"]],options$total),
-             exitAnalysisIfErrors = TRUE)
-
-  if (options[["attributesChartDefectivesChartType"]] == "pChart" || options[["attributesChartDefectivesChartType"]] == "laneyPPrimeChart" || options[["attributesChartDefectsChartType"]] == "uChart" || options[["attributesChartDefectsChartType"]] == "laneyUPrimeChart")
-    .hasErrors(dataset,
-               custom = function() {
-                 if (any(dataset[,D] > dataset[,total]))
-                   return(gettext("The number of Defectives/Defects is larger than the sample  size."))},
-               exitAnalysisIfErrors = TRUE)
-
-
   if ((options[["attributesChart"]] == "defectives" || options[["attributesChart"]] == "defects" || options[["attributesChart"]] == "xmr") && !ready) {
     plot <- createJaspPlot(title = gettext("Attributes Control Charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
     plot$dependOn(c("attributesChart", "defectiveOrDefect", "total"))
     return()
+  }
+
+  # Validate only the active family; hidden chart selections retain their values.
+  binomialChart <- options[["attributesChart"]] == "defectives"
+  rateChart <- options[["attributesChart"]] == "defects" &&
+    options[["attributesChartDefectsChartType"]] %in% c("uChart", "laneyUPrimeChart")
+  countChart <- binomialChart || options[["attributesChart"]] == "defects"
+  # c charts also consume the assigned sample-size column for the equal-size check.
+  .hasErrors(dataset, type = c("infinity", "missingValues", "negativeValues"),
+             all.target = c(D, total), exitAnalysisIfErrors = TRUE)
+
+  if (countChart) {
+    .hasErrors(dataset, custom = function() {
+      counts <- dataset[[D]]
+      if (any(counts != floor(counts)))
+        return(gettext("Defective item and defect counts must be nonnegative integers."))
+      if (binomialChart || rateChart) {
+        sizes <- dataset[[total]]
+        if (any(sizes <= 0))
+          return(gettext("Sample sizes or exposures must be positive."))
+        if (binomialChart && any(sizes != floor(sizes)))
+          return(gettext("Sample sizes for defective items must be positive integers."))
+        if (binomialChart && any(counts > sizes))
+          return(gettext("The number of defective items cannot exceed the sample size."))
+      }
+    }, exitAnalysisIfErrors = TRUE)
   }
 
   dataset <- na.omit(dataset)
