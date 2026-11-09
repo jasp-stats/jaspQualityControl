@@ -139,9 +139,9 @@ Form
 					name: 									"manualSubgroupSizeValue"
 					id:										manualSubgroupSizeValue
 					min: 									1
-					max:									dataSetInfo.rowCount
+					max:									Math.max(1, dataSetInfo.rowCount)
 					negativeValues:							false
-					defaultValue:							(dataSetInfo.rowCount < 5)? dataSetInfo.rowCount : 5
+					defaultValue:							Math.max(1, Math.min(5, dataSetInfo.rowCount))
 				}
 			}
 			
@@ -662,7 +662,7 @@ Form
 						visible:						controlChartType.currentIndex == 2 && dataFormat.currentValue == "wideFormat"
 						defaultValue:					2
 						min: 							2
-						max: 							dataSetInfo.rowCount
+						max: 							Math.max(2, dataSetInfo.rowCount)
 					}
 
 					Group 
@@ -675,7 +675,7 @@ Form
 							label:							qsTr("Moving range length")
 							defaultValue:					2
 							min: 							2
-							max: 							dataSetInfo.rowCount
+							max: 							Math.max(2, dataSetInfo.rowCount)
 						}
 
 						CheckBox
@@ -1057,7 +1057,7 @@ Form
 					label:							qsTr("Moving range length")
 					defaultValue:					2
 					min: 							2
-					max: 							dataSetModel.rowCount()
+					max: 							Math.max(2, dataSetInfo.rowCount)
 				}
 
 				CheckBox

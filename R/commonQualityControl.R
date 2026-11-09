@@ -1111,8 +1111,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         if (plotType == "cusum" && !is.na(formattedPoint)) {
           formattedPoint <- if (currentPoint <= splitPoint) paste0(formattedPoint, gettext(" - upper")) else paste0(formattedPoint, gettext(" - lower"))
         }
-        if (!identical(tableLabels, ""))
-          formattedPoint <- if (is.na(currentPoint)) NA else paste0(formattedPoint, " (", tableLabels[pointLabel], ")")
+        if (!identical(tableLabels, "")) {
+          label <- tableLabels[pointLabel]
+          if (is.na(label)) # a missing axis label shows as an empty one, not as "NA"
+            label <- ""
+          formattedPoint <- if (is.na(currentPoint)) NA else paste0(formattedPoint, " (", label, ")")
+        }
         formattedPoints <- c(formattedPoints, formattedPoint)
       }
       tableListCombined[[test]] <- formattedPoints
