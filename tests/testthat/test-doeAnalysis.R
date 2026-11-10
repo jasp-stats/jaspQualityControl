@@ -5790,3 +5790,66 @@ test_that("Response optimizer averages over blocks and holds covariates at their
   expect_equal(as.numeric(plotSummary[["Result fit"]]), expected, tolerance = 1e-3)
   expect_equal(as.numeric(prediction[["fit"]]), expected, tolerance = 1e-3)
 })
+
+test_that("Response optimizer predicts every level of several discrete factors (jasp-issues#4665)", {
+  # Merging the factor levels used to drop the contribution of the last Strain level (D) and of Conc 1 and 2.
+  # The data make D / 1 the optimum, so the solution table, the summary plot and its table all hit those levels.
+  set.seed(1)
+  levelData <- expand.grid(Strain = c("A", "B", "C", "D"), Conc = c("1", "2", "3"), Rep = 1:2, stringsAsFactors = FALSE)
+  levelData$Yield <- 80 + c(A = -15, B = -8, C = 5, D = 18)[levelData$Strain] + c(20, 2, -22)[as.integer(levelData$Conc)] +
+    round(rnorm(nrow(levelData), sd = 3), 2)
+  levelData$Rep <- NULL
+
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial    <- "Yield"
+  options$fixedFactorsFactorial <- c("Strain", "Conc")
+  options$codeFactors           <- FALSE
+  options$highestOrder          <- FALSE
+  options$modelTerms            <- list(list(components = "Strain"), list(components = "Conc"))
+  options$responsesResponseOptimizer <- list(list(
+    responseOptimizerGoal       = "maximize",
+    responseOptimizerImportance = 1,
+    responseOptimizerLowerBound = 0,
+    responseOptimizerTarget     = 0.5,
+    responseOptimizerUpperBound = 1,
+    responseOptimizerWeight     = 1,
+    variable                    = "Yield"
+  ))
+  options$optimizationPlot <- TRUE
+
+  refData <- levelData
+  refData$Strain <- factor(refData$Strain)
+  refData$Conc   <- factor(refData$Conc)
+  refFit <- stats::lm(Yield ~ Strain + Conc, data = refData, contrasts = list(Strain = "contr.sum", Conc = "contr.sum"))
+  refPredict <- function(strain, conc)
+    unname(stats::predict(refFit, data.frame(Strain = factor(strain, levels(refData$Strain)), Conc = factor(conc, levels(refData$Conc)))))
+
+  # summary plot: subplots in column-major order, row 1 composite desirability and row 2 the response
+  # ($subplots, not [["subplots"]]: the plot object defines its own [[)
+  plotResponses <- function(results) {
+    plot <- results[["state"]][["figures"]][[results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]]][["obj"]]
+    lapply(plot$subplots[c(2, 4)], function(p) stats::setNames(p[["data"]][["y"]], as.character(p[["data"]][["x"]])))
+  }
+
+  set.seed(123)
+  results  <- runAnalysis("doeAnalysis", levelData, options)
+  solution <- results[["results"]][["tableRoSolution"]][["data"]][[1]]
+  expect_equal(c(solution[["Strain"]], solution[["Conc"]]), c("D", "1"))
+  expect_equal(as.numeric(solution[["Yield_fit"]]), refPredict("D", "1"), tolerance = 1e-3)
+  plotSummary <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]][[1]]
+  expect_equal(as.numeric(plotSummary[["Yield fit"]]), refPredict("D", "1"), tolerance = 1e-3)
+  responses <- plotResponses(results)
+  expect_equal(unname(responses[[1]][c("A", "B", "C", "D")]), refPredict(c("A", "B", "C", "D"), "1"))
+  expect_equal(unname(responses[[2]][c("1", "2", "3")]), refPredict("D", c("1", "2", "3")))
+
+  # manual predictor values
+  options$optimizationPlotCustomParameters      <- TRUE
+  options$optimizationPlotCustomParameterValues <- list(list(value = "D", variable = "Strain"), list(value = "2", variable = "Conc"))
+  set.seed(123)
+  results     <- runAnalysis("doeAnalysis", levelData, options)
+  plotSummary <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]][[1]]
+  expect_equal(as.numeric(plotSummary[["Yield fit"]]), refPredict("D", "2"), tolerance = 1e-3)
+  responses <- plotResponses(results)
+  expect_equal(unname(responses[[1]][c("A", "B", "C", "D")]), refPredict(c("A", "B", "C", "D"), "2"))
+  expect_equal(unname(responses[[2]][c("1", "2", "3")]), refPredict("D", c("1", "2", "3")))
+})

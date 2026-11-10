@@ -47,7 +47,8 @@
 * Attributes agreement analysis: Fleiss' kappa no longer crashes with newer `irr` (>= 0.85) when a within-appraiser input has a single measurement column; returns NaN as before.
 * DOE Analysis: the Effect column of the coefficients table is now 2 × coefficient (on the −1/+1 scale) for main effects and interactions of every order. Previously 2-way and 3-way interactions were inflated (4× and 6×), effects depended on the factor level labels, and uncoded continuous predictors and manual coding beyond ±1 gave wrong values. Effects are left blank for squared terms and factors with more than two levels, and a footnote explains the definition ([PR #525](https://github.com/jasp-stats/jaspQualityControl/pull/525)).
 * DOE Analysis: no longer crashes when a discrete factor is fully removed from the model due to aliasing ([PR #525](https://github.com/jasp-stats/jaspQualityControl/pull/525)).
-* DOE Analysis, response optimizer: with blocks or covariates in the model, the fitted responses and desirabilities added every block and covariate coefficient in full. Predictions are now averaged over the blocks and covariates are held at their mean, matching the new prediction table.
+* DOE Analysis, response optimizer: with blocks or covariates in the model, the fitted responses and desirabilities added every block and covariate coefficient in full. Predictions are now averaged over the blocks and covariates are held at their mean, matching the new prediction table ([Issue #4665](https://github.com/jasp-stats/jasp-issues/issues/4665)).
+* DOE Analysis, response optimizer: with two or more discrete factors, the optimization plot, its summary table and the solution table's fitted response gave some factor levels no contribution (e.g. the last level of the first factor), because the factor levels were merged. The optimal settings themselves were not affected ([Issue #4665](https://github.com/jasp-stats/jasp-issues/issues/4665)).
 
 ---
 

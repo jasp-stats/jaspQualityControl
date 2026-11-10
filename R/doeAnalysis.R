@@ -762,7 +762,7 @@ get_levels <- function(var, num_levels, dataset) {
   if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, ""))
     contLevels <- if (length(optimParam) > 1) optimParam[names(optimParam) %in% continuousPredictors] else optimParam
   if (length(discretePredictors) >= 1 && !identical(discretePredictors, ""))
-    discLevels <- if (length(optimParam) > 1) unlist(optimParam[names(optimParam) %in% unlist(discretePredictors)]) else optimParam
+    discLevels <- .doeDiscreteSettings(optimParam, discretePredictors)
 
   predValues <- .equationPredictionFunction(continuousLevels = contLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
                                             currentDiscreteLevels = discLevels, coefficients = coefficients, dependent = roDependent)
@@ -931,7 +931,7 @@ get_levels <- function(var, num_levels, dataset) {
           currentSettings <- factor(currentSettings, levels = levels(dataset[[discPred]]))
         }
       }
-      currentDiscreteLevels <- if (length(currentSettings) > 1) unlist(currentSettings[discretePredictors]) else currentSettings
+      currentDiscreteLevels <- .doeDiscreteSettings(currentSettings, discretePredictors)
     } else {
       currentDiscreteLevels <- ""
     }
@@ -969,7 +969,7 @@ get_levels <- function(var, num_levels, dataset) {
       continuousLevels <- ""
     }
     if (length(discretePredictors) >= 1 && !identical(discretePredictors, "")) {
-      currentDiscreteLevels <- if (length(currentSettings) > 1) unlist(currentSettings[discretePredictors]) else currentSettings
+      currentDiscreteLevels <- .doeDiscreteSettings(currentSettings, discretePredictors)
     } else {
       currentDiscreteLevels <- ""
     }
@@ -1009,11 +1009,8 @@ get_levels <- function(var, num_levels, dataset) {
                                                            roOptionsDf = roOptionsDf)
         if (outcomeType == "compDesi"| outcomeType == "individualDesirability")
           plottingWindowDf$y <- pmax(0, pmin(1, plottingWindowDf$y))
-        if (length(currentDiscreteLevels) > 1) {
-          plottingWindowDf$color <- ifelse(as.character(plottingWindowDf$x) == as.character(currentDiscreteLevels[currentPred]), "red", "blue")
-        } else {
-          plottingWindowDf$color <- ifelse(as.character(plottingWindowDf$x) == as.character(currentDiscreteLevels), "red", "blue")
-        }
+        currentLevel <- if (is.list(currentDiscreteLevels)) currentDiscreteLevels[[currentPred]] else currentDiscreteLevels
+        plottingWindowDf$color <- ifelse(as.character(plottingWindowDf$x) == as.character(currentLevel), "red", "blue")
           yLimits <- if (outcomeType == "compDesi" | outcomeType == "individualDesirability") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
         yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plottingWindowDf$y, yLimits))
         plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y, color = color)) +
@@ -1170,6 +1167,16 @@ get_levels <- function(var, num_levels, dataset) {
     coefficients[[response]] <- est[!columnTerm %in% nuisance]
   }
   return(coefficients)
+}
+
+# Discrete predictor settings for the prediction equation (.equationPredictionFunction), as a named list so that each
+# factor keeps its own levels. unlist() merges them into one factor, but the equation uses the level position, so the
+# levels of later factors and the last level of earlier factors got no contribution (jasp-issues#4665).
+# A single setting stays as is.
+.doeDiscreteSettings <- function(settings, discretePredictors) {
+  if (length(settings) == 1)
+    return(settings)
+  return(as.list(settings)[unlist(discretePredictors)])
 }
 
 .doeResponseOptimizerDependencies <- function() {
@@ -1355,8 +1362,7 @@ get_levels <- function(var, num_levels, dataset) {
       }
     } else if ((valueName %in% discretePredictors)) {
       if (length(discretePredictors) > 1) {
-        valueIndex <- which(names(currentDiscreteLevels) == valueName)
-        currentDiscreteLevels[valueIndex] <- value[i]
+        currentDiscreteLevels[[valueName]] <- value[i] # [[ ]] keeps the factor; [ ] on a list would drop it to its code
       } else {
         currentDiscreteLevels <- value[i]
       }
@@ -1404,7 +1410,7 @@ get_levels <- function(var, num_levels, dataset) {
         } else if (coef_j %in% continuousPredictors) { # cont. predictors don't have an appended factor level so we use coef_j here
           coefResult <- if (length(continuousLevels) > 1) c(coefResult, continuousLevels[[coef_j]]) else c(coefResult, unlist(continuousLevels))
         } else if (coef_j_clean %in% discretePredictors) {
-          current_j_level <- if (length(currentDiscreteLevels)  > 1) currentDiscreteLevels[[coef_j_clean]] else unname(currentDiscreteLevels)
+          current_j_level <- if (is.list(currentDiscreteLevels) || length(currentDiscreteLevels) > 1) currentDiscreteLevels[[coef_j_clean]] else unname(currentDiscreteLevels)
           max_j_level <- length(levels(current_j_level))
           coef_j_level <- as.numeric(coef_j_level)
           if (as.numeric(current_j_level) == coef_j_level) {
