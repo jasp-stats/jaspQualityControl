@@ -447,7 +447,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   p <- ggplot2::ggplot() +
     ggplot2::geom_hline(yintercept = center, col = "green") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_y_continuous(name =  gettext("Defects per unit") ,limits = yLimits, breaks = yBreaks) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
@@ -613,7 +613,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   p <- ggplot2::ggplot() +
     ggplot2::geom_hline(yintercept = center, col = "green") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_y_continuous(name =  gettext("Defects per unit") ,limits = yLimits, breaks = yBreaks) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
