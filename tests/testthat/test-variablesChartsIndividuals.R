@@ -390,3 +390,31 @@ test_that("12.3 Test of all rules for x-mr chart - MR Table", {
                                       "", "Point 33", "", "Point 34", "", "Point 35", "", "Point 36",
                                       "", "Point 44"))
 })
+
+# Std. dev. from moving ranges without a complete moving range ####
+.imrOptions <- function(stage = "", movingRangeLength = 3) {
+  options <- analysisOptions("variablesChartsIndividuals")
+  options$measurement               <- "Measurement"
+  options$stage                     <- stage
+  options$xmrChartMovingRangeLength <- movingRangeLength
+  options
+}
+
+results <- runAnalysis("variablesChartsIndividuals", data.frame(Measurement = c(1.2, NA, 2.3, NA)), .imrOptions(movingRangeLength = 2))
+
+test_that("MR1 X-mR chart without stages errors when every moving range contains a missing value", {
+  plot <- results[["results"]][["Ichart"]][["collection"]][["Ichart_plot"]]
+  expect_identical(results[["status"]], "complete")
+  expect_identical(plot[["status"]], "error")
+  expect_match(plot[["error"]][["errorMessage"]], "The data contain 2 non-missing observations. Estimating the standard deviation from moving ranges of length 2", fixed = TRUE)
+})
+
+data <- data.frame(Measurement = c(1.2, 2.3, 1.8, 2.9, 2.1, 1.7, NA, 2.4, NA), Stage = rep(c("A", "B"), c(6, 3)))
+results <- runAnalysis("variablesChartsIndividuals", data, .imrOptions(stage = "Stage"))
+
+test_that("MR2 X-mR chart errors for a stage whose moving ranges all contain a missing value", {
+  plot <- results[["results"]][["Ichart"]][["collection"]][["Ichart_plot"]]
+  expect_identical(results[["status"]], "complete")
+  expect_identical(plot[["status"]], "error")
+  expect_match(plot[["error"]][["errorMessage"]], "Stage 'B' contains 1 non-missing observation.", fixed = TRUE)
+})

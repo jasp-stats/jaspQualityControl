@@ -521,13 +521,31 @@ test_that("WF5 Test of Time weighted charts report", {
   jaspTools::expect_equal_plots(testPlot, "time-weighted-charts-report_WF5")
 })
 
-# Stages too short for the moving range ####
-# Stage "C" has a single subgroup, fewer than the moving range length (2). The moving range is only used for
-# individual observations, so only that case errors.
+# Std. dev. from moving ranges without a complete moving range ####
+# The moving range sigma is used for individual observations (subgroups of size <= 1). A stage (or the data) without a
+# complete moving range gives an error on that chart only.
 
-.twStageData <- function(subgroupSize) {
+## Moving range helper ####
+test_that("MR0.1 Moving range sigma skips ranges with missing values", {
+  expect_equal(jaspQualityControl:::.movingRangeSigma(c(1, 3, 2, 5), k = 2)[["sigma"]], 2 / 1.128)
+  expect_equal(jaspQualityControl:::.movingRangeSigma(c(1, NA, 2, 4), k = 2)[["sigma"]], 2 / 1.128)
+  expect_equal(dim(jaspQualityControl:::.movingRangeSigma(c(1, 2, 4), k = 3)[["matrix"]]), c(1, 3))
+})
+
+test_that("MR0.2 Moving range sigma errors without a complete moving range", {
+  expect_error(jaspQualityControl:::.movingRangeSigma(5, k = 2),
+               "The data contain 1 non-missing observation. Estimating the standard deviation from moving ranges of length 2",
+               class = "qcDataError", fixed = TRUE)
+  expect_error(jaspQualityControl:::.movingRangeSigma(c(1, NA, 2, NA, 3), k = 2),
+               "The data contain 3 non-missing observations.", class = "qcDataError", fixed = TRUE)
+  expect_error(jaspQualityControl:::.movingRangeSigma(c(1, 2), k = 3, stage = "B"),
+               "Stage 'B' contains 2 non-missing observations. Estimating the standard deviation from moving ranges of length 3",
+               class = "qcDataError", fixed = TRUE)
+})
+
+.twStageData <- function(subgroupSize, lastStageSubgroups = 1) {
   set.seed(1)
-  stageSubgroups <- c(A = 6, B = 6, C = 1)
+  stageSubgroups <- c(A = 6, B = 6, C = lastStageSubgroups)
   data.frame(
     Measurement = rnorm(sum(stageSubgroups) * subgroupSize),
     Stage       = factor(rep(names(stageSubgroups), stageSubgroups * subgroupSize))
@@ -552,59 +570,130 @@ test_that("WF5 Test of Time weighted charts report", {
   options
 }
 
+.twCusumPlot <- function(results) results[["results"]][["CusumChart"]][["collection"]][["CusumChart_plot"]]
+.twEwmaPlot  <- function(results) results[["results"]][["EWMAPlot"]][["collection"]][["EWMAPlot_plot"]]
+
 .twExpectChartDrawn <- function(results, plot) {
   expect_identical(results[["status"]], "complete")
   expect_identical(plot[["status"]], "complete")
   expect_false(is.null(results[["state"]][["figures"]][[plot[["data"]]]][["obj"]]))
 }
 
-## Individual observations -> error ####
+.twExpectChartError <- function(results, plot, message) {
+  expect_identical(results[["status"]], "complete")
+  expect_identical(plot[["status"]], "error")
+  expect_match(plot[["error"]][["errorMessage"]], message, fixed = TRUE)
+}
+
+# y values of the center line and control limits (step layers) of a drawn chart
+.twControlLimits <- function(results, plot) {
+  plotObject <- results[["state"]][["figures"]][[plot[["data"]]]][["obj"]]
+  stepLayers <- which(vapply(plotObject$layers, function(layer) inherits(layer$geom, "GeomStep"), logical(1)))
+  lapply(stepLayers, function(i) ggplot2::layer_data(plotObject, i)[["y"]])
+}
+
+## Individual observations, stage with a single observation -> error ####
 results <- runAnalysis("timeWeightedCharts", .twStageData(subgroupSize = 1), .twStageOptions("individual"))
 
 test_that("MR1.1 Cumulative sum chart errors for stage with single individual observation", {
-  plot <- results[["results"]][["CusumChart"]][["collection"]][["CusumChart_plot"]]
-  expect_identical(results[["status"]], "complete")
-  expect_identical(plot[["status"]], "error")
-  expect_match(plot[["error"]][["errorMessage"]], "only 1 individual observation. Cumulative sum chart requires at least 2", fixed = TRUE)
+  .twExpectChartError(results, .twCusumPlot(results), "Stage 'C' contains 1 non-missing observation. Estimating the standard deviation from moving ranges of length 2")
 })
 
 test_that("MR1.2 EWMA chart errors for stage with single individual observation", {
-  plot <- results[["results"]][["EWMAPlot"]][["collection"]][["EWMAPlot_plot"]]
-  expect_identical(plot[["status"]], "error")
-  expect_match(plot[["error"]][["errorMessage"]], "only 1 individual observation. Exponentially weighted moving average chart requires at least 2", fixed = TRUE)
+  .twExpectChartError(results, .twEwmaPlot(results), "Stage 'C' contains 1 non-missing observation. Estimating the standard deviation from moving ranges of length 2")
 })
 
 ## Same stage counts with subgroup size > 1 -> charts drawn ####
 results <- runAnalysis("timeWeightedCharts", .twStageData(subgroupSize = 3), .twStageOptions("manual"))
 
 test_that("MR2.1 Cumulative sum chart is drawn for stage with single subgroup of size > 1", {
-  .twExpectChartDrawn(results, results[["results"]][["CusumChart"]][["collection"]][["CusumChart_plot"]])
+  .twExpectChartDrawn(results, .twCusumPlot(results))
 })
 
 test_that("MR2.2 EWMA chart is drawn for stage with single subgroup of size > 1", {
-  .twExpectChartDrawn(results, results[["results"]][["EWMAPlot"]][["collection"]][["EWMAPlot_plot"]])
+  .twExpectChartDrawn(results, .twEwmaPlot(results))
 })
 
 ## Historical std. dev. -> charts drawn ####
 results <- runAnalysis("timeWeightedCharts", .twStageData(subgroupSize = 1), .twStageOptions("individual", sdSource = "historical"))
 
 test_that("MR3.1 Cumulative sum chart with historical std. dev. is drawn for stage with single observation", {
-  .twExpectChartDrawn(results, results[["results"]][["CusumChart"]][["collection"]][["CusumChart_plot"]])
+  .twExpectChartDrawn(results, .twCusumPlot(results))
 })
 
 test_that("MR3.2 EWMA chart with historical std. dev. is drawn for stage with single observation", {
-  .twExpectChartDrawn(results, results[["results"]][["EWMAPlot"]][["collection"]][["EWMAPlot_plot"]])
+  .twExpectChartDrawn(results, .twEwmaPlot(results))
 })
 
-## Report mode -> error shown on report ####
+## Report mode, only the EWMA chart fails -> report keeps the cumulative sum chart ####
 options <- .twStageOptions("individual")
-options$report <- TRUE
-results <- runAnalysis("timeWeightedCharts", .twStageData(subgroupSize = 1), options)
+options$report                                                   <- TRUE
+options$exponentiallyWeightedMovingAverageChartMovingRangeLength <- 3
+results <- runAnalysis("timeWeightedCharts", .twStageData(subgroupSize = 1, lastStageSubgroups = 2), options)
 
-test_that("MR4 Report shows moving range errors of both charts", {
+test_that("MR4 Report shows the cumulative sum chart and the EWMA chart error", {
   report <- results[["results"]][["report"]]
   expect_identical(results[["status"]], "complete")
-  expect_identical(report[["status"]], "error")
-  expect_match(report[["error"]][["errorMessage"]], "Cumulative sum chart requires at least 2")
-  expect_match(report[["error"]][["errorMessage"]], "Exponentially weighted moving average chart requires at least 2")
+  expect_identical(report[["status"]], "complete")
+  subplots <- Filter(ggplot2::is_ggplot, results[["state"]][["figures"]][[report[["data"]]]][["obj"]]$subplots)
+  hasSteps <- vapply(subplots, function(p) any(vapply(p$layers, function(l) inherits(l$geom, "GeomStep"), logical(1))), logical(1))
+  labels   <- unlist(lapply(subplots, function(p) lapply(seq_along(p$layers), function(i) as.character(ggplot2::layer_data(p, i)[["label"]]))))
+  expect_true(any(hasSteps))
+  expect_true("Exponentially weighted moving average chart" %in% labels)
+  expect_true(any(grepl("Stage 'C' contains 2 non-missing", labels, fixed = TRUE)))
+})
+
+## No stages, a single observation -> error ####
+options <- .twStageOptions("individual")
+options$stagesLongFormat <- ""
+results <- runAnalysis("timeWeightedCharts", data.frame(Measurement = 5.1), options)
+
+test_that("MR5 Charts without stages error for a single individual observation", {
+  .twExpectChartError(results, .twCusumPlot(results), "The data contain 1 non-missing observation.")
+  .twExpectChartError(results, .twEwmaPlot(results), "The data contain 1 non-missing observation.")
+})
+
+## Missing value in individual observations -> EWMA sigma from moving ranges ####
+.twMissingData <- data.frame(Measurement = c(1.2, 2.3, 1.8, 2.9, NA, 2.1, 1.7, 2.4, 2.0, 1.9), Subgroup = paste0("g", 1:10))
+options <- .twStageOptions("individual")
+options$stagesLongFormat <- ""
+resultsIndividual <- runAnalysis("timeWeightedCharts", .twMissingData, options)
+options <- .twStageOptions("groupingVariable")
+options$stagesLongFormat <- ""
+options$subgroup         <- "Subgroup"
+resultsGrouping <- runAnalysis("timeWeightedCharts", .twMissingData, options)
+
+test_that("MR6.1 EWMA chart of individual observations with a missing value is drawn", {
+  .twExpectChartDrawn(resultsIndividual, .twEwmaPlot(resultsIndividual))
+})
+
+test_that("MR6.2 EWMA limits with subgroups of size 1 and a missing value are from moving ranges, not zero width", {
+  limitsGrouping <- .twControlLimits(resultsGrouping, .twEwmaPlot(resultsGrouping))
+  expect_equal(limitsGrouping, .twControlLimits(resultsIndividual, .twEwmaPlot(resultsIndividual)))
+  expect_gt(max(unlist(limitsGrouping), na.rm = TRUE) - min(unlist(limitsGrouping), na.rm = TRUE), 0.5)
+})
+
+## Stage of missing values only -> error ####
+data <- .twStageData(subgroupSize = 1, lastStageSubgroups = 2)
+data$Measurement[data$Stage == "C"] <- NA
+results <- runAnalysis("timeWeightedCharts", data, .twStageOptions("individual"))
+
+test_that("MR7 Charts error for a stage without non-missing observations", {
+  .twExpectChartError(results, .twCusumPlot(results), "Stage 'C' contains 0 non-missing observations.")
+  .twExpectChartError(results, .twEwmaPlot(results), "Stage 'C' contains 0 non-missing observations.")
+})
+
+## Across rows with one measurement column (moving range length not shown) -> error ####
+options <- analysisOptions("timeWeightedCharts")
+options$dataFormat                                      <- "wideFormat"
+options$measurementsWideFormat                          <- "Measurement"
+options$stagesWideFormat                                <- "Stage"
+options$cumulativeSumChartSdMethod                      <- "s"
+options$exponentiallyWeightedMovingAverageChart         <- TRUE
+options$exponentiallyWeightedMovingAverageChartSdMethod <- "s"
+results <- runAnalysis("timeWeightedCharts", .twStageData(subgroupSize = 1), options)
+
+test_that("MR8 Charts across rows with one column error for stage with single observation", {
+  .twExpectChartError(results, .twCusumPlot(results), "Stage 'C' contains 1 non-missing observation.")
+  .twExpectChartError(results, .twEwmaPlot(results), "Stage 'C' contains 1 non-missing observation.")
 })
