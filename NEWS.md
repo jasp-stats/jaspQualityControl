@@ -42,6 +42,7 @@
 * Attributes agreement analysis: Fleiss' kappa no longer crashes with newer `irr` (>= 0.85) when a within-appraiser input has a single measurement column; returns NaN as before.
 * DOE Analysis: the Effect column of the coefficients table is now 2 × coefficient (on the −1/+1 scale) for main effects and interactions of every order. Previously 2-way and 3-way interactions were inflated (4× and 6×), effects depended on the factor level labels, and uncoded continuous predictors and manual coding beyond ±1 gave wrong values. Effects are left blank for squared terms and factors with more than two levels, and a footnote explains the definition ([PR #525](https://github.com/jasp-stats/jaspQualityControl/pull/525)).
 * DOE Analysis: no longer crashes when a discrete factor is fully removed from the model due to aliasing ([PR #525](https://github.com/jasp-stats/jaspQualityControl/pull/525)).
+* DOE Analysis: the Response optimizer now uses the observed maximum (maximize) or minimum (minimize) as the default target when "Set all bounds manually" is on and "Set all targets manually" is off. Previously the target silently became the value of the disabled Upper/Lower field (1 or 0), which distorted the desirability ([PR #541](https://github.com/jasp-stats/jaspQualityControl/pull/541)).
 
 ---
 
