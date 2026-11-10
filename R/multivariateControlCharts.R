@@ -166,6 +166,7 @@ multivariateControlChartsInternal <- function(jaspResults, dataset, options) {
     if (hasTestData) {
       mqccResult <- try(qcc::mqcc(trainingData, type = "T2.single",
                                    newdata = testData,
+                                   newlabels = rownames(testData),
                                    pred.limits = TRUE,
                                    confidence.level = confidenceLevel,
                                    plot = FALSE))
