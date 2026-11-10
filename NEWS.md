@@ -24,6 +24,7 @@
 * DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
 ## Fixed
+* Multivariate control charts: keep exported T² values aligned with their original rows when incomplete observations are omitted.
 * Multivariate control charts: fix Phase II errors and missing observation labels caused by automatic naming.
 * Control charts and process capability: prevent overflow when calculating bias-corrected standard deviations.
 * Time weighted charts: the exponentially weighted moving average chart now offers S-bar and R-bar as std. dev. estimation method for data in wide format ("Across rows"), instead of only X-mR, which stopped the analysis with two or more measurement columns.
