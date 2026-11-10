@@ -195,10 +195,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["controlChartType"]] == "xmr") {
         ruleList1 <- .getRuleListIndividualCharts(options, type = "I")
         ruleList2 <- .getRuleListIndividualCharts(options, type = "MR")
-        controlCharts[[1]] <- .controlChart(dataset = dataset[measurements], plotType = "I",
+        controlCharts[[1]] <- .qcCapabilityControlChart(dataset = dataset[measurements], plotType = "I",
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
                                             xAxisLabels = seq_along(unlist(dataset[measurements])), ruleList = ruleList1)$plotObject
-        controlCharts[[2]] <- .controlChart(dataset = dataset[measurements], plotType = "MR",
+        controlCharts[[2]] <- .qcCapabilityControlChart(dataset = dataset[measurements], plotType = "MR",
                                             xAxisLabels = seq_along(unlist(dataset[measurements])),
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
                                             movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList2)$plotObject
@@ -218,11 +218,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         # Create the rule list for the out-of-control signals
         ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
         ruleList2 <- .getRuleListSubgroupCharts(options, type = secondPlotType)
-        controlCharts[[1]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
+        controlCharts[[1]] <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                             xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
                                             unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList1)$plotObject
-        controlCharts[[2]] <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
+        controlCharts[[2]] <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
                                             tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
                                             fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList2)$plotObject
@@ -350,11 +350,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         # Create the rule list for the out-of-control signals
         ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
         ruleList2 <- .getRuleListSubgroupCharts(options, type = secondPlotType)
-        xBarChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
+        xBarChart <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
                                    nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                    xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
                                    unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList1)
-        secondPlot <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
+        secondPlot <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
                                     nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
                                     tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
                                     fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList2)
@@ -392,11 +392,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         }
         ruleList1 <- .getRuleListIndividualCharts(options, type = "I")
         ruleList2 <- .getRuleListIndividualCharts(options, type = "MR")
-        individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I",
+        individualChart <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "I",
                                          nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                          xAxisLabels = seq_along(unlist(dataset[measurements])),
                                          specificationLimits = specificationLimitsControlChart, ruleList = ruleList1)
-        mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR",
+        mrChart <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "MR",
                                  nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                  xAxisLabels = seq_along(unlist(dataset[measurements])), movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList2)
         jaspResults[["xmr"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
@@ -418,6 +418,20 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     # Perform capability analysis
     .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements, stages)
   }
+}
+
+# Keep a missing moving range local to its chart, including charts embedded in reports.
+.qcCapabilityControlChart <- function(...) {
+  tryCatch(.controlChart(...), qcDataError = function(error) {
+    text <- strwrap(conditionMessage(error), width = 60)
+    list(plotObject = .ggplotWithText(text = text, maxRows = max(8, length(text))), table = NULL)
+  })
+}
+
+# Capability tables already represent an unavailable within SD as missing. Keep the
+# overall estimates available; the process summary explains the missing within SD.
+.qcCapabilityMovingRangeSd <- function(dataset, k) {
+  tryCatch(.movingRangeSigma(dataset, k)[["sigma"]], qcDataError = function(error) NA_real_)
 }
 
 # Functions for capability analysis section ####
@@ -609,7 +623,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     } else {
       if (length(measurements) < 2) {
         k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-        sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+        sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .qcCapabilityMovingRangeSd(dataCurrentStage[measurements], k)
       } else {
         sdType <- switch(options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]], rBar = "r", sBar = "s", pooled = "pooled")
         unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
@@ -1119,7 +1133,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .qcCapabilityMovingRangeSd(dataCurrentStage[measurements], k)
     } else {
       sdType <- switch(options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]], rBar = "r", sBar = "s", pooled = "pooled")
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
@@ -1676,7 +1690,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .qcCapabilityMovingRangeSd(dataCurrentStage[measurements], k)
     } else {
       sdType <- switch(options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]], rBar = "r", sBar = "s", pooled = "pooled")
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
@@ -1695,7 +1709,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     cpl <-if (options[["lowerSpecificationLimitBoundary"]]) NA else (processMean - lsl) / ((tolMultiplier/2) * sdw)
     cpu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - processMean) / ((tolMultiplier/2) * sdw)
     if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]) {
-      cpk <-if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]) NA else min(cpu, cpl, na.rm = TRUE)
+      cpk <-if (is.na(sdw) || (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) NA else min(cpu, cpl, na.rm = TRUE)
     } else if (options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]) {
       cpk <- cpl
     } else {
@@ -1915,7 +1929,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .qcCapabilityMovingRangeSd(dataCurrentStage[measurements], k)
     } else {
       sdType <- switch(options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]], rBar = "r", sBar = "s", pooled = "pooled")
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
@@ -2136,7 +2150,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .qcCapabilityMovingRangeSd(dataCurrentStage[measurements], k)
     } else {
       sdType <- switch(options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]], rBar = "r", sBar = "s", pooled = "pooled")
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]

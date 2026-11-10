@@ -25,6 +25,8 @@
 * DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
 ## Fixed
+* Time weighted charts: singleton subgroups across multiple measurement columns now use moving ranges in row order, preserving entirely missing rows as gaps.
+* Process Capability: missing moving ranges are shown on the affected control chart without discarding capability tables or the report; unavailable within standard deviations remain missing while overall estimates are retained.
 * Time weighted charts, variables charts for individuals: when the std. dev. is estimated from moving ranges and a stage (or the data) has no complete moving range (fewer non-missing observations than the moving range length, or every range interrupted by a missing value), the chart shows an error naming the stage instead of stopping the analysis or drawing NaN limits. In the time weighted charts report, only the affected chart is replaced by its error.
 * Time weighted charts: the EWMA chart estimates the std. dev. of individual observations with missing values from moving ranges, like the CUSUM chart (previously it stopped with an error, or, with a grouping variable or across-rows data, drew zero-width control limits).
 * Time weighted charts: the CUSUM moving range length field is shown based on the CUSUM (not the EWMA) std. dev. source.

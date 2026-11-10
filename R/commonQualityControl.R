@@ -911,7 +911,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       if (phase2) {
         sigma <- as.numeric(phase2Sd)
       } else if (all(n <= 1)) { # n = 0 is a missing observation
-        sigma <- .movingRangeSigma(dataCurrentStage, movingRangeLength, stageLabel)[["sigma"]]
+        # Keep one value per subgroup row, even when the observed column varies between rows.
+        sigma <- .movingRangeSigma(rowMeans(dataCurrentStage, na.rm = TRUE), movingRangeLength, stageLabel)[["sigma"]]
         # sigma for subgroup size > 1
       } else {
         sigma <- .sdXbar(dataCurrentStage, type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)
@@ -931,7 +932,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       if (phase2) {
         sigma <- as.numeric(phase2Sd)
       } else if (all(n <= 1)) { # n = 0 is a missing observation, as for the cusum chart
-        sigma <- .movingRangeSigma(dataCurrentStage, movingRangeLength, stageLabel)[["sigma"]]
+        sigma <- .movingRangeSigma(rowMeans(dataCurrentStage, na.rm = TRUE), movingRangeLength, stageLabel)[["sigma"]]
         # sigma for subgroup size > 1
       } else {
         sigma <- .sdXbar(dataCurrentStage, type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)

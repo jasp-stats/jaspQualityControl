@@ -697,3 +697,27 @@ test_that("MR8 Charts across rows with one column error for stage with single ob
   .twExpectChartError(results, .twCusumPlot(results), "Stage 'C' contains 1 non-missing observation.")
   .twExpectChartError(results, .twEwmaPlot(results), "Stage 'C' contains 1 non-missing observation.")
 })
+
+## Singleton subgroups spread across columns keep row order and entirely missing rows ####
+for (values in list(c(1, 3, 5, 7, 2, 4), c(1, 3, NA, 7, 2, 4))) {
+  data <- data.frame(Measurement = values,
+                     First = ifelse(seq_along(values) %% 2 == 1, values, NA),
+                     Second = ifelse(seq_along(values) %% 2 == 0, values, NA))
+  options <- .twStageOptions("individual")
+  options$stagesLongFormat <- ""
+  individual <- runAnalysis("timeWeightedCharts", data, options)
+  options$dataFormat <- "wideFormat"
+  options$measurementsWideFormat <- c("First", "Second")
+  options$cumulativeSumChartSdMethod <- "s"
+  options$exponentiallyWeightedMovingAverageChartSdMethod <- "s"
+  acrossRows <- runAnalysis("timeWeightedCharts", data, options)
+
+  test_that(sprintf("MR9 Singleton subgroups across columns match individuals (missing row: %s)", anyNA(values)), {
+    .twExpectChartDrawn(acrossRows, .twCusumPlot(acrossRows))
+    .twExpectChartDrawn(acrossRows, .twEwmaPlot(acrossRows))
+    expect_equal(.twControlLimits(acrossRows, .twCusumPlot(acrossRows)),
+                 .twControlLimits(individual, .twCusumPlot(individual)))
+    expect_equal(.twControlLimits(acrossRows, .twEwmaPlot(acrossRows)),
+                 .twControlLimits(individual, .twEwmaPlot(individual)))
+  })
+}
