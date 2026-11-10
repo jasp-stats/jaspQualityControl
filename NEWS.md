@@ -49,6 +49,7 @@
 * DOE Analysis: no longer crashes when a discrete factor is fully removed from the model due to aliasing ([PR #525](https://github.com/jasp-stats/jaspQualityControl/pull/525)).
 * DOE Analysis, response optimizer: with blocks or covariates in the model, the fitted responses and desirabilities added every block and covariate coefficient in full. Predictions are now averaged over the blocks and covariates are held at their mean, matching the new prediction table ([Issue #4665](https://github.com/jasp-stats/jasp-issues/issues/4665)).
 * DOE Analysis, response optimizer: with two or more discrete factors, the optimization plot, its summary table and the solution table's fitted response gave some factor levels no contribution (e.g. the last level of the first factor), because the factor levels were merged. The optimal settings themselves were not affected ([Issue #4665](https://github.com/jasp-stats/jasp-issues/issues/4665)).
+* DOE Analysis: block and discrete factor levels without runs (e.g. all their rows filtered out or with missing responses) are dropped. Such a level made the model fall back from sum-to-zero to treatment contrasts, which the effects and the response optimizer assume.
 
 ---
 

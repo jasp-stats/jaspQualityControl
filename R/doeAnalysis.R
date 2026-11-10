@@ -163,7 +163,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     factorVars <- c(factorVars, blocks)
   }
   dataset <- .readDataSetToEnd(columns.as.numeric = numericVars, columns.as.factor = factorVars)
-  dataset <- na.omit(dataset)
+  # droplevels: levels without runs (filtered or missing) would make lm() drop the sum-to-zero contrasts
+  dataset <- droplevels(na.omit(dataset))
 
   if (length(blocks) > 0 && !identical(blocks, "")) # name of variable should always be "Block"
     names(dataset)[names(dataset) == blocks] <- "Block"
@@ -453,6 +454,11 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["objectSummary"]] <- regressionSummaryCoded
     resultCoded[["regression"]][["saturated"]] <- regressionSummaryCoded$df[2] == 0
 
+    # ANOVA fit and the data it was fitted on (the lack of fit test groups the runs on these variables)
+    anovaFitCoded   <- (options[["squaredTermsCoded"]] && options[["designType"]] == "responseSurfaceDesign") || options[["codeFactors"]]
+    anovaFitData    <- if (anovaFitCoded) regressionFitCoded else anovaRegressionFit
+    anovaFitDataset <- if (anovaFitCoded) datasetCoded else anovaDataset
+
     if (!result[["regression"]][["saturated"]]) {
       result[["regression"]][["s"]] <- regressionSummary[["sigma"]]
       result[["regression"]][["rsq"]] <- regressionSummary[["r.squared"]]
@@ -465,7 +471,6 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       resultCoded[["regression"]][["predrsq"]] <- .pred_r_squared(regressionFitCoded)
 
       ssType <- options[["sumOfSquaresType"]]
-      anovaFitData <- if ((options[["squaredTermsCoded"]] && options[["designType"]] == "responseSurfaceDesign") || options[["codeFactors"]]) regressionFitCoded else anovaRegressionFit
 
       if (ssType == "type1") {
         anovaFit <- anova(anovaFitData)
@@ -478,7 +483,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
       anovaFit[["Mean Sq"]] <- anovaFit[["Sum Sq"]] / anovaFit[["Df"]]
       anovaFit <- anovaFit[c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")] # rearrange, so it has the same order as the aov function
-      anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, ssType, unlist(covariates))
+      anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, ssType, unlist(covariates), anovaFitDataset)
     } else {
       result[["regression"]][["s"]] <- NA
       result[["regression"]][["rsq"]] <- 1
@@ -490,7 +495,6 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       resultCoded[["regression"]][["adjrsq"]] <- NA
       resultCoded[["regression"]][["predrsq"]] <- NA
 
-      anovaFitData <- if ((options[["squaredTermsCoded"]] && options[["designType"]] == "responseSurfaceDesign") || options[["codeFactors"]]) regressionFitCoded else anovaRegressionFit
       anovaFit <- summary(aov(anovaFitData))[[1]]
       errorRow <- data.frame(Df = 0, SS = 0, MS = 0) # add an error row to keep the format consistent
       colnames(errorRow) <- colnames(anovaFit)
@@ -498,7 +502,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       anovaFit <- rbind(anovaFit, errorRow)
       anovaFit$`F value` <- NA # add these empty columns to the saturated design so the anova fit object always has the same format
       anovaFit$`Pr(>F)` <- NA
-      anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, "type1", unlist(covariates)) # aov gives sequential SS
+      anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, "type1", unlist(covariates), anovaFitDataset) # aov gives sequential SS
 
     }
 
@@ -590,12 +594,14 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
     result[["regression"]][["coefficients"]][["effects"]] <- coefEffects
     result[["regression"]][["coefficients"]][["effectsSe"]] <- .doeEffectStandardErrors(effectsFit, coefEffects)
+    result[["regression"]][["coefficients"]][["effectsDf"]] <- effectsFit[["df.residual"]] # differs from regressionFit when coding changes the rank
     result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
     result[["regression"]][["coefficients"]][["effects"]][1] <- NA
     result[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFit, predictorsForLevelRemoval)
 
     resultCoded[["regression"]][["coefficients"]][["effects"]] <- coefEffectsCoded
     resultCoded[["regression"]][["coefficients"]][["effectsSe"]] <- .doeEffectStandardErrors(regressionFitCoded, coefEffectsCoded)
+    resultCoded[["regression"]][["coefficients"]][["effectsDf"]] <- regressionFitCoded[["df.residual"]]
     resultCoded[["regression"]][["coefficients"]][["est"]] <- coef(regressionFitCoded)[!is.na(coef(regressionFitCoded))]
     resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
     resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded, predictorsForLevelRemoval)
@@ -746,16 +752,13 @@ get_levels <- function(var, num_levels, dataset) {
 
   roOptionsState <- createJaspState()
   jaspResults[["roOptions"]] <- roOptionsState
-  jaspResults[["roOptions"]]$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
-                                      "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
-                                      "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
-                                      .doeAnalysisBaseDependencies()))
+  jaspResults[["roOptions"]]$dependOn(options = .doeResponseOptimizerDependencies())
   roOptionsState$object <- roOptionsDf
 
   roDependent <- roOptionsDf$variable
 
-  coefficients <- .doeOptimizerCoefficients(jaspResults, roDependent, dataset, blocks, covariates)
-  roOutcome <- .calculateOptimalResponse(jaspResults, options, dataset, continuousPredictors, discretePredictors, roDependent, roOptionsDf, coefficients)
+  models <- .doeOptimizerModels(jaspResults, roDependent, dataset, blocks, covariates)
+  roOutcome <- .calculateOptimalResponse(jaspResults, options, dataset, continuousPredictors, discretePredictors, roDependent, roOptionsDf, models)
   optimParam <- roOutcome$parameters
   desi <- roOutcome$desirability
   desi <- pmax(0, pmin(1, desi)) # after optim. desi can be bounded to 0 and 1
@@ -764,14 +767,11 @@ get_levels <- function(var, num_levels, dataset) {
   if (length(discretePredictors) >= 1 && !identical(discretePredictors, ""))
     discLevels <- .doeDiscreteSettings(optimParam, discretePredictors)
 
-  predValues <- .equationPredictionFunction(continuousLevels = contLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
-                                            currentDiscreteLevels = discLevels, coefficients = coefficients, dependent = roDependent)
+  predValues <- .doePredictResponses(continuousLevels = contLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
+                                     currentDiscreteLevels = discLevels, models = models, dependent = roDependent)
   roOutcomeState <- createJaspState()
   jaspResults[["roResult"]] <- roOutcomeState
-  jaspResults[["roResult"]]$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
-            "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
-            "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
-            .doeAnalysisBaseDependencies()))
+  jaspResults[["roResult"]]$dependOn(options = .doeResponseOptimizerDependencies())
   roOutcomeState$object <- roOutcome
 
   # Did all the required calculations and saved to state, if tables should not be displayed return now
@@ -786,10 +786,7 @@ get_levels <- function(var, num_levels, dataset) {
   tb1$addColumnInfo(name = "ub", title = "Upper", type = "number")
   tb1$addColumnInfo(name = "weight", title = "Weight", type = "number")
   tb1$addColumnInfo(name = "importance", title = "Importance", type = "number")
-  tb1$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
-                           "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
-                           "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
-                           .doeAnalysisBaseDependencies()))
+  tb1$dependOn(options = .doeResponseOptimizerDependencies())
   tb1$position <- 1
   jaspResults[["tableRoSettings"]] <- tb1
 
@@ -842,10 +839,7 @@ get_levels <- function(var, num_levels, dataset) {
     colTitle <- gettextf("%s fit", dep)
     tb2$addColumnInfo(name = colName, title = colTitle, type = "number")
   }
-  tb2$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
-                             "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
-                             "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
-                             "optimizationSolutionTable", .doeAnalysisBaseDependencies()))
+  tb2$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationSolutionTable"))
 
   tb2$position <- 2
   jaspResults[["tableRoSolution"]] <- tb2
@@ -877,7 +871,7 @@ get_levels <- function(var, num_levels, dataset) {
   if (!options[["optimizationPlot"]] || !readyModelPresent || !readyRO)
     return()
   roOutcome <- jaspResults[["roResult"]]$object
-  coefficients <- .doeOptimizerCoefficients(jaspResults, roDependent, dataset, blocks, covariates)
+  models <- .doeOptimizerModels(jaspResults, roDependent, dataset, blocks, covariates)
 
   discretePredictors <- unlist(discretePredictors)
   continuousPredictors <- unlist(continuousPredictors)
@@ -900,11 +894,7 @@ get_levels <- function(var, num_levels, dataset) {
       jaspTable$addColumnInfo(name = "weight", title = "Weight", type = "number")
       jaspTable$addColumnInfo(name = "importance", title = "Importance", type = "number")
       jaspTable$addFootnote(gettext("Enter values for all predictors to create an optimization Plot with manual input parameters."))
-      jaspTable$dependOn(options = c("responsesResponseOptimizer",
-                        "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
-                        "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
-                        "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
-                        "optimizationPlot", .doeAnalysisBaseDependencies()))
+      jaspTable$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationPlot"))
       jaspResults[["plotRo"]][["table"]] <- jaspTable
       return()
     }
@@ -918,10 +908,7 @@ get_levels <- function(var, num_levels, dataset) {
           jaspPlot$setError(paste0(gettextf("Enter plausible values for all discrete predictors.
                                    Value %1$s is not a possible for the discrete predictor %2$s. Allowed values: ",
                                             unlist(currentSettings[discPred]), discPred), paste0(levels(dataset[[discPred]]), collapse = ", "), "."))
-          jaspPlot$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
-                      "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
-                      "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
-                      "optimizationPlot", .doeAnalysisBaseDependencies()))
+          jaspPlot$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationPlot"))
           jaspResults[["plotRo"]][["plot"]] <- jaspPlot
           return()
         }
@@ -943,11 +930,7 @@ get_levels <- function(var, num_levels, dataset) {
         if (is.na(as.numeric(currentSettings[contPred]))) {
           jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
           jaspPlot$setError(gettext("Enter plausible values for all continuous predictors. Only numeric values are allowed."))
-          jaspPlot$dependOn(options = c("responsesResponseOptimizer",
-                            "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
-                            "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
-                            "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
-                            "optimizationPlot", .doeAnalysisBaseDependencies()))
+          jaspPlot$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationPlot"))
           jaspResults[["plotRo"]][["plot"]] <- jaspPlot
           return()
         }
@@ -1002,7 +985,7 @@ get_levels <- function(var, num_levels, dataset) {
                                                            continuousPredictors = continuousPredictors,
                                                            discretePredictors = discretePredictors,
                                                            currentDiscreteLevels = currentDiscreteLevels,
-                                                           coefficients = coefficients,
+                                                           models = models,
                                                            dependent = roDependent,
                                                            dependentTarget = dependentTarget,
                                                            dataset = dataset,
@@ -1032,7 +1015,7 @@ get_levels <- function(var, num_levels, dataset) {
                                                            continuousPredictors = continuousPredictors,
                                                            discretePredictors = discretePredictors,
                                                            currentDiscreteLevels = currentDiscreteLevels,
-                                                           coefficients = coefficients,
+                                                           models = models,
                                                            dependent = roDependent,
                                                            dependentTarget = dependentTarget,
                                                            dataset = dataset,
@@ -1053,7 +1036,7 @@ get_levels <- function(var, num_levels, dataset) {
                                                        continuousPredictors = continuousPredictors,
                                                        discretePredictors = discretePredictors,
                                                        currentDiscreteLevels = currentDiscreteLevels,
-                                                       coefficients = coefficients,
+                                                       models = models,
                                                        dependent = roDependent,
                                                        dependentTarget = dependentTarget,
                                                        dataset = dataset,
@@ -1073,10 +1056,7 @@ get_levels <- function(var, num_levels, dataset) {
   }
 
   jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 300*ncol, height = 300*nrow)
-  jaspPlot$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
-                    "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
-                    "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
-                    "optimizationPlot", .doeAnalysisBaseDependencies()))
+  jaspPlot$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationPlot"))
   plotObject <- jaspGraphs::ggMatrixPlot(plotList = plotMat, nr = nrow, nc = ncol)
   jaspPlot$plotObject <- plotObject
   jaspResults[["plotRo"]][["plot"]] <- jaspPlot
@@ -1095,20 +1075,17 @@ get_levels <- function(var, num_levels, dataset) {
     tb$addColumnInfo(name = colName, title = colTitle, type = "number")
   }
 
-  tb$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
-                    "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
-                    "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
-                    "optimizationPlot", .doeAnalysisBaseDependencies()))
+  tb$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationPlot"))
+  extrapolationNote <- gettext("One or more input parameters for continuous predictors are outside of the design space. Extrapolation beyond the design space might not be valid.")
   if (extrapolationNoteBol)
-    tb$addFootnote(gettext("One or more input parameters for continuous predictors are outside of the design space.
-                           Extrapolation beyond the design space might not be valid."))
+    tb$addFootnote(extrapolationNote)
   jaspResults[["plotRo"]][["table"]] <- tb
 
-  desi <- .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, coefficients, roDependent,
+  desi <- .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, models, roDependent,
                                            dataset, roOptionsDf) * -1 # because it is returned as negative for optim. but in this case we want the true value
   desi <- pmax(0, pmin(1, desi))
-  predValues <- .equationPredictionFunction(continuousLevels = continuousLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
-                              currentDiscreteLevels = currentDiscreteLevels, coefficients = coefficients, dependent = roDependent)
+  predValues <- .doePredictResponses(continuousLevels = continuousLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
+                                     currentDiscreteLevels = currentDiscreteLevels, models = models, dependent = roDependent)
 
   rows <- data.frame(desi = desi)
   for (pred in allPredictors) {
@@ -1129,6 +1106,8 @@ get_levels <- function(var, num_levels, dataset) {
     jaspResults[["plotRo"]][["predictionTable"]] <- predictionTable
     .doeFillPredictionTable(predictionTable, jaspResults, roDependent, .doeSettingsAsList(currentSettings, allPredictors), dataset,
                             blocks, covariates, options[["optimizationIntervalsLevel"]])
+    if (extrapolationNoteBol) # the intervals rest on the model beyond the data as well
+      predictionTable$addFootnote(extrapolationNote)
   }
 }
 
@@ -1148,31 +1127,17 @@ get_levels <- function(var, num_levels, dataset) {
                           options[["optimizationIntervalsLevel"]])
 }
 
-# Coefficients for the optimizer's prediction equation (.equationPredictionFunction), which only knows the predictors.
-# Block terms are dropped (blocks averaged out: zero under sum-to-zero contrasts) and covariate terms are folded into
-# the intercept at the covariate mean, as in .doePredictionWithIntervals.
-.doeOptimizerCoefficients <- function(jaspResults, responses, dataset, blocks, covariates) {
-  covariates <- unlist(covariates)
-  covariates <- covariates[covariates != ""]
-  nuisance   <- c(unlist(blocks), covariates)
-  coefficients <- list()
-  for (response in responses) {
-    regression <- jaspResults[[response]][["doeResult"]]$object[["regression"]]
-    fit        <- regression[["object"]]
-    est        <- regression[["coefficients"]][["est"]] # estimable coefficients only
-    columnTerm <- c("(Intercept)", attr(stats::terms(fit), "term.labels"))[attr(stats::model.matrix(fit), "assign") + 1]
-    columnTerm <- columnTerm[!is.na(stats::coef(fit))]
-    for (covariate in intersect(covariates, columnTerm))
-      est[1] <- est[1] + sum(est[columnTerm == covariate]) * mean(dataset[[covariate]])
-    coefficients[[response]] <- est[!columnTerm %in% nuisance]
-  }
-  return(coefficients)
+# Fitted models of the optimized responses, with the data, blocks and covariates their predictions need
+# (.doePredictResponses). The optimizer, the optimization plot and the prediction table all predict through
+# .doePredictionModelRow, so they agree.
+.doeOptimizerModels <- function(jaspResults, responses, dataset, blocks, covariates) {
+  fits <- lapply(stats::setNames(responses, responses), function(response)
+    jaspResults[[response]][["doeResult"]]$object[["regression"]][["object"]])
+  list(fits = fits, dataset = dataset, blocks = blocks, covariates = covariates)
 }
 
-# Discrete predictor settings for the prediction equation (.equationPredictionFunction), as a named list so that each
-# factor keeps its own levels. unlist() merges them into one factor, but the equation uses the level position, so the
-# levels of later factors and the last level of earlier factors got no contribution (jasp-issues#4665).
-# A single setting stays as is.
+# Discrete predictor settings of the optimizer, as a named list so that each factor keeps its own levels
+# (unlist() would merge them into one factor, jasp-issues#4665). A single setting stays as is.
 .doeDiscreteSettings <- function(settings, discretePredictors) {
   if (length(settings) == 1)
     return(settings)
@@ -1214,21 +1179,32 @@ get_levels <- function(var, num_levels, dataset) {
   table$addFootnote(gettext("CI: confidence interval for the mean response. PI: prediction interval for a single new run."))
   if (any(is.na(rows[["se"]])))
     table$addFootnote(gettext("Intervals cannot be calculated when the model has no degrees of freedom for error."))
-  .doeAddPredictionSettingsFootnotes(table, blocks, covariates)
+  .doeAddPredictionSettingsFootnotes(table, blocks, covariates, intervals = TRUE)
 }
 
-.doeAddPredictionSettingsFootnotes <- function(table, blocks, covariates) {
-  if (length(blocks) > 0 && !identical(blocks, ""))
-    table$addFootnote(gettext("Predictions are averaged over the blocks."))
+.doeAddPredictionSettingsFootnotes <- function(table, blocks, covariates, intervals = FALSE) {
+  if (length(blocks) > 0 && !identical(blocks, "")) {
+    # the block effects are averaged out, so the PI is for a run in an average block
+    blockNote <- if (intervals) {
+      gettext("Predictions are averaged over the blocks. The prediction interval is for a new run in an average block: it does not include the variation between blocks.")
+    } else {
+      gettext("Predictions are averaged over the blocks.")
+    }
+    table$addFootnote(blockNote)
+  }
   if (length(covariates) > 0 && !identical(covariates, ""))
     table$addFootnote(gettext("Covariates are held at their mean."))
 }
 
-# Fitted response at the given predictor settings, with its standard error, the confidence interval for the mean
-# response and the prediction interval for a single new observation. Blocks are averaged out (zero under sum-to-zero
-# contrasts) and covariates are held at their mean.
-.doePredictionWithIntervals <- function(fit, settings, dataset, level, blocks = NULL, covariates = NULL) {
-  newdata <- dataset[1, , drop = FALSE] # keeps the column types
+# Model matrix row (1 x estimable coefficients) of the fit at the given predictor settings, a named list.
+# Blocks are averaged out: the block columns are averaged over the block levels of the fit, which holds for any
+# contrasts. Covariates are held at their mean.
+.doePredictionModelRow <- function(fit, settings, dataset, blocks = NULL, covariates = NULL) {
+  blocks      <- unlist(blocks)
+  blocks      <- blocks[blocks != ""]
+  blockLevels <- if (length(blocks) > 0) fit[["xlevels"]][[blocks]] # NULL when the block term is not in the model
+
+  newdata   <- dataset[rep(1, max(1, length(blockLevels))), , drop = FALSE] # one row per block level; keeps the column types
   newdata[] <- lapply(newdata, function(x) { attr(x, "contrasts") <- NULL; x }) # contrasts come from the fit
   for (predictor in names(settings)) {
     value <- unlist(settings[[predictor]])
@@ -1241,17 +1217,25 @@ get_levels <- function(var, num_levels, dataset) {
   covariates <- unlist(covariates)
   for (covariate in covariates[covariates != ""])
     newdata[[covariate]] <- mean(dataset[[covariate]])
+  if (length(blockLevels) > 0)
+    newdata[[blocks]] <- factor(blockLevels, levels = blockLevels)
 
-  modelTerms <- stats::delete.response(stats::terms(fit))
-  x0         <- stats::model.matrix(modelTerms, stats::model.frame(modelTerms, newdata, xlev = fit[["xlevels"]]),
-                                    contrasts.arg = fit[["contrasts"]])
-  blockTerms <- which(attr(modelTerms, "term.labels") %in% unlist(blocks))
-  x0[, attr(x0, "assign") %in% blockTerms] <- 0
+  modelTerms   <- stats::delete.response(stats::terms(fit))
+  x            <- stats::model.matrix(modelTerms, stats::model.frame(modelTerms, newdata, xlev = fit[["xlevels"]]),
+                                      contrasts.arg = fit[["contrasts"]])
+  x0           <- x[1, , drop = FALSE]
+  blockColumns <- attr(x, "assign") %in% which(attr(modelTerms, "term.labels") %in% blocks)
+  x0[, blockColumns] <- colMeans(x[, blockColumns, drop = FALSE])
+  return(x0[, !is.na(stats::coef(fit)), drop = FALSE])
+}
 
-  coefs     <- stats::coef(fit)
-  estimable <- !is.na(coefs)
-  x0        <- x0[, estimable, drop = FALSE]
-  fitValue  <- drop(x0 %*% coefs[estimable])
+# Fitted response at the given predictor settings, with its standard error, the confidence interval for the mean
+# response and the prediction interval for a single new observation. Blocks are averaged out and covariates are held
+# at their mean (.doePredictionModelRow).
+.doePredictionWithIntervals <- function(fit, settings, dataset, level, blocks = NULL, covariates = NULL) {
+  x0       <- .doePredictionModelRow(fit, settings, dataset, blocks, covariates)
+  coefs    <- stats::coef(fit)
+  fitValue <- drop(x0 %*% coefs[!is.na(coefs)])
 
   errorDf <- fit[["df.residual"]]
   if (errorDf == 0)
@@ -1269,7 +1253,7 @@ get_levels <- function(var, num_levels, dataset) {
              piUpper = fitValue + tCrit * sePred)
 }
 
-.calculateOptimalResponse <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, dependent, roOptionsDf, coefficients) {
+.calculateOptimalResponse <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, dependent, roOptionsDf, models) {
 
   if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
     # need initial guesses and limits for cont. variables
@@ -1308,7 +1292,7 @@ get_levels <- function(var, num_levels, dataset) {
           continuousPredictors = continuousPredictors,
           discretePredictors = discretePredictors,
           currentDiscreteLevels = currentDiscreteLevels,
-          coefficients = coefficients,
+          models = models,
           dependent = dependent,
           dataset = dataset,
           roOptionsDf = roOptionsDf
@@ -1316,7 +1300,7 @@ get_levels <- function(var, num_levels, dataset) {
         optimalResultDf[i, "outcomeValue"] <- currrentOptimResult$value * -1  # after optimization the sign can be switched again
         optimalResultDf[i, continuousPredictors] <- currrentOptimResult$par
       } else {
-        optimalResultDf[i, "outcomeValue"]  <-  .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, coefficients, dependent,
+        optimalResultDf[i, "outcomeValue"]  <-  .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent,
                                                                      dataset, roOptionsDf) * -1
       }
     }
@@ -1330,7 +1314,7 @@ get_levels <- function(var, num_levels, dataset) {
       continuousPredictors = continuousPredictors,
       discretePredictors = discretePredictors,
       currentDiscreteLevels = currentDiscreteLevels,
-      coefficients = coefficients,
+      models = models,
       dependent = dependent,
       dataset = dataset,
       roOptionsDf = roOptionsDf
@@ -1349,7 +1333,7 @@ get_levels <- function(var, num_levels, dataset) {
                                          outcomeType = c("response", "individualDesirability", "compDesi"),
                                          continuousLevels, continuousPredictors,
                                          discretePredictors, currentDiscreteLevels,
-                                         coefficients, dependent, dependentTarget = "",
+                                         models, dependent, dependentTarget = "",
                                          dataset, roOptionsDf) {
   returnedValue <- numeric(length = length(value))
   for (i in seq_along(value)) {
@@ -1367,12 +1351,12 @@ get_levels <- function(var, num_levels, dataset) {
         currentDiscreteLevels <- value[i]
       }
     }
-    compDesi <- .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, coefficients, dependent,
+    compDesi <- .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent,
                                      dataset, roOptionsDf) * -1  # flip sign again
 
     if (dependentTarget != "") {
-      rawPrediction <- .equationPredictionFunction(continuousLevels, continuousPredictors, discretePredictors,
-                                                   currentDiscreteLevels, coefficients, dependent)
+      rawPrediction <- .doePredictResponses(continuousLevels, continuousPredictors, discretePredictors,
+                                            currentDiscreteLevels, models, dependent)
       rawPrediction <- rawPrediction[dependentTarget]
 
       indDesi <- .calculateDesirability(dataset, rawPrediction, roOptionsDf)
@@ -1385,55 +1369,32 @@ get_levels <- function(var, num_levels, dataset) {
   return(returnedValue)
 }
 
-.equationPredictionFunction <- function(continuousLevels, continuousPredictors, discretePredictors,
-                                        currentDiscreteLevels, coefficients, dependent) {
-  outcome <- c()
-  for (dep in dependent) {
-    currentCoefSet <- coefficients[[dep]]
-    coefficientVector <- names(currentCoefSet)[-1]
-    predictorValues <- c(1)  # for the intercept
+# Predicted responses (named by response) at the optimizer's predictor settings, from the models of
+# .doeOptimizerModels. Each kind of setting is a data frame row, a named vector or list, or a single unnamed value
+# when there is only one predictor of that kind. Unused settings are not evaluated (they can be missing arguments).
+.doePredictResponses <- function(continuousLevels, continuousPredictors, discretePredictors,
+                                 currentDiscreteLevels, models, dependent) {
+  settingValue <- function(levels, predictor) if (predictor %in% names(levels)) levels[[predictor]] else levels[[1]]
+  continuousPredictors <- unlist(continuousPredictors)
+  discretePredictors   <- unlist(discretePredictors)
+  settings <- list()
+  for (predictor in continuousPredictors[continuousPredictors != ""])
+    settings[[predictor]] <- settingValue(continuousLevels, predictor)
+  for (predictor in discretePredictors[discretePredictors != ""])
+    settings[[predictor]] <- settingValue(currentDiscreteLevels, predictor)
 
-    for (coef_i in coefficientVector) {
-      coefSplit <- strsplit(coef_i, ":")[[1]]
-      coefResult <- c()
-      for (coef_j in coefSplit) {
-        coef_j_clean <- .removeAppendedFactorLevels(discretePredictors, coef_j, ":")
-        coef_j_level <- sub(coef_j_clean, "", coef_j)
-        # Check if this is a squared term (e.g., "Speed^2")
-        isSquaredTerm <- grepl("\\^2$", coef_j)
-        if (isSquaredTerm) {
-          basePredictor <- sub("\\^2$", "", coef_j)
-          if (basePredictor %in% continuousPredictors) {
-            value <- if (length(continuousLevels) > 1) continuousLevels[[basePredictor]] else unlist(continuousLevels)
-            coefResult <- c(coefResult, value^2)
-          }
-        } else if (coef_j %in% continuousPredictors) { # cont. predictors don't have an appended factor level so we use coef_j here
-          coefResult <- if (length(continuousLevels) > 1) c(coefResult, continuousLevels[[coef_j]]) else c(coefResult, unlist(continuousLevels))
-        } else if (coef_j_clean %in% discretePredictors) {
-          current_j_level <- if (is.list(currentDiscreteLevels) || length(currentDiscreteLevels) > 1) currentDiscreteLevels[[coef_j_clean]] else unname(currentDiscreteLevels)
-          max_j_level <- length(levels(current_j_level))
-          coef_j_level <- as.numeric(coef_j_level)
-          if (as.numeric(current_j_level) == coef_j_level) {
-            coefResult <- c(coefResult, 1)
-          } else if (as.numeric(current_j_level) == max_j_level) {
-            coefResult <- c(coefResult, -1) # in the LM function with sum contrasts the last predictor does not have a coefficient, but it is the inverse of the sum of all other predictors, so set all others to -1
-          } else {
-            coefResult <- c(coefResult, 0)
-          }
-        }
-      }
-      coefResult <- prod(coefResult)
-      predictorValues <- c(predictorValues, coefResult)
-    }
-    outcome[dep] <- sum(currentCoefSet * predictorValues)
-  }
-  return(outcome)
+  vapply(dependent, function(response) {
+    fit   <- models[["fits"]][[response]]
+    coefs <- stats::coef(fit)
+    x0    <- .doePredictionModelRow(fit, settings, models[["dataset"]], models[["blocks"]], models[["covariates"]])
+    drop(x0 %*% coefs[!is.na(coefs)])
+  }, numeric(1))
 }
 
 
-.predictDesirability <- function(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, coefficients, dependent,
+.predictDesirability <- function(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent,
                                  dataset, roOptionsDf) {
-  outcome <- .equationPredictionFunction(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, coefficients, dependent)
+  outcome <- .doePredictResponses(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent)
   desirabilityOutcome <- .calculateDesirability(dataset, outcome, roOptionsDf)
   desirabilityOutcome <- desirabilityOutcome * -1  # because optimization minimizes
   return(desirabilityOutcome)
@@ -1494,7 +1455,7 @@ get_levels <- function(var, num_levels, dataset) {
   return(compoundDesi)
 }
 
-.addModelHeaderTerms <- function(anovaFit, fit, ssType, covariates = "") {
+.addModelHeaderTerms <- function(anovaFit, fit, ssType, covariates = "", data = NULL) {
   rownames(anovaFit) <- gsub(" ", "", row.names(anovaFit), fixed = TRUE)
   rownames(anovaFit) <- unname(sapply(rownames(anovaFit), .gsubIdentityFunction)) # remove identity function around squared terms
 
@@ -1563,7 +1524,7 @@ get_levels <- function(var, num_levels, dataset) {
   # Model error row, split into lack of fit and pure error when runs are replicated
   errorRow <- anovaFit[nrow(anovaFit),]
   rownames(errorRow) <- "Error"
-  errorRow <- rbind(errorRow, .doeAnovaLackOfFitRows(fit, colnames(anovaFit)))
+  errorRow <- rbind(errorRow, .doeAnovaLackOfFitRows(fit, colnames(anovaFit), data))
 
   newAnovaFit <- modelRow
   if (length(blockTermIndex) > 0)
@@ -1696,10 +1657,20 @@ get_levels <- function(var, num_levels, dataset) {
 # Lack of fit and pure error rows that split the error of an ANOVA table. Pure error is the variation between runs
 # with identical settings of all variables in the model (replicates, e.g. center points). NULL when there is no
 # pure error or no lack of fit to test (no replicates, or one model coefficient per distinct setting).
-.doeAnovaLackOfFitRows <- function(fit, colNames) {
+# The runs are grouped on the variables in `data` (the data the model was fitted on), not on the model frame columns:
+# with I(A^2) but not A in the model, the runs at A = -1 and A = +1 are distinct settings, not replicates.
+# Without `data`, the runs are grouped on the model frame columns, which are the variables when no term transforms them.
+.doeAnovaLackOfFitRows <- function(fit, colNames, data = NULL) {
   modelFrame  <- stats::model.frame(fit)
   y           <- stats::model.response(modelFrame)
-  settings    <- do.call(paste, c(lapply(modelFrame[-1], as.character), sep = "\r"))
+  runData     <- if (is.null(data)) {
+    modelFrame[-1]
+  } else {
+    data[rownames(modelFrame), all.vars(stats::delete.response(stats::terms(fit))), drop = FALSE] # rows the model was fitted on
+  }
+  if (ncol(runData) == 0) # intercept-only model
+    return(NULL)
+  settings    <- do.call(paste, c(lapply(runData, as.character), sep = "\r"))
   pureErrorDf <- length(y) - length(unique(settings))
   lackOfFitDf <- fit[["df.residual"]] - pureErrorDf
   if (pureErrorDf == 0 || lackOfFitDf <= 0)
@@ -1843,9 +1814,8 @@ get_levels <- function(var, num_levels, dataset) {
     if (options[["tableAlias"]])
       rows["alias"] <- result[["termsAliased"]]
     if (showCi) {
-      errorDf      <- resultRegression[["object"]][["df.residual"]]
-      effectLimits <- .doeConfidenceLimits(result[["effects"]], result[["effectsSe"]], errorDf, ciLevel)
-      coefLimits   <- .doeConfidenceLimits(result[["est"]], result[["se"]], errorDf, ciLevel)
+      effectLimits <- .doeConfidenceLimits(result[["effects"]], result[["effectsSe"]], result[["effectsDf"]], ciLevel)
+      coefLimits   <- .doeConfidenceLimits(result[["est"]], result[["se"]], resultRegression[["object"]][["df.residual"]], ciLevel)
       rows[["effectsLower"]] <- effectLimits[["lower"]]
       rows[["effectsUpper"]] <- effectLimits[["upper"]]
       rows[["coefLower"]]    <- coefLimits[["lower"]]

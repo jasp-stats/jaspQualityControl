@@ -706,7 +706,7 @@ Form
 			{
 				name:						"optimizationIntervals"
 				label:						qsTr("Confidence and prediction intervals")
-				info:						qsTr("Show the predicted (fitted) response of each included response at the optimal solution, with its standard error, the confidence interval (CI) for the mean response and the prediction interval (PI) for the response of a single new run. With 'Set input parameters manually', the same is shown for the manually set factor levels. Blocks are averaged out and covariates are held at their mean.")
+				info:						qsTr("Show the predicted (fitted) response of each included response at the optimal solution, with its standard error, the confidence interval (CI) for the mean response and the prediction interval (PI) for the response of a single new run. With 'Set input parameters manually', the same is shown for the manually set factor levels. Blocks are averaged out and covariates are held at their mean. With blocks, the prediction interval is for a new run in an average block: it does not include the variation between blocks.")
 				childrenOnSameRow:			true
 
 				CIField
