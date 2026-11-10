@@ -1,5 +1,4 @@
 context("[Quality Control] MSA Gauge non-replicabe")
-.numDecimals <- 2
 
 # Long format ####
 

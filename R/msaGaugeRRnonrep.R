@@ -16,7 +16,7 @@
 #
 
 #' @export
-msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
+msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
   # Reading the data in the correct format
   wideFormat <- options[["dataFormat"]] == "wideFormat"
   if (wideFormat) {
@@ -267,14 +267,19 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       jaspResults[["trafficLightChart"]] <- .trafficplot(StudyVar = percentMSVar, ToleranceUsed = options[["tolerance"]],
                                                          ToleranceVar = percentMSTolerance, options = options,
                                                          ready = ready)
-      jaspResults[["trafficLightChart"]]$dependOn(c("trafficLightChart", "report"))
+      jaspResults[["trafficLightChart"]]$dependOn(c("trafficLightChart", "report", "processVariationReference",
+                        "historicalSdValue", "tolerance", "toleranceValue",
+                        "studyVarianceMultiplierType", "studyVarianceMultiplierValue",
+                        "measurementLongFormat", "operatorLongFormat", "partLongFormat",
+                        "measurementsWideFormat", "operatorWideFormat", "partWideFormat",
+                        "dataFormat"))
     }
   }
 }
 
 .gaugeRRNonRep <- function(dataset, measurements, parts, operators, options, ready, plotOnly = FALSE, trafficPlotValuesOnly = FALSE,
                            gaugeEvaluationDfOnly = FALSE) {
-  gaugeRRNonRepTables <- createJaspContainer(gettext("Gauge r&R study - nested ANOVA"))
+  gaugeRRNonRepTables <- createJaspContainer(gettext("Gauge r&R study - nested Analysis of Variance"))
   gaugeRRNonRepTables$position <- 1
 
   gaugeRRNonRepTable1 <- createJaspTable(title = gettext("Gauge r&R (nested)"))

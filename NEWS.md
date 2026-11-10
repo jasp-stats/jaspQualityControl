@@ -16,7 +16,30 @@
 
 # jaspQualityControl (development version)
 
+## Added
+* Process Capability: optional Z.bench (ST) / Z.bench (LT) columns, reporting the sigma level based on the total expected defect probability across both specification limits, alongside the existing Z (ST) / Z (LT) = 3·Cpk / 3·Ppk.
+* Process Capability / control charts: added "Pooled" as a within-subgroup standard deviation estimation method (in addition to R-bar and S-bar).
 
+## Changed
+* DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
+
+## Fixed
+* Test–retest: limit across-rows input to two measurement columns, reject extra single-column measurement sets (previously the third set was silently ignored) and report duplicate or unmatched readings; rows with missing values are still excluded.
+* Attribute agreement: return valid confidence-interval endpoints for zero or perfect agreement.
+* Probability of detection: identify natural-log coordinates in covariate labels, reference tables and explanatory footnotes.
+* Attribute charts: allow defect rates above one and reject defective-item counts exceeding the sample size.
+* Process Capability: observed nonconformance rates and changes from baseline now use each stage's valid measurement count when stage sizes differ.
+* Attribute charts: label u and Laney u axes as defects per unit instead of proportions.
+* Multivariate control charts: keep exported T² values aligned with their original rows when incomplete observations are omitted.
+* Multivariate control charts: fix Phase II errors and missing observation labels caused by automatic naming.
+* Control charts and process capability: prevent overflow when calculating bias-corrected standard deviations.
+* Time weighted charts: the exponentially weighted moving average chart now offers S-bar and R-bar as std. dev. estimation method for data in wide format ("Across rows"), instead of only X-mR, which stopped the analysis with two or more measurement columns.
+* Rare event charts: the interval type "Time" no longer always fails with "Date/time conversion returned no valid values", and its intervals are always converted to minutes, so the chart no longer labels intervals given in hours as minutes.
+* Stepwise model selection in the Response Surface design now respects marginality: a squared term is no longer retained without its corresponding main effect.
+* Process Capability: distribution/fit density curves no longer render flat in interactive (plotly) plots; the curves are now drawn with `geom_line` instead of `stat_function`.
+* Process Capability: the x-axis of the capability plot is no longer stretched towards the default historical scale (Weibull) or log mean (log-normal) when no historical parameter is set, which squeezed the histogram and fitted density into a narrow strip for data far from zero.
+* Process Capability: the x-axis of the Weibull and log-normal probability plots no longer stretches far beyond the data, which squeezed the points into a thin strip and made the tick labels overlap. The axis now follows the data, and ticks that would crowd each other are dropped.
+* Attributes agreement analysis: Fleiss' kappa no longer crashes with newer `irr` (>= 0.85) when a within-appraiser input has a single measurement column; returns NaN as before.
 
 ---
 

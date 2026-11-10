@@ -1,5 +1,4 @@
 context("[Quality Control] DoE Analysis")
-.numDecimals <- 2
 
 # Basic tests
 
@@ -240,39 +239,62 @@ test_that("3.1 Five factors full factorial with covariates ANOVA table results m
 test_that("3.2 Five factors full factorial with covariates Coded Coefficients table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("(Intercept)", 109.731825415679, "", 9.90816291567143e-06, 16.8635074468689,
-                                      "(Intercept)", 6.50705825946392, "", "A", 2.13840267682821,
-                                      4.27680535365642, 0.104834657354436, 1.23875752075877, "A",
-                                      1.72624798719154, 1.03756527040855, "B", -2.98338174503944,
-                                      -5.96676349007888, 0.0373144413753065, 1.30584036708283, "B",
-                                      -2.2846450609458, 1.1529832484784, "C", -0.0182577225440942,
-                                      -0.0365154450881883, 0.98852641189724, 1.24864215989919, "C",
-                                      -0.014622061572523, 1.05418979411064, "D", 1.70149654086625,
-                                      3.4029930817325, 0.227543055508507, 1.35229669371421, "D", 1.25822724315988,
-                                      1.23647913020274, "E", -3.63318781224342, -7.26637562448684,
-                                      0.0094926969943897, 1.22234045141578, "E", -2.97232068858989,
-                                      1.01024610967775, "COV1", -0.170265654150517, "", 0.639853403417289,
-                                      0.356538657135893, "Covariate", -0.477551734553207, 1.05418979411064,
-                                      "AB", 1.71225939719856, 3.42451879439712, 0.218527053935101,
-                                      1.33324816148842, "A<unicode>B", 1.28427658605358, 1.03756527040855,
-                                      "AC", 1.24356000989087, 2.48712001978175, 0.323101766517528,
-                                      1.21710241047352, "A<unicode>C", 1.02173818668805, 1.03756527040855,
-                                      "AD", -0.7098549031372, -1.4197098062744, 0.569625231928613,
-                                      1.22100432101365, "A<unicode>D", -0.581369689623943, 1.03756527040855,
-                                      "AE", -1.510844791645, -3.02168958329001, 0.247909307290872,
-                                      1.2566989137569, "A<unicode>E", -1.20223290965402, 1.03756527040855,
-                                      "BC", -1.9133327168253, -3.82666543365061, 0.146509749204623,
-                                      1.24947942604136, "B<unicode>C", -1.53130389900632, 1.1529832484784,
-                                      "BD", 1.6233491385151, 3.2466982770302, 0.201836398006105, 1.21613745615216,
-                                      "B<unicode>D", 1.3348401780596, 1.1529832484784, "BE", -0.355336376717944,
-                                      -0.710672753435889, 0.778553166992427, 1.24106660753279, "B<unicode>E",
-                                      -0.286315315037235, 1.1529832484784, "CD", 1.08825673873087,
-                                      2.17651347746173, 0.406739278085951, 1.27486697751332, "C<unicode>D",
-                                      0.853623756773084, 1.05418979411064, "CE", -2.51881683426932,
-                                      -5.03763366853864, 0.0566992364049144, 1.22000266183344, "C<unicode>E",
-                                      -2.06459945790937, 1.05418979411064, "DE", 2.51425344501745,
-                                      5.02850689003489, 0.0569197989649348, 1.21901756761415, "D<unicode>E",
-                                      2.06252437357267, 1.23647913020274))
+                                 list("(Intercept)", 109.731825415679, "",
+                                  9.90816291567143e-06, 16.8635074468689,
+                                  "(Intercept)", 6.50705825946392, "", "A",
+                                  2.13840267682821, 4.27680535365642,
+                                  0.104834657354436, 1.23875752075877, "A",
+                                  1.72624798719154, 1.03756527040855, "B",
+                                  -2.98338174503944, -5.96676349007888,
+                                  0.0373144413753065, 1.30584036708283, "B",
+                                  -2.2846450609458, 1.1529832484784, "C",
+                                  -0.0182577225440942, -0.0365154450881883,
+                                  0.98852641189724, 1.24864215989919, "C",
+                                  -0.014622061572523, 1.05418979411064, "D",
+                                  1.70149654086625, 3.4029930817325,
+                                  0.227543055508507, 1.35229669371421, "D",
+                                  1.25822724315988, 1.23647913020274, "E",
+                                  -3.63318781224342, -7.26637562448684,
+                                  0.0094926969943897, 1.22234045141578, "E",
+                                  -2.97232068858989, 1.01024610967775, "COV1",
+                                  -0.170265654150517, "", 0.639853403417289,
+                                  0.356538657135893, "Covariate",
+                                  -0.477551734553207, 1.97797930981595, "AB",
+                                  1.71225939719856, 3.42451879439712,
+                                  0.218527053935101, 1.33324816148842,
+                                  "A<unicode>B", 1.28427658605358,
+                                  1.03756527040855, "AC", 1.24356000989087,
+                                  2.48712001978175, 0.323101766517528,
+                                  1.21710241047352, "A<unicode>C",
+                                  1.02173818668805, 1.03756527040855, "AD",
+                                  -0.7098549031372, -1.4197098062744,
+                                  0.569625231928613, 1.22100432101365,
+                                  "A<unicode>D", -0.581369689623943,
+                                  1.03756527040855, "AE", -1.510844791645,
+                                  -3.02168958329001, 0.247909307290872,
+                                  1.2566989137569, "A<unicode>E",
+                                  -1.20223290965402, 1.03756527040855, "BC",
+                                  -1.9133327168253, -3.82666543365061,
+                                  0.146509749204623, 1.24947942604136,
+                                  "B<unicode>C", -1.53130389900632,
+                                  1.1529832484784, "BD", 1.6233491385151,
+                                  3.2466982770302, 0.201836398006105,
+                                  1.21613745615216, "B<unicode>D",
+                                  1.3348401780596, 1.1529832484784, "BE",
+                                  -0.355336376717944, -0.710672753435889,
+                                  0.778553166992427, 1.24106660753279,
+                                  "B<unicode>E", -0.286315315037235,
+                                  1.1529832484784, "CD", 1.08825673873087,
+                                  2.17651347746173, 0.406739278085951,
+                                  1.27486697751332, "C<unicode>D",
+                                  0.853623756773084, 1.05418979411064, "CE",
+                                  -2.51881683426932, -5.03763366853864,
+                                  0.0566992364049144, 1.22000266183344,
+                                  "C<unicode>E", -2.06459945790937,
+                                  1.05418979411064, "DE", 2.51425344501745,
+                                  5.02850689003489, 0.0569197989649348,
+                                  1.21901756761415, "D<unicode>E",
+                                  2.06252437357267, 1.23647913020274))
 })
 
 test_that("3.3 Five factors full factorial with covariates Regression Equation in Coded Units table results match", {
@@ -789,8 +811,7 @@ test_that("7.2 One center point Coded Coefficients table results match", {
 test_that("7.3 One center point Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 100.15 + 1.6 A + 4.38 B + 4.4 C + 0.52 AB + 8.05 BC + 0.65 AC + 0.87 ABC"
-                                 ))
+                                 list("Result = 100.149 + 1.601 A + 4.384 B + 4.402 C + 0.521 AB + 8.049 BC + 0.648 AC + 0.867 ABC"))
 })
 
 test_that("7.4 One center point Model Summary table results match", {
@@ -3926,8 +3947,7 @@ test_that("41.2 Saturated design handling - Uncoded Coefficients table results m
 test_that("41.3 Saturated design handling - Regression equation in Uncoded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 100.15 + 1.6 A + 4.38 B + 4.4 C + 0.52 AB + 8.05 BC + 0.65 AC + 0.87 ABC"
-                                 ))
+                                 list("Result = 100.149 + 1.601 A + 4.384 B + 4.402 C + 0.521 AB + 8.049 BC + 0.648 AC + 0.867 ABC"))
 })
 
 test_that("41.4 Saturated design handling - Model Summary table results match", {
@@ -4227,7 +4247,7 @@ test_that("44.6 Response Optimizer Factorial Multiple Discrete Levels Summary Pl
 test_that("44.7 Response Optimizer Factorial Multiple Discrete Levels Optimization Plot Summary table results match", {
   table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(3, 3, 50, 116.05, 0.943388705160755))
+                                 list(3, 3, 50, 116.054, 0.943388705160755))
 })
 
 test_that("44.8 Response Optimizer Factorial Multiple Discrete Levels Response Optimizer Settings table results match", {
@@ -4239,7 +4259,7 @@ test_that("44.8 Response Optimizer Factorial Multiple Discrete Levels Response O
 test_that("44.9 Response Optimizer Factorial Multiple Discrete Levels Response Optimizer Solution table results match", {
   table <- results[["results"]][["tableRoSolution"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(3, 3, 50, 116.05, 0.943388705160755))
+                                 list(3, 3, 50, 116.054, 0.943388705160755))
 })
 
 ## Factorial design, multivariate outcome ####
@@ -4408,7 +4428,8 @@ test_that("45.11 Response Optimizer Factorial Multivariate Outcome - Summary Plo
 test_that("45.12 Response Optimizer Factorial Multivariate Outcome - Optimization Plot Summary table results match", {
   table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.6, 75, 100, "Formula2", 32.41, 0.773694076197508))
+                                 list(0.598, 75, 100, "Formula2", 32.41,
+                                  0.773694076197508))
 })
 
 test_that("45.13 Response Optimizer Factorial Multivariate Outcome - Response Optimizer Settings table results match", {
@@ -4421,7 +4442,8 @@ test_that("45.13 Response Optimizer Factorial Multivariate Outcome - Response Op
 test_that("45.14 Response Optimizer Factorial Multivariate Outcome - Response Optimizer Solution table results match", {
   table <- results[["results"]][["tableRoSolution"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.6, 75, 100, "Formula2", 32.41, 0.773694076197508))
+                                 list(0.598, 75, 100, "Formula2", 32.41,
+                                  0.773694076197508))
 })
 
 
@@ -4713,7 +4735,8 @@ test_that("47.11 Response Optimizer Factorial Changing All Options - Summary Plo
 test_that("47.12 Response Optimizer Factorial Changing All Options - Optimization Plot Summary table results match", {
   table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.6, 75, 100, "Formula2", 32.41, 0.87732801703988))
+                                 list(0.598, 75, 100, "Formula2", 32.41,
+                                  0.87732801703988))
 })
 
 test_that("47.13 Response Optimizer Factorial Changing All Options - Response Optimizer Settings table results match", {
@@ -4726,7 +4749,8 @@ test_that("47.13 Response Optimizer Factorial Changing All Options - Response Op
 test_that("47.14 Response Optimizer Factorial Changing All Options - Response Optimizer Solution table results match", {
   table <- results[["results"]][["tableRoSolution"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.6, 75, 100, "Formula2", 32.41, 0.87732801703988))
+                                 list(0.598, 75, 100, "Formula2", 32.41,
+                                  0.87732801703988))
 })
 
 ## Response Surface design, basic example, no squared terms ####
@@ -4829,7 +4853,7 @@ test_that("48.6 Response Optimizer Response Surface No Squares - Summary Plot ma
 test_that("48.7 Response Optimizer Response Surface No Squares - Optimization Plot Summary table results match", {
   table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(3, 10, 100, -19.65, 0.765607810781078))
+                                 list(3, 10, 100, -19.653, 0.765607810781078))
 })
 
 test_that("48.8 Response Optimizer Response Surface No Squares - Response Optimizer Settings table results match", {
@@ -4841,7 +4865,7 @@ test_that("48.8 Response Optimizer Response Surface No Squares - Response Optimi
 test_that("48.9 Response Optimizer Response Surface No Squares - Response Optimizer Solution table results match", {
   table <- results[["results"]][["tableRoSolution"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(3, 10, 100, -19.65, 0.765607810781078))
+                                 list(3, 10, 100, -19.653, 0.765607810781078))
 })
 
 options("jaspRoundToPrecision" = NULL) # reset default
@@ -4944,7 +4968,7 @@ test_that("50.1 Response Optimizer Response Surface Multivariate No Squares - Su
 test_that("50.2 Response Optimizer Response Surface Multivariate No Squares - Optimization Plot Summary table results match", {
   table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(63.53, 1, 10, 100, -7.01, 0.74608569049605))
+                                 list(63.53, 1, 10, 100, -7.014, 0.74608569049605))
 })
 
 test_that("50.3 Response Optimizer Response Surface Multivariate No Squares - Response Optimizer Settings table results match", {
@@ -4957,7 +4981,7 @@ test_that("50.3 Response Optimizer Response Surface Multivariate No Squares - Re
 test_that("50.4 Response Optimizer Response Surface Multivariate No Squares - Response Optimizer Solution table results match", {
   table <- results[["results"]][["tableRoSolution"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(63.53, 1, 10, 100, -7.01, 0.74608569049605))
+                                 list(63.53, 1, 10, 100, -7.014, 0.74608569049605))
 })
 
 
@@ -5141,7 +5165,7 @@ if (jaspTools:::getOS() == "windows") { # randomly fails on linux and mac
 test_that("53.2 Response Optimizer Response Surface Change All Options - Optimization Plot Summary table results match", {
   table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(100, 2, 12.3, 120.83, -22, 0.885700020509264))
+                                 list(99.999, 2, 12.296, 120.83, -22.004, 0.885700020509264))
 })
 
 test_that("53.3 Response Optimizer Response Surface Change All Options - Response Optimizer Settings table results match", {
@@ -5154,8 +5178,68 @@ test_that("53.3 Response Optimizer Response Surface Change All Options - Respons
 test_that("53.4 Response Optimizer Response Surface Change All Options - Response Optimizer Solution table results match", {
   table <- results[["results"]][["tableRoSolution"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(100, 2, 12.3, 120.83, -22, 0.885700020509264))
+                                 list(99.999, 2, 12.296, 120.83, -22.004, 0.885700020509264))
+})
+
+test_that("Stepwise marginality works without explicit data and preserves keep", {
+  set.seed(1)
+  model <- local({
+    A <- runif(40, -1, 1)
+    B <- runif(40, -1, 1)
+    y <- 2 * A^2 + 0.5 * B + rnorm(40, sd = 0.3)
+
+    stats::lm(y ~ I(A^2) + B)
+  })
+  model$keep <- list(aic = 1)
+
+  out   <- jaspQualityControl:::.enforceSquaredTermMarginality(model)
+  terms <- attr(stats::terms(out[["model"]]), "term.labels")
+
+  expect_equal(out[["forcedMainEffects"]], "A")
+  expect_true("A" %in% terms)
+  expect_identical(out[["model"]][["keep"]], model[["keep"]])
+})
+
+test_that("Stepwise marginality leaves compliant models untouched", {
+  set.seed(1)
+  d <- data.frame(A = runif(40, -1, 1))
+  d$y <- d$A + 2 * d$A^2 + rnorm(40, sd = 0.3)
+
+  model <- stats::lm(y ~ A + I(A^2), data = d)
+  out   <- jaspQualityControl:::.enforceSquaredTermMarginality(model)
+
+  expect_length(out[["forcedMainEffects"]], 0)
+  expect_identical(stats::coef(out[["model"]]), stats::coef(model))
 })
 
 options("jaspRoundToPrecision" = NULL) # reset default
 
+## Contour plot ####
+
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B", "C")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "-1", highValue = "1"),
+  list(predictors = "C", lowValue = "-1", highValue = "1")
+)
+options$squaredTermsCoded <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "fullQuadratic"
+options$modelTerms <- NULL
+options$contourSurfacePlot <- TRUE
+options$contourSurfacePlotType <- "contourPlot"
+options$contourSurfacePlotVariables <- c("A", "B")
+options$contourSurfacePlotResponseDivision <- 5
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM3contCCD.csv", options)
+
+test_that("54.1 Contour plot matches", {
+  plotName <- results[["results"]][["Result"]][["collection"]][["Result_contourSurfacePlot"]][["collection"]][["Result_contourSurfacePlot_Contour plot of Result vs A and B"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "contour-plot54")
+})

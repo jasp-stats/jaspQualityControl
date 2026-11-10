@@ -1,6 +1,9 @@
 ---
-# Git Workflow Instructions
+paths:
+  - "**"
 ---
+
+# Git Workflow Instructions
 
 ## Commit Message Style
 
@@ -51,7 +54,7 @@ git checkout -b feature/descriptive-name
 ### 1. Before committing:
 ```bash
 # Run full test suite
-Rscript -e "library(jaspTools); testAll()"
+Rscript -e "library(jaspTools); agentTestAll()"
 
 # Check git status
 git status
@@ -85,7 +88,7 @@ EOF
 ## Pre-Commit Requirements
 
 Before every commit, ensure:
-- ✅ All tests pass (`jaspTools::testAll()`)
+- ✅ All tests pass (`jaspTools::agentTestAll()`)
 - ✅ No unintended files staged (.env, credentials, etc.)
 - ✅ Commit message is concise and descriptive
 - ✅ Changes are focused and related

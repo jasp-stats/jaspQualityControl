@@ -139,9 +139,9 @@ Form
 					name: 									"manualSubgroupSizeValue"
 					id:										manualSubgroupSizeValue
 					min: 									1
-					max:									dataSetInfo.rowCount
+					max:									Math.max(1, dataSetInfo.rowCount)
 					negativeValues:							false
-					defaultValue:							(dataSetInfo.rowCount < 5)? dataSetInfo.rowCount : 5
+					defaultValue:							Math.max(1, Math.min(5, dataSetInfo.rowCount))
 				}
 			}
 			
@@ -560,6 +560,16 @@ Form
 						label: 								qsTr("Display specification limits")
 						checked: 							true
 					}
+
+					RadioButtonGroup
+					{
+						name:	"processCapabilityPlotXAxisModification"
+						title:	qsTr("Axis modifications")
+
+						RadioButton { value: "none";     label: qsTr("None");              checked: true }
+						RadioButton { value: "thin";     label: qsTr("Thin x-axis labels") }
+						RadioButton { value: "compress"; label: qsTr("Compress x-axis")    }
+					}
 				}
 
 				CheckBox
@@ -587,6 +597,13 @@ Form
 					{
 						name: "processCapabilityTableZ"
 						label: qsTr("Z (ST) / Z (LT)")
+					}
+
+					CheckBox
+					{
+						name: "processCapabilityTableZBench"
+						label: qsTr("Z.bench (ST) / Z.bench (LT)")
+						info:  qsTr("Sigma level based on total defect probability across both specification limits, as opposed to Z (ST)/Z (LT) which equal 3·Cpk/3·Ppk (distance to the nearest bound).")
 					}
 
 				}
@@ -645,7 +662,7 @@ Form
 						visible:						controlChartType.currentIndex == 2 && dataFormat.currentValue == "wideFormat"
 						defaultValue:					2
 						min: 							2
-						max: 							dataSetInfo.rowCount
+						max: 							Math.max(2, dataSetInfo.rowCount)
 					}
 
 					Group 
@@ -658,7 +675,7 @@ Form
 							label:							qsTr("Moving range length")
 							defaultValue:					2
 							min: 							2
-							max: 							dataSetInfo.rowCount
+							max: 							Math.max(2, dataSetInfo.rowCount)
 						}
 
 						CheckBox
@@ -1013,7 +1030,8 @@ Form
 					values: 
 					[
 						{ label: qsTr("R-bar"),			value: "rBar"},
-						{ label: qsTr("S-bar"),			value: "sBar"}
+						{ label: qsTr("S-bar"),			value: "sBar"},
+						{ label: qsTr("Pooled"),			value: "pooled"}
 					]
 					indexDefaultValue:
 					(controlChartType.currentValue == "xBarR" || controlChartType.currentValue == "xBarMR") ? 0 : 
@@ -1039,7 +1057,7 @@ Form
 					label:							qsTr("Moving range length")
 					defaultValue:					2
 					min: 							2
-					max: 							dataSetModel.rowCount()
+					max: 							Math.max(2, dataSetInfo.rowCount)
 				}
 
 				CheckBox

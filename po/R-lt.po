@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.0\n"
-"POT-Creation-Date: 2026-04-04 04:24\n"
+"POT-Creation-Date: 2026-09-05 03:43\n"
 "PO-Revision-Date: 2025-10-20 06:17+0000\n"
 "Last-Translator: Gabija Vaitkevičiūtė <gabija.vaitkev@gmail.com>\n"
 "Language-Team: Lithuanian <https://hosted.weblate.org/projects/jasp/"
@@ -328,7 +328,7 @@ msgstr ""
 msgid "The following aliased terms were removed: %s."
 msgstr ""
 
-msgid "ANOVA"
+msgid "Analysis of Variance"
 msgstr ""
 
 msgid "Source"
@@ -424,13 +424,13 @@ msgstr ""
 msgid "Histogram of Residuals"
 msgstr ""
 
+msgid "Residuals"
+msgstr ""
+
 msgid "Residuals versus Fitted Values"
 msgstr ""
 
 msgid "Fitted values"
-msgstr ""
-
-msgid "Residuals"
 msgstr ""
 
 msgid "Residuals versus Run Order"
@@ -458,6 +458,12 @@ msgid "and"
 msgstr ""
 
 msgid "%1$s of %2$s vs %3$s"
+msgstr ""
+
+msgid ""
+"Could not plot because the following selected variable(s) were not included "
+"in the final model: %1$s. They might have been removed during model "
+"selection."
 msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
@@ -509,6 +515,34 @@ msgid "The design is not exported until 'Export design' is checked."
 msgstr ""
 
 msgid "The design is exported as '%1$s'."
+msgstr ""
+
+msgid ""
+"The selected design is a full factorial; no generators can be specified."
+msgstr ""
+
+msgid ""
+"All generators must either all include a factor name (e.g., D=ABC) or none "
+"should."
+msgstr ""
+
+msgid "Only the final %1$s factor(s) can be defined by a generator: %2$s."
+msgstr ""
+
+msgid "Expected %1$s generator(s) for added factor(s) %2$s, but got %3$s."
+msgstr ""
+
+msgid "Factor(s) defined more than once in generators: %s."
+msgstr ""
+
+msgid ""
+"Generator for %1$s references non-base or unknown factor(s): %2$s. Base "
+"factors are: %3$s."
+msgstr ""
+
+msgid ""
+"Generator %1$s references non-base or unknown factor(s): %2$s. Base factors "
+"are: %3$s."
 msgstr ""
 
 msgid "No aliasing among main effects and 2-factor interactions."
@@ -805,7 +839,7 @@ msgstr ""
 msgid "Number of distinct categories"
 msgstr ""
 
-msgid "Gauge r&R ANOVA table"
+msgid "Gauge r&R Analysis of Variance table"
 msgstr ""
 
 msgid "Range chart by operator"
@@ -832,13 +866,13 @@ msgstr ""
 msgid "Traffic light chart"
 msgstr ""
 
-msgid "Gauge r&R study - crossed ANOVA"
+msgid "Gauge r&R study - crossed Analysis of Variance"
 msgstr ""
 
-msgid "One-way ANOVA table"
+msgid "One-way Analysis of Variance table"
 msgstr ""
 
-msgid "Two-way ANOVA table with interaction"
+msgid "Two-way Analysis of Variance table with interaction"
 msgstr ""
 
 msgid "Mean squares"
@@ -908,7 +942,7 @@ msgid ""
 "to values for %%study variation."
 msgstr ""
 
-msgid "Two-way ANOVA table without interaction"
+msgid "Two-way Analysis of Variance table without interaction"
 msgstr ""
 
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
@@ -950,12 +984,6 @@ msgstr ""
 msgid "Matrix plot for operators"
 msgstr ""
 
-msgid "Repeat"
-msgstr ""
-
-msgid "Reprod"
-msgstr ""
-
 msgid "%% Study Variation"
 msgstr ""
 
@@ -981,7 +1009,7 @@ msgstr ""
 msgid "Measurement by part x operator plot"
 msgstr ""
 
-msgid "Gauge r&R study - nested ANOVA"
+msgid "Gauge r&R study - nested Analysis of Variance"
 msgstr ""
 
 msgid "Gauge r&R (nested)"
@@ -1550,6 +1578,9 @@ msgstr ""
 msgid "UB = %g"
 msgstr ""
 
+msgid "Lognormal dist."
+msgstr ""
+
 msgid "Process capability (within)"
 msgstr ""
 
@@ -1572,6 +1603,9 @@ msgid "%s CI for Cpk"
 msgstr ""
 
 msgid "Z (ST)"
+msgstr ""
+
+msgid "Z.bench (ST)"
 msgstr ""
 
 msgid ""
@@ -1604,6 +1638,9 @@ msgid "%s CI for Ppk"
 msgstr ""
 
 msgid "Z (LT)"
+msgstr ""
+
+msgid "Z.bench (LT)"
 msgstr ""
 
 msgid "Cpm"
@@ -1704,6 +1741,16 @@ msgid ""
 msgstr ""
 
 msgid "Probability plot against %1$s distribution"
+msgstr ""
+
+msgid ""
+"Could not compute variance-covariance matrix: parameter vector has "
+"unexpected length."
+msgstr ""
+
+msgid ""
+"Could not compute variance-covariance matrix: Hessian contains invalid "
+"values."
 msgstr ""
 
 msgid ""
@@ -1836,8 +1883,18 @@ msgstr ""
 msgid "Variables Chart for Subgroups Report"
 msgstr ""
 
-msgid "The following covariate was considered but not included: %s."
-msgid_plural "The following covariates were considered but not included: %s."
+msgid "The following covariate was considered but not included: %1$s."
+msgid_plural "The following covariates were considered but not included: %1$s."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+msgid ""
+"The main effect %1$s was retained to respect marginality (its squared term "
+"is in the model)."
+msgid_plural ""
+"The main effects %1$s were retained to respect marginality (their squared "
+"terms are in the model)."
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""

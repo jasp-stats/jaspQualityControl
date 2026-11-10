@@ -42,6 +42,7 @@ Form
 	{
 		id:										variablesFormLongFormat
 		visible:								dataFormat.currentValue == "longFormat"
+		preferredHeight:						jaspTheme.smallDefaultVariablesFormHeight
 
 		AvailableVariablesList
 		{
@@ -78,6 +79,7 @@ Form
 	{
 		id:										variablesFormWideFormat
 		visible:								dataFormat.currentValue == "wideFormat"
+		preferredHeight:						jaspTheme.smallDefaultVariablesFormHeight
 
 		AvailableVariablesList
 		{
@@ -92,6 +94,8 @@ Form
 			id:									measurementsWideFormat
 			visible:							dataFormat.currentValue == "wideFormat"
 			allowedColumns:						["scale"]
+			maxRows:							2
+			height:								75 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList

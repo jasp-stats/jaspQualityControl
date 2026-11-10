@@ -18,27 +18,27 @@ A response surface design is an experimental framework used to optimize and unde
 
 ### Assignment box
 - Response: The measured outcome variable of the process under investigation.
-- Discrete predictors: The columns corresponding to the discrete predictors in the design.
-- Continuous predictors: The columns corresponding to the continuous predictors in the design.
-- Covariates: The columns corresponding to the covariates in the design. The difference between a covariate and a continuous predictor is that the covariate will not be analysed for interaction effects and excluded from effect plots.
-- Blocks: The columns corresponding to the blocks in the design. The difference between a block variable and a discrete predictor is that the blocks will not be analysed for interaction effects and excluded from effect plots.
+- Discrete factors: The columns corresponding to the discrete factors in the design.
+- Continuous factors: The columns corresponding to the continuous factors in the design.
+- Covariates: The columns corresponding to the covariates in the design. The difference between a covariate and a continuous factor is that the covariate will not be analysed for interaction effects and excluded from effect plots.
+- Blocks: The columns corresponding to the blocks in the design. The difference between a block variable and a discrete factor is that the blocks will not be analysed for interaction effects and excluded from effect plots.
 
 ## Analysis options
 -------
 
-### Predictor levels
-For the ordering of contrasts and to identify the alpha points in a response surface design, the low and high levels of all predictors need to be specified. There are two options to handle this.
+### Factor levels
+For the ordering of contrasts and to identify the alpha points in a response surface design, the low and high levels of all factors need to be specified. There are two options to handle this.
 
-- Automatically detect low/high: Attempts to automatically detect the low and high levels by taking the minimum and maximum for continuous predictors, and by ordering discrete predictors alphabetically. For response surface designs, this might recognize alpha values as low/high levels. In this case, manual specification is needed.
+- Automatically detect low/high: Attempts to automatically detect the low and high levels by taking the minimum and maximum for continuous factors, and by ordering discrete factors alphabetically. For response surface designs, this might recognize alpha values as low/high levels. In this case, manual specification is needed.
 
-- Manually specify low/high: Shows all predictors in the analysis to allow for manual specification of the low and high levels.
+- Manually specify low/high: Shows all factors in the analysis to allow for manual specification of the low and high levels.
 
 ### Other analysis options
 
-- Use alias names: Check to assign alias names to predictors. Useful when predictors have long names.
+- Use alias names: Check to assign alias names to factors. Useful when factors have long names.
 - Show regression equation: Check to display the regression coefficients as an equation predicting the response.
-- Display result in coded units: Check to display the results in coded units. This means, all predictor levels are standardized between -1 and 1.
-- Show optimal response: Check to display the predictor levels yielding the optimal response.
+- Display result in coded units: Check to display the results in coded units. This means, all factor levels are standardized between -1 and 1.
+- Show optimal response: Check to display the factor levels yielding the optimal response.
 
 ## Model options
 -------

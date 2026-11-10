@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.96.0\n"
-"POT-Creation-Date: 2026-04-04 04:24\n"
-"PO-Revision-Date: 2026-05-17 06:14+0000\n"
-"Last-Translator: Arif Budiman <arifpedia@gmail.com>\n"
+"POT-Creation-Date: 2026-09-05 03:43\n"
+"PO-Revision-Date: 2026-08-24 01:51+0000\n"
+"Last-Translator: Zahid Rizky Fakhri <zahidrizkyfakhri@gmail.com>\n"
 "Language-Team: Indonesian <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/id/>\n"
 "Language: id\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.6.dev0\n"
+"X-Generator: Weblate 2026.9.dev0\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -112,7 +112,7 @@ msgid "CL = %g"
 msgstr ""
 
 msgid "Proportion"
-msgstr ""
+msgstr "Proporsi"
 
 msgid "UCL = %g"
 msgstr ""
@@ -227,7 +227,7 @@ msgid "Design of Experiments - Analysis"
 msgstr ""
 
 msgid "Error"
-msgstr ""
+msgstr "Galat"
 
 msgid ""
 "Stepwise method failed. Please consider a different method or starting model."
@@ -251,28 +251,28 @@ msgid "Terms removed from ANOVA:"
 msgstr ""
 
 msgid "Response Optimizer Settings"
-msgstr ""
+msgstr "Pengaturan Pengoptimasi Tanggapan"
 
 msgid "lower and upper bounds and target are"
-msgstr ""
+msgstr "batas bawah dan atas dan target adalah"
 
 msgid "lower and upper bounds are"
-msgstr ""
+msgstr "batas bawah dan atas adalah"
 
 msgid "target is"
-msgstr ""
+msgstr "target adalah"
 
 msgid "The %s estimated from data."
-msgstr ""
+msgstr "%s diestimasikan dari data."
 
 msgid "Response Optimizer Solution"
-msgstr ""
+msgstr "Solusi Pengoptimasi Tanggapan"
 
 msgid "%s fit"
-msgstr ""
+msgstr "Kesesuaian %s"
 
 msgid "Optimization Plot"
-msgstr ""
+msgstr "Diagram Optimasi"
 
 msgid ""
 "Enter values for all predictors to create an optimization Plot with manual "
@@ -300,10 +300,10 @@ msgid "Ind. desirability ("
 msgstr ""
 
 msgid "Optimization Plot Summary (Manual Predictor Values)"
-msgstr ""
+msgstr "Ringkasan Diagram Optimasi (Nilai Prediktor Manual)"
 
 msgid "Optimization Plot Summary"
-msgstr ""
+msgstr "Ringkasan Diagram Optimasi"
 
 msgid "Composite desirability"
 msgstr ""
@@ -327,8 +327,8 @@ msgstr ""
 msgid "The following aliased terms were removed: %s."
 msgstr ""
 
-msgid "ANOVA"
-msgstr "ANOVA"
+msgid "Analysis of Variance"
+msgstr ""
 
 msgid "Source"
 msgstr ""
@@ -364,7 +364,7 @@ msgid "Alias"
 msgstr ""
 
 msgid "Term"
-msgstr ""
+msgstr "Istilah"
 
 msgid "Effect"
 msgstr "Efek"
@@ -373,7 +373,7 @@ msgid "Coefficient"
 msgstr "Koefisien"
 
 msgid "Standard error"
-msgstr ""
+msgstr "Galat standar"
 
 msgid "Discrete Predictor Levels"
 msgstr ""
@@ -423,14 +423,14 @@ msgstr ""
 msgid "Histogram of Residuals"
 msgstr ""
 
+msgid "Residuals"
+msgstr "Residu"
+
 msgid "Residuals versus Fitted Values"
 msgstr ""
 
 msgid "Fitted values"
 msgstr ""
-
-msgid "Residuals"
-msgstr "Residu"
 
 msgid "Residuals versus Run Order"
 msgstr ""
@@ -457,6 +457,12 @@ msgid "and"
 msgstr ""
 
 msgid "%1$s of %2$s vs %3$s"
+msgstr ""
+
+msgid ""
+"Could not plot because the following selected variable(s) were not included "
+"in the final model: %1$s. They might have been removed during model "
+"selection."
 msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
@@ -508,6 +514,34 @@ msgid "The design is not exported until 'Export design' is checked."
 msgstr ""
 
 msgid "The design is exported as '%1$s'."
+msgstr ""
+
+msgid ""
+"The selected design is a full factorial; no generators can be specified."
+msgstr ""
+
+msgid ""
+"All generators must either all include a factor name (e.g., D=ABC) or none "
+"should."
+msgstr ""
+
+msgid "Only the final %1$s factor(s) can be defined by a generator: %2$s."
+msgstr ""
+
+msgid "Expected %1$s generator(s) for added factor(s) %2$s, but got %3$s."
+msgstr ""
+
+msgid "Factor(s) defined more than once in generators: %s."
+msgstr ""
+
+msgid ""
+"Generator for %1$s references non-base or unknown factor(s): %2$s. Base "
+"factors are: %3$s."
+msgstr ""
+
+msgid ""
+"Generator %1$s references non-base or unknown factor(s): %2$s. Base factors "
+"are: %3$s."
 msgstr ""
 
 msgid "No aliasing among main effects and 2-factor interactions."
@@ -568,10 +602,10 @@ msgid "Attributes agreement analysis"
 msgstr ""
 
 msgid "Cohen's kappa"
-msgstr ""
+msgstr "Kappa Cohen"
 
 msgid "Kendall's tau"
-msgstr ""
+msgstr "tau Kendall"
 
 msgid "Cohen's kappa for appraiser vs standard"
 msgstr ""
@@ -587,7 +621,7 @@ msgid ""
 msgstr ""
 
 msgid "Fleiss' kappa"
-msgstr ""
+msgstr "Kappa Fleiss"
 
 msgid "Within appraisers"
 msgstr ""
@@ -686,7 +720,7 @@ msgid "Gauge bias"
 msgstr ""
 
 msgid "Part"
-msgstr ""
+msgstr "Bagian"
 
 msgid "Reference value"
 msgstr ""
@@ -707,10 +741,10 @@ msgid "Regression model"
 msgstr ""
 
 msgid "Predictor"
-msgstr ""
+msgstr "Prediktor"
 
 msgid "Std. error"
-msgstr ""
+msgstr "Galat Std."
 
 msgid "<i>t</i>-value"
 msgstr ""
@@ -804,7 +838,7 @@ msgstr ""
 msgid "Number of distinct categories"
 msgstr ""
 
-msgid "Gauge r&R ANOVA table"
+msgid "Gauge r&R Analysis of Variance table"
 msgstr ""
 
 msgid "Range chart by operator"
@@ -831,13 +865,13 @@ msgstr ""
 msgid "Traffic light chart"
 msgstr ""
 
-msgid "Gauge r&R study - crossed ANOVA"
+msgid "Gauge r&R study - crossed Analysis of Variance"
 msgstr ""
 
-msgid "One-way ANOVA table"
+msgid "One-way Analysis of Variance table"
 msgstr ""
 
-msgid "Two-way ANOVA table with interaction"
+msgid "Two-way Analysis of Variance table with interaction"
 msgstr ""
 
 msgid "Mean squares"
@@ -907,7 +941,7 @@ msgid ""
 "to values for %%study variation."
 msgstr ""
 
-msgid "Two-way ANOVA table without interaction"
+msgid "Two-way Analysis of Variance table without interaction"
 msgstr ""
 
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
@@ -949,12 +983,6 @@ msgstr ""
 msgid "Matrix plot for operators"
 msgstr ""
 
-msgid "Repeat"
-msgstr ""
-
-msgid "Reprod"
-msgstr ""
-
 msgid "%% Study Variation"
 msgstr ""
 
@@ -980,7 +1008,7 @@ msgstr ""
 msgid "Measurement by part x operator plot"
 msgstr ""
 
-msgid "Gauge r&R study - nested ANOVA"
+msgid "Gauge r&R study - nested Analysis of Variance"
 msgstr ""
 
 msgid "Gauge r&R (nested)"
@@ -1048,7 +1076,7 @@ msgid "%%GRR of process std. dev."
 msgstr ""
 
 msgid "Tolerance"
-msgstr ""
+msgstr "Toleransi"
 
 msgid "%%GRR of tolerance"
 msgstr ""
@@ -1301,7 +1329,7 @@ msgid ""
 msgstr ""
 
 msgid "Intercept"
-msgstr "Intersepsi"
+msgstr "Intersep"
 
 msgid ""
 "The IWLS algorithm did not converge. Interpret the results with caution."
@@ -1450,7 +1478,7 @@ msgid "LSL"
 msgstr ""
 
 msgid "Target"
-msgstr ""
+msgstr "Target"
 
 msgid "UB"
 msgstr ""
@@ -1549,6 +1577,9 @@ msgstr ""
 msgid "UB = %g"
 msgstr ""
 
+msgid "Lognormal dist."
+msgstr ""
+
 msgid "Process capability (within)"
 msgstr ""
 
@@ -1571,6 +1602,9 @@ msgid "%s CI for Cpk"
 msgstr ""
 
 msgid "Z (ST)"
+msgstr ""
+
+msgid "Z.bench (ST)"
 msgstr ""
 
 msgid ""
@@ -1605,6 +1639,9 @@ msgstr ""
 msgid "Z (LT)"
 msgstr ""
 
+msgid "Z.bench (LT)"
+msgstr ""
+
 msgid "Cpm"
 msgstr ""
 
@@ -1635,7 +1672,7 @@ msgid "Shape (%1$s)"
 msgstr ""
 
 msgid "Threshold"
-msgstr ""
+msgstr "Ambang Batas"
 
 msgid "Calculations based on %s distribution."
 msgstr ""
@@ -1703,6 +1740,16 @@ msgid ""
 msgstr ""
 
 msgid "Probability plot against %1$s distribution"
+msgstr ""
+
+msgid ""
+"Could not compute variance-covariance matrix: parameter vector has "
+"unexpected length."
+msgstr ""
+
+msgid ""
+"Could not compute variance-covariance matrix: Hessian contains invalid "
+"values."
 msgstr ""
 
 msgid ""
@@ -1835,7 +1882,17 @@ msgstr ""
 msgid "Variables Chart for Subgroups Report"
 msgstr ""
 
-msgid "The following covariate was considered but not included: %s."
-msgid_plural "The following covariates were considered but not included: %s."
+msgid "The following covariate was considered but not included: %1$s."
+msgid_plural "The following covariates were considered but not included: %1$s."
 msgstr[0] ""
-msgstr[1] ""
+
+msgid ""
+"The main effect %1$s was retained to respect marginality (its squared term "
+"is in the model)."
+msgid_plural ""
+"The main effects %1$s were retained to respect marginality (their squared "
+"terms are in the model)."
+msgstr[0] ""
+
+#~ msgid "ANOVA"
+#~ msgstr "ANOVA"

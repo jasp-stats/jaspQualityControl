@@ -337,7 +337,8 @@
       "NeedsCompilation": "no",
       "Author": "Coen Bernaards [aut, cre], Paul Gilbert [aut], Robert Jennrich [aut]",
       "Maintainer": "Coen Bernaards <cab.gparotation@gmail.com>",
-      "Repository": "CRAN"
+      "Repository": "RSPM",
+      "Encoding": "UTF-8"
     },
     "Hmisc": {
       "Package": "Hmisc",
@@ -1041,8 +1042,7 @@
       "URL": "https://www.rforge.net/base64enc",
       "BugReports": "https://github.com/s-u/base64enc/issues",
       "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "bbmle": {
       "Package": "bbmle",
@@ -1611,8 +1611,7 @@
       "NeedsCompilation": "no",
       "Author": "John Fox [aut], Sanford Weisberg [aut], Brad Price [aut, cre]",
       "Maintainer": "Brad Price <brad.price@mail.wvu.edu>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "checkmate": {
       "Package": "checkmate",
@@ -2258,8 +2257,7 @@
       "URL": "https://github.com/tpetzoldt/deSolve/",
       "LazyData": "yes",
       "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "desc": {
       "Package": "desc",
@@ -2740,11 +2738,11 @@
       "RoxygenNote": "7.3.2",
       "VignetteBuilder": "knitr",
       "RemoteType": "github",
-      "RemoteHost": "api.github.com",
       "RemoteUsername": "dustinfife",
       "RemoteRepo": "flexplot",
       "RemoteRef": "master",
-      "RemoteSha": "cae36ba45502ce1794ad35cfeaf0155275db3056"
+      "RemoteSha": "cae36ba45502ce1794ad35cfeaf0155275db3056",
+      "RemoteHost": "api.github.com"
     },
     "flexsurv": {
       "Package": "flexsurv",
@@ -3728,8 +3726,7 @@
       "NeedsCompilation": "yes",
       "URL": "https://forgemia.inra.fr/sylvain.jasson/gmp",
       "Author": "Antoine Lucas [aut, cre] (ORCID: <https://orcid.org/0000-0002-8059-9767>), Immanuel Scholz [aut], Rainer Boehme [ctb], Sylvain Jasson [ctb], Martin Maechler [ctb]",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "goftest": {
       "Package": "goftest",
@@ -4109,70 +4106,8 @@
     },
     "igraph": {
       "Package": "igraph",
-      "Version": "2.3.1",
+      "Version": "2.3.3",
       "Source": "Repository",
-      "Title": "Network Analysis and Visualization",
-      "Authors@R": "c( person(\"Gábor\", \"Csárdi\", , \"csardi.gabor@gmail.com\", role = \"aut\", comment = c(ORCID = \"0000-0001-7098-9676\")), person(\"Tamás\", \"Nepusz\", , \"ntamas@gmail.com\", role = \"aut\", comment = c(ORCID = \"0000-0002-1451-338X\")), person(\"Vincent\", \"Traag\", role = \"aut\", comment = c(ORCID = \"0000-0003-3170-3879\")), person(\"Szabolcs\", \"Horvát\", , \"szhorvat@gmail.com\", role = \"aut\", comment = c(ORCID = \"0000-0002-3100-523X\")), person(\"Fabio\", \"Zanini\", , \"fabio.zanini@unsw.edu.au\", role = \"aut\", comment = c(ORCID = \"0000-0001-7097-8539\")), person(\"Daniel\", \"Noom\", role = \"aut\"), person(\"Kirill\", \"Müller\", , \"kirill@cynkra.com\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0002-1416-3412\")), person(\"Michael\", \"Antonov\", role = \"ctb\"), person(\"Chan Zuckerberg Initiative\", role = \"fnd\", comment = c(ROR = \"02qenvm24\")), person(\"David\", \"Schoch\", , \"david.schoch@cynkra.com\", role = \"aut\", comment = c(ORCID = \"0000-0003-2952-4812\")), person(\"Maëlle\", \"Salmon\", , \"maelle@cynkra.com\", role = \"aut\", comment = c(ORCID = \"0000-0002-2815-0399\")), person(\"R Consortium\", role = \"fnd\", comment = c(ROR = \"01z833950\")) )",
-      "Description": "Routines for simple graphs and network analysis. It can handle large graphs very well and provides functions for generating random and regular graphs, graph visualization, centrality methods and much more.",
-      "License": "GPL (>= 2)",
-      "URL": "https://r.igraph.org/, https://igraph.org/, https://igraph.discourse.group/",
-      "BugReports": "https://github.com/igraph/rigraph/issues",
-      "Depends": [
-        "methods",
-        "R (>= 3.5.0)"
-      ],
-      "Imports": [
-        "cli",
-        "graphics",
-        "grDevices",
-        "lifecycle",
-        "magrittr",
-        "Matrix",
-        "pkgconfig (>= 2.0.0)",
-        "rlang (>= 1.1.0)",
-        "stats",
-        "utils",
-        "vctrs"
-      ],
-      "Suggests": [
-        "ape (>= 5.7-0.1)",
-        "callr",
-        "decor",
-        "digest",
-        "igraphdata",
-        "knitr",
-        "rgl (>= 1.3.14)",
-        "rmarkdown",
-        "scales",
-        "stats4",
-        "tcltk",
-        "testthat",
-        "vdiffr",
-        "withr"
-      ],
-      "Enhances": [
-        "graph"
-      ],
-      "LinkingTo": [
-        "cpp11 (>= 0.5.0)"
-      ],
-      "VignetteBuilder": "knitr",
-      "Config/build/compilation-database": "false",
-      "Config/build/never-clean": "true",
-      "Config/comment/compilation-database": "Generate manually with pkgload:::generate_db() for faster pkgload::load_all()",
-      "Config/Needs/build": "devtools, irlba, pkgconfig",
-      "Config/Needs/coverage": "covr",
-      "Config/Needs/roxygen2": "r-lib/roxygen2, igraph/igraph.r2cdocs, moodymudskipper/devtag",
-      "Config/Needs/website": "here, readr, tibble, xmlparsedata, xml2",
-      "Config/testthat/edition": "3",
-      "Config/testthat/parallel": "true",
-      "Config/testthat/start-first": "aaa-auto, vs-es, scan, vs-operators, weakref, watts.strogatz.game",
-      "Encoding": "UTF-8",
-      "RoxygenNote": "7.3.3.9000",
-      "SystemRequirements": "libxml2 (optional), glpk (>= 4.57, optional)",
-      "NeedsCompilation": "yes",
-      "Author": "Gábor Csárdi [aut] (ORCID: <https://orcid.org/0000-0001-7098-9676>), Tamás Nepusz [aut] (ORCID: <https://orcid.org/0000-0002-1451-338X>), Vincent Traag [aut] (ORCID: <https://orcid.org/0000-0003-3170-3879>), Szabolcs Horvát [aut] (ORCID: <https://orcid.org/0000-0002-3100-523X>), Fabio Zanini [aut] (ORCID: <https://orcid.org/0000-0001-7097-8539>), Daniel Noom [aut], Kirill Müller [aut, cre] (ORCID: <https://orcid.org/0000-0002-1416-3412>), Michael Antonov [ctb], Chan Zuckerberg Initiative [fnd] (ROR: <https://ror.org/02qenvm24>), David Schoch [aut] (ORCID: <https://orcid.org/0000-0003-2952-4812>), Maëlle Salmon [aut] (ORCID: <https://orcid.org/0000-0002-2815-0399>), R Consortium [fnd] (ROR: <https://ror.org/01z833950>)",
-      "Maintainer": "Kirill Müller <kirill@cynkra.com>",
       "Repository": "CRAN"
     },
     "irr": {
@@ -4237,72 +4172,40 @@
     },
     "jaspBase": {
       "Package": "jaspBase",
-      "Version": "0.20.4",
+      "Version": "0.20.5",
       "Source": "GitHub",
-      "Type": "Package",
-      "Title": "JASP Base",
-      "Author": "JASP Team",
-      "Maintainer": "Bruno Boutin <B.Boutin@uva.nl>",
-      "Description": "Package contains the JASP Bayesian and Frequentist analyses. See <https://jasp-stats.org> for more details.",
-      "License": "GPL2+",
-      "Imports": [
+      "Requirements": [
         "cli",
         "codetools",
-        "compiler",
         "ggplot2",
-        "grDevices",
-        "grid",
         "gridExtra",
         "gridGraphics",
         "jaspGraphs",
         "jsonlite",
         "lifecycle",
-        "methods",
         "officer",
         "pkgbuild",
         "plyr",
         "ragg",
         "R6",
-        "Rcpp (>= 0.12.14)",
+        "Rcpp",
         "rvg",
         "svglite",
         "systemfonts",
-        "withr"
+        "withr",
+        "testthat"
       ],
-      "RoxygenNote": "7.3.3",
-      "Roxygen": "list(markdown = TRUE)",
-      "Encoding": "UTF-8",
-      "LinkingTo": [
-        "Rcpp"
-      ],
-      "RcppModules": "jaspResults",
-      "NeedsCompilation": "yes",
-      "Suggests": [
-        "testthat (>= 3.0.0)"
-      ],
-      "Config/testthat/edition": "3",
       "RemoteType": "github",
-      "Remotes": "jasp-stats/jaspGraphs",
+      "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspBase",
-      "RemoteRef": "master",
-      "RemoteSha": "244c661b7a4cdcc9aca0aacbf5555881d90c0985",
-      "RemoteHost": "api.github.com"
+      "RemoteSha": "5ac9db8349dfa59e57b2942dd0155e4c488c4518"
     },
     "jaspDescriptives": {
       "Package": "jaspDescriptives",
       "Version": "0.96.5",
       "Source": "GitHub",
-      "Type": "Package",
-      "Title": "Descriptives Module for JASP",
-      "Date": "2026-04-07",
-      "Author": "JASP Team",
-      "Website": "jasp-stats.org",
-      "Maintainer": "JASP Team <info@jasp-stats.org>",
-      "Description": "Explore the data with tables and plots",
-      "License": "GPL (>= 2)",
-      "Encoding": "UTF-8",
-      "Imports": [
+      "Requirements": [
         "ggplot2",
         "ggrepel",
         "jaspBase",
@@ -4320,31 +4223,19 @@
         "forcats",
         "patchwork"
       ],
-      "RoxygenNote": "7.3.3",
       "RemoteType": "github",
-      "Remotes": "jasp-stats/jaspBase, jasp-stats/jaspGraphs, jasp-stats/jaspTTests, dustinfife/flexplot",
+      "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspDescriptives",
-      "RemoteRef": "master",
-      "RemoteSha": "ff66fe2331680e2078be50b7c9ded54191f9af4a",
-      "RemoteHost": "api.github.com"
+      "RemoteSha": "6d9bfc07e103a1b4fe8a4a732cd302ae50634369"
     },
     "jaspGraphs": {
       "Package": "jaspGraphs",
       "Version": "0.20.0",
       "Source": "GitHub",
-      "Type": "Package",
-      "Title": "Custom Graphs for JASP",
-      "Author": "Don van den Bergh",
-      "Maintainer": "JASP-team <info@jasp-stats.nl>",
-      "Description": "Graph making functions and wrappers for JASP.",
-      "License": "GPL",
-      "Encoding": "UTF-8",
-      "LazyData": "true",
-      "RoxygenNote": "7.3.3",
-      "Imports": [
+      "Requirements": [
         "cli",
-        "ggplot2 (>= 3.0.0)",
+        "ggplot2",
         "gridExtra",
         "gtable",
         "htmlwidgets",
@@ -4353,34 +4244,21 @@
         "plotly",
         "R6",
         "rlang",
-        "scales"
-      ],
-      "Suggests": [
+        "scales",
         "testthat",
         "vdiffr"
       ],
-      "Roxygen": "list(markdown = TRUE)",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspGraphs",
-      "RemoteRef": "master",
-      "RemoteSha": "cbe943517ac21078d0a502bcfaf8ae5e11756a05"
+      "RemoteSha": "288d2751131ee6ac17362bd89d2ed7d9c0c67c7c"
     },
     "jaspTTests": {
       "Package": "jaspTTests",
       "Version": "0.96.5",
       "Source": "GitHub",
-      "Type": "Package",
-      "Title": "T-Tests Module for JASP",
-      "Date": "2022-10-05",
-      "Author": "JASP Team",
-      "Website": "jasp-stats.org",
-      "Maintainer": "JASP Team <info@jasp-stats.org>",
-      "Description": "Evaluate the difference between two means",
-      "License": "GPL (>= 2)",
-      "Encoding": "UTF-8",
-      "Imports": [
+      "Requirements": [
         "BayesFactor",
         "car",
         "ggplot2",
@@ -4390,59 +4268,11 @@
         "plotrix",
         "plyr"
       ],
-      "RoxygenNote": "7.3.2",
       "RemoteType": "github",
-      "Remotes": "jasp-stats/jaspBase, jasp-stats/jaspGraphs",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspTTests",
-      "RemoteRef": "master",
-      "RemoteSha": "79e0e449ff7995626c1d6a2dc8688ccfd37c4aa8"
-    },
-    "jaspTools": {
-      "Package": "jaspTools",
-      "Version": "0.20.1",
-      "Source": "GitHub",
-      "Type": "Package",
-      "Title": "Helps Preview and Debug JASP Analyses",
-      "Authors@R": "c( person(\"Tim\", \"de Jong\", role = \"aut\"), person(\"Don\", \"van den Bergh\", role = c(\"ctb\", \"cre\"), email = \"d.vandenbergh@uva.nl\"), person(\"František\", \"Bartoš\", role = \"ctb\"))",
-      "Maintainer": "Don van den Bergh <d.vandenbergh@uva.nl>",
-      "Description": "This package assists JASP developers when writing R code. It removes the necessity of building JASP every time a change is made. Rather, analyses can be called directly in R and be debugged interactively.",
-      "License": "GNU General Public License",
-      "Encoding": "UTF-8",
-      "Imports": [
-        "archive (>= 1.1.6)",
-        "cli",
-        "data.table",
-        "DBI",
-        "httr",
-        "jsonlite",
-        "lifecycle",
-        "pkgload",
-        "remotes",
-        "rjson",
-        "RSQLite",
-        "stringi",
-        "stringr",
-        "testthat (>= 3.2.2)",
-        "vdiffr (>= 1.0.7)"
-      ],
-      "Suggests": [
-        "ggplot2"
-      ],
-      "RoxygenNote": "7.3.3",
-      "Roxygen": "list(markdown = TRUE)",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "jaspTools",
-      "RemoteUsername": "jasp-stats",
-      "RemoteRef": "4de8982",
-      "RemoteSha": "4de898283e3817fdb072733f642ba5711897a592",
-      "NeedsCompilation": "no",
-      "Author": "Tim de Jong [aut], Don van den Bergh [ctb, cre], František Bartoš [ctb]",
-      "Depends": [
-        "R (>= 3.5.0)"
-      ]
+      "RemoteSha": "8c9f68ac784679aff9bc94151a92d7067bd41c1a"
     },
     "jpeg": {
       "Package": "jpeg",
@@ -4704,8 +4534,7 @@
       "NeedsCompilation": "yes",
       "Author": "Hadley Wickham [aut, cre], RStudio [cph]",
       "Maintainer": "Hadley Wickham <hadley@rstudio.com>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "libcoin": {
       "Package": "libcoin",
@@ -4733,8 +4562,7 @@
       "License": "GPL-2",
       "Author": "Torsten Hothorn [aut, cre] (ORCID: <https://orcid.org/0000-0001-8301-0471>), Henric Winell [aut] (ORCID: <https://orcid.org/0000-0001-7995-3047>)",
       "Maintainer": "Torsten Hothorn <Torsten.Hothorn@R-project.org>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "lifecycle": {
       "Package": "lifecycle",
@@ -5152,9 +4980,6 @@
       "Package": "mgcv",
       "Version": "1.9-4",
       "Source": "Repository",
-      "Authors@R": "person(given = \"Simon\", family = \"Wood\", role = c(\"aut\", \"cre\"), email = \"simon.wood@r-project.org\")",
-      "Title": "Mixed GAM Computation Vehicle with Automatic Smoothness Estimation",
-      "Description": "Generalized additive (mixed) models, some of their extensions and  other generalized ridge regression with multiple smoothing  parameter estimation by (Restricted) Marginal Likelihood,  Cross Validation and similar, or using iterated nested Laplace approximation for fully Bayesian inference. See Wood (2025) <doi:10.1146/annurev-statistics-112723-034249> for an overview. Includes a gam() function, a wide variety of smoothers, 'JAGS' support and distributions beyond the exponential family.",
       "Priority": "recommended",
       "Depends": [
         "R (>= 4.4.0)",
@@ -5168,18 +4993,24 @@
         "splines",
         "utils"
       ],
+      "LinkingTo": [
+        null
+      ],
       "Suggests": [
         "parallel",
         "survival",
         "MASS"
       ],
-      "LazyLoad": "yes",
-      "ByteCompile": "yes",
+      "Enhances": [
+        null
+      ],
       "License": "GPL (>= 2)",
+      "License_is_FOSS": null,
+      "License_restricts_use": null,
+      "OS_type": null,
       "NeedsCompilation": "yes",
-      "Author": "Simon Wood [aut, cre]",
-      "Maintainer": "Simon Wood <simon.wood@r-project.org>",
-      "Repository": "CRAN"
+      "Repository": "RSPM",
+      "Type": "source"
     },
     "microbenchmark": {
       "Package": "microbenchmark",
@@ -5434,8 +5265,7 @@
       "NeedsCompilation": "no",
       "Author": "Torsten Hothorn [aut, cre] (ORCID: <https://orcid.org/0000-0001-8301-0471>), Frank Bretz [aut], Peter Westfall [aut], Richard M. Heiberger [ctb], Andre Schuetzenmeister [ctb], Susan Scheibe [ctb], Christian Ritz [ctb], Christian B. Pipper [ctb]",
       "Maintainer": "Torsten Hothorn <Torsten.Hothorn@R-project.org>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "mvtnorm": {
       "Package": "mvtnorm",
@@ -5461,8 +5291,7 @@
       "NeedsCompilation": "yes",
       "Author": "Alan Genz [aut], Frank Bretz [aut], Tetsuhisa Miwa [aut], Xuefei Mi [aut], Friedrich Leisch [ctb], Fabian Scheipl [ctb], Bjoern Bornkamp [ctb] (ORCID: <https://orcid.org/0000-0002-6294-8185>), Martin Maechler [ctb] (ORCID: <https://orcid.org/0000-0002-8685-9910>), Torsten Hothorn [aut, cre] (ORCID: <https://orcid.org/0000-0001-8301-0471>)",
       "Maintainer": "Torsten Hothorn <Torsten.Hothorn@R-project.org>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "nlme": {
       "Package": "nlme",
@@ -5798,8 +5627,7 @@
       "NeedsCompilation": "yes",
       "Author": "Torsten Hothorn [aut, cre] (ORCID: <https://orcid.org/0000-0001-8301-0471>), Kurt Hornik [aut] (ORCID: <https://orcid.org/0000-0003-4198-9911>), Carolin Strobl [aut] (ORCID: <https://orcid.org/0000-0003-0952-3230>), Achim Zeileis [aut] (ORCID: <https://orcid.org/0000-0003-0918-3766>)",
       "Maintainer": "Torsten Hothorn <Torsten.Hothorn@R-project.org>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "patchwork": {
       "Package": "patchwork",
@@ -6174,12 +6002,11 @@
       "Depends": [
         "R (>= 3.5.0)"
       ],
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "URL": "https://plotrix.github.io/plotrix/, https://github.com/plotrix/plotrix",
       "BugReports": "https://github.com/plotrix/plotrix/issues",
       "Author": "Jim Lemon [aut], Ben Bolker [ctb], Sander Oom [ctb], Eduardo Klein [ctb], Barry Rowlingson [ctb], Hadley Wickham [ctb], Anupam Tyagi [ctb], Olivier Eterradossi [ctb], Gabor Grothendieck [ctb], Michael Toews [ctb], John Kane [ctb], Rolf Turner [ctb], Carl Witthoft [ctb], Julian Stander [ctb], Thomas Petzoldt [ctb], Remko Duursma [ctb], Elisa Biancotto [ctb], Ofir Levy [ctb], Christophe Dutang [ctb], Peter Solymos [ctb], Robby Engelmann [ctb], Michael Hecker [ctb], Felix Steinbeck [ctb], Hans Borchers [ctb], Henrik Singmann [ctb], Ted Toal [ctb], Derek Ogle [ctb], Darshan Baral [ctb], Ulrike Groemping [ctb], Bill Venables [ctb], The CRAN Team [ctb], Duncan Murdoch [ctb, cre]",
-      "Maintainer": "Duncan Murdoch <murdoch.duncan@gmail.com>",
-      "Encoding": "UTF-8"
+      "Maintainer": "Duncan Murdoch <murdoch.duncan@gmail.com>"
     },
     "plyr": {
       "Package": "plyr",
@@ -6235,8 +6062,7 @@
       "URL": "https://www.rforge.net/png/",
       "BugReports": "https://github.com/s-u/png/issues/",
       "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "polynom": {
       "Package": "polynom",
@@ -6443,7 +6269,8 @@
       "NeedsCompilation": "no",
       "Author": "William Revelle [aut, cre] (ORCID: <https://orcid.org/0000-0003-4880-9610>)",
       "Maintainer": "William Revelle <revelle@northwestern.edu>",
-      "Repository": "CRAN"
+      "Repository": "RSPM",
+      "Encoding": "UTF-8"
     },
     "purrr": {
       "Package": "purrr",
@@ -6961,10 +6788,9 @@
       "NeedsCompilation": "yes",
       "Author": "Terry Therneau [aut], Beth Atkinson [aut, cre], Brian Ripley [trl] (producer of the initial R port, maintainer 1999-2017)",
       "Maintainer": "Beth Atkinson <atkinson@mayo.edu>",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "URL": "https://github.com/bethatkinson/rpart, https://cran.r-project.org/package=rpart",
-      "BugReports": "https://github.com/bethatkinson/rpart/issues",
-      "Encoding": "UTF-8"
+      "BugReports": "https://github.com/bethatkinson/rpart/issues"
     },
     "rprojroot": {
       "Package": "rprojroot",
@@ -8179,8 +8005,7 @@
       "URL": "https://www.rforge.net/uuid",
       "BugReports": "https://github.com/s-u/uuid/issues",
       "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "vcd": {
       "Package": "vcd",

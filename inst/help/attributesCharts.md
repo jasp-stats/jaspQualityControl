@@ -60,8 +60,6 @@ In the case that the data of the individual and moving Range chart (X-mR chart) 
 
 - Duncan, A.J. (1986), *Quality control and industrial statistics*, Richard D. Irwin, Inc.
 - Automotive Industry Action Group, *Statistical Process Control – Reference Manual* (July 2005, 2nd Edition)
-- SKF Quality Techniques, Klerx, R., Dodson, B., and Dumont, D., QT 1 – *Process capability studies* (PUB GQ/P9 10347/1 EN – December 2021)
-- SKF Quality Techniques, Dodson, B., Lynch, D., Weidenbacher, M., and Klerx, R., QT 2 – *Statistical process control* (PUB GQS/P9 18343 EN – April 2019)
 - International Organization for Standardization, *Control charts – Part 2: Shewhart control charts*, ISO 7870-2:2023 (E)
 
 
