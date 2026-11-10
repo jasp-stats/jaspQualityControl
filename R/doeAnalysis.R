@@ -134,7 +134,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   .doeAnalysisPlotMatrixResidualPlot(jaspResults, dependent, dataset, options, ready)
   .doeAnalysisPlotContourSurface(jaspResults, dataset, options, dependent, ready)
   .doeResponseOptimizerTables(jaspResults, options, dataset, continuousPredictors, discretePredictors, ready)
-  .doeResponseOptimizerPlots(jaspResults, options, dataset, continuousPredictors, discretePredictors, ready)
+  .doeResponseOptimizerPredictionTable(jaspResults, options, dataset, continuousPredictors, discretePredictors, blocks, covariates, ready)
+  .doeResponseOptimizerPlots(jaspResults, options, dataset, continuousPredictors, discretePredictors, blocks, covariates, ready)
   }
 
 .doeAnalysisReadData <- function(dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent) {
@@ -588,11 +589,13 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       coefEffects <- rep(NA_real_, length(regressionFit$coefficients))
 
     result[["regression"]][["coefficients"]][["effects"]] <- coefEffects
+    result[["regression"]][["coefficients"]][["effectsSe"]] <- .doeEffectStandardErrors(effectsFit, coefEffects)
     result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
     result[["regression"]][["coefficients"]][["effects"]][1] <- NA
     result[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFit, predictorsForLevelRemoval)
 
     resultCoded[["regression"]][["coefficients"]][["effects"]] <- coefEffectsCoded
+    resultCoded[["regression"]][["coefficients"]][["effectsSe"]] <- .doeEffectStandardErrors(regressionFitCoded, coefEffectsCoded)
     resultCoded[["regression"]][["coefficients"]][["est"]] <- coef(regressionFitCoded)[!is.na(coef(regressionFitCoded))]
     resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
     resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded, predictorsForLevelRemoval)
@@ -865,7 +868,7 @@ get_levels <- function(var, num_levels, dataset) {
 }
 
 .doeResponseOptimizerPlots <- function(jaspResults, options, dataset, continuousPredictors,
-                                       discretePredictors, readyModelPresent) {
+                                       discretePredictors, blocks, covariates, readyModelPresent) {
   if (is.null(jaspResults[["roOptions"]]))
     return()
   roOptionsDf <- jaspResults[["roOptions"]]$object
@@ -885,7 +888,7 @@ get_levels <- function(var, num_levels, dataset) {
   continuousPredictors <- unlist(continuousPredictors)
 
   jaspResults[["plotRo"]] <- createJaspContainer(title = gettext("Optimization Plot"))
-  jaspResults[["plotRo"]]$position <- 3
+  jaspResults[["plotRo"]]$position <- 4
 
   # Create Df if custom parameters are entered
   if (options[["optimizationPlotCustomParameters"]]) {
@@ -1125,6 +1128,117 @@ get_levels <- function(var, num_levels, dataset) {
   for (dep in roDependent)
     rows[[paste0(dep, " fit")]] <- round(as.numeric(predValues[[dep]]), .numDecimals)
   tb$addRows(rows)
+
+  if (options[["optimizationIntervals"]] && options[["optimizationPlotCustomParameters"]]) {
+    predictionTable <- createJaspTable(gettext("Predicted Responses (Manual Predictor Values)"))
+    predictionTable$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationPlot", "optimizationPlotCustomParameterValues",
+                                         "optimizationIntervals", "optimizationIntervalsLevel"))
+    jaspResults[["plotRo"]][["predictionTable"]] <- predictionTable
+    .doeFillPredictionTable(predictionTable, jaspResults, roDependent, .doeSettingsAsList(currentSettings, allPredictors), dataset,
+                            blocks, covariates, options[["optimizationIntervalsLevel"]])
+  }
+}
+
+.doeResponseOptimizerPredictionTable <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, blocks, covariates, readyModelPresent) {
+  if (!options[["optimizationIntervals"]] || !readyModelPresent || is.null(jaspResults[["roResult"]]) || !is.null(jaspResults[["tableRoPrediction"]]))
+    return()
+
+  table <- createJaspTable(gettext("Predicted Responses (Optimal Solution)"))
+  table$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationIntervals", "optimizationIntervalsLevel"))
+  table$position <- 3
+  jaspResults[["tableRoPrediction"]] <- table
+
+  predictors <- c(unlist(discretePredictors), unlist(continuousPredictors))
+  predictors <- predictors[predictors != ""]
+  settings   <- .doeSettingsAsList(jaspResults[["roResult"]]$object[["parameters"]], predictors)
+  .doeFillPredictionTable(table, jaspResults, jaspResults[["roOptions"]]$object$variable, settings, dataset, blocks, covariates,
+                          options[["optimizationIntervalsLevel"]])
+}
+
+.doeResponseOptimizerDependencies <- function() {
+  c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
+    "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
+    "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
+    .doeAnalysisBaseDependencies())
+}
+
+# Predictor settings (a data frame row, or a single value when there is only one predictor) as a named list
+.doeSettingsAsList <- function(settings, predictors) {
+  if (is.data.frame(settings))
+    return(as.list(settings[1, predictors, drop = FALSE]))
+  if (length(predictors) == 1)
+    return(stats::setNames(list(settings), predictors))
+  return(as.list(settings)[predictors])
+}
+
+.doeFillPredictionTable <- function(table, jaspResults, responses, settings, dataset, blocks, covariates, level) {
+  intervalLevel <- 100 * level
+  table$addColumnInfo(name = "response", title = gettext("Response"), type = "string")
+  table$addColumnInfo(name = "fit",      title = gettext("Fit"), type = "number")
+  table$addColumnInfo(name = "se",       title = gettext("Standard error"), type = "number")
+  table$addColumnInfo(name = "ciLower",  title = gettext("Lower"), type = "number", overtitle = gettextf("%s%% CI", intervalLevel))
+  table$addColumnInfo(name = "ciUpper",  title = gettext("Upper"), type = "number", overtitle = gettextf("%s%% CI", intervalLevel))
+  table$addColumnInfo(name = "piLower",  title = gettext("Lower"), type = "number", overtitle = gettextf("%s%% PI", intervalLevel))
+  table$addColumnInfo(name = "piUpper",  title = gettext("Upper"), type = "number", overtitle = gettextf("%s%% PI", intervalLevel))
+
+  rows <- do.call(rbind, lapply(responses, function(response) {
+    fit <- jaspResults[[response]][["doeResult"]]$object[["regression"]][["object"]]
+    cbind(response = response, .doePredictionWithIntervals(fit, settings, dataset, level, blocks, covariates))
+  }))
+  table$setData(rows)
+
+  table$addFootnote(gettext("CI: confidence interval for the mean response. PI: prediction interval for a single new run."))
+  if (any(is.na(rows[["se"]])))
+    table$addFootnote(gettext("Intervals cannot be calculated when the model has no degrees of freedom for error."))
+  if (length(blocks) > 0 && !identical(blocks, ""))
+    table$addFootnote(gettext("Predictions are averaged over the blocks."))
+  if (length(covariates) > 0 && !identical(covariates, ""))
+    table$addFootnote(gettext("Covariates are held at their mean."))
+}
+
+# Fitted response at the given predictor settings, with its standard error, the confidence interval for the mean
+# response and the prediction interval for a single new observation. Blocks are averaged out (zero under sum-to-zero
+# contrasts) and covariates are held at their mean.
+.doePredictionWithIntervals <- function(fit, settings, dataset, level, blocks = NULL, covariates = NULL) {
+  newdata <- dataset[1, , drop = FALSE] # keeps the column types
+  newdata[] <- lapply(newdata, function(x) { attr(x, "contrasts") <- NULL; x }) # contrasts come from the fit
+  for (predictor in names(settings)) {
+    value <- unlist(settings[[predictor]])
+    newdata[[predictor]] <- if (is.factor(dataset[[predictor]])) {
+      factor(as.character(value), levels = levels(dataset[[predictor]]))
+    } else {
+      as.numeric(as.character(value))
+    }
+  }
+  covariates <- unlist(covariates)
+  for (covariate in covariates[covariates != ""])
+    newdata[[covariate]] <- mean(dataset[[covariate]])
+
+  modelTerms <- stats::delete.response(stats::terms(fit))
+  x0         <- stats::model.matrix(modelTerms, stats::model.frame(modelTerms, newdata, xlev = fit[["xlevels"]]),
+                                    contrasts.arg = fit[["contrasts"]])
+  blockTerms <- which(attr(modelTerms, "term.labels") %in% unlist(blocks))
+  x0[, attr(x0, "assign") %in% blockTerms] <- 0
+
+  coefs     <- stats::coef(fit)
+  estimable <- !is.na(coefs)
+  x0        <- x0[, estimable, drop = FALSE]
+  fitValue  <- drop(x0 %*% coefs[estimable])
+
+  errorDf <- fit[["df.residual"]]
+  if (errorDf == 0)
+    return(data.frame(fit = fitValue, se = NA_real_, ciLower = NA_real_, ciUpper = NA_real_, piLower = NA_real_, piUpper = NA_real_))
+
+  sigma  <- sqrt(sum(stats::residuals(fit)^2) / errorDf)
+  seFit  <- sqrt(drop(x0 %*% stats::vcov(fit, complete = FALSE) %*% t(x0)))
+  sePred <- sqrt(seFit^2 + sigma^2)
+  tCrit  <- stats::qt((1 + level) / 2, errorDf)
+  data.frame(fit     = fitValue,
+             se      = seFit,
+             ciLower = fitValue - tCrit * seFit,
+             ciUpper = fitValue + tCrit * seFit,
+             piLower = fitValue - tCrit * sePred,
+             piUpper = fitValue + tCrit * sePred)
 }
 
 .calculateOptimalResponse <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, dependent, roOptionsDf, coefficients) {
@@ -1419,9 +1533,10 @@ get_levels <- function(var, num_levels, dataset) {
     interactionRow <- groupRow(interactionTermIndices, sprintf("\u00A0 %s", "Interaction terms"))
   }
 
-  # Model error row
+  # Model error row, split into lack of fit and pure error when runs are replicated
   errorRow <- anovaFit[nrow(anovaFit),]
   rownames(errorRow) <- "Error"
+  errorRow <- rbind(errorRow, .doeAnovaLackOfFitRows(fit, colnames(anovaFit)))
 
   newAnovaFit <- modelRow
   if (length(blockTermIndex) > 0)
@@ -1531,6 +1646,49 @@ get_levels <- function(var, num_levels, dataset) {
   return(effects)
 }
 
+# Standard error of each effect (2 * standard error of the coefficient), aligned with .doeCoefficientEffects().
+# NA where no effect is defined, and for all terms when the model has no error degrees of freedom.
+.doeEffectStandardErrors <- function(regressionFit, effects) {
+  coefs     <- stats::coef(regressionFit)
+  se        <- rep(NA_real_, length(coefs))
+  if (length(coefs) != length(effects)) # effects of mismatched terms are not shown either
+    return(rep(NA_real_, length(effects)))
+  if (regressionFit[["df.residual"]] > 0)
+    se[!is.na(coefs)] <- summary(regressionFit)[["coefficients"]][, "Std. Error"]
+  se        <- 2 * se
+  se[is.na(effects)] <- NA
+  return(se)
+}
+
+# Lower and upper confidence limits for estimates with t-based standard errors; NA without error degrees of freedom.
+.doeConfidenceLimits <- function(estimates, se, df, level) {
+  tCrit <- if (isTRUE(df > 0)) stats::qt((1 + level) / 2, df) else NA_real_
+  list(lower = estimates - tCrit * se, upper = estimates + tCrit * se)
+}
+
+# Lack of fit and pure error rows that split the error of an ANOVA table. Pure error is the variation between runs
+# with identical settings of all variables in the model (replicates, e.g. center points). NULL when there is no
+# pure error or no lack of fit to test (no replicates, or one model coefficient per distinct setting).
+.doeAnovaLackOfFitRows <- function(fit, colNames) {
+  modelFrame  <- stats::model.frame(fit)
+  y           <- stats::model.response(modelFrame)
+  settings    <- do.call(paste, c(lapply(modelFrame[-1], as.character), sep = "\r"))
+  pureErrorDf <- length(y) - length(unique(settings))
+  lackOfFitDf <- fit[["df.residual"]] - pureErrorDf
+  if (pureErrorDf == 0 || lackOfFitDf <= 0)
+    return(NULL)
+
+  pureErrorSS <- sum((y - stats::ave(y, settings))^2)
+  lackOfFitSS <- max(0, sum(stats::residuals(fit)^2) - pureErrorSS) # max(): guard against rounding below zero
+  pureErrorMS <- pureErrorSS / pureErrorDf
+
+  lackOfFitRow <- .doeAnovaRow(lackOfFitSS, lackOfFitDf, pureErrorMS, pureErrorDf, colNames, sprintf("\u00A0 %s", gettext("Lack of fit")))
+  pureErrorRow <- data.frame(df = pureErrorDf, ss = pureErrorSS, ms = pureErrorMS, f = NA, p = NA)
+  colnames(pureErrorRow) <- colNames
+  rownames(pureErrorRow) <- sprintf("\u00A0 %s", gettext("Pure error"))
+  return(rbind(lackOfFitRow, pureErrorRow))
+}
+
 .createHighestOrderInteractionFormula <- function(dependentVariable, independentVariables, interactionOrder) {
   # Create a formula string with main effects
   formulaStr <- paste(independentVariables, collapse = " + ")
@@ -1619,19 +1777,32 @@ get_levels <- function(var, num_levels, dataset) {
     if (options[["tableAlias"]])
       tb$addColumnInfo(name = "alias", title = gettext("Alias"), type = "string")
     tb$addColumnInfo(name = "terms", title = gettext("Term"), type = "string")
+    showCi  <- options[["tableCoefficientsCi"]]
+    ciLevel <- options[["tableCoefficientsCiLevel"]]
     tb$addColumnInfo(name = "effects", title = gettext("Effect"), type = "number")
+    if (showCi) {
+      effectCiTitle <- gettextf("%s%% CI for effect", 100 * ciLevel)
+      tb$addColumnInfo(name = "effectsLower", title = gettext("Lower"), type = "number", overtitle = effectCiTitle)
+      tb$addColumnInfo(name = "effectsUpper", title = gettext("Upper"), type = "number", overtitle = effectCiTitle)
+    }
     tb$addColumnInfo(name = "coef", title = gettext("Coefficient"), type = "number")
+    if (showCi) {
+      coefCiTitle <- gettextf("%s%% CI for coefficient", 100 * ciLevel)
+      tb$addColumnInfo(name = "coefLower", title = gettext("Lower"), type = "number", overtitle = coefCiTitle)
+      tb$addColumnInfo(name = "coefUpper", title = gettext("Upper"), type = "number", overtitle = coefCiTitle)
+    }
     tb$addColumnInfo(name = "se", title = gettext("Standard error"), type = "number")
     tb$addColumnInfo(name = "tval", title = "t", type = "number")
     tb$addColumnInfo(name = "pval", title = "p", type = "pvalue")
     tb$addColumnInfo(name = "vif", title = "VIF", type = "number")
-    tb$dependOn(options = c("tableEquation", "tableAlias", .doeAnalysisBaseDependencies()))
+    tb$dependOn(options = c("tableEquation", "tableAlias", "tableCoefficientsCi", "tableCoefficientsCiLevel", .doeAnalysisBaseDependencies()))
     tb$position <- 3
     jaspResults[[dep]][["tableCoefficients"]] <- tb
     if (!ready || is.null(jaspResults[[dep]][["doeResult"]]) || jaspResults[[dep]]$getError()) {
       return()
     }
-    result <- if (coded) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]][["coefficients"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]][["coefficients"]]
+    resultRegression <- if (coded) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]]
+    result <- resultRegression[["coefficients"]]
     effectNote <- if (coded) {
       gettext("Effect = 2 \u00D7 coefficient: the change in the response when a term goes from its \u22121 to its +1 setting.")
     } else {
@@ -1644,6 +1815,17 @@ get_levels <- function(var, num_levels, dataset) {
     )
     if (options[["tableAlias"]])
       rows["alias"] <- result[["termsAliased"]]
+    if (showCi) {
+      errorDf      <- resultRegression[["object"]][["df.residual"]]
+      effectLimits <- .doeConfidenceLimits(result[["effects"]], result[["effectsSe"]], errorDf, ciLevel)
+      coefLimits   <- .doeConfidenceLimits(result[["est"]], result[["se"]], errorDf, ciLevel)
+      rows[["effectsLower"]] <- effectLimits[["lower"]]
+      rows[["effectsUpper"]] <- effectLimits[["upper"]]
+      rows[["coefLower"]]    <- coefLimits[["lower"]]
+      rows[["coefUpper"]]    <- coefLimits[["upper"]]
+      if (resultRegression[["saturated"]])
+        tb$addFootnote(gettext("Confidence intervals cannot be calculated: the model has no degrees of freedom for error."))
+    }
     tb$addRows(rows)
 
     if ((length(options[["fixedFactorsFactorial"]]) > 0 | length(options[["fixedFactorsResponseSurface"]])) && !coded) {

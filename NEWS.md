@@ -19,6 +19,9 @@
 ## Added
 * Process Capability: optional Z.bench (ST) / Z.bench (LT) columns, reporting the sigma level based on the total expected defect probability across both specification limits, alongside the existing Z (ST) / Z (LT) = 3·Cpk / 3·Ppk.
 * Process Capability / control charts: added "Pooled" as a within-subgroup standard deviation estimation method (in addition to R-bar and S-bar).
+* DOE Analysis: optional confidence intervals for the effects and coefficients in the coefficients table ([Issue #4640](https://github.com/jasp-stats/jasp-issues/issues/4640)).
+* DOE Analysis: the ANOVA table splits the Error row into Lack of fit (with F-test) and Pure error when the design has replicated runs, e.g. center points ([Issue #4640](https://github.com/jasp-stats/jasp-issues/issues/4640)).
+* DOE Analysis, response optimizer: optional table with the predicted responses at the optimal solution (and at manually set factor levels), with standard error, confidence interval for the mean response and prediction interval for a single new run ([Issue #4640](https://github.com/jasp-stats/jasp-issues/issues/4640)).
 
 ## Changed
 * DOE Analysis, Factorial Design and Response Surface Design: help moved from markdown files into the QML `info` properties.
