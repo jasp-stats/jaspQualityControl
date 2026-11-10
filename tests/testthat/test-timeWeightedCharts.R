@@ -76,6 +76,26 @@ test_that("LF2.2 Basic test of Cumulative sum chart with stages table", {
                                       "", "Point 8 - upper"))
 })
 
+### CUSUM with a single-subgroup stage: lower points stay lower (jasp-issues#4672) ####
+options <- analysisOptions("timeWeightedCharts")
+options$measurementLongFormat <- "Measurement"
+options$stagesLongFormat <- "Stage"
+options$cumulativeSumChart <- TRUE
+options$cumulativeSumChartSdSource <- "historical"
+options$cumulativeSumChartSdValue <- 1
+options$cumulativeSumChartNumberSd <- 3
+singleSubgroupStageDataset <- data.frame(Measurement = c(rep(-10, 10), 0), Stage = c(rep("A", 10), "B"))
+results <- runAnalysis("timeWeightedCharts", singleSubgroupStageDataset, options)
+
+test_that("LF2.3 Cumulative sum chart with a single-subgroup stage table", {
+  table <- results[["results"]][["CusumChart"]][["collection"]][["CusumChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("A", "Point 1 - lower", "", "Point 2 - lower", "", "Point 3 - lower",
+                                      "", "Point 4 - lower", "", "Point 5 - lower", "", "Point 6 - lower",
+                                      "", "Point 7 - lower", "", "Point 8 - lower", "", "Point 9 - lower",
+                                      "", "Point 10 - lower"))
+})
+
 ### EWMA (verified with Minitab) ####
 options <- analysisOptions("timeWeightedCharts")
 options$measurementLongFormat <- "Measurement"

@@ -730,6 +730,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   } else if (!identical(stages, "")) {
     nStages <- length(unique(dataset[[stages]]))
   }
+  # .cusumPoints() gives one upper and one lower point per subgroup (row)
+  nCusumPointsPerSide <- sum(!is.na(dataset[[stages]]))
 
   ### Calculate plot values per stage and combine into single dataframe ###
   plotData <- data.frame(matrix(ncol = 4, nrow = 0))
@@ -1044,11 +1046,17 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       dfLimitLabel <- rbind(dfLimitLabel, data.frame(x = labelXPos,
                                                      y = c(lastCenter, lastLCL, lastUCL),
                                                      label = labelText))
-    tableLabelsCurrentStage <- subgroups
-    if (plotType == "MR" || plotType == "MMR")
-      tableLabelsCurrentStage <- tableLabelsCurrentStage[-seq(1, k-1)]
-
-    tableList[[i]] <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)$violationList
+    # .nelsonLaws() counts points within the current stage; the table reports positions on the whole chart.
+    # Without enabled rules, .nelsonLaws() returns test1 = list(); empty results stay as they are.
+    stageViolations <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)$violationList
+    tableList[[i]] <- lapply(stageViolations, function(points) {
+      if (length(points) == 0)
+        return(points)
+      chartPoints <- subgroups[points]
+      if (plotType == "cusum") # .controlChart_table() expects the lower CUSUM points after the upper points of all stages
+        chartPoints <- chartPoints + (points > length(plotStatisticUpper)) * nCusumPointsPerSide
+      chartPoints
+    })
     tableListLengths <- sapply(tableList[[i]], length)
     if (any(tableListLengths > 0)) {
       tableList[[i]][["stage"]] <- as.character(stage)
@@ -1319,7 +1327,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   }
 
   # Loop over remaining data
-  for (i in seq(2, nrow(data))) {
+  for (i in seq_len(nrow(data))[-1]) { # one point per subgroup, also for a single subgroup
     rowMean_i <- if (length(data[i,]) == 1) data[i,] else rowMeans(data[i,], na.rm = TRUE)
     if (cuType == "lower") {
       cuSumPoint <- cuSumPoints[i-1] + rowMean_i - (target - shiftSize*(sigma/sqrt(n[i])))
