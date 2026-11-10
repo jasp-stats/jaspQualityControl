@@ -593,7 +593,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   }
 
   if (N > 1) {
-    c4 <- sqrt(2/(N-1)) * gamma(N/2) / gamma((N-1)/2)
+    c4 <- sqrt(2/(N-1)) * exp(lgamma(N/2) - lgamma((N-1)/2))
     c5 <- sqrt(1 - c4^2)
   } else {
     c4 <- 0
