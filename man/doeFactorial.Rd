@@ -36,6 +36,53 @@ doeFactorial(
   showAliasStructure = FALSE
 )
 }
+\arguments{
+\item{actualExporter, }{Check to save the selected design to the specified file.
+Defaults to \code{FALSE}.}
+
+\item{blocks, }{Select the number of blocks in the design. Not available for split-plot and general full factorial designs.}
+
+\item{categoricalNoLevels, }{Set the maximum number of levels for the factors in the design. Only applicable for general full factorial designs, else factors always have two levels. If a factor has fewer levels than the maximum number of levels in the design, leave the remaining level cells empty or add a space.}
+
+\item{categoricalVariables, }{Set the names of the factors and give the values for each level.}
+
+\item{centerpoints, }{Select the number of centre points per block to add to the design. Not available for split-plot and general full factorial designs.}
+
+\item{codedOutput, }{Display the factor levels in coded units instead of the given units.
+Defaults to \code{FALSE}.}
+
+\item{displayDesign, }{Display the design table in the output. If a design table is shown in the options, one of its designs needs to be selected first.
+Defaults to \code{TRUE}.}
+
+\item{exportDesignFile, }{Option to save the design as a .csv file. Specify a name and path for the file or use the browse option.}
+
+\item{factorialDesignTypeSplitPlotNumberHardToChangeFactors, }{Select the number of hard-to-change factors.}
+
+\item{factorialType, }{The type of factorial design to generate.
+\itemize{
+\item \code{"factorialTypeDefault"}: Generate a two-level factorial design using the default generator.
+\item \code{"factorialTypeSpecify"}: Generate a two-level factorial design using a custom generator.
+\item \code{"factorialTypeSplit"}: Generate a two-level split-plot design containing hard-to-change factors.
+\item \code{"generalFullFactorial"}: Generate a general full factorial design.
+}}
+
+\item{factorialTypeSpecifyGenerators, }{Specify the generator for the design.}
+
+\item{numberOfCategorical, }{Set the total number of factors in the design.}
+
+\item{replications, }{Select the number of replications of the whole design.}
+
+\item{runOrder, }{Whether to sort the runs in the design by run order or standard order.
+\itemize{
+\item \code{"runOrderRandom"}: Sort the runs in the randomized order in which they should be carried out.
+\item \code{"runOrderStandard"}: Sort the runs in standard (non-randomized) order.
+}}
+
+\item{selectedDesign2, }{Select one of the pre-set designs by clicking on it in the table.}
+
+\item{showAliasStructure, }{Check to display the alias structure of the generated design. Only available for two-level factorial designs with the default generator.
+Defaults to \code{FALSE}.}
+}
 \description{
-Create Factorial Worksheet
+A factorial design is an experimental setup used to study the effects of multiple factors by varying them simultaneously. Each factor is tested at different levels and in different combinations with other factors. This design allows for the examination of both the main effects of each factor and the interactions between factors. It provides a systematic approach to understanding how different variables influence the outcome.
 }

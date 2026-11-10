@@ -477,7 +477,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
       anovaFit[["Mean Sq"]] <- anovaFit[["Sum Sq"]] / anovaFit[["Df"]]
       anovaFit <- anovaFit[c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")] # rearrange, so it has the same order as the aov function
-      anovaFit <- .addModelHeaderTerms(anovaFit, unlist(covariates))
+      anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, ssType, unlist(covariates))
     } else {
       result[["regression"]][["s"]] <- NA
       result[["regression"]][["rsq"]] <- 1
@@ -497,7 +497,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       anovaFit <- rbind(anovaFit, errorRow)
       anovaFit$`F value` <- NA # add these empty columns to the saturated design so the anova fit object always has the same format
       anovaFit$`Pr(>F)` <- NA
-      anovaFit <- .addModelHeaderTerms(anovaFit, unlist(covariates))
+      anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, "type1", unlist(covariates)) # aov gives sequential SS
 
     }
 
@@ -572,18 +572,20 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["coefficients"]][["terms"]] <- termNamesCoded
 
     # calculate effects, but not for blocks, covariates or intercept
-    coefEffects <- .doeCoefficientEffects(regressionFit)
-    coefEffectsCoded <- .doeCoefficientEffects(regressionFitCoded)
-    if (length(blocks) > 0 && !identical(blocks, "")) {
-      blockNameIndices <- which(termNamesRemoved == blocks) # get the indices of the block variables
-      blockNameIndicesCoded <- which(termNamesRemovedCoded == blocks)
-      coefEffects[blockNameIndices] <- NA
-      coefEffectsCoded[blockNameIndicesCoded] <- NA
-    }
-    if (length(covariates) > 0 && !identical(covariates, "")) {
-      coefEffects[names(coefEffects) %in% unlist(covariates)] <- NA
-      coefEffectsCoded[names(coefEffectsCoded) %in% unlist(covariates)] <- NA
-    }
+    # Effects do not depend on the coding, so for the uncoded table they are taken from a fit with the continuous predictors
+    # on the -1/+1 scale. Discrete predictors are left as they are, so terms and signs match the uncoded coefficients.
+    continuousVars <- unlist(continuousPredictors)
+    continuousVars <- continuousVars[continuousVars != ""]
+    datasetEffects <- dataset
+    datasetEffects[continuousVars] <- datasetCoded[continuousVars]
+    effectsFit <- lm(formula, data = datasetEffects)
+
+    excludeFromEffects <- unlist(c(blocks, covariates))
+    excludeFromEffects <- excludeFromEffects[excludeFromEffects != ""]
+    coefEffects      <- .doeCoefficientEffects(effectsFit, excludeFromEffects)
+    coefEffectsCoded <- .doeCoefficientEffects(regressionFitCoded, excludeFromEffects)
+    if (length(coefEffects) != length(regressionFit$coefficients)) # should not happen, but never show effects of mismatched terms
+      coefEffects <- rep(NA_real_, length(regressionFit$coefficients))
 
     result[["regression"]][["coefficients"]][["effects"]] <- coefEffects
     result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
@@ -698,7 +700,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
 get_levels <- function(var, num_levels, dataset) {
   levels_var <- levels(dataset[[var]])
-  levels_var[1:(num_levels)]
+  levels_var[seq_len(num_levels)] # seq_len: a factor fully removed due to aliasing has 0 levels, 1:0 would return one
 }
 
 .getVIF <- function(regressionFit, predictors) {
@@ -1351,25 +1353,32 @@ get_levels <- function(var, num_levels, dataset) {
   return(compoundDesi)
 }
 
-.addModelHeaderTerms <- function(anovaFit, covariates = "") {
+.addModelHeaderTerms <- function(anovaFit, fit, ssType, covariates = "") {
   rownames(anovaFit) <- gsub(" ", "", row.names(anovaFit), fixed = TRUE)
   rownames(anovaFit) <- unname(sapply(rownames(anovaFit), .gsubIdentityFunction)) # remove identity function around squared terms
 
-  # calculate model row
-  modelSS <- sum(anovaFit$`Sum Sq`[-nrow(anovaFit)])
-  modelDf <- sum(anovaFit$Df[-nrow(anovaFit)])
-  modelMS <- if (modelDf != 0) modelSS / modelDf else NA
+  errorDf <- anovaFit$Df[nrow(anovaFit)]
   msError <- anovaFit$`Mean Sq`[nrow(anovaFit)]
-  modelFValue <- if (msError != 0 && modelDf != 0) modelMS / msError else NA
-  modelPValue <- if (!is.na(modelFValue)) pf(modelFValue, modelDf, anovaFit$Df[nrow(anovaFit)], lower.tail = FALSE) else NA
-  modelRow <- data.frame(df = modelDf, ss = modelSS, ms = modelMS, f = modelFValue, p = modelPValue)
-  colnames(modelRow) <- colnames(anovaFit)
-  rownames(modelRow) <- "Model"
+
+  # Model and total SS come from the fit itself. Summing the term rows only works for type I SS;
+  # type II/III SS do not add up to the model SS in non-orthogonal designs.
+  y       <- model.response(model.frame(fit))
+  totalSS <- sum((y - mean(y))^2)
+  modelSS <- totalSS - sum(residuals(fit)^2)
+  # df from the fit rank: term df can be 0 when coding makes terms aliased, so their sum would be too small
+  modelDf <- fit$rank - attr(terms(fit), "intercept")
+  modelRow <- .doeAnovaRow(modelSS, modelDf, msError, errorDf, colnames(anovaFit), "Model")
 
   # calculate total row
-  totalRow <- data.frame(df = sum(anovaFit$Df), ss = sum(anovaFit$`Sum Sq`), ms = NA, f = NA, p = NA)
+  totalRow <- data.frame(df = length(y) - 1, ss = totalSS, ms = NA, f = NA, p = NA)
   colnames(totalRow) <- colnames(anovaFit)
   rownames(totalRow) <- "Total"
+
+  # SS of a group of term rows (e.g., all linear terms), tested jointly
+  groupRow <- function(rowIndices, label) {
+    group <- .doeAnovaGroupSumOfSquares(anovaFit, rowIndices, fit, ssType)
+    .doeAnovaRow(group[["ss"]], group[["df"]], msError, errorDf, colnames(anovaFit), label)
+  }
 
   # calculate block row
   blockTermIndex <- which(rownames(anovaFit) == "Block")
@@ -1383,9 +1392,7 @@ get_levels <- function(var, num_levels, dataset) {
   if (length(covariateTermIndices) > 0) {
     anovaFitCovariate <- anovaFit[covariateTermIndices,]
     rownames(anovaFitCovariate) <- sprintf("\u00A0 \u00A0 %s", rownames(anovaFitCovariate)) # double indent
-    covariateRow <- data.frame(df = sum(anovaFitCovariate$Df), ss = sum(anovaFitCovariate$`Sum Sq`), ms = NA, f = NA, p = NA)
-    colnames(covariateRow) <- colnames(anovaFit)
-    rownames(covariateRow) <- sprintf("\u00A0 %s", "Covariates")
+    covariateRow <- groupRow(covariateTermIndices, sprintf("\u00A0 %s", "Covariates"))
   }
 
   # calculate linear row and get all linear terms
@@ -1394,18 +1401,14 @@ get_levels <- function(var, num_levels, dataset) {
                                !rownames(anovaFit[-nrow(anovaFit),]) %in% covariates)  # all terms without squared symbol or colon or residuals or Block or covariates
   anovaFitLinear <- anovaFit[linearTermIndices,]
   rownames(anovaFitLinear) <- sprintf("\u00A0 \u00A0 %s", rownames(anovaFitLinear)) # double indent
-  linearRow <- data.frame(df = sum(anovaFitLinear$Df), ss = sum(anovaFitLinear$`Sum Sq`), ms = NA, f = NA, p = NA)
-  colnames(linearRow) <- colnames(anovaFit)
-  rownames(linearRow) <- sprintf("\u00A0 %s", "Linear terms")
+  linearRow <- groupRow(linearTermIndices, sprintf("\u00A0 %s", "Linear terms"))
 
   # calculate squared row and get all squared terms
   squaredTermIndices <- which(grepl("\\^2$", rownames(anovaFit)))
   if (length(squaredTermIndices) > 0) {
     anovaFitSquared <- anovaFit[squaredTermIndices,]
     rownames(anovaFitSquared) <- sprintf("\u00A0 \u00A0 %s", rownames(anovaFitSquared)) # double indent
-    squaredRow <- data.frame(df = sum(anovaFitSquared$Df), ss = sum(anovaFitSquared$`Sum Sq`), ms = NA, f = NA, p = NA)
-    colnames(squaredRow) <- colnames(anovaFit)
-    rownames(squaredRow) <- sprintf("\u00A0 %s", "Squared terms")
+    squaredRow <- groupRow(squaredTermIndices, sprintf("\u00A0 %s", "Squared terms"))
   }
 
   # calculate interaction row and get all interaction terms
@@ -1413,9 +1416,7 @@ get_levels <- function(var, num_levels, dataset) {
   if (length(interactionTermIndices) > 0) {
     anovaFitInteraction <- anovaFit[interactionTermIndices, ]
     rownames(anovaFitInteraction) <- sprintf("\u00A0 \u00A0 %s", rownames(anovaFitInteraction)) # double indent
-    interactionRow <- data.frame(df = sum(anovaFitInteraction$Df), ss = sum(anovaFitInteraction$`Sum Sq`), ms = NA, f = NA, p = NA)
-    colnames(interactionRow) <- colnames(anovaFit)
-    rownames(interactionRow) <- sprintf("\u00A0 %s", "Interaction terms")
+    interactionRow <- groupRow(interactionTermIndices, sprintf("\u00A0 %s", "Interaction terms"))
   }
 
   # Model error row
@@ -1435,6 +1436,53 @@ get_levels <- function(var, num_levels, dataset) {
   newAnovaFit <- rbind(newAnovaFit, errorRow, totalRow)
 
   return(newAnovaFit)
+}
+
+.doeAnovaRow <- function(ss, df, msError, errorDf, colNames, label) {
+  ms   <- if (df != 0) ss / df else NA
+  fVal <- if (!is.na(ms) && isTRUE(msError > 0)) ms / msError else NA
+  pVal <- if (!is.na(fVal)) pf(fVal, df, errorDf, lower.tail = FALSE) else NA
+  row  <- data.frame(df = df, ss = ss, ms = ms, f = fVal, p = pVal)
+  colnames(row) <- colNames
+  rownames(row) <- label
+  return(row)
+}
+
+# Joint SS and df for a group of ANOVA term rows. Type I: sums of the sequential SS and df (these add up correctly).
+# Type II/III: extra SS from dropping all terms of the group at once, mirroring car::Anova for single terms;
+# df is the rank difference of the two compared models, so aliased columns are not counted.
+.doeAnovaGroupSumOfSquares <- function(anovaFit, rowIndices, fit, ssType) {
+  if (length(rowIndices) == 0)
+    return(list(ss = 0, df = 0))
+  if (ssType == "type1")
+    return(list(ss = sum(anovaFit$`Sum Sq`[rowIndices]), df = sum(anovaFit$Df[rowIndices])))
+
+  termLabels      <- attr(terms(fit), "term.labels")
+  cleanTermLabels <- unname(sapply(gsub(" ", "", termLabels, fixed = TRUE), .gsubIdentityFunction))
+  groupTerms      <- match(rownames(anovaFit)[rowIndices], cleanTermLabels)
+  if (anyNA(groupTerms))
+    return(list(ss = NA, df = sum(anovaFit$Df[rowIndices])))
+
+  modelMatrix <- model.matrix(fit)
+  termAssign  <- attr(modelMatrix, "assign")
+  y           <- model.response(model.frame(fit))
+  reducedFit <- function(dropTerms) {
+    keep    <- !(termAssign %in% dropTerms)
+    lmFit   <- lm.fit(modelMatrix[, keep, drop = FALSE], y)
+    list(rss = sum(lmFit$residuals^2), rank = lmFit$rank)
+  }
+  groupTest <- function(smaller, larger)
+    list(ss = smaller[["rss"]] - larger[["rss"]], df = larger[["rank"]] - smaller[["rank"]])
+
+  if (ssType == "type3")
+    return(groupTest(reducedFit(groupTerms), reducedFit(integer(0))))
+
+  # type II: adjust for all terms except the group and its higher-order relatives (terms containing a group term)
+  factors    <- attr(terms(fit), "factors") > 0
+  contains   <- function(outer, inner) all(!(factors[, inner] & !factors[, outer]))
+  otherTerms <- setdiff(seq_along(termLabels), groupTerms)
+  relatives  <- otherTerms[vapply(otherTerms, function(j) any(vapply(groupTerms, function(i) contains(j, i), logical(1))), logical(1))]
+  return(groupTest(reducedFit(c(groupTerms, relatives)), reducedFit(relatives)))
 }
 
 .removeAppendedFactorLevels <- function(predictorNames, terms, interactionSymbol = "✻"){
@@ -1461,21 +1509,26 @@ get_levels <- function(var, num_levels, dataset) {
   }
 }
 
-.doeCoefficientEffects <- function(regressionFit) {
-  effectVector <- c()
-  for (i in seq_along(regressionFit$coefficients)) {
-    termName <- names(regressionFit$coefficients)[i]
-    if (termName == "(Intercept)") {
-      effect <- NA
-    } else {
-      coef <- regressionFit$coefficients[i]
-      coefLevels <- unique(unlist(regressionFit$model[which(sapply(colnames(regressionFit$model), function(v) grepl(v, termName)))]))
-      factorRange <- if (is.numeric(coefLevels)) max(coefLevels) - min(coefLevels) else length(coefLevels)
-      effect <- coef * factorRange
-    }
-    effectVector <- c(effectVector, effect)
-  }
-  return(effectVector)
+# Factorial effect: change in mean response from the -1 to the +1 setting of a term, i.e., 2 * coefficient.
+# Holds for main effects and interactions of any order, as long as the predictors are on a -1/+1 scale
+# (coded numeric predictors or 2-level factors with sum-to-zero contrasts).
+# NA for the intercept, squared terms, terms with a factor of more than 2 levels, and terms with excluded variables (blocks, covariates).
+.doeCoefficientEffects <- function(regressionFit, excludeVars = character(0)) {
+  termFactors <- attr(stats::terms(regressionFit), "factors") # variables x terms
+  if (length(termFactors) == 0) # intercept-only model
+    return(rep(NA_real_, length(stats::coef(regressionFit))))
+  modelFrame  <- regressionFit[["model"]]
+  noEffectVar <- vapply(rownames(termFactors), function(v) {
+    x <- modelFrame[[v]]
+    (is.factor(x) && nlevels(x) > 2) || grepl("^I\\(.*\\^2\\)$", v) || v %in% excludeVars
+  }, logical(1))
+  noEffectTerm <- colSums(termFactors[noEffectVar, , drop = FALSE]) > 0
+  termIndex    <- regressionFit[["assign"]] # maps each coefficient to its term, 0 = intercept
+
+  effects <- 2 * unname(stats::coef(regressionFit))
+  effects[termIndex == 0] <- NA
+  effects[termIndex > 0][noEffectTerm[termIndex[termIndex > 0]]] <- NA
+  return(effects)
 }
 
 .createHighestOrderInteractionFormula <- function(dependentVariable, independentVariables, interactionOrder) {
@@ -1579,6 +1632,12 @@ get_levels <- function(var, num_levels, dataset) {
       return()
     }
     result <- if (coded) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]][["coefficients"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]][["coefficients"]]
+    effectNote <- if (coded) {
+      gettext("Effect = 2 \u00D7 coefficient: the change in the response when a term goes from its \u22121 to its +1 setting.")
+    } else {
+      gettext("Effect = 2 \u00D7 coefficient in coded (\u22121/+1) units, not 2 \u00D7 the coefficient shown: the change in the response when a term goes from its \u22121 to its +1 setting. For discrete predictors the sign follows the level shown in the Discrete Predictor Levels table.")
+    }
+    tb$addFootnote(paste(effectNote, gettext("Not shown for squared terms, discrete predictors with more than two levels, blocks, and covariates.")))
     rows <- data.frame(
       terms = result[["terms"]], effects = result[["effects"]], coef = result[["est"]],
       se = result[["se"]], tval = result[["t"]], pval = result[["p"]], vif = result[["vif"]]

@@ -22,6 +22,7 @@ import "./common"	as Common
 
 Form
 {
+	info: qsTr("A factorial design is an experimental setup used to study the effects of multiple factors by varying them simultaneously. Each factor is tested at different levels and in different combinations with other factors. This design allows for the examination of both the main effects of each factor and the interactions between factors. It provides a systematic approach to understanding how different variables influence the outcome.")
 	columns:									1
 
 	Common.ShowAndExportDesign {}
@@ -34,10 +35,12 @@ Form
 		{
 
 			IntegerField { id: numberOfCategorical;		label: qsTr("Number of factors");	name: "numberOfCategorical";	min: 2;		defaultValue: 3;	max: 256
+				info: qsTr("Set the total number of factors in the design.")
 				property int intValue: defaultValue
 				onValueChanged : { intValue = value !== "" ? value : 0 ; factorialDesignTypeSplitPlotNumberHardToChangeFactors.value = 1 }
 			}
 			IntegerField { id: numberOfLevels;			label: qsTr("Maximum factor levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 20; 	enabled: factorialType.value == "generalFullFactorial"
+				info: qsTr("Set the maximum number of levels for the factors in the design. Only applicable for general full factorial designs, else factors always have two levels. If a factor has fewer levels than the maximum number of levels in the design, leave the remaining level cells empty or add a space.")
 				property int intValue: defaultValue
 				onValueChanged : { intValue = value !== "" ? value : 0}
 			}
@@ -47,6 +50,8 @@ Form
 		{
 			name: 								"factorialType"
 			id:									factorialType
+			infoLabel:							qsTr("Design type")
+			info:								qsTr("The type of factorial design to generate.")
 			onValueChanged : {numberOfLevels.value = value !== "generalFullFactorial" ?  2 : 3}
 
 			RadioButton
@@ -54,6 +59,7 @@ Form
 				id:								factorialTypeDefault
 				name:							"factorialTypeDefault"
 				label:							qsTr("2-level factorial (default generator)")
+				info:							qsTr("Generate a two-level factorial design using the default generator.")
 				checked:						true
 			}
 
@@ -62,6 +68,7 @@ Form
 				id:								factorialTypeSpecify
 				name:							"factorialTypeSpecify"
 				label:							qsTr("2-level factorial (specify generator)")
+				info:							qsTr("Generate a two-level factorial design using a custom generator.")
 
 				TextArea
 				{
@@ -70,6 +77,7 @@ Form
 					width:						250 * preferencesModel.uiScale
 					visible:					factorialTypeSpecify.checked
 					title:						qsTr("Design generator")
+					info:						qsTr("Specify the generator for the design.")
 					textType:					JASP.TextTypeSource
 				}
 			}
@@ -80,12 +88,14 @@ Form
 				visible:						numberOfCategorical.value > 3 | factorialRuns.currentIndex > 0
 				name:							"factorialTypeSplit"
 				label:							qsTr("2-level split-plot (hard-to-change factors)")
+				info:							qsTr("Generate a two-level split-plot design containing hard-to-change factors.")
 
 				IntegerField
 				{
 					id:							factorialDesignTypeSplitPlotNumberHardToChangeFactors
 					name:						"factorialDesignTypeSplitPlotNumberHardToChangeFactors"
 					label:						qsTr("Number of hard-to-change factors")
+					info:						qsTr("Select the number of hard-to-change factors.")
 					visible:					factorialTypeSplit.checked
 					defaultValue:				1
 					min:						1
@@ -98,6 +108,7 @@ Form
 				id:								generalFullFactorial
 				name:							"generalFullFactorial"
 				label:							qsTr("General full factorial")
+				info:							qsTr("Generate a general full factorial design.")
 			}
 		}
 	}
@@ -105,6 +116,8 @@ Form
 	TableView
 	{
 		id: categoricalVariables
+		infoLabel: qsTr("Factor names and levels")
+		info: qsTr("Set the names of the factors and give the values for each level.")
 
 		implicitWidth		: form.implicitWidth
 		implicitHeight		: 140 * preferencesModel.uiScale // about 3 rows
@@ -326,6 +339,8 @@ Form
 			}
 
 			id					: selectedDesign2
+			infoLabel			: qsTr("Design table")
+			info				: qsTr("Select one of the pre-set designs by clicking on it in the table.")
 			implicitWidth		: form.implicitWidth
 			implicitHeight		: 150 * preferencesModel.uiScale
 
@@ -433,8 +448,8 @@ Form
 
 		IntegerField { name: "selectedRow"; label: qsTr("debug selected row"); defaultValue: selectedDesign2.rowSelected; negativeValues: true; visible: false }
 		IntegerField { name: "selectedCol"; label: qsTr("debug selected col"); defaultValue: selectedDesign2.colSelected; negativeValues: true; visible: false }
-		CheckBox { name: "showAliasStructure"; label: qsTr("Alias structure"); enabled: factorialTypeDefault.checked}
-		SetSeed{}
+		CheckBox { name: "showAliasStructure"; label: qsTr("Alias structure"); enabled: factorialTypeDefault.checked; info: qsTr("Check to display the alias structure of the generated design. Only available for two-level factorial designs with the default generator.")}
+		SetSeed{ info: qsTr("Set a seed to reproduce a certain random order.") }
 
 	}
 
@@ -450,6 +465,7 @@ Form
 				name:									"blocks"
 				enabled:								!factorialTypeSplit.checked & !generalFullFactorial.checked
 				label:									qsTr("Blocks")
+				info:									qsTr("Select the number of blocks in the design. Not available for split-plot and general full factorial designs.")
 				indexDefaultValue:						0
 				values: [
 						{ label: qsTr("1"), value: "1"},
@@ -464,6 +480,7 @@ Form
 				enabled:					!factorialTypeSplit.checked & !generalFullFactorial.checked
 				name:						"centerpoints"
 				label:						qsTr("Centre points per block")
+				info:						qsTr("Select the number of centre points per block to add to the design. Not available for split-plot and general full factorial designs.")
 				defaultValue:				0
 				min:						0
 				max:						2**(numberOfCategorical.value - 1)
@@ -473,6 +490,7 @@ Form
 			{
 				name:						"replications"
 				label:						qsTr("Replications")
+				info:						qsTr("Select the number of replications of the whole design.")
 				defaultValue:				1
 				min:						1
 				max:						8

@@ -21,12 +21,14 @@
 * Process Capability / control charts: added "Pooled" as a within-subgroup standard deviation estimation method (in addition to R-bar and S-bar).
 
 ## Changed
+* DOE Analysis, Factorial Design and Response Surface Design: help moved from markdown files into the QML `info` properties.
 * DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
 ## Fixed
 * Time weighted charts, variables charts for individuals: when the std. dev. is estimated from moving ranges and a stage (or the data) has no complete moving range (fewer non-missing observations than the moving range length, or every range interrupted by a missing value), the chart shows an error naming the stage instead of stopping the analysis or drawing NaN limits. In the time weighted charts report, only the affected chart is replaced by its error.
 * Time weighted charts: the EWMA chart estimates the std. dev. of individual observations with missing values from moving ranges, like the CUSUM chart (previously it stopped with an error, or, with a grouping variable or across-rows data, drew zero-width control limits).
 * Time weighted charts: the CUSUM moving range length field is shown based on the CUSUM (not the EWMA) std. dev. source.
+* DOE Analysis: with type II/III sums of squares, the ANOVA table's Model and Total rows no longer just add up the individual term SS (which is only valid for type I). Model SS is now SST − SSE, with F/p from the overall regression test, and Total SS is SST. The grouped rows (Linear, Squared, Interaction terms, Covariates) are now tested jointly and report MS, F and p.
 * Test–retest: limit across-rows input to two measurement columns, reject extra single-column measurement sets (previously the third set was silently ignored) and report duplicate or unmatched readings; rows with missing values are still excluded.
 * Attribute agreement: return valid confidence-interval endpoints for zero or perfect agreement.
 * Probability of detection: identify natural-log coordinates in covariate labels, reference tables and explanatory footnotes.
@@ -43,6 +45,8 @@
 * Process Capability: the x-axis of the capability plot is no longer stretched towards the default historical scale (Weibull) or log mean (log-normal) when no historical parameter is set, which squeezed the histogram and fitted density into a narrow strip for data far from zero.
 * Process Capability: the x-axis of the Weibull and log-normal probability plots no longer stretches far beyond the data, which squeezed the points into a thin strip and made the tick labels overlap. The axis now follows the data, and ticks that would crowd each other are dropped.
 * Attributes agreement analysis: Fleiss' kappa no longer crashes with newer `irr` (>= 0.85) when a within-appraiser input has a single measurement column; returns NaN as before.
+* DOE Analysis: the Effect column of the coefficients table is now 2 × coefficient (on the −1/+1 scale) for main effects and interactions of every order. Previously 2-way and 3-way interactions were inflated (4× and 6×), effects depended on the factor level labels, and uncoded continuous predictors and manual coding beyond ±1 gave wrong values. Effects are left blank for squared terms and factors with more than two levels, and a footnote explains the definition ([PR #525](https://github.com/jasp-stats/jaspQualityControl/pull/525)).
+* DOE Analysis: no longer crashes when a discrete factor is fully removed from the model due to aliasing ([PR #525](https://github.com/jasp-stats/jaspQualityControl/pull/525)).
 
 ---
 
