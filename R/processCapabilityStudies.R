@@ -2127,6 +2127,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
+    n <- length(allData)
     allDataVector <- as.vector(allData)
     lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
     uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
@@ -2820,6 +2821,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
+    n <- length(allData)
     allDataVector <- as.vector(allData)
     beta <- distParameters[[i]]$beta
     theta <- distParameters[[i]]$theta

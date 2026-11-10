@@ -1,5 +1,4 @@
 context("[Quality Control] Gauge r&R")
-.numDecimals <- 2
 
 # Long format ####
 

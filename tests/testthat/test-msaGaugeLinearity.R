@@ -1,5 +1,4 @@
 context("[Quality Control] MSA - Gauge Linearity")
-.numDecimals <- 2
 set.seed(1)
 
 # Basic test  (verified with other software) ####

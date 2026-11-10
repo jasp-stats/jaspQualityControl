@@ -4172,7 +4172,7 @@
     },
     "jaspBase": {
       "Package": "jaspBase",
-      "Version": "0.20.4",
+      "Version": "0.20.5",
       "Source": "GitHub",
       "Requirements": [
         "cli",
@@ -4199,7 +4199,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspBase",
-      "RemoteSha": "62f61178024b5d3ac9853082d79f13486032eefb"
+      "RemoteSha": "5ac9db8349dfa59e57b2942dd0155e4c488c4518"
     },
     "jaspDescriptives": {
       "Package": "jaspDescriptives",

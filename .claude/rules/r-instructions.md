@@ -16,6 +16,9 @@ paths:
   - `jaspResults` is a container that stores all of the analysis output and byproducts (if they are supposed to be kept for later use).
   - `dataset` is the loaded dataset in JASP
   - `options` are the UI choices from QML; **do not rename** option keys (they're your API).
+  - Read GUI options directly with `options[["name"]]`; do not add R-side normalization, old-name aliases, compatibility maps, or backup defaults for missing QML options in unreleased work.
+  - For checkbox options, use `if (options[["flag"]])`, not `isTRUE(options[["flag"]])`; `isTRUE()` hides missing/disconnected options by treating them like `FALSE`.
+  - Keep option names in `$dependOn()` vectors synchronized with current QML `name:` values.
 
 - **Recommended structure (3 roles):**
   1) **Main function** orchestrates and wires output elements.
@@ -26,6 +29,8 @@ paths:
   Add `$dependOn()` to every output (table/plot/text/container/state) so JASP knows when to reuse or drop it.
   Outputs nested within containers inherit all dependencies from the container.
 
+- **NEVER instantiate jaspResults C++ objects directly** (e.g., `jaspResultsClass$new()`, `create_cpp_jaspResults()`, `jaspBase:::initJaspResults()`). These require JASP Desktop C++ initialization unavailable in headless R sessions. They crash with `Rcpp::not_initialized` or `Expecting an external pointer`. Always use `jaspTools::runAnalysis()` or `agentTestAll()` which handle initialization internally.
+
 - **Errors:**
   - Catch run-time errors with `try(...)` and report via `$setError()`.
   - Wrap user-visible text with `gettext()` / `gettextf()` for translation.
@@ -35,6 +40,7 @@ paths:
 ## 2) Input Validation
 
 Only validate the `dataset`. `options` input is validated in the QML automatically.
+Do not compensate for missing ordinary GUI options in R. Defaults belong in QML controls; if an option is absent, fix the QML/R mapping instead of adding fallback code. The exceptions are targeted validation for arbitrary user text, such as `TextField` and `FormulaField` options.
 
 Common checks (prefix arguments with the check name):
 ```r

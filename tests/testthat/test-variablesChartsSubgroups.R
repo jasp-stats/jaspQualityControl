@@ -1,5 +1,4 @@
 context("[Quality Control] Variables Charts for Subgroups")
-.numDecimals <- 2
 set.seed(1)
 
 # Long / Column format ####
@@ -417,35 +416,17 @@ test_that("LF20. X-bar & s control chart with all but one missing value in measu
 
 #### All values missing ####
 
-##### x-bar & r chart ####
-options <- analysisOptions("variablesChartsSubgroups")
-options$testSet <- "jaspDefault"
-options$measurementLongFormat <- "DiameterMissingAll"
-options$chartType <- "xBarAndR"
-results <- runAnalysis("variablesChartsSubgroups",
-                       "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
-                       options)
-
-test_that("LF21. X-bar & R control chart with all missing value in measurement", {
-  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart10")
-})
-
-##### x-bar & s chart ####
-options <- analysisOptions("variablesChartsSubgroups")
-options$testSet <- "jaspDefault"
-options$measurementLongFormat <- "DiameterMissingAll"
-options$chartType <- "xBarAndS"
-options$xBarAndSUnbiasingConstant <- TRUE
-results <- runAnalysis("variablesChartsSubgroups",
-                       "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
-                       options)
-
-test_that("LF22. X-bar & s control chart with all missing value in measurement", {
-  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart10")
+# The measurement list only takes scale variables with at least one numeric value, so JASP
+# does not let an all-missing variable in: neither may the tests.
+test_that("LF21. A measurement with all values missing is rejected, like in JASP", {
+  options <- analysisOptions("variablesChartsSubgroups")
+  options$testSet <- "jaspDefault"
+  options$measurementLongFormat <- "DiameterMissingAll"
+  options$chartType <- "xBarAndR"
+  expect_error(runAnalysis("variablesChartsSubgroups",
+                           "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
+                           options),
+               "Minimum number of numeric values is 1")
 })
 
 ### Missing values in subgroup variable ####
@@ -1083,78 +1064,29 @@ test_that("WF16. X-bar & s control chart with single missing value in measuremen
   jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart23")
 })
 
-#### All but one value missing ####
+#### All values missing in some or all measurements ####
 
-##### x-bar & r chart ####
-options <- analysisOptions("variablesChartsSubgroups")
-options$testSet <- "jaspDefault"
-options$dataFormat <- "wideFormat"
-options$measurementsWideFormat <- list("dm1Missing19", "dm2MissingAll", "dm3MissingAll",
-                                       "dm4MissingAll", "dm5MissingAll")
-options$chartType <- "xBarAndR"
-results <- runAnalysis("variablesChartsSubgroups",
-                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
-                       options)
+# The measurement list only takes scale variables with at least one numeric value, so JASP
+# does not let an all-missing variable in: neither may the tests.
+test_that("WF17. Measurements with all values missing are rejected, like in JASP", {
+  options <- analysisOptions("variablesChartsSubgroups")
+  options$testSet <- "jaspDefault"
+  options$dataFormat <- "wideFormat"
+  options$chartType <- "xBarAndR"
 
-test_that("WF17. X-bar & R control chart with all but one missing value in measurement", {
-  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart24")
-})
+  options$measurementsWideFormat <- list("dm1Missing19", "dm2MissingAll", "dm3MissingAll",
+                                         "dm4MissingAll", "dm5MissingAll")
+  expect_error(runAnalysis("variablesChartsSubgroups",
+                           "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                           options),
+               "Minimum number of numeric values is 1")
 
-##### x-bar & s chart ####
-options <- analysisOptions("variablesChartsSubgroups")
-options$testSet <- "jaspDefault"
-options$dataFormat <- "wideFormat"
-options$measurementsWideFormat <- list("dm1Missing19", "dm2MissingAll", "dm3MissingAll",
-                                       "dm4MissingAll", "dm5MissingAll")
-options$chartType <- "xBarAndS"
-options$xBarAndSUnbiasingConstant <- TRUE
-results <- runAnalysis("variablesChartsSubgroups",
-                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
-                       options)
-
-test_that("WF18. X-bar & s control chart with all but one missing value in measurement", {
-  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart24")
-})
-
-#### All values missing ####
-
-##### x-bar & r chart ####
-options <- analysisOptions("variablesChartsSubgroups")
-options$testSet <- "jaspDefault"
-options$dataFormat <- "wideFormat"
-options$measurementsWideFormat <- list("dm1MissingAll", "dm2MissingAll", "dm3MissingAll",
-                                       "dm4MissingAll", "dm5MissingAll")
-options$chartType <- "xBarAndR"
-results <- runAnalysis("variablesChartsSubgroups",
-                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
-                       options)
-
-test_that("WF19. X-bar & R control chart with all values missing in measurement", {
-  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart25")
-})
-
-##### x-bar & s chart ####
-options <- analysisOptions("variablesChartsSubgroups")
-options$testSet <- "jaspDefault"
-options$dataFormat <- "wideFormat"
-options$measurementsWideFormat <- list("dm1MissingAll", "dm2MissingAll", "dm3MissingAll",
-                                       "dm4MissingAll", "dm5MissingAll")
-options$chartType <- "xBarAndS"
-options$xBarAndSUnbiasingConstant <- TRUE
-results <- runAnalysis("variablesChartsSubgroups",
-                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
-                       options)
-
-test_that("WF20. X-bar & s control chart with all values missing in measurement", {
-  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart25")
+  options$measurementsWideFormat <- list("dm1MissingAll", "dm2MissingAll", "dm3MissingAll",
+                                         "dm4MissingAll", "dm5MissingAll")
+  expect_error(runAnalysis("variablesChartsSubgroups",
+                           "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                           options),
+               "Minimum number of numeric values is 1")
 })
 
 ### Missing values in stages variable ####

@@ -10,10 +10,9 @@ test_that("msaTestRetest results match", {
   opts <- jaspTools::analysisOptions(jaspFile)
   dataset <- jaspTools::extractDatasetFromJASPFile(jaspFile)
 
-  # Encode and run analysis
-  encoded <- jaspTools:::encodeOptionsAndDataset(opts, dataset)
+  # Run analysis
   set.seed(1)
-  results <- jaspTools::runAnalysis("msaTestRetest", encoded$dataset, encoded$options, encodedDataset = TRUE)
+  results <- jaspTools::runAnalysis("msaTestRetest", dataset, opts)
 
   plotName <- results[["results"]][["ScatterOperatorParts"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
