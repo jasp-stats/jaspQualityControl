@@ -520,3 +520,91 @@ test_that("WF5 Test of Time weighted charts report", {
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "time-weighted-charts-report_WF5")
 })
+
+# Stages too short for the moving range ####
+# Stage "C" has a single subgroup, fewer than the moving range length (2). The moving range is only used for
+# individual observations, so only that case errors.
+
+.twStageData <- function(subgroupSize) {
+  set.seed(1)
+  stageSubgroups <- c(A = 6, B = 6, C = 1)
+  data.frame(
+    Measurement = rnorm(sum(stageSubgroups) * subgroupSize),
+    Stage       = factor(rep(names(stageSubgroups), stageSubgroups * subgroupSize))
+  )
+}
+
+.twStageOptions <- function(subgroupSizeType, sdSource = "data") {
+  sdMethod <- if (subgroupSizeType == "individual") "averageMovingRange" else "s"
+  options <- analysisOptions("timeWeightedCharts")
+  options$measurementLongFormat                             <- "Measurement"
+  options$stagesLongFormat                                  <- "Stage"
+  options$subgroupSizeType                                  <- subgroupSizeType
+  options$manualSubgroupSizeValue                           <- 3
+  options$cumulativeSumChart                                <- TRUE
+  options$cumulativeSumChartSdSource                        <- sdSource
+  options$cumulativeSumChartSdMethod                        <- sdMethod
+  options$cumulativeSumChartSdValue                         <- 1
+  options$exponentiallyWeightedMovingAverageChart           <- TRUE
+  options$exponentiallyWeightedMovingAverageChartSdSource   <- sdSource
+  options$exponentiallyWeightedMovingAverageChartSdMethod   <- sdMethod
+  options$exponentiallyWeightedMovingAverageChartSdValue    <- 1
+  options
+}
+
+.twExpectChartDrawn <- function(results, plot) {
+  expect_identical(results[["status"]], "complete")
+  expect_identical(plot[["status"]], "complete")
+  expect_false(is.null(results[["state"]][["figures"]][[plot[["data"]]]][["obj"]]))
+}
+
+## Individual observations -> error ####
+results <- runAnalysis("timeWeightedCharts", .twStageData(subgroupSize = 1), .twStageOptions("individual"))
+
+test_that("MR1.1 Cumulative sum chart errors for stage with single individual observation", {
+  plot <- results[["results"]][["CusumChart"]][["collection"]][["CusumChart_plot"]]
+  expect_identical(results[["status"]], "complete")
+  expect_identical(plot[["status"]], "error")
+  expect_match(plot[["error"]][["errorMessage"]], "only 1 individual observation. Cumulative sum chart requires at least 2", fixed = TRUE)
+})
+
+test_that("MR1.2 EWMA chart errors for stage with single individual observation", {
+  plot <- results[["results"]][["EWMAPlot"]][["collection"]][["EWMAPlot_plot"]]
+  expect_identical(plot[["status"]], "error")
+  expect_match(plot[["error"]][["errorMessage"]], "only 1 individual observation. Exponentially weighted moving average chart requires at least 2", fixed = TRUE)
+})
+
+## Same stage counts with subgroup size > 1 -> charts drawn ####
+results <- runAnalysis("timeWeightedCharts", .twStageData(subgroupSize = 3), .twStageOptions("manual"))
+
+test_that("MR2.1 Cumulative sum chart is drawn for stage with single subgroup of size > 1", {
+  .twExpectChartDrawn(results, results[["results"]][["CusumChart"]][["collection"]][["CusumChart_plot"]])
+})
+
+test_that("MR2.2 EWMA chart is drawn for stage with single subgroup of size > 1", {
+  .twExpectChartDrawn(results, results[["results"]][["EWMAPlot"]][["collection"]][["EWMAPlot_plot"]])
+})
+
+## Historical std. dev. -> charts drawn ####
+results <- runAnalysis("timeWeightedCharts", .twStageData(subgroupSize = 1), .twStageOptions("individual", sdSource = "historical"))
+
+test_that("MR3.1 Cumulative sum chart with historical std. dev. is drawn for stage with single observation", {
+  .twExpectChartDrawn(results, results[["results"]][["CusumChart"]][["collection"]][["CusumChart_plot"]])
+})
+
+test_that("MR3.2 EWMA chart with historical std. dev. is drawn for stage with single observation", {
+  .twExpectChartDrawn(results, results[["results"]][["EWMAPlot"]][["collection"]][["EWMAPlot_plot"]])
+})
+
+## Report mode -> error shown on report ####
+options <- .twStageOptions("individual")
+options$report <- TRUE
+results <- runAnalysis("timeWeightedCharts", .twStageData(subgroupSize = 1), options)
+
+test_that("MR4 Report shows moving range errors of both charts", {
+  report <- results[["results"]][["report"]]
+  expect_identical(results[["status"]], "complete")
+  expect_identical(report[["status"]], "error")
+  expect_match(report[["error"]][["errorMessage"]], "Cumulative sum chart requires at least 2")
+  expect_match(report[["error"]][["errorMessage"]], "Exponentially weighted moving average chart requires at least 2")
+})
