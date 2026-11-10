@@ -5743,3 +5743,50 @@ test_that("Predictions average over blocks and hold covariates at their mean", {
   expect_equal(prediction[["fit"]], mean(stats::predict(fit, perBlock)))
   expect_equal(prediction[["se"]], sqrt(drop(t(x) %*% stats::vcov(fit) %*% x)))
 })
+
+test_that("Response optimizer averages over blocks and holds covariates at their mean", {
+  # The optimizer used to add every block and covariate coefficient in full (as if each was 1)
+  blockData <- read.csv("datasets/doeAnalysis/fourBlocksFactorial.csv")
+  set.seed(1)
+  blockData$Cov <- round(rnorm(nrow(blockData), mean = 10), 2)
+
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial         <- "Result"
+  options$continuousFactorsFactorial <- c("A", "B")
+  options$blocksFactorial            <- "Blocks"
+  options$covariates                 <- "Cov"
+  options$codeFactors                <- TRUE
+  options$codeFactorsMethod          <- "automatic"
+  options$highestOrder               <- FALSE
+  options$modelTerms                 <- list(list(components = "A"), list(components = "B"))
+  options$responsesResponseOptimizer <- list(list(
+    responseOptimizerGoal       = "maximize",
+    responseOptimizerImportance = 1,
+    responseOptimizerLowerBound = 0,
+    responseOptimizerTarget     = 0.5,
+    responseOptimizerUpperBound = 1,
+    responseOptimizerWeight     = 1,
+    variable                    = "Result"
+  ))
+  options$optimizationPlot           <- TRUE
+  options$optimizationIntervals      <- TRUE
+  options$optimizationIntervalsLevel <- 0.95
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", blockData, options)
+
+  refData <- blockData
+  refData$Block <- factor(refData$Blocks)
+  contrasts(refData$Block) <- "contr.sum"
+  refFit <- stats::lm(Result ~ A + B + Block + Cov, data = refData)
+
+  solution <- results[["results"]][["tableRoSolution"]][["data"]][[1]]
+  perBlock <- data.frame(A = as.numeric(solution[["A"]]), B = as.numeric(solution[["B"]]), Cov = mean(blockData$Cov),
+                         Block = factor(levels(refData$Block), levels = levels(refData$Block)))
+  expected <- mean(stats::predict(refFit, perBlock))
+
+  plotSummary <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]][[1]]
+  prediction  <- results[["results"]][["tableRoPrediction"]][["data"]][[1]]
+  expect_equal(as.numeric(solution[["Result_fit"]]), expected, tolerance = 1e-3)
+  expect_equal(as.numeric(plotSummary[["Result fit"]]), expected, tolerance = 1e-3)
+  expect_equal(as.numeric(prediction[["fit"]]), expected, tolerance = 1e-3)
+})
