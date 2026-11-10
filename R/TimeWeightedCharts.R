@@ -151,6 +151,16 @@ timeWeightedChartsInternal <- function(jaspResults, dataset, options) {
       text <- NULL
     }
 
+    # charts that failed the moving range check have no plotObject, so show their error on the report instead
+    chartErrors <- c(
+      if (options[["cumulativeSumChart"]]) cusumChart[["errorMessage"]],
+      if (options[["exponentiallyWeightedMovingAverageChart"]]) ewmaPlot[["errorMessage"]]
+    )
+    if (length(chartErrors) > 0) {
+      reportPlot$setError(paste(chartErrors, collapse = "<br>"))
+      return()
+    }
+
     plots <- list()
     if (options[["cumulativeSumChart"]])
       plots[["cusum"]] <- cusumChart[["plot"]]$plotObject
@@ -195,14 +205,18 @@ timeWeightedChartsInternal <- function(jaspResults, dataset, options) {
   columnsToPass <- columnsToPass[columnsToPass != ""]
   phase2 <- (options[["cumulativeSumChartSdSource"]] == "historical")
   movingRangeLength <- options[["cumulativeSumChartAverageMovingRangeLength"]]
-  if (!phase2 && .stageHasTooFewObservationsForMovingRange(dataset, stages, movingRangeLength)) {
-    plot$setError(.timeWeightedStagesMovingRangeErrorMessage(
-      chartTitle        = gettext("Cumulative sum chart"),
-      dataset           = dataset,
-      stages            = stages,
-      movingRangeLength = movingRangeLength
-    ))
-    return(list("plot" = plot))
+  # sigma from moving ranges only for individual observations, see .controlChart_calculations
+  shortStages <- if (phase2) NULL else .timeWeightedMovingRangeShortStages(
+    dataset           = dataset,
+    measurements      = measurements,
+    stages            = stages,
+    movingRangeLength = movingRangeLength,
+    usesMovingRange   = function(n) all(n <= 1)
+  )
+  if (!is.null(shortStages)) {
+    errorMessage <- .timeWeightedMovingRangeErrorMessage(gettext("Cumulative sum chart"), shortStages, movingRangeLength)
+    plot$setError(errorMessage)
+    return(list("plot" = plot, "errorMessage" = errorMessage))
   }
 
   cusumChart <- .controlChart(dataset[columnsToPass], plotType = "cusum", stages = stages, xBarSdType = options[["cumulativeSumChartSdMethod"]],
@@ -233,14 +247,18 @@ timeWeightedChartsInternal <- function(jaspResults, dataset, options) {
   columnsToPass <- columnsToPass[columnsToPass != ""]
   phase2 <- (options[["exponentiallyWeightedMovingAverageChartSdSource"]] == "historical")
   movingRangeLength <- options[["exponentiallyWeightedMovingAverageChartMovingRangeLength"]]
-  if (!phase2 && .stageHasTooFewObservationsForMovingRange(dataset, stages, movingRangeLength)) {
-    plot$setError(.timeWeightedStagesMovingRangeErrorMessage(
-      chartTitle        = gettext("Exponentially weighted moving average chart"),
-      dataset           = dataset,
-      stages            = stages,
-      movingRangeLength = movingRangeLength
-    ))
-    return(list("plot" = plot))
+  # sigma from moving ranges only for individual observations, see .controlChart_calculations
+  shortStages <- if (phase2) NULL else .timeWeightedMovingRangeShortStages(
+    dataset           = dataset,
+    measurements      = measurements,
+    stages            = stages,
+    movingRangeLength = movingRangeLength,
+    usesMovingRange   = function(n) all(n == 1)
+  )
+  if (!is.null(shortStages)) {
+    errorMessage <- .timeWeightedMovingRangeErrorMessage(gettext("Exponentially weighted moving average chart"), shortStages, movingRangeLength)
+    plot$setError(errorMessage)
+    return(list("plot" = plot, "errorMessage" = errorMessage))
   }
 
   ewmaChart <- .controlChart(dataset[columnsToPass], plotType = "ewma", stages = stages, xBarSdType = options[["exponentiallyWeightedMovingAverageChartSdMethod"]],
@@ -269,20 +287,33 @@ timeWeightedChartsInternal <- function(jaspResults, dataset, options) {
   return(ruleList)
 }
 
-.stageHasTooFewObservationsForMovingRange <- function(dataset, stages, movingRangeLength) {
-  if (identical(stages, "") || !stages %in% colnames(dataset))
-    return(FALSE)
+# Subgroup counts of stages whose sigma comes from the moving range (individual observations, as decided per stage
+# in .controlChart_calculations: CUSUM if all(n <= 1), EWMA if all(n == 1)) and that have fewer subgroups than the
+# moving range length. Returns NULL if no stage is affected.
+.timeWeightedMovingRangeShortStages <- function(dataset, measurements, stages, movingRangeLength, usesMovingRange) {
+  if (identical(stages, ""))
+    return(NULL)
 
-  stageCounts <- table(dataset[[stages]])
-  any(stageCounts < movingRangeLength)
+  stageLabels          <- as.character(dataset[[stages]])
+  n                    <- rowSums(!is.na(dataset[, measurements, drop = FALSE]))
+  stageCounts          <- table(stageLabels)
+  stageUsesMovingRange <- tapply(n, stageLabels, usesMovingRange)[names(stageCounts)]
+
+  shortStages <- stageCounts[stageUsesMovingRange & stageCounts < movingRangeLength]
+  if (length(shortStages) == 0)
+    return(NULL)
+
+  return(shortStages)
 }
 
-.timeWeightedStagesMovingRangeErrorMessage <- function(chartTitle, dataset, stages, movingRangeLength) {
-  stageCounts <- table(dataset[[stages]])
-  minObservations <- min(stageCounts)
-  gettextf(paste0(
-    "At least one stage contains only %1$s observation(s). %2$s requires at least %3$s observations per stage ",
-    "for the selected moving range length. This can happen when too many stages are defined (for example one point ",
-    "per stage). Reduce the number of stages or lower the moving range length."
-  ), minObservations, chartTitle, movingRangeLength)
+.timeWeightedMovingRangeErrorMessage <- function(chartTitle, shortStages, movingRangeLength) {
+  minObservations <- min(shortStages)
+  gettextf(
+    ngettext(
+      minObservations,
+      "At least one stage contains only %1$s individual observation. %2$s requires at least %3$s individual observations per stage for the selected moving range length. This can happen when too many stages are defined (for example one point per stage). Reduce the number of stages or lower the moving range length.",
+      "At least one stage contains only %1$s individual observations. %2$s requires at least %3$s individual observations per stage for the selected moving range length. This can happen when too many stages are defined (for example one point per stage). Reduce the number of stages or lower the moving range length."
+    ),
+    minObservations, chartTitle, movingRangeLength
+  )
 }

@@ -24,6 +24,7 @@
 * DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
 ## Fixed
+* Time weighted charts: a stage of individual observations with fewer subgroups than the moving range length now gives an informative error on the chart (or the report) instead of stopping the analysis; charts with subgroup size > 1 or a historical std. dev. are unaffected.
 * Test–retest: limit across-rows input to two measurement columns, reject extra single-column measurement sets (previously the third set was silently ignored) and report duplicate or unmatched readings; rows with missing values are still excluded.
 * Attribute agreement: return valid confidence-interval endpoints for zero or perfect agreement.
 * Probability of detection: identify natural-log coordinates in covariate labels, reference tables and explanatory footnotes.
