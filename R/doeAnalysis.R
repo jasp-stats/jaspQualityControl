@@ -1363,18 +1363,19 @@ get_levels <- function(var, num_levels, dataset) {
   y       <- model.response(model.frame(fit))
   totalSS <- sum((y - mean(y))^2)
   modelSS <- totalSS - sum(residuals(fit)^2)
-  modelDf <- sum(anovaFit$Df[-nrow(anovaFit)])
+  # df from the fit rank: term df can be 0 when coding makes terms aliased, so their sum would be too small
+  modelDf <- fit$rank - attr(terms(fit), "intercept")
   modelRow <- .doeAnovaRow(modelSS, modelDf, msError, errorDf, colnames(anovaFit), "Model")
 
   # calculate total row
-  totalRow <- data.frame(df = sum(anovaFit$Df), ss = totalSS, ms = NA, f = NA, p = NA)
+  totalRow <- data.frame(df = length(y) - 1, ss = totalSS, ms = NA, f = NA, p = NA)
   colnames(totalRow) <- colnames(anovaFit)
   rownames(totalRow) <- "Total"
 
   # SS of a group of term rows (e.g., all linear terms), tested jointly
   groupRow <- function(rowIndices, label) {
-    groupSS <- .doeAnovaGroupSumOfSquares(anovaFit, rowIndices, fit, ssType)
-    .doeAnovaRow(groupSS, sum(anovaFit$Df[rowIndices]), msError, errorDf, colnames(anovaFit), label)
+    group <- .doeAnovaGroupSumOfSquares(anovaFit, rowIndices, fit, ssType)
+    .doeAnovaRow(group[["ss"]], group[["df"]], msError, errorDf, colnames(anovaFit), label)
   }
 
   # calculate block row
@@ -1445,37 +1446,41 @@ get_levels <- function(var, num_levels, dataset) {
   return(row)
 }
 
-# Joint SS for a group of ANOVA term rows. Type I: sum of sequential SS (these add up correctly).
-# Type II/III: extra SS from dropping all terms of the group at once, mirroring car::Anova for single terms.
+# Joint SS and df for a group of ANOVA term rows. Type I: sums of the sequential SS and df (these add up correctly).
+# Type II/III: extra SS from dropping all terms of the group at once, mirroring car::Anova for single terms;
+# df is the rank difference of the two compared models, so aliased columns are not counted.
 .doeAnovaGroupSumOfSquares <- function(anovaFit, rowIndices, fit, ssType) {
   if (length(rowIndices) == 0)
-    return(0)
+    return(list(ss = 0, df = 0))
   if (ssType == "type1")
-    return(sum(anovaFit$`Sum Sq`[rowIndices]))
+    return(list(ss = sum(anovaFit$`Sum Sq`[rowIndices]), df = sum(anovaFit$Df[rowIndices])))
 
   termLabels      <- attr(terms(fit), "term.labels")
   cleanTermLabels <- unname(sapply(gsub(" ", "", termLabels, fixed = TRUE), .gsubIdentityFunction))
   groupTerms      <- match(rownames(anovaFit)[rowIndices], cleanTermLabels)
   if (anyNA(groupTerms))
-    return(NA)
+    return(list(ss = NA, df = sum(anovaFit$Df[rowIndices])))
 
   modelMatrix <- model.matrix(fit)
   termAssign  <- attr(modelMatrix, "assign")
   y           <- model.response(model.frame(fit))
-  rss <- function(dropTerms) {
-    keep <- !(termAssign %in% dropTerms)
-    sum(lm.fit(modelMatrix[, keep, drop = FALSE], y)$residuals^2)
+  reducedFit <- function(dropTerms) {
+    keep    <- !(termAssign %in% dropTerms)
+    lmFit   <- lm.fit(modelMatrix[, keep, drop = FALSE], y)
+    list(rss = sum(lmFit$residuals^2), rank = lmFit$rank)
   }
+  groupTest <- function(smaller, larger)
+    list(ss = smaller[["rss"]] - larger[["rss"]], df = larger[["rank"]] - smaller[["rank"]])
 
   if (ssType == "type3")
-    return(rss(groupTerms) - rss(integer(0)))
+    return(groupTest(reducedFit(groupTerms), reducedFit(integer(0))))
 
   # type II: adjust for all terms except the group and its higher-order relatives (terms containing a group term)
   factors    <- attr(terms(fit), "factors") > 0
   contains   <- function(outer, inner) all(!(factors[, inner] & !factors[, outer]))
   otherTerms <- setdiff(seq_along(termLabels), groupTerms)
   relatives  <- otherTerms[vapply(otherTerms, function(j) any(vapply(groupTerms, function(i) contains(j, i), logical(1))), logical(1))]
-  return(rss(c(groupTerms, relatives)) - rss(relatives))
+  return(groupTest(reducedFit(c(groupTerms, relatives)), reducedFit(relatives)))
 }
 
 .removeAppendedFactorLevels <- function(predictorNames, terms, interactionSymbol = "✻"){

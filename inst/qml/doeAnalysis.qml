@@ -564,6 +564,7 @@ Form
 	{
 		title: qsTr("Response optimizer")
 		columns: 2
+		info: qsTr("Finds the factor settings that maximize the composite desirability of the included responses, based on the fitted model of each response. Continuous factors are searched within their observed range; all combinations of discrete factor levels are tried.")
 
 		VariablesForm
 		{
@@ -584,6 +585,7 @@ Form
 				id:									responsesResponseOptimizer
 				allowedColumns:						["scale"]
 				label:								qsTr("Included responses")
+				info:								qsTr("The responses to optimize. For each response, the individual desirability (between 0 and 1) is set by the goal, bounds, target and weight. The composite desirability is the weighted geometric mean of the individual desirabilities, with the importances (normalized to sum to 1) as weights.")
 				width:								450 * preferencesModel.uiScale
 
 				property int rowWidth: 		Math.round(width / 12)
@@ -609,6 +611,8 @@ Form
 					{
 						name:							"responseOptimizerGoal"
 						id: 							responseOptimizerGoal
+						infoLabel:						qsTr("Goal")
+						info:							qsTr("Whether to maximize or minimize the response, or to hit a target value.")
 						indexDefaultValue:				0
 						values: [
 							{ label: qsTr("Maximize"), value: "maximize"},
@@ -619,6 +623,8 @@ Form
 					DoubleField
 					{
 						name:							"responseOptimizerLowerBound"
+						infoLabel:						qsTr("Lower")
+						info:							qsTr("Response value at and below which the individual desirability is 0. Used for the goals maximize and target. Only editable with 'Set all bounds manually'; otherwise the minimum of the observed response is used.")
 						defaultValue:					0
 						negativeValues:					true
 						fieldWidth:						1.2 * responsesResponseOptimizer.rowWidth
@@ -627,6 +633,8 @@ Form
 					DoubleField
 					{
 						name:							"responseOptimizerTarget"
+						infoLabel:						qsTr("Target")
+						info:							qsTr("Response value at which the individual desirability is 1. Always editable for the goal target. For maximize and minimize only editable with 'Set all targets manually'; otherwise the maximum or minimum of the observed response is used.")
 						defaultValue:					0.5
 						negativeValues:					true
 						fieldWidth:						responsesResponseOptimizer.rowWidth
@@ -635,6 +643,8 @@ Form
 					DoubleField
 					{
 						name:							"responseOptimizerUpperBound"
+						infoLabel:						qsTr("Upper")
+						info:							qsTr("Response value at and above which the individual desirability is 0. Used for the goals minimize and target. Only editable with 'Set all bounds manually'; otherwise the maximum of the observed response is used.")
 						defaultValue:					1
 						negativeValues:					true
 						fieldWidth:						responsesResponseOptimizer.rowWidth
@@ -643,6 +653,8 @@ Form
 					DoubleField
 					{
 						name:							"responseOptimizerWeight"
+						infoLabel:						qsTr("Weight")
+						info:							qsTr("Shape of the individual desirability between bound and target (0.1 to 10). With 1 it increases linearly; larger values require the response to be closer to the target for a high desirability, smaller values are more lenient.")
 						defaultValue:					1
 						min:							0.1
 						max:							10
@@ -651,6 +663,8 @@ Form
 					DoubleField
 					{
 						name:							"responseOptimizerImportance"
+						infoLabel:						qsTr("Importance")
+						info:							qsTr("Relative importance of the response in the composite desirability (0.1 to 10). Only enabled with more than one response.")
 						defaultValue:					1
 						min:							0.1
 						max:							10
@@ -669,6 +683,7 @@ Form
 			{
 				name:						"optimizationSolutionTable"
 				label:						qsTr("Show optimal solution")
+				info:						qsTr("Show the optimizer settings per response and the optimal solution: the factor levels with the highest composite desirability, that desirability, and the predicted (fitted) responses at these levels.")
 				checked:					true
 			}
 
@@ -676,12 +691,14 @@ Form
 			{
 				name:						"optimizationPlot"
 				label:						qsTr("Show optimization plot")
+				info:						qsTr("Show a matrix of plots with one column per factor. The top row shows the composite desirability, the other rows one per response. Each plot varies one factor while the other factors are held at the optimal (or manually set) levels, which are marked in red.")
 				checked:					true
 
 				DropDown
 				{
 					name:							"optimizationPlotPredictionType"
 					label:							qsTr("Predict")
+					info:							qsTr("What the response rows of the optimization plot show: the predicted response or its individual desirability.")
 					id: 							optimizationPlotPredictionType
 					indexDefaultValue:				0
 					values: [
@@ -695,6 +712,7 @@ Form
 					name:						"optimizationPlotCustomParameters"
 					id:							optimizationPlotCustomParameters
 					label:						qsTr("Set input parameters manually")
+					info:						qsTr("Draw the optimization plot at manually entered factor levels instead of the optimal solution. Enter a value for every factor; discrete factors need one of their observed levels.")
 					checked:					false
 				}
 
@@ -723,6 +741,7 @@ Form
 				name:						"responseOptimizerManualBounds"
 				id:							responseOptimizerManualBounds
 				label:						qsTr("Set all bounds manually")
+				info:						qsTr("Use the entered lower and upper bounds instead of the minimum and maximum of the observed responses.")
 				checked:					false
 			}
 
@@ -731,6 +750,7 @@ Form
 				name:						"responseOptimizerManualTarget"
 				id:							responseOptimizerManualTarget
 				label:						qsTr("Set all targets manually")
+				info:						qsTr("Use the entered targets for the goals maximize and minimize instead of the maximum or minimum of the observed responses.")
 				checked:					false
 			}
 		}
@@ -774,7 +794,7 @@ Form
 		{
 			name:							"sumOfSquaresType"
 			label:							qsTr("Sum of squares type")
-			info:							qsTr("How the sum of squares of each term in the ANOVA table is calculated. The types differ in which other terms a term is adjusted for. In balanced designs, such as complete factorial designs, all types give the same result. In unbalanced designs, e.g. with missing runs, covariates or squared terms, they can differ. The Model, Error and Total rows are the same for all types. See the description of the ANOVA table below.") + "\n"
+			info:							qsTr("How the sum of squares of each term in the ANOVA table is calculated. The types differ in which other terms a term is adjusted for. In balanced designs with orthogonal (coded) terms, such as complete two-level factorial designs, all types give the same result. In unbalanced designs, e.g. with missing runs, covariates or squared terms, they can differ. The Model, Error and Total rows are the same for all types. See the description of the ANOVA table below.") + "\n"
 											+ "- **" + qsTr("Type I") + "**: " + qsTr("Sequential sums of squares: each term is adjusted only for the terms entered before it, so the results depend on the order of the terms. The term rows add up to the Model row.") + "\n"
 											+ "- **" + qsTr("Type II") + "**: " + qsTr("Each term is adjusted for all other terms, except for higher-order terms that contain it. For example, A is adjusted for B, but not for A✻B.") + "\n"
 											+ "- **" + qsTr("Type III") + "**: " + qsTr("Each term is adjusted for all other terms in the model, i.e. it measures what the term adds when it is entered last. Results for lower-order terms depend on how the factors are coded.")
