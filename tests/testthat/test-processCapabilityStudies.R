@@ -755,7 +755,7 @@ test_that("LF10.1 (Normal) Missing value test of Process performance (total) tab
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
   testthat::skip_on_os("mac")
   jaspTools::expect_equal_tables(table,
-                                 list(0.41, "", "", "*", "<unicode>", "NaN", Inf, "*", "", "*", "",
+                                 list(0.408, "", "", "*", "<unicode>", "NaN", Inf, "*", "", "*", "",
                                       "1 (BL)", "NaN", "-", "-", "*", "<unicode>", "NaN", "NaN", "*",
                                       "", "*", "", 2, "NaN", "NaN", "NaN", "*", "NaN", "-", "-", "*",
                                       "-", "*", "-", "Change (2 vs. BL)"))
