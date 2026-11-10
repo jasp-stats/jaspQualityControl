@@ -10,10 +10,9 @@ test_that("saved np example rejects impossible defective-item counts", {
   opts <- jaspTools::analysisOptions(jaspFile)
   dataset <- jaspTools::extractDatasetFromJASPFile(jaspFile)
 
-  # Encode and run analysis
-  encoded <- jaspTools:::encodeOptionsAndDataset(opts, dataset)
+  # Run analysis
   set.seed(1)
-  results <- jaspTools::runAnalysis("attributesCharts", encoded$dataset, encoded$options, encodedDataset = TRUE)
+  results <- jaspTools::runAnalysis("attributesCharts", dataset, opts)
 
   # The saved data include 88 defective items in a sample of 50.
   expect_identical(results$status, "validationError")

@@ -48,6 +48,11 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
     dataset         <- .readDataSetToEnd(c(numeric.vars, factor.vars))
   }
 
+  # The results lists only accept nominal variables, so numeric ratings arrive as factors:
+  # give them their numbers back, which Kendall's tau and the rating correlations need.
+  for (measurement in numeric.vars)
+    dataset[[measurement]] <- .msaAttributeAsNumberIfPossible(dataset[[measurement]])
+
   # Check for missing values and infinity
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
              all.target = c(measurements, standards, operators, parts),
@@ -599,6 +604,21 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 }
 
 
+# A factor (or character vector) whose values are all numbers, e.g. ratings 1 to 5, as those numbers;
+# anything else unchanged. as.numeric() on the factor itself would give the level codes instead.
+.msaAttributeAsNumberIfPossible <- function(x) {
+  if (is.numeric(x))
+    return(x)
+
+  values  <- as.character(x)
+  numbers <- suppressWarnings(as.numeric(values))
+
+  if (all(is.na(numbers) == is.na(values)))
+    return(numbers)
+
+  return(x)
+}
+
 .kendallTau <- function(dataset, measurements, parts, operators, standards, options, ready) {
 
   operatorVector <- as.character(unique(dataset[[operators]]))
@@ -649,7 +669,7 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
       if (standards != ""){
 
-        kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = as.numeric(operator1[[standards]]))
+        kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = as.numeric(.msaAttributeAsNumberIfPossible(operator1[[standards]])))
         standCorrVector <- c(standCorrVector, kt$r)
       }
     }

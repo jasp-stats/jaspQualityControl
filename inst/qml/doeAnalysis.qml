@@ -546,6 +546,7 @@ Form
 					{
 						name:							"responseOptimizerLowerBound"
 						defaultValue:					0
+						negativeValues:					true
 						fieldWidth:						1.2 * responsesResponseOptimizer.rowWidth
 						enabled:						responseOptimizerGoal.currentValue != "minimize" & responseOptimizerManualBounds.checked
 					}
@@ -553,6 +554,7 @@ Form
 					{
 						name:							"responseOptimizerTarget"
 						defaultValue:					0.5
+						negativeValues:					true
 						fieldWidth:						responsesResponseOptimizer.rowWidth
 						enabled:						responseOptimizerManualTarget.checked | responseOptimizerGoal.currentValue == "target"
 					}
@@ -560,6 +562,7 @@ Form
 					{
 						name:							"responseOptimizerUpperBound"
 						defaultValue:					1
+						negativeValues:					true
 						fieldWidth:						responsesResponseOptimizer.rowWidth
 						enabled:						responseOptimizerGoal.currentValue != "maximize" & responseOptimizerManualBounds.checked
 					}

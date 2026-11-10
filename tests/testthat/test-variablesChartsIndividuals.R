@@ -1,5 +1,4 @@
 context("[Quality Control] Variables Charts for Individuals")
-.numDecimals <- 2
 set.seed(1)
 
 # Basic tests ####
@@ -306,26 +305,28 @@ test_that("11.1 X-mR control chart with missing values in axis labels - plot", {
 test_that("11.2 X-mR control chart with missing values in axis labels - I table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableI"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 3 (Mar Year 1)", "Point 11 (Nov Year 1)", "Point 4 (Apr Year 1)",
-                                      "Point 4 (Apr Year 1)", "Point 12 (Dec Year 1)", "Point 24 (Dec Year 2)",
-                                      "Point 23 (Nov Year 2)", "Point 13 ()", "", "Point 24 (Dec Year 2)",
-                                      "Point 14 (Feb Year 2)", "", "", "Point 15 (Mar Year 2)", "",
-                                      "", "Point 16 (Apr Year 2)", "", "", "Point 17 (May Year 2)",
-                                      "", "", "Point 18 (Jun Year 2)", "", "", "Point 19 (Jul Year 2)",
-                                      "", "", "Point 20 (Aug Year 2)", "", "", "Point 21 (Sep Year 2)",
-                                      "", "", "Point 22 ()", "", "", "Point 31 (Jul Year 3)", "",
-                                      "", "Point 32 ()", "", "", "Point 33 (Sep Year 3)", "", "",
-                                      "Point 34 (Oct Year 3)", "", "", "Point 35 (Nov Year 3)", "",
-                                      "", "Point 36 (Dec Year 3)", ""))
+                                 list("Point 3 (Mar Year 1)", "Point 11 (Nov Year 1)",
+                                      "Point 4 (Apr Year 1)", "Point 4 (Apr Year 1)",
+                                      "Point 12 (Dec Year 1)", "Point 24 (Dec Year 2)",
+                                      "Point 23 (Nov Year 2)", "Point 13 ()", "",
+                                      "Point 24 (Dec Year 2)", "Point 14 (Feb Year 2)", "", "",
+                                      "Point 15 (Mar Year 2)", "", "", "Point 16 (Apr Year 2)", "", "",
+                                      "Point 17 (May Year 2)", "", "", "Point 18 (Jun Year 2)", "", "",
+                                      "Point 19 (Jul Year 2)", "", "", "Point 20 (Aug Year 2)", "", "",
+                                      "Point 21 (Sep Year 2)", "", "", "Point 22 ()", "", "",
+                                      "Point 31 (Jul Year 3)", "", "", "Point 32 ()", "", "",
+                                      "Point 33 (Sep Year 3)", "", "", "Point 34 (Oct Year 3)", "", "",
+                                      "Point 35 (Nov Year 3)", "", "", "Point 36 (Dec Year 3)", ""))
 })
 
 test_that("11.3 X-mR control chart with missing values in axis labels - MR table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 3 (Mar Year 1)", "Point 12 (Dec Year 1)", "Point 5 (May Year 1)",
-                                      "Point 13 ()", "Point 23 (Nov Year 2)", "Point 14 (Feb Year 2)",
-                                      "Point 25 (Jan Year 3)", "Point 15 (Mar Year 2)", "", "Point 32 ()",
-                                      "", "Point 33 (Sep Year 3)", "", "Point 34 (Oct Year 3)", "",
+                                 list("Point 3 (Mar Year 1)", "Point 12 (Dec Year 1)",
+                                      "Point 5 (May Year 1)", "Point 13 ()", "Point 23 (Nov Year 2)",
+                                      "Point 14 (Feb Year 2)", "Point 25 (Jan Year 3)",
+                                      "Point 15 (Mar Year 2)", "", "Point 32 ()", "",
+                                      "Point 33 (Sep Year 3)", "", "Point 34 (Oct Year 3)", "",
                                       "Point 35 (Nov Year 3)", "", "Point 36 (Dec Year 3)"))
 })
 

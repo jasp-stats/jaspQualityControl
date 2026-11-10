@@ -1,5 +1,4 @@
 context("[Quality Control] MSA - Type 1 Instrument Capability")
-.numDecimals <- 2
 set.seed(1)
 
 # Basic tests ####
