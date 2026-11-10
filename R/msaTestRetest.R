@@ -22,6 +22,7 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
   if (wideFormat) {
     measurements <- unlist(options[["measurementsWideFormat"]])
     parts <- unlist(options[["partWideFormat"]])
+    operators <- ""
     factor.vars <- parts
   } else {
     measurements <- unlist(options[["measurementLongFormat"]])
@@ -41,28 +42,40 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
   }
 
   if (is.null(dataset)) {
-    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
-                                         exclude.na.listwise = c(numeric.vars, factor.vars))
+    dataset <- .readDataSetToEnd(columns.as.numeric = numeric.vars, columns.as.factor = factor.vars,
+                                 exclude.na.listwise = c(numeric.vars, factor.vars))
   }
 
-  .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             all.target = c(measurements, options[["operator"]], options[["part"]]),
-             exitAnalysisIfErrors = TRUE)
-
-  # Checking for crossed design
-  if (ready && !wideFormat) {
-    crossed <- .checkIfCrossed(dataset, operators, parts)
-    if(!crossed){
-      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
-      jaspResults[["gaugeTestRetest"]] <- plot
-      plot$setError(gettext("Design is not balanced: not all parts were measured the same number of times."))
-      return()
-    }
+  if (ready) {
+    .hasErrors(dataset, type = "infinity", infinity.target = numeric.vars, exitAnalysisIfErrors = TRUE)
+    # Rows with missing values are excluded listwise; long-format parts left unpaired are rejected below.
+    # The wide-format QML allows at most two measurement columns; the R check covers older saved analyses.
+    .hasErrors(dataset, custom = function() {
+      if (nrow(dataset) == 0L)
+        return(gettext("At least one complete pair of measurements is required."))
+      if (wideFormat) {
+        if (length(measurements) != 2L || anyDuplicated(measurements))
+          return(gettext("Test-retest requires exactly two measurement columns."))
+        if (anyDuplicated(dataset[[parts]]))
+          return(gettext("Each part must occupy one row with two measurements."))
+      } else {
+        if (length(unique(dataset[[operators]])) != 2L)
+          return(gettext("Test-retest requires exactly two observed measurement sets or operators."))
+        cells <- table(as.character(dataset[[parts]]), as.character(dataset[[operators]]))
+        if (any(cells > 1L))
+          return(gettext("Each part must have only one reading in each measurement set."))
+        if (any(cells != 1L))
+          return(gettext("Each part must have a reading in both measurement sets."))
+      }
+    }, exitAnalysisIfErrors = TRUE)
   }
 
   if (!wideFormat && ready) {
-    dataset <- as.data.frame(tidyr::pivot_wider(dataset, values_from = dplyr::all_of(measurements), names_from = dplyr::all_of(operators)))
-    measurements <- names(dataset[-1])
+    # Order the two sets by factor level, not by row order, so "1st" and "2nd" are stable.
+    setLevels <- levels(droplevels(as.factor(dataset[[operators]])))
+    dataset <- as.data.frame(tidyr::pivot_wider(dataset, id_cols = dplyr::all_of(parts),
+                            values_from = dplyr::all_of(measurements), names_from = dplyr::all_of(operators)))
+    measurements <- setLevels
   }
 
   # Range Method
@@ -85,7 +98,8 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
   if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
     jaspResults[["rChart"]] <- createJaspContainer(gettext("Range method range chart"))
     jaspResults[["rChart"]]$position <- 3
-    jaspResults[["rChart"]]$dependOn(c("rChart", "measurements", "measurementsLong", "parts"))
+    jaspResults[["rChart"]]$dependOn(c("rChart", "measurementsWideFormat", "measurementLongFormat",
+                                      "partWideFormat", "partLongFormat", "operator", "dataFormat"))
     jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by part"), width = 800, height = 400)
     if (ready) {
       rChart <- .controlChart(dataset = dataset[measurements], plotType = "R", xAxisLabels = dataset[[parts]])
@@ -130,7 +144,8 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
 
 
   plot <- createJaspPlot(title = gettext("Run chart of parts"), width = 500, height = 320)
-  plot$dependOn(c("runChartPart", "measurementsWideFormat", "partWideFormat", "measurementLongFormat", "partLongFormat", "operators"))
+  plot$dependOn(c("runChartPart", "measurementsWideFormat", "partWideFormat", "measurementLongFormat",
+                  "partLongFormat", "operator", "dataFormat"))
 
   if (ready) {
 
@@ -168,7 +183,9 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
   else {
     table <- createJaspTable(title = gettext("Short gauge study"))
     table$position <- 1
-    table$dependOn(c("repeatabilityAndReproducibilityTable", "toleranceValue", "manualProcessSdValue", "tolerance", "manualProcessSd"))
+    table$dependOn(c("repeatabilityAndReproducibilityTable", "toleranceValue", "manualProcessSdValue",
+                     "tolerance", "manualProcessSd", "measurementsWideFormat", "partWideFormat",
+                     "measurementLongFormat", "partLongFormat", "operator", "dataFormat"))
 
     table$addColumnInfo(name = "n", title = gettext("Sample size (n)"), type = "integer")
     table$addColumnInfo(name = "Rbar", title = gettext("R-bar"), type = "number")
@@ -204,8 +221,9 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
 .ScatterPlotOperators <- function(dataset, measurements, parts, operators, options, ready) {
 
   plot <- createJaspPlot(title = gettext("Scatterplot of 1st measurement vs 2nd measurement"))
-  plot$dependOn(c("scatterPlotMeasurement", "scatterPlotMeasurementFitLine", "rangeScatterPlotOriginLine", "gaugeRRmethod",
-                  "measurementsWideFormat", "partWideFormat", "measurementLongFormat", "partLongFormat", "operators"))
+  plot$dependOn(c("scatterPlotMeasurement", "scatterPlotMeasurementFitLine", "scatterPlotMeasurementAllValues",
+                  "measurementsWideFormat", "partWideFormat", "measurementLongFormat", "partLongFormat",
+                  "operator", "dataFormat"))
 
   if (ready) {
 
