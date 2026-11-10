@@ -540,3 +540,27 @@ test_that("WF5 Test of Time weighted charts report", {
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "time-weighted-charts-report_WF5")
 })
+
+### CUSUM with interleaved stages: test results use each flagged row's timestamp (jasp-issues#4672) ####
+# Stages alternate by row; the chart shows all A rows, then all B rows. B shifts up from D8 on.
+options <- analysisOptions("timeWeightedCharts")
+options$measurementLongFormat <- "Measurement"
+options$stagesLongFormat <- "Stage"
+options$subgroup <- "Day"
+options$cumulativeSumChart <- TRUE
+options$cumulativeSumChartTarget <- 10
+options$cumulativeSumChartSdSource <- "historical"
+options$cumulativeSumChartSdValue <- 1
+interleavedStagesDataset <- data.frame(
+  Measurement = c(10, 10, 10, 10, 10, 10, 10, 20, 10, 20, 10, 20),
+  Stage       = rep(c("A", "B"), 6),
+  Day         = paste0("D", 1:12)
+)
+results <- runAnalysis("timeWeightedCharts", interleavedStagesDataset, options)
+
+test_that("LF interleaved stages - Cumulative sum chart test results use each flagged row's timestamp", {
+  table <- results[["results"]][["CusumChart"]][["collection"]][["CusumChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("B", "Point 10 - upper (D8)", "", "Point 11 - upper (D10)", "",
+                                      "Point 12 - upper (D12)"))
+})
