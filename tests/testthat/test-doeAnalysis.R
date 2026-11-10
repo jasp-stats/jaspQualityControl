@@ -5214,6 +5214,44 @@ test_that("Stepwise marginality leaves compliant models untouched", {
 
 options("jaspRoundToPrecision" = NULL) # reset default
 
+## Response optimizer default targets ####
+
+.doeTestOptimizerRow <- function(goal, lowerBound, upperBound) {
+  data.frame(
+    variable                    = "y",
+    responseOptimizerGoal       = goal,
+    responseOptimizerTarget     = "",
+    responseOptimizerLowerBound = lowerBound,
+    responseOptimizerUpperBound = upperBound,
+    responseOptimizerWeight     = 1,
+    responseOptimizerImportance = 1
+  )
+}
+
+.doeTestDesirability <- function(dataset, values, roOptionsDf) {
+  vapply(values, function(v) jaspQualityControl:::.calculateDesirability(dataset, c(y = v), roOptionsDf), numeric(1))
+}
+
+test_that("Optimizer target defaults to observed max/min, also with manual bounds", {
+  # bounds not manual (blank): linear between observed min and max
+  expect_equal(
+    .doeTestDesirability(data.frame(y = c(0, 10)), c(3, 5, 9), .doeTestOptimizerRow("maximize", "", "")),
+    c(0.3, 0.5, 0.9)
+  )
+
+  # maximize, manual lower bound: the disabled Upper field (default 1) must not become the target
+  expect_equal(
+    .doeTestDesirability(data.frame(y = c(0, 10)), c(1, 3, 5, 9, 10), .doeTestOptimizerRow("maximize", 2, 1)),
+    c(0, 0.125, 0.375, 0.875, 1)
+  )
+
+  # minimize, manual upper bound: the disabled Lower field (default 0) must not become the target
+  expect_equal(
+    .doeTestDesirability(data.frame(y = c(3, 13)), c(3, 5, 8, 12), .doeTestOptimizerRow("minimize", 0, 12)),
+    c(1, 7 / 9, 4 / 9, 0)
+  )
+})
+
 ## Contour plot ####
 
 options <- analysisOptions("doeAnalysis")

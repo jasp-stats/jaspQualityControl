@@ -1316,7 +1316,8 @@ get_levels <- function(var, num_levels, dataset) {
     ub <- if (upperbounds[outcomeName] == "") max(dataset[[outcomeName]]) else as.numeric(upperbounds[outcomeName])
     weight <- as.numeric(weights[outcomeName])
     if (outcomeGoal == "minimize") {
-      target <- if (targets[outcomeName] == "") lb else as.numeric(targets[outcomeName])
+      # default target is the observed minimum, not lb: with manual bounds lb is the disabled Lower field (default 0)
+      target <- if (targets[outcomeName] == "") min(dataset[[outcomeName]]) else as.numeric(targets[outcomeName])
       if (outcomeValue < target) {
         desi <- 1
       } else if (outcomeValue > ub) {
@@ -1325,7 +1326,8 @@ get_levels <- function(var, num_levels, dataset) {
         desi <- ((ub - outcomeValue) / (ub - target))^weight
       }
     } else if (outcomeGoal == "maximize") {
-      target <- if (targets[outcomeName] == "") ub else as.numeric(targets[outcomeName])
+      # default target is the observed maximum, not ub: with manual bounds ub is the disabled Upper field (default 1)
+      target <- if (targets[outcomeName] == "") max(dataset[[outcomeName]]) else as.numeric(targets[outcomeName])
       if (outcomeValue < lb) {
         desi <- 0
       } else if (outcomeValue > target) {
