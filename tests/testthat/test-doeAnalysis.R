@@ -5664,6 +5664,85 @@ test_that("No lack of fit split without replicates or without degrees of freedom
   expect_equal(rownames(rows), c("\u00A0 Lack of fit", "\u00A0 Pure error"))
 })
 
+test_that("Lack of fit groups the runs on the variables, not on the model terms", {
+  # with I(A^2) but not A in the model, the runs at A = -a and A = +a are distinct settings, not replicates
+  colNames <- c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")
+  squares  <- data.frame(A = rep(c(-2, -1, 1, 2), each = 2))
+  squares$y <- squares$A + rep(c(-0.1, 0.1), 4)
+  fit  <- stats::lm(y ~ I(A^2), data = squares)
+  ref  <- stats::anova(fit, stats::lm(y ~ factor(A), data = squares))
+  rows <- jaspQualityControl:::.doeAnovaLackOfFitRows(fit, colNames, squares)
+  expect_equal(rows[["Df"]], c(ref[["Df"]][2], ref[["Res.Df"]][2]))
+  expect_equal(c(rows[["Sum Sq"]][1], rows[["F value"]][1], rows[["Pr(>F)"]][1]),
+               c(ref[["Sum of Sq"]][2], ref[["F"]][2], ref[["Pr(>F)"]][2]))
+})
+
+test_that("Lack of fit in uncoded factorial designs follows the ANOVA fit with the predictors as factors", {
+  # Uncoded, the factorial ANOVA treats continuous predictors as factors (3 levels here: 2 df each), coded as numeric
+  # (1 df each), so the split of Error changes with the coding. A full 3 x 3 grid, so no factor column is aliased.
+  set.seed(1)
+  grid    <- expand.grid(A = c(100, 150, 200), B = c(1, 2, 3))
+  lofData <- rbind(grid, grid[c(1, 3, 5, 9), ])
+  lofData$y <- round(10 + 0.02 * lofData$A + 3 * lofData$B - 2 * (lofData$B - 2)^2 + rnorm(nrow(lofData)), 2)
+  lofOptions <- function(coded) {
+    options <- analysisOptions("doeAnalysis")
+    options$dependentFactorial         <- "y"
+    options$continuousFactorsFactorial <- c("A", "B")
+    options$codeFactors                <- coded
+    options$codeFactorsMethod          <- "automatic"
+    options$highestOrder               <- FALSE
+    options$modelTerms                 <- list(list(components = "A"), list(components = "B"))
+    options
+  }
+  cellMeans <- stats::lm(y ~ factor(paste(A, B)), data = lofData)
+  refs <- list(uncoded = stats::anova(stats::lm(y ~ factor(A) + factor(B), data = lofData), cellMeans),
+               coded   = stats::anova(stats::lm(y ~ A + B, data = lofData), cellMeans))
+  for (coding in names(refs)) {
+    set.seed(123)
+    results <- runAnalysis("doeAnalysis", lofData, lofOptions(coded = coding == "coded"))
+    table   <- results[["results"]][["y"]][["collection"]][["y_tableAnova"]]
+    lof     <- doeAnovaRow(table, "  Lack of fit")
+    pure    <- doeAnovaRow(table, "  Pure error")
+    ref     <- refs[[coding]]
+    expect_equal(c(lof[["df"]], lof[["adjss"]], lof[["fval"]], lof[["pval"]]),
+                 c(ref[["Df"]][2], ref[["Sum of Sq"]][2], ref[["F"]][2], ref[["Pr(>F)"]][2]), label = coding)
+    expect_equal(c(pure[["df"]], pure[["adjss"]]), c(ref[["Res.Df"]][2], ref[["RSS"]][2]), label = coding)
+  }
+  expect_equal(c(refs[["uncoded"]][["Df"]][2], refs[["coded"]][["Df"]][2]), c(4, 6)) # the split differs
+})
+
+test_that("Effect intervals use the error df of the fit the effects come from", {
+  # Uncoded, the effects come from a fit on coded continuous predictors. Here the coded A^2 and B^2 coincide, so that
+  # fit has one coefficient less and one more error df than the uncoded fit.
+  set.seed(3)
+  sqData <- data.frame(A = c(0, 2, 1, 0, 2, 1, 0, 2, 1, 0),
+                       B = c(10, 12, 11, 12, 10, 11, 10, 10, 11, 12),
+                       C = c(-1, -1, -1, 1, 1, 1, 0, 0, 1, -1))
+  sqData$y <- round(5 + sqData$C + 0.3 * sqData$A^2 + 0.01 * sqData$B^2 + rnorm(10, sd = 0.2), 2)
+  options <- analysisOptions("doeAnalysis")
+  options$designType                       <- "responseSurfaceDesign"
+  options$dependentResponseSurface         <- "y"
+  options$continuousFactorsResponseSurface <- c("A", "B", "C")
+  options$rsmPredefinedModel               <- FALSE
+  options$modelTerms                       <- list(list(components = "C"))
+  options$squaredTerms                     <- c("A", "B")
+  options$codeFactors                      <- FALSE
+  options$codeFactorsMethod                <- "automatic"
+  options$tableCoefficientsCi              <- TRUE
+  options$tableCoefficientsCiLevel         <- 0.95
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", sqData, options)
+  table   <- results[["results"]][["y"]][["collection"]][["y_tableCoefficients"]]
+
+  codedData <- transform(sqData, A = A - 1, B = B - 11) # automatic coding: -1/0/+1
+  codedFit  <- stats::lm(y ~ C + I(A^2) + I(B^2), data = codedData)
+  expect_equal(codedFit[["df.residual"]], 7)
+  expect_equal(stats::lm(y ~ C + I(A^2) + I(B^2), data = sqData)[["df.residual"]], 6)
+  row <- which(doeTableTerms(table) == "C")
+  expect_equal(c(doeTableColumn(table, "effectsLower")[row], doeTableColumn(table, "effectsUpper")[row]),
+               2 * unname(stats::confint(codedFit)["C", ]))
+})
+
 etchOptimizerOptions <- function(...) {
   options <- etchOptions(...)
   options$responsesResponseOptimizer <- list(list(
@@ -5852,4 +5931,101 @@ test_that("Response optimizer predicts every level of several discrete factors (
   responses <- plotResponses(results)
   expect_equal(unname(responses[[1]][c("A", "B", "C", "D")]), refPredict(c("A", "B", "C", "D"), "2"))
   expect_equal(unname(responses[[2]][c("1", "2", "3")]), refPredict("D", c("1", "2", "3")))
+})
+
+test_that("Blocks without runs are dropped, so predictions still average over the blocks", {
+  # All responses of the last block are missing. Its level used to make lm() fall back to treatment contrasts, so the
+  # optimizer and the prediction table predicted at the first block instead of averaging over the blocks.
+  blockData <- read.csv("datasets/doeAnalysis/fourBlocksFactorial.csv")
+  blockData$Result[blockData$Blocks == max(blockData$Blocks)] <- NA
+
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial         <- "Result"
+  options$continuousFactorsFactorial <- c("A", "B")
+  options$blocksFactorial            <- "Blocks"
+  options$codeFactors                <- TRUE
+  options$codeFactorsMethod          <- "automatic"
+  options$highestOrder               <- FALSE
+  options$modelTerms                 <- list(list(components = "A"), list(components = "B"))
+  options$responsesResponseOptimizer <- list(list(
+    responseOptimizerGoal       = "maximize",
+    responseOptimizerImportance = 1,
+    responseOptimizerLowerBound = 0,
+    responseOptimizerTarget     = 0.5,
+    responseOptimizerUpperBound = 1,
+    responseOptimizerWeight     = 1,
+    variable                    = "Result"
+  ))
+  options$optimizationIntervals      <- TRUE
+  options$optimizationIntervalsLevel <- 0.95
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", blockData, options)
+
+  refData <- stats::na.omit(blockData)
+  refData$Block <- factor(refData$Blocks)
+  refFit <- stats::lm(Result ~ A + B + Block, data = refData, contrasts = list(Block = "contr.sum"))
+
+  solution   <- results[["results"]][["tableRoSolution"]][["data"]][[1]]
+  prediction <- results[["results"]][["tableRoPrediction"]]
+  perBlock   <- data.frame(A = as.numeric(solution[["A"]]), B = as.numeric(solution[["B"]]),
+                           Block = factor(levels(refData$Block), levels = levels(refData$Block)))
+  expected   <- mean(stats::predict(refFit, perBlock))
+  expect_equal(as.numeric(solution[["Result_fit"]]), expected, tolerance = 1e-3)
+  expect_equal(as.numeric(prediction[["data"]][[1]][["fit"]]), expected)
+
+  # the prediction interval is for a run in an average block
+  notes <- vapply(prediction[["footnotes"]], function(note) note[["text"]], character(1))
+  expect_true(any(grepl("does not include the variation between blocks", notes, fixed = TRUE)))
+})
+
+test_that("Contour plot averages over the blocks and holds covariates at their mean", {
+  # rsm::contour.lm averages the predictions over all factor levels (here the blocks), like the prediction table
+  blockData <- read.csv("datasets/doeAnalysis/fourBlocksFactorial.csv")
+  set.seed(1)
+  blockData$Cov <- round(rnorm(nrow(blockData), mean = 10), 2)
+
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial          <- "Result"
+  options$continuousFactorsFactorial  <- c("A", "B")
+  options$blocksFactorial             <- "Blocks"
+  options$covariates                  <- "Cov"
+  options$codeFactors                 <- TRUE
+  options$codeFactorsMethod           <- "automatic"
+  options$highestOrder                <- FALSE
+  options$modelTerms                  <- list(list(components = "A"), list(components = "B"))
+  options$contourSurfacePlot          <- TRUE
+  options$contourSurfacePlotType      <- "contourPlot"
+  options$contourSurfacePlotVariables <- c("A", "B")
+  set.seed(123)
+  results  <- runAnalysis("doeAnalysis", blockData, options)
+  plots    <- results[["results"]][["Result"]][["collection"]][["Result_contourSurfacePlot"]][["collection"]]
+  plotData <- results[["state"]][["figures"]][[plots[[1]][["data"]]]][["obj"]][["data"]] # x = A, y = B
+
+  refData <- blockData
+  refData$Block <- factor(refData$Blocks)
+  refFit  <- stats::lm(Result ~ A + B + Block + Cov, data = refData, contrasts = list(Block = "contr.sum"))
+  blocks  <- factor(levels(refData$Block), levels = levels(refData$Block))
+  grid    <- data.frame(point = rep(seq_len(nrow(plotData)), each = length(blocks)),
+                        A = rep(plotData$x, each = length(blocks)), B = rep(plotData$y, each = length(blocks)),
+                        Block = rep(blocks, nrow(plotData)), Cov = mean(blockData$Cov))
+  expected <- as.vector(tapply(stats::predict(refFit, grid), grid$point, mean))
+  expect_equal(plotData$z, expected)
+})
+
+test_that("Prediction table at manual values outside the design space notes the extrapolation", {
+  options <- etchOptimizerOptions(continuous = etchTerms, coded = FALSE)
+  options$optimizationPlotCustomParameters      <- TRUE
+  options$optimizationPlotCustomParameterValues <- list(
+    list(value = 1.1, variable = "Gap"),
+    list(value = 420, variable = "Pressure"),
+    list(value = 150, variable = "Flow"),
+    list(value = 350, variable = "Power") # design space: 275 to 325
+  )
+  set.seed(123)
+  results    <- runAnalysis("doeAnalysis", etchDataUncoded, options)
+  prediction <- results[["results"]][["plotRo"]][["collection"]][["plotRo_predictionTable"]]
+  newdata    <- data.frame(Gap = 1.1, Pressure = 420, Flow = 150, Power = 350)
+  expect_equal(doePredictionRow(prediction), doePredictionReference(etchFitUncoded, newdata, 0.9))
+  notes <- vapply(prediction[["footnotes"]], function(note) note[["text"]], character(1))
+  expect_true(any(grepl("outside of the design space", notes, fixed = TRUE)))
 })
