@@ -5272,6 +5272,110 @@ test_that("Stepwise marginality leaves compliant models untouched", {
   expect_identical(stats::coef(out[["model"]]), stats::coef(model))
 })
 
+## ANOVA group rows and Model row against independent references ####
+
+# car::Anova table in the format used by doeAnalysis before the header rows are added
+.doeTestCarAnova <- function(fit, type) {
+  tab <- car::Anova(fit, type = type)
+  if (type == 3)
+    tab <- tab[-1, ]
+  tab[["Mean Sq"]] <- tab[["Sum Sq"]] / tab[["Df"]]
+  tab[c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")]
+}
+
+.doeTestRow <- function(anovaTable, label) {
+  anovaTable[trimws(gsub(" ", " ", rownames(anovaTable))) == label, ]
+}
+
+# unbalanced 2^3 factorial (runs dropped) with a covariate
+.doeTestUnbalancedFit <- local({
+  set.seed(1)
+  d <- expand.grid(A = c(-1, 1), B = c(-1, 1), C = c(-1, 1), rep = 1:3)
+  d <- d[-c(2, 7, 13, 20), ]
+  d$X <- rnorm(nrow(d))
+  d$y <- 5 + d$A + 0.5 * d$B - 0.3 * d$C + 0.8 * d$A * d$B + 0.4 * d$X + rnorm(nrow(d))
+  stats::lm(y ~ A + B + C + A:B + A:C + X, data = d)
+})
+
+test_that("ANOVA group SS for single terms match car::Anova type II and III", {
+  fit <- .doeTestUnbalancedFit
+  for (type in 2:3) {
+    tab <- .doeTestCarAnova(fit, type)
+    for (i in seq_len(nrow(tab) - 1)) {
+      group <- jaspQualityControl:::.doeAnovaGroupSumOfSquares(tab, i, fit, paste0("type", type))
+      expect_equal(group[["ss"]], tab[["Sum Sq"]][i], tolerance = 1e-10, info = paste(type, rownames(tab)[i]))
+      expect_equal(group[["df"]], tab[["Df"]][i], info = paste(type, rownames(tab)[i]))
+    }
+  }
+})
+
+test_that("ANOVA linear and interaction group rows match joint tests for type II and III", {
+  fit  <- .doeTestUnbalancedFit
+  d    <- stats::model.frame(fit)
+  rows <- list(linear = c("A", "B", "C"), interaction = c("A:B", "A:C"))
+
+  # type III: joint Wald test of all coefficients in the group
+  tab3 <- .doeTestCarAnova(fit, 3)
+  for (group in rows) {
+    reference <- car::linearHypothesis(fit, paste(group, "= 0"))
+    out       <- jaspQualityControl:::.doeAnovaGroupSumOfSquares(tab3, match(group, rownames(tab3)), fit, "type3")
+    expect_equal(out[["ss"]], reference[["Sum of Sq"]][2], tolerance = 1e-10)
+    expect_equal(out[["df"]], length(group))
+  }
+
+  # type II: linear terms are adjusted for X only (interactions contain them); interactions for all other terms
+  tab2      <- .doeTestCarAnova(fit, 2)
+  linearRef <- stats::anova(stats::lm(y ~ X, data = d), stats::lm(y ~ A + B + C + X, data = d))
+  interRef  <- stats::anova(stats::lm(y ~ A + B + C + X, data = d), fit)
+  linear    <- jaspQualityControl:::.doeAnovaGroupSumOfSquares(tab2, match(rows$linear, rownames(tab2)), fit, "type2")
+  inter     <- jaspQualityControl:::.doeAnovaGroupSumOfSquares(tab2, match(rows$interaction, rownames(tab2)), fit, "type2")
+  expect_equal(linear[["ss"]], linearRef[["Sum of Sq"]][2], tolerance = 1e-10)
+  expect_equal(inter[["ss"]], interRef[["Sum of Sq"]][2], tolerance = 1e-10)
+  expect_equal(c(linear[["df"]], inter[["df"]]), c(3, 2))
+})
+
+test_that("ANOVA Model and Total rows match the overall regression test for all SS types", {
+  fit   <- .doeTestUnbalancedFit
+  fstat <- summary(fit)$fstatistic
+  y     <- stats::model.response(stats::model.frame(fit))
+  for (type in 1:3) {
+    tab <- if (type == 1) {
+      a <- stats::anova(fit)
+      a[["Mean Sq"]] <- a[["Sum Sq"]] / a[["Df"]]
+      a[c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")]
+    } else {
+      .doeTestCarAnova(fit, type)
+    }
+    out   <- jaspQualityControl:::.addModelHeaderTerms(tab, fit, paste0("type", type), "X")
+    model <- .doeTestRow(out, "Model")
+    total <- .doeTestRow(out, "Total")
+    expect_equal(model[["Df"]], unname(fstat["numdf"]))
+    expect_equal(model[["F value"]], unname(fstat["value"]), tolerance = 1e-10)
+    expect_equal(total[["Sum Sq"]], sum((y - mean(y))^2), tolerance = 1e-10)
+    expect_equal(total[["Df"]], length(y) - 1)
+  }
+})
+
+test_that("ANOVA Model and group df follow the fit rank when coding aliases terms", {
+  # coded squares of A and B coincide, so one squared term is aliased although the uncoded terms are not
+  set.seed(1)
+  d    <- data.frame(A = rep(0:4, 3), B = rep(c(8, 11, 10, 11, 12), 3), C = rnorm(15))
+  d$y  <- 3 + d$C + d$A^2 + rnorm(15)
+  d$Ac <- (d$A - 2) / 2
+  d$Bc <- (d$B - 10) / 2
+  fit  <- stats::lm(y ~ C + I(Ac^2) + I(Bc^2), data = d)
+
+  # type II only: car::Anova refuses type III for aliased fits
+  out     <- jaspQualityControl:::.addModelHeaderTerms(.doeTestCarAnova(fit, 2), fit, "type2", "")
+  model   <- .doeTestRow(out, "Model")
+  squared <- .doeTestRow(out, "Squared terms")
+  expect_equal(model[["Df"]], fit$rank - 1)
+  expect_equal(model[["F value"]], unname(summary(fit)$fstatistic["value"]), tolerance = 1e-10)
+  expect_equal(squared[["Df"]], 1)
+  expect_equal(squared[["Sum Sq"]], stats::anova(stats::lm(y ~ C, data = d), fit)[["Sum of Sq"]][2], tolerance = 1e-10)
+  expect_equal(.doeTestRow(out, "Total")[["Df"]], nrow(d) - 1)
+})
+
 options("jaspRoundToPrecision" = NULL) # reset default
 
 ## Contour plot ####
