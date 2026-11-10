@@ -42,13 +42,14 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
   }
 
   if (is.null(dataset)) {
-    dataset <- .readDataSetToEnd(columns.as.numeric = numeric.vars, columns.as.factor = factor.vars)
+    dataset <- .readDataSetToEnd(columns.as.numeric = numeric.vars, columns.as.factor = factor.vars,
+                                 exclude.na.listwise = c(numeric.vars, factor.vars))
   }
 
   if (ready) {
-    .hasErrors(dataset, type = c("infinity", "missingValues"),
-               infinity.target = numeric.vars, missingValues.target = c(numeric.vars, factor.vars),
-               exitAnalysisIfErrors = TRUE)
+    .hasErrors(dataset, type = "infinity", infinity.target = numeric.vars, exitAnalysisIfErrors = TRUE)
+    # Rows with missing values are excluded listwise; long-format parts left unpaired are rejected below.
+    # The wide-format QML allows at most two measurement columns; the R check covers older saved analyses.
     .hasErrors(dataset, custom = function() {
       if (nrow(dataset) == 0L)
         return(gettext("At least one complete pair of measurements is required."))
@@ -70,9 +71,11 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
   }
 
   if (!wideFormat && ready) {
+    # Order the two sets by factor level, not by row order, so "1st" and "2nd" are stable.
+    setLevels <- levels(droplevels(as.factor(dataset[[operators]])))
     dataset <- as.data.frame(tidyr::pivot_wider(dataset, id_cols = dplyr::all_of(parts),
                             values_from = dplyr::all_of(measurements), names_from = dplyr::all_of(operators)))
-    measurements <- setdiff(names(dataset), parts)
+    measurements <- setLevels
   }
 
   # Range Method

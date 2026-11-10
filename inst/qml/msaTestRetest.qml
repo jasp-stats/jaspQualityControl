@@ -92,6 +92,7 @@ Form
 			id:									measurementsWideFormat
 			visible:							dataFormat.currentValue == "wideFormat"
 			allowedColumns:						["scale"]
+			maxRows:							2
 		}
 
 		AssignedVariablesList

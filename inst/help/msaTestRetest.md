@@ -7,7 +7,7 @@ Test-retest aims to approximate an overall picture of the measurement system's v
 ### Data Format
 Data can be in the form of all observations in one column ("Single column") or across rows with a subgroup index ("Across rows").
 
-The paired range method requires exactly two measurement sets. In across-rows format, select two measurement columns and use one row per unique part. In single-column format, use exactly two observed operator/repetition levels, with one reading for every part at each level. Extra sets, duplicate readings, missing values and incomplete pairs are unsupported and produce an error.
+The paired range method requires exactly two measurement sets. In across-rows format, select two measurement columns and use one row per unique part; rows with a missing value are excluded. In single-column format, use exactly two operator/repetition levels, with one reading for every part at each level; the first level is plotted as the 1st measurement. Rows with missing values are excluded, and a part left without a reading in both levels produces an error, as do duplicate readings and extra levels.
 
 ### Assignment Box
 - operators: the operators of the measurement system.
