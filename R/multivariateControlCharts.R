@@ -166,6 +166,7 @@ multivariateControlChartsInternal <- function(jaspResults, dataset, options) {
     if (hasTestData) {
       mqccResult <- try(qcc::mqcc(trainingData, type = "T2.single",
                                    newdata = testData,
+                                   newlabels = rownames(testData),
                                    pred.limits = TRUE,
                                    confidence.level = confidenceLevel,
                                    plot = FALSE))
@@ -185,6 +186,7 @@ multivariateControlChartsInternal <- function(jaspResults, dataset, options) {
     modelState$object <- list(
       mqccResult      = mqccResult,
       nDropped        = nDropped,
+      completeRows    = completeRows,
       confidenceLevel = confidenceLevel,
       hasStage        = TRUE,
       hasTestData     = hasTestData,
@@ -214,6 +216,7 @@ multivariateControlChartsInternal <- function(jaspResults, dataset, options) {
     modelState$object <- list(
       mqccResult      = mqccResult,
       nDropped        = nDropped,
+      completeRows    = completeRows,
       confidenceLevel = confidenceLevel,
       hasStage        = FALSE
     )
@@ -696,9 +699,13 @@ multivariateControlChartsInternal <- function(jaspResults, dataset, options) {
     tsqValues <- as.numeric(mqccResult$statistics)
   }
 
+  # Restore analysis omissions; the column API separately restores user-filtered rows.
+  alignedTsqValues <- rep(NA_real_, length(stateObj$completeRows))
+  alignedTsqValues[stateObj$completeRows] <- tsqValues
+
   jaspResults[["tsqColumn"]] <- createJaspColumn(columnName = options[["tsqColumn"]])
   jaspResults[["tsqColumn"]]$dependOn(c(.multivariateComputeDependencies(), "addTsqToData", "tsqColumn"))
-  jaspResults[["tsqColumn"]]$setScale(tsqValues)
+  jaspResults[["tsqColumn"]]$setScale(alignedTsqValues)
 }
 
 .multivariateTsqTable <- function(jaspResults, dataset, options, variables, stage, ready) {
