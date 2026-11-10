@@ -25,6 +25,8 @@
 
 ## Fixed
 * Test–retest: limit across-rows input to two measurement columns, reject extra single-column measurement sets (previously the third set was silently ignored) and report duplicate or unmatched readings; rows with missing values are still excluded.
+* Process Capability / t chart: maximum-likelihood fits of non-normal distributions use a tight convergence tolerance again (without the absolute tolerance that stopped fits of small-valued data at their start values), so estimates match the exact MLE instead of differing in the 4th-5th significant digit. ([jasp-issues #4142](https://github.com/jasp-stats/jasp-issues/issues/4142))
+* Process Capability: the probability-table Anderson-Darling p-value now selects its approximation from the adjusted statistic consistently, and the AD statistic is no longer displayed as an integer.
 * Attribute agreement: return valid confidence-interval endpoints for zero or perfect agreement.
 * Probability of detection: identify natural-log coordinates in covariate labels, reference tables and explanatory footnotes.
 * Attribute charts: allow defect rates above one and reject defective-item counts exceeding the sample size.
