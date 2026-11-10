@@ -24,6 +24,7 @@
 * DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
 ## Fixed
+* Probability of detection: identify natural-log coordinates in covariate labels, reference tables and explanatory footnotes.
 * Attribute charts: allow defect rates above one and reject defective-item counts exceeding the sample size.
 * Process Capability: observed nonconformance rates and changes from baseline now use each stage's valid measurement count when stage sizes differ.
 * Attribute charts: label u and Laney u axes as defects per unit instead of proportions.
