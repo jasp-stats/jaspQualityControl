@@ -19,6 +19,45 @@
 
 #' Create Response Surface Worksheet
 #'
+#' A response surface design is an experimental framework used to optimize and understand the relationships between several explanatory variables and one or more response variables. By systematically varying the input variables, researchers can explore the effects of these variables on the response, identify optimal conditions, and understand the interactions between variables. Response surface designs are particularly useful in situations where the goal is to optimize a process or product, as they provide a detailed map of the response landscape, enabling precise fine-tuning and improvement.
+#'
+#' @param actualExporter, Check to save the selected design to the specified file.
+#'    Defaults to \code{FALSE}.
+#' @param alphaType, Select how the alpha value (distance of the axial points from the centre) in the design is determined.
+#' \itemize{
+#'   \item \code{"default"}: Use the default alpha value displayed in the design table.
+#'   \item \code{"faceCentered"}: Use a face centred alpha value, i.e. the axial points lie on the faces of the cube.
+#'   \item \code{"custom"}: Enter a custom alpha value.
+#' }
+#' @param categoricalNoLevels, Set the maximum number of levels for the discrete factors in the design. Continuous factors always have two defined levels (low/high). If a discrete factor has fewer levels than the maximum number of levels in the design, leave the remaining level cells empty or add a space.
+#' @param categoricalVariables, Set the names of the discrete factors and give the values for each level.
+#' @param centerPointType, Select how the number of centre points in the design is determined.
+#' \itemize{
+#'   \item \code{"default"}: Use the default number of centre points displayed in the design table.
+#'   \item \code{"custom"}: Enter a custom number of centre points.
+#' }
+#' @param codedOutput, Display the factor levels in coded units instead of the given units.
+#'    Defaults to \code{FALSE}.
+#' @param continuousVariables, Set the names and the low and high levels of the continuous factors.
+#' @param customAxialBlock, Enter the number of axial centre points.
+#' @param customCubeBlock, Enter the number of cube centre points.
+#' @param designType, Select the type of response surface design to generate. See the background section below.
+#' \itemize{
+#'   \item \code{"centralCompositeDesign"}: Generate a central composite design.
+#'   \item \code{"boxBehnkenDesign"}: Generate a Box-Behnken design.
+#' }
+#' @param displayDesign, Display the design table in the output. If a design table is shown in the options, one of its designs needs to be selected first.
+#'    Defaults to \code{TRUE}.
+#' @param exportDesignFile, Option to save the design as a .csv file. Specify a name and path for the file or use the browse option.
+#' @param numberOfCategorical, Set the total number of discrete factors in the design.
+#' @param numberOfContinuous, Set the total number of continuous factors in the design.
+#' @param replicates, Select the number of replications of the whole design.
+#' @param runOrder, Whether to sort the runs in the design by run order or standard order.
+#' \itemize{
+#'   \item \code{"runOrderRandom"}: Sort the runs in the randomized order in which they should be carried out.
+#'   \item \code{"runOrderStandard"}: Sort the runs in standard (non-randomized) order.
+#' }
+#' @param selectedDesign2, Select one of the pre-set designs by clicking on it in the table.
 doeResponseSurfaceMethodology <- function(
           data = NULL,
           version = "1",
