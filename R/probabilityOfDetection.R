@@ -651,8 +651,5 @@ probabilityOfDetectionInternal <- function(jaspResults, dataset, options) {
 }
 
 .podGetCovariateLabel <- function(variable, logTransformed) {
-  variable <- jaspBase::decodeColNames(variable)
-  if (logTransformed)
-    return(gettextf("log(%s)", variable))
-  return(variable)
+  if (logTransformed) gettextf("log(%s)", variable) else variable
 }
