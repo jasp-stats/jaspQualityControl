@@ -27,12 +27,12 @@ processCapabilityStudies <- function(
           axisLabels = list(types = list(), value = ""),
           capabilityStudyType = "normalCapabilityAnalysis",
           controlChart = TRUE,
-          controlChartSdEstimationMethodGroupSize = "largerThanOne",
+          controlChartSdEstimationMethodGroupSize = "equalOne",
           controlChartSdEstimationMethodGroupSizeEqualOne = "meanMovingRange",
-          controlChartSdEstimationMethodGroupSizeLargerThanOne = "sBar",
+          controlChartSdEstimationMethodGroupSizeLargerThanOne = "rBar",
           controlChartSdEstimationMethodMeanMovingRangeLength = 2,
           controlChartSdUnbiasingConstant = TRUE,
-          controlChartType = "xBarS",
+          controlChartType = "xmr",
           controlLimitsNumberOfSigmas = 3,
           dataFormat = "longFormat",
           dataTransformation = "none",
@@ -65,7 +65,7 @@ processCapabilityStudies <- function(
           lowerSpecificationLimit = FALSE,
           lowerSpecificationLimitBoundary = FALSE,
           lowerSpecificationLimitValue = -1,
-          manualSubgroupSizeValue = 0,
+          manualSubgroupSizeValue = 1,
           measurementLongFormat = list(types = list(), value = ""),
           measurementsWideFormat = list(types = list(), value = list()),
           nonNormalDistribution = "weibull",
@@ -153,5 +153,7 @@ processCapabilityStudies <- function(
    for (name in optionsWithFormula) {
       if ((name %in% optionsWithFormula) && inherits(options[[name]], "formula")) options[[name]] = jaspBase::jaspFormula(options[[name]], data)   }
 
+   # Options not given in the call get their default from the form, which can depend on the other options.
+   options <- options[names(options) %in% names(match.call())[-1L]]
    return(jaspBase::runWrappedAnalysis("jaspQualityControl", "processCapabilityStudies", "processCapabilityStudies.qml", options, version, FALSE))
 }
