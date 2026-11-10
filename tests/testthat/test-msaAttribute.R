@@ -1,5 +1,4 @@
 context("Attribute Agreement Analysis")
-.numDecimals <- 2
 
 # Long format ####
 

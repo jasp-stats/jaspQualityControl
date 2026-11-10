@@ -72,5 +72,5 @@ test_that("Detection plot matches for example 3", {
 
 test_that("Parameter estimates table results matches for example 3", {
   table <- results[["results"]][["mainContainer"]][["collection"]][["mainContainer_mainTable"]][["data"]]
-  jaspTools::expect_equal_tables(table, list(17.6573206618451, "Intercept", 4.39007841700679, "depth.inch"))
+  jaspTools::expect_equal_tables(table, list(17.6573206618451, "Intercept", 4.39007841700679, "log(depth.inch)"))
 })

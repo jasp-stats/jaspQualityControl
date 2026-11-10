@@ -1,5 +1,4 @@
 context("[Quality Control] Time Weighted Charts")
-.numDecimals <- 2
 
 # Long Format ####
 
@@ -85,7 +84,7 @@ options$stagesLongFormat <- "Stage"
 options$cumulativeSumChart <- FALSE
 options$exponentiallyWeightedMovingAverageChart <- TRUE
 options$exponentiallyWeightedMovingAverageChartSdSource <- "data"
-options$exponentiallyWeightedMovingAverageChartSdMethod <- "s"
+options$exponentiallyWeightedMovingAverageChartSdMethod <- "averageMovingRange"
 results <- runAnalysis("timeWeightedCharts", "datasets/timeWeightedCharts/ewmaChartLong.csv", options)
 
 test_that("LF2.3 Basic test of Exponentially weighted moving average chart with stages", {
@@ -159,7 +158,7 @@ options$measurementLongFormat <- "Measurement"
 options$subgroupSizeType <- "individual"
 options$cumulativeSumChart <- TRUE
 options$cumulativeSumChartSdSource <- "data"
-options$cumulativeSumChartSdMethod <- "s"
+options$cumulativeSumChartSdMethod <- "averageMovingRange"
 results <- runAnalysis("timeWeightedCharts", "datasets/timeWeightedCharts/cumsumChartLong.csv", options)
 
 test_that("LF4.1 Test of Cumulative sum chart without subgroups", {
@@ -194,7 +193,7 @@ options$subgroupSizeType <- "individual"
 options$cumulativeSumChart <- FALSE
 options$exponentiallyWeightedMovingAverageChart <- TRUE
 options$exponentiallyWeightedMovingAverageChartSdSource <- "data"
-options$exponentiallyWeightedMovingAverageChartSdMethod <- "s"
+options$exponentiallyWeightedMovingAverageChartSdMethod <- "averageMovingRange"
 results <- runAnalysis("timeWeightedCharts", "datasets/timeWeightedCharts/ewmaChartLong.csv", options)
 
 test_that("LF4.3 Test of Exponentially weighted moving average chart without subgroups", {
