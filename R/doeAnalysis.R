@@ -1586,7 +1586,12 @@ get_levels <- function(var, num_levels, dataset) {
       return()
     }
     result <- if (coded) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]][["coefficients"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]][["coefficients"]]
-    tb$addFootnote(gettext("Effect = 2 \u00D7 coefficient in coded (\u22121/+1) units: the change in the response when a term goes from its \u22121 to its +1 setting. Not shown for squared terms, discrete predictors with more than two levels, blocks, and covariates."))
+    effectNote <- if (coded) {
+      gettext("Effect = 2 \u00D7 coefficient: the change in the response when a term goes from its \u22121 to its +1 setting.")
+    } else {
+      gettext("Effect = 2 \u00D7 coefficient in coded (\u22121/+1) units, not 2 \u00D7 the coefficient shown: the change in the response when a term goes from its \u22121 to its +1 setting. For discrete predictors the sign follows the level shown in the Discrete Predictor Levels table.")
+    }
+    tb$addFootnote(paste(effectNote, gettext("Not shown for squared terms, discrete predictors with more than two levels, blocks, and covariates.")))
     rows <- data.frame(
       terms = result[["terms"]], effects = result[["effects"]], coef = result[["est"]],
       se = result[["se"]], tval = result[["t"]], pval = result[["p"]], vif = result[["vif"]]
