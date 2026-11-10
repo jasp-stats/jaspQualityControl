@@ -139,7 +139,7 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
     if (options[["reportRChartByOperator"]]) {
       plots[[plotIndexCounter]] <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)], ruleList = ruleList2,
                                                  plotType = "R", stages = operators,
-                                                 xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
+                                                 xAxisLabels = .qcLabelsInStageOrder(datasetWide[[parts]], datasetWide[[operators]]),
                                                  stagesSeparateCalculation = FALSE)$plotObject #R chart by operator
       plotIndexCounter <- plotIndexCounter + 1
     }
@@ -150,7 +150,7 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
     if (options[["reportAverageChartByOperator"]]) {
       plots[[plotIndexCounter]] <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)], ruleList = ruleList1,
                                                  plotType = "xBar", xBarSdType = "r", stages = operators,
-                                                 xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
+                                                 xAxisLabels = .qcLabelsInStageOrder(datasetWide[[parts]], datasetWide[[operators]]),
                                                  stagesSeparateCalculation = FALSE)$plotObject #Average chart by operator
       plotIndexCounter <- plotIndexCounter + 1
     }
@@ -209,7 +209,7 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
       if (ready) {
         rChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)], ruleList = ruleList2,
                                 plotType = "R", stages = operators,
-                                xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
+                                xAxisLabels = .qcLabelsInStageOrder(datasetWide[[parts]], datasetWide[[operators]]),
                                 stagesSeparateCalculation = FALSE)
         jaspResults[["rChart"]][["plot"]]$plotObject <- rChart$plotObject
         jaspResults[["rChart"]][["table"]] <- rChart$table
@@ -225,7 +225,7 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
       if (ready) {
         xBarChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)], ruleList = ruleList1,
                                    plotType = "xBar", xBarSdType = "r", stages = operators,
-                                   xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
+                                   xAxisLabels = .qcLabelsInStageOrder(datasetWide[[parts]], datasetWide[[operators]]),
                                    stagesSeparateCalculation = FALSE)
         jaspResults[["xBarChart"]][["plot"]]$plotObject <- xBarChart$plotObject
         jaspResults[["xBarChart"]][["table"]] <- xBarChart$table

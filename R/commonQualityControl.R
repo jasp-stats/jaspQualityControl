@@ -77,14 +77,19 @@
     xAxisTitle <- subgroupVariable
     if (stages != ""){
       dataset[[stages]] <- stagesPerSubgroup
-      stageDataForOrdering <- factor(dataset[[stages]], levels = unique(dataset[[stages]]))
-      axisLabels <- axisLabels[order(stageDataForOrdering)]
+      axisLabels <- .qcLabelsInStageOrder(axisLabels, dataset[[stages]])
     }
   }
   return(list(dataset = dataset,
               measurements = measurements,
               axisLabels = axisLabels,
               xAxisTitle = xAxisTitle))
+}
+
+# .controlChart() plots the stages one after another, in order of first appearance, so the
+# axis and table labels (one per subgroup, in data order) must follow that order as well.
+.qcLabelsInStageOrder <- function(labels, stageValues) {
+  labels[order(factor(stageValues, levels = unique(stageValues)))]
 }
 
 .qcReport <- function(text = NULL, # a string or vector of strings,

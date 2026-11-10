@@ -105,6 +105,8 @@ variablesChartsSubgroupsInternal <- function(jaspResults, dataset, options) {
     if (axisLabels != "") {
       xAxisTitle <- options[["axisLabels"]]
       axisLabels <- dataset[[axisLabels]]
+      if (stages != "")
+        axisLabels <- .qcLabelsInStageOrder(axisLabels, dataset[[stages]])
     } else {
       xAxisTitle <- gettext("Sample")
     }

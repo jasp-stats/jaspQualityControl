@@ -36,10 +36,8 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
   if (axisLabelVariable != ""){
     axisLabels <- dataset[[axisLabelVariable]]
     xAxisTitle <- axisLabelVariable
-    if (stages != "") {
-      stageDataForOrdering <- factor(dataset[[stages]], levels = unique(dataset[[stages]]))
-      axisLabels <- axisLabels[order(stageDataForOrdering)]
-    }
+    if (stages != "")
+      axisLabels <- .qcLabelsInStageOrder(axisLabels, dataset[[stages]])
   } else {
     axisLabels <- ""
     xAxisTitle <- gettext("Sample")

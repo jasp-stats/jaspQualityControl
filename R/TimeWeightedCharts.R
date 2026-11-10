@@ -82,7 +82,13 @@ timeWeightedChartsInternal <- function(jaspResults, dataset, options) {
                                                         subgroupSizeType = options[["subgroupSizeType"]],
                                                         manualSubgroupSizeValue = options[["manualSubgroupSizeValue"]],
                                                         subgroupVariableMethod = options[["groupingVariableMethod"]])
-    axisLabels <- if (axisLabels == "") reshapeOutputList$axisLabels else dataset[[axisLabels]]
+    if (axisLabels == "") {
+      axisLabels <- reshapeOutputList$axisLabels
+    } else { # individual timestamps: one subgroup per row
+      axisLabels <- dataset[[axisLabels]]
+      if (stages != "")
+        axisLabels <- .qcLabelsInStageOrder(axisLabels, dataset[[stages]])
+    }
     dataset <- reshapeOutputList$dataset
     measurements <- reshapeOutputList$measurements
     xAxisTitle <- reshapeOutputList$xAxisTitle
@@ -90,6 +96,8 @@ timeWeightedChartsInternal <- function(jaspResults, dataset, options) {
     if (axisLabels != "") {
       xAxisTitle <- options[["axisLabels"]]
       axisLabels <- dataset[[axisLabels]]
+      if (stages != "")
+        axisLabels <- .qcLabelsInStageOrder(axisLabels, dataset[[stages]])
     } else {
       xAxisTitle <- gettext("Sample")
     }
