@@ -565,6 +565,43 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(list(ranges = ranges, n = n))
 }
 
+# Sigma from the average moving range of length k. The observations keep their order and missing values, so a moving
+# range that contains a missing value is skipped (not bridged). Stops with a "qcDataError" if no moving range is complete
+# (fewer than k observations, or every window of k consecutive observations has a missing value).
+.movingRangeSigma <- function(x, k, stage = NULL) {
+  x <- unlist(x, use.names = FALSE)
+  windowEnds <- if (length(x) >= k) seq.int(k, length(x)) else integer(0)
+  mrMatrix   <- matrix(x[outer(windowEnds, seq_len(k) - 1L, "-")], ncol = k) # row i: x[end_i], x[end_i - 1], ...
+
+  if (!any(stats::complete.cases(mrMatrix)))
+    .qcDataError(.movingRangeErrorMessage(nObserved = sum(!is.na(x)), k = k, stage = stage))
+
+  meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
+  d2              <- KnownControlStats.RS(k)$constants[1]
+  return(list(matrix = mrMatrix, meanMovingRange = meanMovingRange, sigma = meanMovingRange / d2))
+}
+
+.movingRangeErrorMessage <- function(nObserved, k, stage = NULL) {
+  if (is.null(stage)) {
+    sprintf(ngettext(
+      nObserved,
+      "The data contain %1$i non-missing observation. Estimating the standard deviation from moving ranges of length %2$s requires at least %2$s consecutive non-missing observations.",
+      "The data contain %1$i non-missing observations. Estimating the standard deviation from moving ranges of length %2$s requires at least %2$s consecutive non-missing observations."
+    ), nObserved, k)
+  } else {
+    sprintf(ngettext(
+      nObserved,
+      "Stage '%1$s' contains %2$i non-missing observation. Estimating the standard deviation from moving ranges of length %3$s requires at least %3$s consecutive non-missing observations per stage.",
+      "Stage '%1$s' contains %2$i non-missing observations. Estimating the standard deviation from moving ranges of length %3$s requires at least %3$s consecutive non-missing observations per stage."
+    ), stage, nObserved, k)
+  }
+}
+
+# Error caused by the data (not by the code), for callers that show it on a plot and continue: tryCatch(..., qcDataError = )
+.qcDataError <- function(message) {
+  stop(errorCondition(message, class = "qcDataError", call = NULL))
+}
+
 KnownControlStats.RS <- function(N, sigma = 3) {
 
   # d2 and d3 are unbiasing constants as reported in D. J. Wheeler and D. S. Chambers. (1992). Understanding Statistical Process Control, Second Edition, SPC Press, Inc.
@@ -723,6 +760,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                        phase2tChartDistributionScale   = 3
 ) {
   plotType <- match.arg(plotType)
+  hasStages <- !identical(stages, "")
   if (identical(stages, "")) {
     nStages <- 1
     dataset[["stage"]] <- 1
@@ -752,6 +790,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stageLabel <- if (hasStages) as.character(stage) else NULL # names the stage in data errors
     ###
     ### Calculations for I, MR and MMR chart
     ###
@@ -763,13 +802,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       k <- movingRangeLength
       # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
       dataCurrentStageVector <- unlist(dataCurrentStage)
-      mrMatrix <- matrix(dataCurrentStageVector[seq((k), length(dataCurrentStageVector))])   # remove first k - 1 elements
-      for (j in seq(1, k-1)) {
-        mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStageVector[seq(k-j, length(dataCurrentStageVector)-j)]))
-      }
-      meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
-      d2 <- KnownControlStats.RS(k)$constants[1]
-      sigma <- meanMovingRange/d2
+      movingRanges    <- .movingRangeSigma(dataCurrentStageVector, k, stageLabel)
+      mrMatrix        <- movingRanges[["matrix"]]
+      meanMovingRange <- movingRanges[["meanMovingRange"]]
+      sigma           <- movingRanges[["sigma"]]
       if (plotType == "I") {
         processMean <- mean(dataCurrentStageVector, na.rm = TRUE) # manually calculate mean as package does not remove NAs
         qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sigma, center = processMean, nsigmas = nSigmasControlLimits)
@@ -874,16 +910,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       # sigma for subgroup size = 1 is calculated as the average moving range sd
       if (phase2) {
         sigma <- as.numeric(phase2Sd)
-      } else if (all(n <= 1)) {
-        k <- movingRangeLength
-        dataCurrentStageVector <- unlist(dataCurrentStage)
-        mrMatrix <- matrix(dataCurrentStageVector[seq((k), length(dataCurrentStageVector))])   # remove first k - 1 elements
-        for (j in seq(1, k-1)) {
-          mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStageVector[seq(k-j, length(dataCurrentStageVector)-j)]))
-        }
-        meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
-        d2 <- KnownControlStats.RS(k)$constants[1]
-        sigma <- meanMovingRange/d2
+      } else if (all(n <= 1)) { # n = 0 is a missing observation
+        sigma <- .movingRangeSigma(dataCurrentStage, movingRangeLength, stageLabel)[["sigma"]]
         # sigma for subgroup size > 1
       } else {
         sigma <- .sdXbar(dataCurrentStage, type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)
@@ -902,16 +930,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else rowSums(!is.na(dataCurrentStage)) # returns the number of non NA values per row
       if (phase2) {
         sigma <- as.numeric(phase2Sd)
-      } else if (all(n == 1)) {
-        k <- movingRangeLength
-        dataCurrentStageVector <- unlist(dataCurrentStage)
-        mrMatrix <- matrix(dataCurrentStageVector[seq((k), length(dataCurrentStageVector))])   # remove first k - 1 elements
-        for (j in seq(1, k-1)) {
-          mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStageVector[seq(k-j, length(dataCurrentStageVector)-j)]))
-        }
-        meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
-        d2 <- KnownControlStats.RS(k)$constants[1]
-        sigma <- meanMovingRange/d2
+      } else if (all(n <= 1)) { # n = 0 is a missing observation, as for the cusum chart
+        sigma <- .movingRangeSigma(dataCurrentStage, movingRangeLength, stageLabel)[["sigma"]]
         # sigma for subgroup size > 1
       } else {
         sigma <- .sdXbar(dataCurrentStage, type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)

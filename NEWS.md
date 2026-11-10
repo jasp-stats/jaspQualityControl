@@ -24,7 +24,9 @@
 * DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
 ## Fixed
-* Time weighted charts: a stage of individual observations with fewer subgroups than the moving range length now gives an informative error on the chart (or the report) instead of stopping the analysis; charts with subgroup size > 1 or a historical std. dev. are unaffected.
+* Time weighted charts, variables charts for individuals: when the std. dev. is estimated from moving ranges and a stage (or the data) has no complete moving range (fewer non-missing observations than the moving range length, or every range interrupted by a missing value), the chart shows an error naming the stage instead of stopping the analysis or drawing NaN limits. In the time weighted charts report, only the affected chart is replaced by its error.
+* Time weighted charts: the EWMA chart estimates the std. dev. of individual observations with missing values from moving ranges, like the CUSUM chart (previously it stopped with an error, or, with a grouping variable or across-rows data, drew zero-width control limits).
+* Time weighted charts: the CUSUM moving range length field is shown based on the CUSUM (not the EWMA) std. dev. source.
 * Test–retest: limit across-rows input to two measurement columns, reject extra single-column measurement sets (previously the third set was silently ignored) and report duplicate or unmatched readings; rows with missing values are still excluded.
 * Attribute agreement: return valid confidence-interval endpoints for zero or perfect agreement.
 * Probability of detection: identify natural-log coordinates in covariate labels, reference tables and explanatory footnotes.
