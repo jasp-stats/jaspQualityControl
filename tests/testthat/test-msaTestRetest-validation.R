@@ -22,17 +22,16 @@ context("Test-retest paired input validation")
                                names_to = "set", values_to = "reading")
 
 test_that("third measurement sets are explicitly rejected before output", {
+  # Wide format is capped at two columns in the QML, so only long format can supply a third set.
   for (extra in c(0, 10000)) {
     data <- .trvWide
     data$third <- data$third + extra
-    for (wide in c(TRUE, FALSE)) {
-      input <- if (wide) data else tidyr::pivot_longer(data, -part, names_to = "set", values_to = "reading")
-      result <- .trvRun(input, wide, c("first", "second", "third"), plots = TRUE)
-      expect_identical(result$status, "validationError")
-      expect_match(result$results$errorMessage, "exactly two")
-      expect_null(result$results$rAndR2)
-      expect_length(result$state$figures, 0L)
-    }
+    input <- tidyr::pivot_longer(data, -part, names_to = "set", values_to = "reading")
+    result <- .trvRun(input, FALSE, plots = TRUE)
+    expect_identical(result$status, "validationError")
+    expect_match(result$results$errorMessage, "exactly two")
+    expect_null(result$results$rAndR2)
+    expect_length(result$state$figures, 0L)
   }
 })
 
@@ -62,10 +61,40 @@ test_that("duplicate and incomplete pairs are rejected", {
                   subset(.trvLong, set == "first"))
   for (data in badLong)
     expect_identical(.trvRun(data, FALSE)$status, "validationError")
-  for (data in list(.trvWide[FALSE, ], rbind(.trvWide, .trvWide[1, ]),
-                    transform(.trvWide, first = replace(first, 1, NA)),
-                    transform(.trvWide, part = replace(part, 1, NA))))
-    expect_identical(.trvRun(data)$status, "validationError")
+  expect_identical(.trvRun(rbind(.trvWide, .trvWide[1, ]))$status, "validationError")
+})
+
+test_that("wide rows with missing values are excluded listwise", {
+  for (data in list(transform(.trvWide, first = replace(first, 1, NA)),
+                    transform(.trvWide, part = replace(part, 1, NA)))) {
+    result <- .trvRun(data)
+    expect_identical(result$status, "complete")
+    expect_equal(result$results$rAndR2$data[[1]]$n, 4)
+    expect_equal(result$results$rAndR2$data[[1]]$Rbar, 1)
+  }
+})
+
+test_that("blank padding rows do not affect either format", {
+  # Another, longer column in the data file pads the assigned columns with blanks.
+  wide <- rbind(.trvWide, data.frame(part = NA, first = NA, second = NA, third = 1006))
+  long <- rbind(as.data.frame(.trvLong), data.frame(part = NA, set = NA, reading = NA))
+  for (result in list(.trvRun(wide), .trvRun(long, FALSE))) {
+    expect_identical(result$status, "complete")
+    expect_equal(result$results$rAndR2$data[[1]]$n, 5)
+    expect_equal(result$results$rAndR2$data[[1]]$Rbar, 1)
+  }
+})
+
+test_that("long-format scatter axes follow set level order, not row order", {
+  long <- as.data.frame(.trvLong)
+  long$set <- factor(long$set, levels = c("first", "second"))
+  for (data in list(long, long[nrow(long):1, ])) {
+    result <- .trvRun(data, FALSE, plots = TRUE)
+    plot <- result$state$figures[[result$results$ScatterOperators$data]]$obj
+    built <- ggplot2::ggplot_build(plot)$data[[1]]
+    expect_equal(sort(built$x), .trvWide$first)
+    expect_equal(sort(built$y), .trvWide$second)
+  }
 })
 
 test_that("unassigned inputs and too few wide selections retain readiness", {
