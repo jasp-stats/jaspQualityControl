@@ -678,6 +678,8 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
 
     if (gaugeEvaluationDfOnly) {
       gaugeEvalDf <- as.data.frame(RRtable2DataList)
+      # the report draws this table inside a plot, where JASP does not decode column names
+      gaugeEvalDf[["source"]] <- jaspBase::decodeColNames(gaugeEvalDf[["source"]])
       gaugeEvalDf[,-1] <- round(gaugeEvalDf[,-1], .numDecimals) # Round everything while including the source column
       names(gaugeEvalDf) <- if (ncol(gaugeEvalDf) == 5) c("Source", "Std. dev.", "Study variation", "%Study variation", "%Tolerance") else c("Source", "Std. dev.", "Study variation", "%Study variation")
       return(list("gaugeEvalDf" = gaugeEvalDf, "nCategories" = nCategories))
