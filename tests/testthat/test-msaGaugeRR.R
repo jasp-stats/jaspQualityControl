@@ -293,12 +293,24 @@ results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCross
 test_that("LF3.1 Fixed effect ANOVA - Two-way ANOVA table with interaction results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(9, 765.700483091787, 97.8395061728395, 2.22178519889191e-21, 880.555555555556,
-                                      "Parts", 2, 6.54347826086958, 0.836111111111114, 0.0073155788200197,
+                                 list(9, 765.700483091787, 97.8395061728395, 1.92009425335834e-58, 880.555555555556,
+                                      "Parts", 2, 6.54347826086958, 0.836111111111114, 0.00268745492511035,
                                       1.67222222222223, "Operators", 18, 1.22946859903382, 0.157098765432099,
                                       0.268355463232599, 2.82777777777778, "Parts  *  Operators",
                                       60, 0.127777777777778, 7.66666666666667, "Repeatability", 89,
                                       892.722222222222, "Total"))
+})
+
+test_that("LF3.1b Fixed effect ANOVA - F and p-values match two-way fixed-effects ANOVA (error term = repeatability)", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
+  dataset <- read.csv(testthat::test_path("datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv"))
+  dataset$Parts <- factor(dataset$Parts)
+  dataset$Operators <- factor(dataset$Operators)
+  reference <- anova(lm(Dm ~ Parts * Operators, data = dataset))
+  for (i in 1:3) {
+    expect_equal(table[[i]][["F value"]], reference[["F value"]][i], tolerance = 1e-8)
+    expect_equal(table[[i]][["Pr(>F)"]], reference[["Pr(>F)"]][i], tolerance = 1e-8)
+  }
 })
 
 test_that("LF3.2 Fixed effect ANOVA - Two-way ANOVA table without interaction results match", {
@@ -363,6 +375,17 @@ test_that("LF4.4 Type 3 study - One-way ANOVA table results match", {
                                  list(9, 643.328259766616, 97.8395061728395, 9.59874187907134e-71, 880.555555555556,
                                       "Parts", 80, 0.152083333333333, 12.1666666666667, "Repeatability",
                                       89, 892.722222222222, "Total"))
+})
+
+test_that("LF4.4b Type 3 study - fixed effects model type gives the same one-way ANOVA and variance components", {
+  optionsFixed <- options
+  optionsFixed$anovaModelType <- "fixedEffect"
+  set.seed(1)
+  resultsFixed <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", optionsFixed, view = FALSE)
+  expect_equal(resultsFixed[["status"]], results[["status"]])
+  for (name in c("gaugeANOVA_anovaTable1", "gaugeANOVA_RRtable1", "gaugeANOVA_RRtable2"))
+    expect_equal(resultsFixed[["results"]][["gaugeANOVA"]][["collection"]][[name]][["data"]],
+                 results[["results"]][["gaugeANOVA"]][["collection"]][[name]][["data"]])
 })
 
 test_that("LF4.5 Type 3 study - Part by operator interaction plot matches", {
@@ -854,8 +877,8 @@ results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCross
 test_that("WF3.1 Fixed effct ANOVA - Two-way ANOVA table with interaction results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(9, 28.837403998517, 27.0546720241459, 6.66730220666189e-09, 243.492048217313,
-                                      "Part", 2, 0.925856544711989, 0.868619975635811, 0.41425774549038,
+                                 list(9, 28.837403998517, 27.0546720241459, 1.31131411297697e-18, 243.492048217313,
+                                      "Part", 2, 0.925856544711989, 0.868619975635811, 0.401777425532419,
                                       1.73723995127162, "Operator", 18, 0.581263589632298, 0.545329800764601,
                                       0.89932032121579, 9.81593641376281, "Part  *  Operator", 60,
                                       0.938179873109842, 56.2907923865905, "Repeatability", 89, 311.336016968938,

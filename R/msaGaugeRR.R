@@ -428,22 +428,22 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
 
     if(singleOperator){
       fPart <- msPart / msRepWithInteraction
-    }else{
-      fPart <- msPart / msInteraction
-      fOperator <- msOperator / msInteraction
-      fInteraction <- msInteraction / msRepWithInteraction
-    }
-
-    if (options[["anovaModelType"]] == "fixedEffect"){
+      pPart <- pf(fPart, dfPart, dfRepWithInteraction, lower.tail = F)
+    } else if (options[["anovaModelType"]] == "fixedEffect") {
+      # fixed effects: Part and Operator are tested against repeatability (error) mean square
       fPart <- msPart / msRepWithInteraction
       fOperator <- msOperator / msRepWithInteraction
-    }
-
-    if(singleOperator){
       pPart <- pf(fPart, dfPart, dfRepWithInteraction, lower.tail = F)
-    }else{
+      pOperator <- pf(fOperator, dfOperators, dfRepWithInteraction, lower.tail = F)
+    } else {
+      # random effects: Part and Operator are tested against the interaction mean square
+      fPart <- msPart / msInteraction
+      fOperator <- msOperator / msInteraction
       pPart <- pf(fPart, dfPart, dfInteraction, lower.tail = F)
       pOperator <- pf(fOperator, dfOperators, dfInteraction, lower.tail = F)
+    }
+    if(!singleOperator){
+      fInteraction <- msInteraction / msRepWithInteraction
       pInteraction <- pf(fInteraction, dfInteraction, dfRepWithInteraction, lower.tail = F)
     }
 
