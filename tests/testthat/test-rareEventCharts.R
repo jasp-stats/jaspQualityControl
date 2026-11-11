@@ -613,3 +613,15 @@ test_that("17.3 G chart limits estimated from data", {
   expect_equal(c(limits$LCL, limits$CL, limits$UCL),
                c(.gChartReferenceLimit(0.00135, p), .gChartReferenceLimit(0.5, p), .gChartReferenceLimit(0.99865, p)))
 })
+
+test_that("17.4 G chart limits at the extremes of the event probability", {
+  # p = 1: an event on every trial, so every limit is a gap of 0
+  limits <- jaspQualityControl:::.gChartStatistics(intervals = 1, phase2Proportion = 1)
+  expect_equal(c(limits$LCL, limits$CL, limits$UCL), c(0, 0, 0))
+  # very small p: finite limits within one unit of the continuous quantile log(1 - alpha) / log(1 - p) - 1
+  p <- 5e-14
+  limits <- jaspQualityControl:::.gChartStatistics(intervals = 1, phase2Proportion = p)
+  continuous <- log1p(-c(0.00135, 0.5, 0.99865)) / log1p(-p) - 1
+  expect_true(all(is.finite(c(limits$LCL, limits$CL, limits$UCL))))
+  expect_lt(max(abs(c(limits$LCL, limits$CL, limits$UCL) - continuous)), 1)
+})

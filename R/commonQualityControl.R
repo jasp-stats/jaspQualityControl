@@ -1422,11 +1422,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 # Interpolated quantile of the number of trials until an event, G ~ geometric with CDF F(g) = 1 - (1 - p)^g:
 # Ga, Gb = Ga + 1 with F(Ga) < alpha <= F(Gb), G = Ga + (alpha - F(Ga)) / (F(Gb) - F(Ga)).
 # The chart plots the number between events, so the limit is G - 1 (floored at 0, the smallest possible gap).
+# With the survival function S(g) = 1 - F(g), F(Gb) - F(Ga) = p * S(Ga), so G = Ga + (1 - (1 - alpha) / S(Ga)) / p,
+# evaluated on the log scale to stay accurate for very small p.
 .gChartProbabilityLimit <- function(alpha, p) {
-  Ga <- qgeom(alpha, prob = p)      # F(g) = pgeom(g - 1), so qgeom() returns Ga directly
-  Fa <- pgeom(Ga - 1, prob = p)
-  Fb <- pgeom(Ga, prob = p)
-  G  <- Ga + (alpha - Fa) / (Fb - Fa)
+  Ga    <- qgeom(alpha, prob = p)  # F(g) = pgeom(g - 1), so qgeom() returns Ga directly
+  logSa <- pgeom(Ga - 1, prob = p, lower.tail = FALSE, log.p = TRUE)
+  G     <- Ga - expm1(log1p(-alpha) - logSa) / p
   return(max(0, G - 1))
 }
 
