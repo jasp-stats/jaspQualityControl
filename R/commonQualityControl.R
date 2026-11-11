@@ -580,27 +580,18 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   mrMatrix   <- matrix(x[outer(windowEnds, seq_len(k) - 1L, "-")], ncol = k) # row i: x[end_i], x[end_i - 1], ...
 
   if (!any(stats::complete.cases(mrMatrix)))
-    .qcDataError(.movingRangeErrorMessage(nObserved = sum(!is.na(x)), k = k, stage = stage))
+    .qcDataError(.movingRangeErrorMessage(k = k, stage = stage))
 
   meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
   d2              <- KnownControlStats.RS(k)$constants[1]
   return(list(matrix = mrMatrix, meanMovingRange = meanMovingRange, sigma = meanMovingRange / d2))
 }
 
-.movingRangeErrorMessage <- function(nObserved, k, stage = NULL) {
-  if (is.null(stage)) {
-    sprintf(ngettext(
-      nObserved,
-      "The data contain %1$i non-missing observation. Estimating the standard deviation from moving ranges of length %2$s requires at least %2$s consecutive non-missing observations.",
-      "The data contain %1$i non-missing observations. Estimating the standard deviation from moving ranges of length %2$s requires at least %2$s consecutive non-missing observations."
-    ), nObserved, k)
-  } else {
-    sprintf(ngettext(
-      nObserved,
-      "Stage '%1$s' contains %2$i non-missing observation. Estimating the standard deviation from moving ranges of length %3$s requires at least %3$s consecutive non-missing observations per stage.",
-      "Stage '%1$s' contains %2$i non-missing observations. Estimating the standard deviation from moving ranges of length %3$s requires at least %3$s consecutive non-missing observations per stage."
-    ), stage, nObserved, k)
-  }
+.movingRangeErrorMessage <- function(k, stage = NULL) {
+  if (is.null(stage))
+    gettextf("Cannot estimate the standard deviation from moving ranges of length %1$s: the data have fewer than %1$s consecutive non-missing observations.", k)
+  else
+    gettextf("Cannot estimate the standard deviation from moving ranges of length %1$s: stage '%2$s' has fewer than %1$s consecutive non-missing observations.", k, stage)
 }
 
 # Error caused by the data (not by the code), for callers that show it on a plot and continue: tryCatch(..., qcDataError = )

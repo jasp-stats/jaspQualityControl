@@ -421,10 +421,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 }
 
 # Keep a missing moving range local to its chart, including charts embedded in reports.
-.qcCapabilityControlChart <- function(...) {
-  tryCatch(.controlChart(...), qcDataError = function(error) {
-    text <- strwrap(conditionMessage(error), width = 60)
-    list(plotObject = .ggplotWithText(text = text, maxRows = max(8, length(text))), table = NULL)
+.qcCapabilityControlChart <- function(plotType, ...) {
+  tryCatch(.controlChart(plotType = plotType, ...), qcDataError = function(error) {
+    # only the moving range based charts can fail this way
+    chartTitle <- switch(plotType, "I" = gettext("Individual value"), "MR" = , "MMR" = gettext("Moving range"), "")
+    list(plotObject = .qcReportErrorPanel(chartTitle, conditionMessage(error)), table = NULL)
   })
 }
 
