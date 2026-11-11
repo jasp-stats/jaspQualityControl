@@ -844,6 +844,8 @@ get_levels <- function(var, num_levels, dataset) {
     rows2[[colName]] <- round(as.numeric(predValues[[dep]]), .numDecimals)
   }
   tb2$addRows(rows2)
+  if (desi <= 0)
+    tb2$addFootnote(gettext("No factor setting found within the observed predictor ranges reaches a composite desirability above 0: the predicted responses do not reach the bounds there."))
   .doeAddPredictionSettingsFootnotes(tb2, blocks, covariates)
 }
 
@@ -1242,9 +1244,9 @@ get_levels <- function(var, num_levels, dataset) {
 .calculateOptimalResponse <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, dependent, roOptionsDf, models) {
 
   if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
-    # need initial guesses and limits for cont. variables
+    # starting points (the design points) and limits for cont. variables
     continuousPredictorsData <- dataset[continuousPredictors]
-    continuousPredictorsInital <- continuousPredictorsData[1,]
+    continuousPredictorsStarts <- unique(as.matrix(continuousPredictorsData))
     continuousPredictorsMin <- sapply(continuousPredictorsData, min)
     continuousPredictorsMax <- sapply(continuousPredictorsData, max)
   }
@@ -1269,19 +1271,9 @@ get_levels <- function(var, num_levels, dataset) {
     for (i in seq_len(nrow(gridSearchDf))) {
       currentDiscreteLevels <- gridSearchDf[i,]
       if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
-        currrentOptimResult <- optim(
-          par = continuousPredictorsInital,   # Initial guesses
-          fn = .predictDesirability,     # Objective function
-          method = "L-BFGS-B",         # Optimization method
-          lower = continuousPredictorsMin,  # Lower bounds
-          upper = continuousPredictorsMax,  # Upper bounds
-          continuousPredictors = continuousPredictors,
-          discretePredictors = discretePredictors,
-          currentDiscreteLevels = currentDiscreteLevels,
-          models = models,
-          dependent = dependent,
-          roOptionsDf = roOptionsDf
-        )
+        currrentOptimResult <- .doeOptimizeContinuous(continuousPredictorsStarts, continuousPredictorsMin, continuousPredictorsMax,
+                                                      continuousPredictors, discretePredictors, currentDiscreteLevels,
+                                                      models, dependent, roOptionsDf)
         optimalResultDf[i, "outcomeValue"] <- currrentOptimResult$value * -1  # after optimization the sign can be switched again
         optimalResultDf[i, continuousPredictors] <- currrentOptimResult$par
       } else {
@@ -1290,19 +1282,9 @@ get_levels <- function(var, num_levels, dataset) {
       }
     }
   } else {
-    currrentOptimResult <- optim(
-      par = continuousPredictorsInital,   # Initial guesses
-      fn = .predictDesirability,     # Objective function
-      method = "L-BFGS-B",         # Optimization method
-      lower = continuousPredictorsMin,  # Lower bounds
-      upper = continuousPredictorsMax,  # Upper bounds
-      continuousPredictors = continuousPredictors,
-      discretePredictors = discretePredictors,
-      currentDiscreteLevels = currentDiscreteLevels,
-      models = models,
-      dependent = dependent,
-      roOptionsDf = roOptionsDf
-    )
+    currrentOptimResult <- .doeOptimizeContinuous(continuousPredictorsStarts, continuousPredictorsMin, continuousPredictorsMax,
+                                                  continuousPredictors, discretePredictors, currentDiscreteLevels,
+                                                  models, dependent, roOptionsDf)
     optimalResultDf <- data.frame("outcomeValue" = currrentOptimResult$value * -1)  # after optimization the sign can be switched again
     optimalResultDf[continuousPredictors] <- currrentOptimResult$par
   }
@@ -1312,6 +1294,25 @@ get_levels <- function(var, num_levels, dataset) {
   return(list(parameters = optimalParameters, desirability = maxDesirability))
 }
 
+
+# Maximizes the composite desirability over the continuous predictors (L-BFGS-B within the observed ranges).
+# The desirability is flat (0 beyond a bound, 1 beyond a target), so a single start can stall there; instead start from the
+# first design point (the former single start, so the result is never worse) and the nStarts design points with the
+# highest desirability, and keep the best optimum.
+.doeOptimizeContinuous <- function(startPoints, lower, upper, continuousPredictors, discretePredictors, currentDiscreteLevels,
+                                   models, dependent, roOptionsDf, nStarts = 3) {
+  negDesirability <- function(par) .predictDesirability(par, continuousPredictors, discretePredictors, currentDiscreteLevels,
+                                                         models, dependent, roOptionsDf)
+  startValue <- vapply(seq_len(nrow(startPoints)), function(s) negDesirability(startPoints[s, ]), numeric(1))
+  startRows  <- unique(c(1, order(startValue)[seq_len(min(nStarts, nrow(startPoints)))])) # order() keeps ties in design order
+  best <- NULL
+  for (s in startRows) {
+    result <- optim(par = startPoints[s, ], fn = negDesirability, method = "L-BFGS-B", lower = lower, upper = upper)
+    if (is.null(best) || result$value < best$value)
+      best <- result
+  }
+  return(best)
+}
 
 .individualValueROprediction <- function(value, valueName,
                                          outcomeType = c("response", "individualDesirability", "compDesi"),
