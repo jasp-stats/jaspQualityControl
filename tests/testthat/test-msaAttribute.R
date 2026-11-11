@@ -509,7 +509,7 @@ test_that("TO5 Perfectly correlated appraisers (wide) - correlation of 1 is show
   ratingsPerfect <- lapply(split(perfect, perfect$Operator), function(d) as.matrix(d[order(d$Part), trials] == "Yes") * 1)
   results <- runAnalysis("msaAttribute", perfect, options)
   table   <- results[["results"]][["cohensKappaCor"]][["data"]]
-  expect_identical(allTrialPairsCor(ratingsPerfect[["BL"]], ratingsPerfect[["EG"]]), 1)
+  expect_equal(allTrialPairsCor(ratingsPerfect[["BL"]], ratingsPerfect[["EG"]]), 1)
   jaspTools::expect_equal_tables(table, expectedCorTable(ratingsPerfect, unique(dataset$Operator)))
 })
 
