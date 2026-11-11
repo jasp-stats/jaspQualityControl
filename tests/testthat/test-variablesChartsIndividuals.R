@@ -105,16 +105,16 @@ test_that("4.2 Basic test to create x-mR control chart with stages - I table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableI"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Zero", "Point 3", "Point 11", "Point 4", "", "Point 4", "Point 12",
-                                      "", "One", "Point 11", "Point 7", "Point 12", "", "Point 12",
-                                      "Point 8", "", "", "", "Point 9", "", "", "", "Point 10", ""
+                                      "", "One", "Point 23", "Point 19", "Point 24", "", "Point 24",
+                                      "Point 20", "", "", "", "Point 21", "", "", "", "Point 22", ""
                                  ))
 })
 
 test_that("4.3 Basic test to create x-mR control chart with stages - MR table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Zero", "Point 3", "Point 12", "", "Point 5", "", "One", "Point 11",
-                                      "Point 8", "", "", "Point 9", "", "", "Point 10"))
+                                 list("Zero", "Point 3", "Point 12", "", "Point 5", "", "One", "Point 23",
+                                      "Point 20", "", "", "Point 21", "", "", "Point 22"))
 })
 
 
@@ -168,8 +168,8 @@ test_that("6.1 Test X-mR control chart with stages and large moving range length
 test_that("6.2 Test X-mR control chart with stages and large moving range length - I table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableI"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Zero", "Point 11", "Point 4", "", "Point 12", "", "One", "Point 7",
-                                      "Point 12", "", "Point 8", "", "", "Point 9", "", "", "Point 10",
+                                 list("Zero", "Point 11", "Point 4", "", "Point 12", "", "One", "Point 19",
+                                      "Point 24", "", "Point 20", "", "", "Point 21", "", "", "Point 22",
                                       ""))
 })
 
@@ -177,6 +177,42 @@ test_that("6.3 Test X-mR control chart with stages and large moving range length
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("No test violations occurred."))
+})
+
+## X-mR chart with stages: test results use chart positions and timestamps (jasp-issues#4672) ####
+# The second stage comes first alphabetically and has one out-of-control point (row 18)
+stagedDataset <- data.frame(
+  Viscosity = c(10, 11, 10, 11, 10, 11, 10, 11, 10, 11,
+                20, 21, 20, 21, 20, 21, 20, 40, 20, 21),
+  Stage     = rep(c("Before", "After"), each = 10),
+  Day       = paste("Day", 1:20)
+)
+options <- analysisOptions("variablesChartsIndividuals")
+options$measurement <- "Viscosity"
+options$stage <- "Stage"
+options$axisLabels <- "Day"
+options$xmrChartMovingRangeLength <- 2
+options$testSet <- "custom"
+options$rule1 <- TRUE
+options$rule2 <- FALSE
+options$rule3 <- FALSE
+options$rule4 <- FALSE
+options$rule5 <- FALSE
+options$rule6 <- FALSE
+options$rule7 <- FALSE
+options$rule8 <- FALSE
+results <- runAnalysis("variablesChartsIndividuals", stagedDataset, options)
+
+test_that("6.4 X-mR chart with stages reports chart positions in later stages - I table", {
+  table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableI"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("After", "Point 18 (Day 18)"))
+})
+
+test_that("6.5 X-mR chart with stages reports chart positions in later stages - MR table", {
+  table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("After", "Point 18 (Day 18)", "", "Point 19 (Day 19)"))
 })
 
 ## Autocorrelation plot with different number of lags ####

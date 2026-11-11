@@ -76,6 +76,26 @@ test_that("LF2.2 Basic test of Cumulative sum chart with stages table", {
                                       "", "Point 8 - upper"))
 })
 
+### CUSUM with a single-subgroup stage: lower points stay lower (jasp-issues#4672) ####
+options <- analysisOptions("timeWeightedCharts")
+options$measurementLongFormat <- "Measurement"
+options$stagesLongFormat <- "Stage"
+options$cumulativeSumChart <- TRUE
+options$cumulativeSumChartSdSource <- "historical"
+options$cumulativeSumChartSdValue <- 1
+options$cumulativeSumChartNumberSd <- 3
+singleSubgroupStageDataset <- data.frame(Measurement = c(rep(-10, 10), 0), Stage = c(rep("A", 10), "B"))
+results <- runAnalysis("timeWeightedCharts", singleSubgroupStageDataset, options)
+
+test_that("LF2.3 Cumulative sum chart with a single-subgroup stage table", {
+  table <- results[["results"]][["CusumChart"]][["collection"]][["CusumChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("A", "Point 1 - lower", "", "Point 2 - lower", "", "Point 3 - lower",
+                                      "", "Point 4 - lower", "", "Point 5 - lower", "", "Point 6 - lower",
+                                      "", "Point 7 - lower", "", "Point 8 - lower", "", "Point 9 - lower",
+                                      "", "Point 10 - lower"))
+})
+
 ### EWMA (verified with Minitab) ####
 options <- analysisOptions("timeWeightedCharts")
 options$measurementLongFormat <- "Measurement"
@@ -766,4 +786,28 @@ test_that("MR10 Removed observations are noted below the charts", {
                "Removed 1 observation(s) that were not assigned to any stage.", fixed = TRUE)
   expect_match(results[["results"]][["EWMAPlot"]][["collection"]][["EWMAPlot_plotNote"]][["text"]],
                "Removed 1 observation(s) that were not assigned to any stage.", fixed = TRUE)
+})
+
+### CUSUM with interleaved stages: test results use each flagged row's timestamp (jasp-issues#4672) ####
+# Stages alternate by row; the chart shows all A rows, then all B rows. B shifts up from D8 on.
+options <- analysisOptions("timeWeightedCharts")
+options$measurementLongFormat <- "Measurement"
+options$stagesLongFormat <- "Stage"
+options$subgroup <- "Day"
+options$cumulativeSumChart <- TRUE
+options$cumulativeSumChartTarget <- 10
+options$cumulativeSumChartSdSource <- "historical"
+options$cumulativeSumChartSdValue <- 1
+interleavedStagesDataset <- data.frame(
+  Measurement = c(10, 10, 10, 10, 10, 10, 10, 20, 10, 20, 10, 20),
+  Stage       = rep(c("A", "B"), 6),
+  Day         = paste0("D", 1:12)
+)
+results <- runAnalysis("timeWeightedCharts", interleavedStagesDataset, options)
+
+test_that("LF interleaved stages - Cumulative sum chart test results use each flagged row's timestamp", {
+  table <- results[["results"]][["CusumChart"]][["collection"]][["CusumChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("B", "Point 10 - upper (D8)", "", "Point 11 - upper (D10)", "",
+                                      "Point 12 - upper (D12)"))
 })

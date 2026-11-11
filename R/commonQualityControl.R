@@ -77,14 +77,21 @@
     xAxisTitle <- subgroupVariable
     if (stages != ""){
       dataset[[stages]] <- stagesPerSubgroup
-      stageDataForOrdering <- factor(dataset[[stages]], levels = unique(dataset[[stages]]))
-      axisLabels <- axisLabels[order(stageDataForOrdering)]
     }
   }
   return(list(dataset = dataset,
               measurements = measurements,
               axisLabels = axisLabels,
               xAxisTitle = xAxisTitle))
+}
+
+# .controlChart() plots the stages one after another, in order of first appearance, so the
+# axis and table labels (one per subgroup, in data order) must follow that order as well.
+.qcLabelsInStageOrder <- function(labels, stageValues) {
+  if (identical(labels, "")) # no labels
+    return(labels)
+  stopifnot(length(labels) == length(stageValues)) # one label per subgroup (row)
+  labels[order(factor(stageValues, levels = unique(stageValues)))]
 }
 
 .qcReport <- function(text = NULL, # a string or vector of strings,
@@ -691,6 +698,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                           specificationLimits       = NA,
                           xAxisLabels               = "",
                           tableLabels               = "",
+                          labelsInDataOrder         = TRUE, # FALSE: the labels already follow the chart positions
                           xAxisTitle                = gettext("Sample"),
                           movingRangeLength         = 2,
                           clLabelSize               = 4.5,
@@ -706,6 +714,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                           phase2tChartDistributionScale   = 3
 ) {
   plotType <- match.arg(plotType)
+
+  # xAxisLabels and tableLabels come in data order (one per subgroup); the plot and table show the subgroups in stage order
+  if (!identical(stages, "") && labelsInDataOrder) {
+    xAxisLabels <- .qcLabelsInStageOrder(xAxisLabels, dataset[[stages]])
+    tableLabels <- .qcLabelsInStageOrder(tableLabels, dataset[[stages]])
+  }
 
   # This function returns all the needed data for the plot and table: data for the points, the limits, the labels and a list of point violations for the table
   controlChartData <- .controlChart_calculations(dataset, ruleList = ruleList, plotType = plotType, stages = stages, xBarSdType = xBarSdType,
@@ -769,7 +783,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   ### Calculate plot values per stage and combine into single dataframe ###
   plotData <- data.frame(matrix(ncol = 4, nrow = 0))
   clData <- data.frame(matrix(ncol = 5, nrow = 0))
-  tableList <- list()
+  stageViolations <- list()
   colnames(plotData) <- c("plotStatistic", "subgroup", "stage", "dotColor")
   colnames(clData) <- c("subgroup", "stage", "LCL", "UCL", "center")
   if (warningLimits) {
@@ -978,7 +992,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(plotStatistic))
       }
 
-      dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(plotData$subgroup) + length(subgroups)/2,
+      # max(subgroups), not length(subgroups): the upper and lower cusum points share their x positions
+      dfStageLabels <- rbind(dfStageLabels, data.frame(x = (max(plotData$subgroup) + max(subgroups)) / 2,
                                                        y = NA,  # the y value will be filled in later
                                                        label = stage,
                                                        separationLine = max(plotData$subgroup) + .5))
@@ -994,16 +1009,15 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                        separationLine = NA))
     }
 
+    nelsonLawsResults <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)
     if (length(na.omit(plotStatistic)) > 1) {
       if (plotType == "MR" || plotType == "MMR") {
         dotColor <- c(rep("blue", length(plotStatistic)))
         dotColor[seq(1, k-1)] <- NA
-        redPoints <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)$redPoints
-        dotColor[redPoints] <- "red"
+        dotColor[nelsonLawsResults$redPoints] <- "red"
       } else {
         dotColor <- rep("blue", length(plotStatistic))
-        redPoints <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)$redPoints
-        dotColor[redPoints] <- "red"
+        dotColor[nelsonLawsResults$redPoints] <- "red"
       }
     } else {
       dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue") # TODO: try out if the new function can handle single value, if yes remove this whole logic
@@ -1063,17 +1077,33 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       dfLimitLabel <- rbind(dfLimitLabel, data.frame(x = labelXPos,
                                                      y = c(lastCenter, lastLCL, lastUCL),
                                                      label = labelText))
-    tableLabelsCurrentStage <- subgroups
-    if (plotType == "MR" || plotType == "MMR")
-      tableLabelsCurrentStage <- tableLabelsCurrentStage[-seq(1, k-1)]
-
-    tableList[[i]] <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)$violationList
-    tableListLengths <- sapply(tableList[[i]], length)
-    if (any(tableListLengths > 0)) {
-      tableList[[i]][["stage"]] <- as.character(stage)
-      tableList[[i]] <- lapply(tableList[[i]], "length<-", max(lengths(tableList[[i]]))) # this fills up all elements of the list with NAs so all elements are the same size
-    }
+    # .nelsonLaws() counts points within the current stage; they are mapped to positions on the whole chart below
+    lowerCusum <- rep(FALSE, length(plotStatistic))
+    if (plotType == "cusum")
+      lowerCusum <- seq_along(plotStatistic) > length(plotStatisticUpper)
+    stageViolations[[i]] <- list(points     = nelsonLawsResults$violationList,
+                                 subgroups  = subgroups,
+                                 lowerCusum = lowerCusum,
+                                 stage      = stage)
   }
+
+  # .controlChart_table() labels the points above half the plotted points as lower cusum points, so a lower point is
+  # its x position plus the number of upper points of all stages
+  nUpperCusumPoints <- nrow(plotData) / 2
+  tableList <- lapply(stageViolations, function(stageResult) {
+    # Without enabled rules, .nelsonLaws() returns test1 = list(); empty results stay as they are.
+    stageTable <- lapply(stageResult$points, function(points) {
+      if (length(points) == 0)
+        return(points)
+      stageResult$subgroups[points] + stageResult$lowerCusum[points] * nUpperCusumPoints
+    })
+    if (any(lengths(stageTable) > 0)) {
+      stageTable[["stage"]] <- as.character(stageResult$stage)
+      stageTable <- lapply(stageTable, "length<-", max(lengths(stageTable))) # this fills up all elements of the list with NAs so all elements are the same size
+    }
+    stageTable
+  })
+
   return(list("pointData"      = plotData,
               "clData"         = clData,
               "clLabels"       = dfLimitLabel,

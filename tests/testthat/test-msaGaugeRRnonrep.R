@@ -100,10 +100,10 @@ test_that("LF1.11 Default settings - Average chart by operator plot matches", {
 test_that("LF1.12 Default settings - Test results for x-bar chart table results match", {
   table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("A", "Point 2", "", "Point 3", "", "Point 4", "", "Point 5", "B",
-                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5", "C",
-                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5"
-                                 ))
+                                 list("A", "Point 2", "", "Point 3", "", "Point 4", "", "Point 5",
+                                      "B", "Point 6", "", "Point 7", "", "Point 8", "", "Point 10",
+                                      "C", "Point 11", "", "Point 12", "", "Point 13", "",
+                                      "Point 15"))
 })
 
 ## Historical std. dev. ####
@@ -206,10 +206,10 @@ test_that("LF2.11 Historical std. dev. - Average chart by operator plot matches"
 test_that("LF2.12 Historical std. dev. - Test results for x-bar chart table results match", {
   table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("A", "Point 2", "", "Point 3", "", "Point 4", "", "Point 5", "B",
-                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5", "C",
-                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5"
-                                 ))
+                                 list("A", "Point 2", "", "Point 3", "", "Point 4", "", "Point 5",
+                                      "B", "Point 6", "", "Point 7", "", "Point 8", "", "Point 10",
+                                      "C", "Point 11", "", "Point 12", "", "Point 13", "",
+                                      "Point 15"))
 })
 
 ## Report ####
@@ -341,10 +341,10 @@ test_that("WF1.11 Default settings - Average chart by operator plot matches", {
 test_that("WF1.12 Default settings - Test results for x-bar chart table results match", {
   table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("A", "Point 2", "", "Point 3", "", "Point 4", "", "Point 5", "B",
-                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5", "C",
-                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5"
-                                 ))
+                                 list("A", "Point 2", "", "Point 3", "", "Point 4", "", "Point 5",
+                                      "B", "Point 6", "", "Point 7", "", "Point 8", "", "Point 10",
+                                      "C", "Point 11", "", "Point 12", "", "Point 13", "",
+                                      "Point 15"))
 })
 
 ## Historical std. dev. ####
@@ -448,10 +448,10 @@ test_that("WF2.11 Historical std. dev. - Average chart by operator plot matches"
 test_that("WF2.12 Historical std. dev. - Test results for x-bar chart table results match", {
   table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("A", "Point 2", "", "Point 3", "", "Point 4", "", "Point 5", "B",
-                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5", "C",
-                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5"
-                                 ))
+                                 list("A", "Point 2", "", "Point 3", "", "Point 4", "", "Point 5",
+                                      "B", "Point 6", "", "Point 7", "", "Point 8", "", "Point 10",
+                                      "C", "Point 11", "", "Point 12", "", "Point 13", "",
+                                      "Point 15"))
 })
 
 ## Report ####

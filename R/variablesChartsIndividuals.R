@@ -33,18 +33,6 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
     dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = factorVariables)
   }
 
-  if (axisLabelVariable != ""){
-    axisLabels <- dataset[[axisLabelVariable]]
-    xAxisTitle <- axisLabelVariable
-    if (stages != "") {
-      stageDataForOrdering <- factor(dataset[[stages]], levels = unique(dataset[[stages]]))
-      axisLabels <- axisLabels[order(stageDataForOrdering)]
-    }
-  } else {
-    axisLabels <- ""
-    xAxisTitle <- gettext("Sample")
-  }
-
   # Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', "observations"),
              infinity.target = c(options$measurement, options$axisLabels),
@@ -58,6 +46,14 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
     droppedStagesNote <- gettextf("<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage.", nDroppedRows)
   } else if (!identical(stages, "") && !anyNA(dataset[[stages]])) {
     nDroppedRows <- 0
+  }
+
+  if (axisLabelVariable != ""){ # one label per remaining row
+    axisLabels <- dataset[[axisLabelVariable]]
+    xAxisTitle <- axisLabelVariable
+  } else {
+    axisLabels <- ""
+    xAxisTitle <- gettext("Sample")
   }
 
   # default plot
