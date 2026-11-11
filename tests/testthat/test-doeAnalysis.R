@@ -6785,14 +6785,15 @@ test_that("60.5 Alias footnotes follow the fit shown: coded units can alias othe
   expect_false(any(grepl("aliased", notes[["coded"]])))
 })
 
-test_that("60.6 Saturated model: sequential sums of squares are labelled Type I, and Type III with aliasing gives the error", {
+test_that("60.6 Saturated model: sequential sums of squares are labelled Type I, also with aliasing and Type III", {
   etchFour  <- c(as.list(etchTerms), combn(etchTerms, 2, simplify = FALSE), combn(etchTerms, 3, simplify = FALSE), list(etchTerms))
   set.seed(123)
   saturated <- runAnalysis("doeAnalysis", etchData[1:16, ], doeTestOptions("EtchRate", etchTerms, character(0), etchFour, ssType = "type3"))
   expect_true(any(startsWith(doeFootnotes(doeTable(saturated, "EtchRate", "tableAnova")), "Type I (sequential) sums of squares, whatever type is selected")))
   set.seed(123)
   aliased <- runAnalysis("doeAnalysis", afData[c(1, 2, 5, 6, 9), ], doeTestOptions("y", "A", "F", afTerms, ssType = "type3"))
-  expect_match(doeTable(aliased, "y", "tableAnova")[["error"]][["errorMessage"]], "Type III sums of squares are unavailable for this model")
+  expect_null(doeTable(aliased, "y", "tableAnova")[["error"]]) # no Type III error: no type but Type I is shown anyway
+  expect_true(any(startsWith(doeFootnotes(doeTable(aliased, "y", "tableAnova")), "Type I (sequential) sums of squares, whatever type is selected")))
 })
 
 test_that("60.7 Fully aliased terms are removed with a footnote", {
@@ -6947,4 +6948,83 @@ test_that("60.16 Effect plots without any unique effect show an error", {
   collection <- results[["results"]][["EtchRate"]][["collection"]]
   expect_match(collection[["EtchRate_plotPareto"]][["error"]][["errorMessage"]], "No effects to plot")
   expect_match(collection[["EtchRate_normalEffectsPlot"]][["error"]][["errorMessage"]], "No effects to plot")
+})
+
+test_that("60.17 Effect plots show an error when only a covariate has a unique estimate", {
+  # the covariate keeps a unique estimate, but it is left out of the effect plots, so no effect is left to plot
+  data     <- etchDataDiscrete
+  set.seed(7)
+  data$Cov <- round(stats::rnorm(nrow(data)), 2)
+  options <- etchSsOptions("type2", discrete = etchTerms, coded = FALSE)
+  options$covariates        <- "Cov"
+  options$plotPareto        <- TRUE
+  options$normalEffectsPlot <- TRUE
+  set.seed(123)
+  results    <- runAnalysis("doeAnalysis", data, options)
+  collection <- results[["results"]][["EtchRate"]][["collection"]]
+  expect_match(collection[["EtchRate_plotPareto"]][["error"]][["errorMessage"]], "No effects to plot")
+  expect_match(collection[["EtchRate_normalEffectsPlot"]][["error"]][["errorMessage"]], "No effects to plot")
+})
+
+# factor A held constant within blocks (as in 60.15): the optimizer finds no setting with a unique prediction
+blockedAData   <- data.frame(Block = factor(rep(1:4, each = 4)), A = rep(c(-1, 1), each = 8), B = rep(c(-1, 1), 8))
+blockedAData$y <- c(10.2, 12.1, 9.8, 12.4, 10.9, 12.6, 10.4, 13.1, 14.8, 18.9, 15.3, 19.2, 14.1, 18.4, 15.0, 19.6)
+blockedAOptions <- function() {
+  options <- doeTestOptions("y", c("A", "B"), character(0), list("A", "B", c("A", "B")))
+  options$blocksFactorial <- "Block"
+  options$responsesResponseOptimizer <- list(list(responseOptimizerGoal = "maximize", responseOptimizerImportance = 1, responseOptimizerLowerBound = 0,
+                                                  responseOptimizerTarget = 0.5, responseOptimizerUpperBound = 1, responseOptimizerWeight = 1,
+                                                  variable = "y"))
+  options
+}
+
+test_that("60.18 Response optimizer without a solution keeps the settings table and shows no unchecked solution table", {
+  options <- blockedAOptions()
+  options$optimizationSolutionTable <- FALSE
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", blockedAData, options)
+  expect_null(results[["results"]][["tableRoSolution"]])
+  expect_null(results[["results"]][["tableRoSettings"]])
+
+  options$optimizationSolutionTable <- TRUE
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", blockedAData, options)
+  expect_length(results[["results"]][["tableRoSettings"]][["data"]], 1)
+  expect_match(results[["results"]][["tableRoSolution"]][["error"]][["errorMessage"]], "The response optimizer cannot be used with this model")
+})
+
+test_that("60.19 Optimization plot with manual settings that have a unique prediction, although the optimizer found none", {
+  # averaged over the blocks, the prediction is unique at A = 0 (the mean of A over the blocks), not at A = -1 or 1
+  options <- blockedAOptions()
+  options$optimizationPlot                      <- TRUE
+  options$optimizationPlotCustomParameters      <- TRUE
+  options$optimizationPlotCustomParameterValues <- list(list(variable = "A", value = "0"), list(variable = "B", value = "1"))
+  options$optimizationIntervals                 <- TRUE
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", blockedAData, options)
+  expect_match(results[["results"]][["tableRoPrediction"]][["error"]][["errorMessage"]], "The response optimizer cannot be used with this model")
+  collection <- results[["results"]][["plotRo"]][["collection"]]
+  expect_identical(collection[["plotRo_plot"]][["status"]], "complete")
+  # reference: the same model without the A column, which is aliased with the blocks
+  reference <- mean(stats::predict(stats::lm(y ~ Block + B + A:B, data = blockedAData),
+                                   newdata = data.frame(Block = factor(1:4), A = 0, B = 1)))
+  expect_equal(collection[["plotRo_predictionTable"]][["data"]][[1]][["fit"]], reference)
+  expect_equal(collection[["plotRo_table"]][["data"]][[1]][["y fit"]], round(reference, 3))
+})
+
+test_that("60.20 Saturated model with aliased coefficients: Type III shows the sequential sums of squares of Type I", {
+  # afData runs of 60.6: 5 runs, rank 5 (A is constant within level c of F, so one contrast of A x F is aliased)
+  data      <- afData[c(1, 2, 5, 6, 9), ]
+  resultsOf <- function(ssType) {
+    set.seed(123)
+    runAnalysis("doeAnalysis", data, doeTestOptions("y", "A", "F", afTerms, ssType = ssType))
+  }
+  results3 <- resultsOf("type3")
+  expect_equal(doeTable(results3, "y", "tableAnova")[["data"]], doeTable(resultsOf("type1"), "y", "tableAnova")[["data"]])
+  # sequential SS and df of the terms, from an independent fit
+  reference <- suppressWarnings(stats::anova(stats::lm(y ~ A + F + A:F, data = data))) # warns about the perfect fit
+  anova     <- doeAnovaSources(results3, "y")
+  terms     <- anova[match(c("A", "F", "A:F"), anova[["source"]]), ]
+  expect_equal(terms[["df"]], unname(reference[c("A", "F", "A:F"), "Df"]))
+  expect_equal(terms[["ss"]], unname(reference[c("A", "F", "A:F"), "Sum Sq"]))
 })
