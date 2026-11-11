@@ -3475,7 +3475,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       xLimits <- logAxis$limits
     }
     data1 <- data.frame(x = dataCurrentStage, y = y)
-    yLimits <- range(yBreaks)
+    # The outer points of a large sample lie beyond the 0.1% and 99.9% ticks; widen the axis so they are not dropped
+    yLimits <- range(yBreaks, y)
     label_x <- round(label_x, .numDecimals)
     p <- ggplot2::ggplot() +
       ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate), na.rm = TRUE) +
@@ -3529,6 +3530,13 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   n <- length(x)
   i <- rank(x)
   p <- (i) / (n)
+  # A unique largest observation gets p = 1, which has no finite plotting position. Place it at 90% of the distance
+  # between the prior p and 1, i.e. (n - 0.1) / n without ties. A tied maximum has an average rank below n, so p < 1.
+  isLargest <- p == 1
+  if (any(isLargest)) {
+    pPrior <- if (any(!isLargest)) max(p[!isLargest]) else 0
+    p[isLargest] <- pPrior + 0.9 * (1 - pPrior)
+  }
   return(p)
 }
 
