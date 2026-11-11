@@ -534,12 +534,12 @@ test_that("MR0.1 Moving range sigma skips ranges with missing values", {
 
 test_that("MR0.2 Moving range sigma errors without a complete moving range", {
   expect_error(jaspQualityControl:::.movingRangeSigma(5, k = 2),
-               "The data contain 1 non-missing observation. Estimating the standard deviation from moving ranges of length 2",
+               "Cannot estimate the standard deviation from moving ranges of length 2: the data have fewer than 2 consecutive non-missing observations.",
                class = "qcDataError", fixed = TRUE)
   expect_error(jaspQualityControl:::.movingRangeSigma(c(1, NA, 2, NA, 3), k = 2),
-               "The data contain 3 non-missing observations.", class = "qcDataError", fixed = TRUE)
+               "the data have fewer than 2 consecutive non-missing observations.", class = "qcDataError", fixed = TRUE)
   expect_error(jaspQualityControl:::.movingRangeSigma(c(1, 2), k = 3, stage = "B"),
-               "Stage 'B' contains 2 non-missing observations. Estimating the standard deviation from moving ranges of length 3",
+               "Cannot estimate the standard deviation from moving ranges of length 3: stage 'B' has fewer than 3 consecutive non-missing observations.",
                class = "qcDataError", fixed = TRUE)
 })
 
@@ -596,11 +596,11 @@ test_that("MR0.2 Moving range sigma errors without a complete moving range", {
 results <- runAnalysis("timeWeightedCharts", .twStageData(subgroupSize = 1), .twStageOptions("individual"))
 
 test_that("MR1.1 Cumulative sum chart errors for stage with single individual observation", {
-  .twExpectChartError(results, .twCusumPlot(results), "Stage 'C' contains 1 non-missing observation. Estimating the standard deviation from moving ranges of length 2")
+  .twExpectChartError(results, .twCusumPlot(results), "Cannot estimate the standard deviation from moving ranges of length 2: stage 'C' has fewer than 2 consecutive non-missing observations.")
 })
 
 test_that("MR1.2 EWMA chart errors for stage with single individual observation", {
-  .twExpectChartError(results, .twEwmaPlot(results), "Stage 'C' contains 1 non-missing observation. Estimating the standard deviation from moving ranges of length 2")
+  .twExpectChartError(results, .twEwmaPlot(results), "Cannot estimate the standard deviation from moving ranges of length 2: stage 'C' has fewer than 2 consecutive non-missing observations.")
 })
 
 ## Same stage counts with subgroup size > 1 -> charts drawn ####
@@ -640,7 +640,7 @@ test_that("MR4 Report shows the cumulative sum chart and the EWMA chart error", 
   labels   <- unlist(lapply(subplots, function(p) lapply(seq_along(p$layers), function(i) as.character(ggplot2::layer_data(p, i)[["label"]]))))
   expect_true(any(hasSteps))
   expect_true("Exponentially weighted moving average chart" %in% labels)
-  expect_true(any(grepl("Stage 'C' contains 2 non-missing", labels, fixed = TRUE)))
+  expect_true(any(grepl("stage 'C' has fewer than 3 consecutive", labels, fixed = TRUE)))
 })
 
 ## No stages, a single observation -> error ####
@@ -649,8 +649,8 @@ options$stagesLongFormat <- ""
 results <- runAnalysis("timeWeightedCharts", data.frame(Measurement = 5.1), options)
 
 test_that("MR5 Charts without stages error for a single individual observation", {
-  .twExpectChartError(results, .twCusumPlot(results), "The data contain 1 non-missing observation.")
-  .twExpectChartError(results, .twEwmaPlot(results), "The data contain 1 non-missing observation.")
+  .twExpectChartError(results, .twCusumPlot(results), "the data have fewer than 2 consecutive non-missing observations.")
+  .twExpectChartError(results, .twEwmaPlot(results), "the data have fewer than 2 consecutive non-missing observations.")
 })
 
 ## Missing value in individual observations -> EWMA sigma from moving ranges ####
@@ -710,8 +710,8 @@ data$Measurement[data$Stage == "C"] <- NA
 results <- runAnalysis("timeWeightedCharts", data, .twStageOptions("individual"))
 
 test_that("MR7 Charts error for a stage without non-missing observations", {
-  .twExpectChartError(results, .twCusumPlot(results), "Stage 'C' contains 0 non-missing observations.")
-  .twExpectChartError(results, .twEwmaPlot(results), "Stage 'C' contains 0 non-missing observations.")
+  .twExpectChartError(results, .twCusumPlot(results), "stage 'C' has fewer than 2 consecutive non-missing observations.")
+  .twExpectChartError(results, .twEwmaPlot(results), "stage 'C' has fewer than 2 consecutive non-missing observations.")
 })
 
 ## Across rows with one measurement column (moving range length not shown) -> error ####
@@ -725,8 +725,8 @@ options$exponentiallyWeightedMovingAverageChartSdMethod <- "s"
 results <- runAnalysis("timeWeightedCharts", .twStageData(subgroupSize = 1), options)
 
 test_that("MR8 Charts across rows with one column error for stage with single observation", {
-  .twExpectChartError(results, .twCusumPlot(results), "Stage 'C' contains 1 non-missing observation.")
-  .twExpectChartError(results, .twEwmaPlot(results), "Stage 'C' contains 1 non-missing observation.")
+  .twExpectChartError(results, .twCusumPlot(results), "stage 'C' has fewer than 2 consecutive non-missing observations.")
+  .twExpectChartError(results, .twEwmaPlot(results), "stage 'C' has fewer than 2 consecutive non-missing observations.")
 })
 
 ## Singleton subgroups spread across columns keep row order and entirely missing rows ####

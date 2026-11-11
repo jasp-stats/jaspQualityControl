@@ -46,7 +46,7 @@ test_that("Missing moving ranges do not discard process capability results", {
   }
   plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
   labels <- .pcPlotLabels(results[["state"]][["figures"]][[plotName]][["obj"]])
-  expect_true(any(grepl("5 non-missing observations", labels, fixed = TRUE)))
+  expect_true(any(grepl("the data have fewer than 2 consecutive", labels, fixed = TRUE)))
 })
 
 options <- .pcMovingRangeOptions()
@@ -58,7 +58,7 @@ test_that("Process capability report retains tables and the moving-range error",
   report <- results[["results"]][["report"]]
   expect_identical(report[["status"]], "complete")
   labels <- .pcPlotLabels(results[["state"]][["figures"]][[report[["data"]]]][["obj"]])
-  expect_true(any(grepl("5 non-missing observations", labels, fixed = TRUE)))
+  expect_true(any(grepl("the data have fewer than 2 consecutive", labels, fixed = TRUE)))
   expect_true(any(grepl("Process capability", labels, fixed = TRUE)))
 })
 

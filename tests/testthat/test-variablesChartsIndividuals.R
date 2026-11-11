@@ -406,7 +406,7 @@ test_that("MR1 X-mR chart without stages errors when every moving range contains
   plot <- results[["results"]][["Ichart"]][["collection"]][["Ichart_plot"]]
   expect_identical(results[["status"]], "complete")
   expect_identical(plot[["status"]], "error")
-  expect_match(plot[["error"]][["errorMessage"]], "The data contain 2 non-missing observations. Estimating the standard deviation from moving ranges of length 2", fixed = TRUE)
+  expect_match(plot[["error"]][["errorMessage"]], "Cannot estimate the standard deviation from moving ranges of length 2: the data have fewer than 2 consecutive non-missing observations.", fixed = TRUE)
 })
 
 data <- data.frame(Measurement = c(1.2, 2.3, 1.8, 2.9, 2.1, 1.7, NA, 2.4, NA), Stage = rep(c("A", "B"), c(6, 3)))
@@ -416,7 +416,7 @@ test_that("MR2 X-mR chart errors for a stage whose moving ranges all contain a m
   plot <- results[["results"]][["Ichart"]][["collection"]][["Ichart_plot"]]
   expect_identical(results[["status"]], "complete")
   expect_identical(plot[["status"]], "error")
-  expect_match(plot[["error"]][["errorMessage"]], "Stage 'B' contains 1 non-missing observation.", fixed = TRUE)
+  expect_match(plot[["error"]][["errorMessage"]], "stage 'B' has fewer than 3 consecutive non-missing observations.", fixed = TRUE)
 })
 
 options <- .imrOptions(stage = "Stage")
@@ -430,6 +430,6 @@ test_that("MR3 Report shows the X-mR chart error and keeps the meta data", {
   expect_identical(report[["status"]], "complete")
   subplots <- Filter(ggplot2::is_ggplot, results[["state"]][["figures"]][[report[["data"]]]][["obj"]]$subplots)
   labels   <- unlist(lapply(subplots, function(p) lapply(seq_along(p$layers), function(i) as.character(ggplot2::layer_data(p, i)[["label"]]))))
-  expect_true(any(grepl("Stage 'B' contains 1 non-missing", labels, fixed = TRUE)))
+  expect_true(any(grepl("stage 'B' has fewer than 3 consecutive", labels, fixed = TRUE)))
   expect_true(any(grepl("Chart name:", labels, fixed = TRUE)))
 })
