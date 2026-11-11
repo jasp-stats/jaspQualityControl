@@ -165,10 +165,12 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   dataset <- .readDataSetToEnd(columns.as.numeric = numericVars, columns.as.factor = factorVars)
   # Number of levels of each factor including levels without runs, i.e., the levels the form counts when it hides the
   # low/high fields of discrete factors with more than two levels (see .doeMultiLevelDiscretePredictors)
-  allLevelCounts <- vapply(dataset[intersect(factorVars, names(dataset))], nlevels, integer(1))
+  allLevels <- lapply(dataset[intersect(factorVars, names(dataset))], levels)
   # droplevels: levels without runs (filtered or missing) would make lm() drop the sum-to-zero contrasts
   dataset <- droplevels(na.omit(dataset))
-  attr(dataset, "allLevelCounts") <- allLevelCounts
+  attr(dataset, "allLevelCounts") <- lengths(allLevels)
+  levelsWithoutRuns <- Map(function(var, varLevels) setdiff(varLevels, levels(dataset[[var]])), names(allLevels), allLevels)
+  attr(dataset, "levelsWithoutRuns") <- Filter(length, levelsWithoutRuns) # reported below the coefficients table
 
   if (length(blocks) > 0 && !identical(blocks, "")) # name of variable should always be "Block"
     names(dataset)[names(dataset) == blocks] <- "Block"
@@ -210,6 +212,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     resultCoded <- list()
     resultCoded[["regression"]] <- list()
     resultCoded[["anova"]] <- list()
+    result[["regression"]][["levelsWithoutRuns"]] <- resultCoded[["regression"]][["levelsWithoutRuns"]] <- attr(dataset, "levelsWithoutRuns")
 
     # set the contrasts for all categorical variables, add option to choose later
     for (fac in unlist(discretePredictors)) {
@@ -603,7 +606,9 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     datasetEffects[continuousVars] <- datasetCoded[continuousVars]
     effectsFit <- lm(formula, data = datasetEffects)
 
-    excludeFromEffects <- unlist(c(blocks, covariates))
+    # Discrete factors with more than 2 levels have no effect, also when only 2 of their levels have runs: their sum-to-zero
+    # contrast does not follow the low/high order, so a 2 * coefficient "effect" would have an arbitrary sign
+    excludeFromEffects <- unlist(c(blocks, covariates, multiLevelVars))
     excludeFromEffects <- excludeFromEffects[excludeFromEffects != ""]
     coefEffects      <- .doeCoefficientEffects(effectsFit, excludeFromEffects)
     coefEffectsCoded <- .doeCoefficientEffects(regressionFitCoded, excludeFromEffects)
@@ -1859,6 +1864,11 @@ get_levels <- function(var, num_levels, dataset) {
       gettext("Effect = 2 \u00D7 coefficient in coded (\u22121/+1) units, not 2 \u00D7 the coefficient shown: the change in the response when a term goes from its \u22121 to its +1 setting. For discrete predictors the sign follows the level shown in the Discrete Predictor Levels table.")
     }
     tb$addFootnote(paste(effectNote, gettext("Not shown for squared terms, discrete predictors with more than two levels, blocks, and covariates.")))
+    levelsWithoutRuns <- resultRegression[["levelsWithoutRuns"]]
+    if (length(levelsWithoutRuns) > 0) {
+      levelsText <- paste0(names(levelsWithoutRuns), " (", vapply(levelsWithoutRuns, paste, character(1), collapse = ", "), ")", collapse = "; ")
+      tb$addFootnote(gettextf("Levels without runs (e.g., filtered out or with missing values) are left out of the model: %s.", levelsText))
+    }
     rows <- data.frame(
       terms = result[["terms"]], effects = result[["effects"]], coef = result[["est"]],
       se = result[["se"]], tval = result[["t"]], pval = result[["p"]], vif = result[["vif"]]
