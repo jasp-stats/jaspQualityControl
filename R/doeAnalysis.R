@@ -2164,15 +2164,15 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 }
 
 # Lenth's (1989) pseudo standard error (PSE) and margin of error (ME) of the effects of an unreplicated two-level design,
-# with m / 3 degrees of freedom for m effects. NULL when it cannot be computed (no effects, or PSE = 0; a PSE that is
-# only rounding error relative to the largest effect counts as 0).
-.doeLenthMarginOfError <- function(effects, alpha = 0.05) {
+# with m / 3 degrees of freedom for m effects. NULL when it cannot be computed: no effects, or PSE = 0 (a PSE up to
+# zeroTolerance, the rounding error of the effects, counts as 0).
+.doeLenthMarginOfError <- function(effects, zeroTolerance = 0, alpha = 0.05) {
   absEffects <- abs(effects)
   if (length(absEffects) == 0)
     return(NULL)
   s0  <- 1.5 * stats::median(absEffects)
   pse <- 1.5 * stats::median(absEffects[absEffects < 2.5 * s0])
-  if (!is.finite(pse) || pse <= sqrt(.Machine$double.eps) * max(absEffects))
+  if (!is.finite(pse) || pse <= zeroTolerance)
     return(NULL)
   df <- length(absEffects) / 3
   return(list(pse = pse, df = df, me = stats::qt(1 - alpha / 2, df) * pse))
@@ -2183,12 +2183,15 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 # error message.
 .doeLenthEffects <- function(result, plotData) {
   if (isTRUE(result[["coefficients"]][["effectsOtherModel"]])) # only set for the uncoded fit
-    return(gettext("The model is saturated (no error degrees of freedom) and its effects are not available in uncoded units, because coding changes the model. Display the results in coded units to assess the effects with Lenth's method."))
+    return(gettext("The model is saturated (no error degrees of freedom) and its effects are not available in uncoded units, because coding changes the model."))
   if (anyNA(plotData$value))
     return(gettext("The model is saturated (no error degrees of freedom). Lenth's method for assessing its effects applies to two-level factorial terms only, but the model has squared terms or terms of discrete factors with more than two levels."))
   if (!result[["coefficients"]][["effectsOrthogonal"]])
     return(gettext("The model is saturated (no error degrees of freedom). Lenth's method for assessing its effects needs uncorrelated effects with equal variance, as in an orthogonal two-level design, but the effects of this model are not."))
-  lenth <- .doeLenthMarginOfError(plotData$value)
+  # rounding error of effects from an orthogonal fit is of the order of n * eps * max|y|; a PSE below 100 times that is 0
+  response      <- result[["object"]][["model"]][[1]]
+  zeroTolerance <- 100 * length(response) * .Machine$double.eps * max(abs(response))
+  lenth <- .doeLenthMarginOfError(plotData$value, zeroTolerance)
   if (is.null(lenth))
     return(gettext("The model is saturated (no error degrees of freedom) and Lenth's pseudo standard error of its effects is zero, so the effects cannot be assessed."))
   return(lenth)
