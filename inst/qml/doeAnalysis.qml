@@ -243,8 +243,8 @@ Form
 
 					rowComponent: RowLayout
 					{
-						// Blocks and discrete factors with more than two levels are not rescaled to -1/1 (the latter keep one term
-						// per level), so they have no low/high level; the R code ignores their lowValue/highValue
+						// Blocks and discrete factors with more than two levels are not rescaled to -1/1 (the latter keep their
+						// sum-to-zero contrasts), so they have no low/high level; the R code ignores their lowValue/highValue
 						property var	blocks:		designType.currentValue == "factorialDesign" ? blocksFactorial : blocksResponseSurface
 						property bool	hasLowHigh:	rowType === "scale" || (!blocks.columnsNames.includes(rowValue) && rowVariableLevels.levels.length <= 2)
 
@@ -305,7 +305,7 @@ Form
 				name:								"codeFactors"
 				checked:							true
 				label:								qsTr("Display results in coded units")
-				info:								qsTr("Display the results in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: they enter the model with one term per level (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. For factorial designs, continuous factors are treated as categorical in the ANOVA table when this option is unchecked.")
+				info:								qsTr("Display the results in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. For factorial designs, continuous factors are treated as categorical in the ANOVA table when this option is unchecked.")
 			}
 
 			CheckBox

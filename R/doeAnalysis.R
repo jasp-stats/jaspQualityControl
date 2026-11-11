@@ -189,7 +189,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
 .scaleDOEvariable <- function(x){2*(x-min(x))/(max(x)-min(x))-1}
 
-# Discrete factors with more than 2 levels, counting levels without runs (e.g., filtered out) as the form does: the form
+# Discrete factors with more than 2 levels, counting levels without runs (e.g., all runs missing) as the form does: the form
 # shows no low/high fields for them, so they must not be coded with the (hidden) manual low/high levels. A factor with
 # only 2 levels with runs then enters as a factor with sum-to-zero contrasts, which is the same as -1/1 coding.
 .doeMultiLevelDiscretePredictors <- function(dataset, discretePredictors) {
@@ -588,7 +588,6 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     }
 
     discretePredictorsIndices <- which(termNamesRemoved %in% discretePredictors)
-    nDiscretePredictorLevels <- sapply(discretePredictors, function(x) sum(termNamesRemoved == x))
 
     # Only terms of discrete factors with more than 2 levels have appended factor levels in the coded model, so just remove whitespace
     termNames <- gsub("\\s", "", termNames)
@@ -668,16 +667,16 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     result[["regression"]][["factorLevels"]] <- list()
     result[["regression"]][["factorLevels"]][["factorNamesAliased"]] <- termNamesAliased[discretePredictorsIndices]
     result[["regression"]][["factorLevels"]][["factorNames"]] <- termNames[discretePredictorsIndices]
-    discretePredictorLevels <- unlist(lapply(names(nDiscretePredictorLevels), function(x) get_levels(x, nDiscretePredictorLevels[x], dataset)))
-    result[["regression"]][["factorLevels"]][["levels"]] <- discretePredictorLevels
+    result[["regression"]][["factorLevels"]][["levels"]] <- .doeCoefficientLevels(termNames[discretePredictorsIndices],
+                                                                                 termNamesRemoved[discretePredictorsIndices], dataset)
 
     # In the coded model, only discrete factors with more than 2 levels have level-specific terms
     multiLevelIndicesCoded <- which(termNamesRemovedCoded %in% multiLevelVars)
-    nMultiLevelLevelsCoded <- sapply(multiLevelVars, function(x) sum(termNamesRemovedCoded == x))
     resultCoded[["regression"]][["factorLevels"]] <- list()
     resultCoded[["regression"]][["factorLevels"]][["factorNamesAliased"]] <- termNamesAliasedCoded[multiLevelIndicesCoded]
     resultCoded[["regression"]][["factorLevels"]][["factorNames"]] <- termNamesCoded[multiLevelIndicesCoded]
-    resultCoded[["regression"]][["factorLevels"]][["levels"]] <- unlist(lapply(names(nMultiLevelLevelsCoded), function(x) get_levels(x, nMultiLevelLevelsCoded[x], dataset)))
+    resultCoded[["regression"]][["factorLevels"]][["levels"]] <- .doeCoefficientLevels(termNamesCoded[multiLevelIndicesCoded],
+                                                                                      termNamesRemovedCoded[multiLevelIndicesCoded], dataset)
 
 
     if (!result[["regression"]][["saturated"]]) {
@@ -738,9 +737,14 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   }
 }
 
-get_levels <- function(var, num_levels, dataset) {
-  levels_var <- levels(dataset[[var]])
-  levels_var[seq_len(num_levels)] # seq_len: a factor fully removed due to aliasing has 0 levels, 1:0 would return one
+# Level of each main-effect coefficient of a discrete factor, for the Discrete Predictor Levels legend. lm() names the
+# k-th sum-to-zero contrast of factor `var` "<var>k", which belongs to its k-th level, so the level follows from the
+# coefficient name itself, whatever the order of the model terms and also when some contrasts are aliased.
+.doeCoefficientLevels <- function(coefNames, factorVars, dataset) {
+  vapply(seq_along(coefNames), function(i) {
+    levelIndex <- as.integer(substring(coefNames[i], nchar(factorVars[i]) + 1))
+    levels(dataset[[factorVars[i]]])[levelIndex]
+  }, character(1))
 }
 
 .getVIF <- function(regressionFit, predictors) {
@@ -1867,7 +1871,7 @@ get_levels <- function(var, num_levels, dataset) {
     levelsWithoutRuns <- resultRegression[["levelsWithoutRuns"]]
     if (length(levelsWithoutRuns) > 0) {
       levelsText <- paste0(names(levelsWithoutRuns), " (", vapply(levelsWithoutRuns, paste, character(1), collapse = ", "), ")", collapse = "; ")
-      tb$addFootnote(gettextf("Levels without runs (e.g., filtered out or with missing values) are left out of the model: %s.", levelsText))
+      tb$addFootnote(gettextf("Levels without runs are left out of the model: %s.", levelsText))
     }
     rows <- data.frame(
       terms = result[["terms"]], effects = result[["effects"]], coef = result[["est"]],
