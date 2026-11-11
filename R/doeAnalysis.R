@@ -585,6 +585,11 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
     resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded)[isFittedCoded]
 
+    # Lenth's method (effect plots of a saturated model) needs uncorrelated effects with equal variance
+    result[["regression"]][["coefficients"]][["effectsOrthogonal"]] <- .doeEffectsOrthogonal(effectsFit, coefEffects)
+    resultCoded[["regression"]][["coefficients"]][["effectsOrthogonal"]] <- .doeEffectsOrthogonal(
+      regressionFitCoded, replace(coefEffectsCoded, !.doeEstimableCoefficients(regressionFitCoded), NA))
+
     termNamesAliased <- termNames
     termNamesAliasedCoded <- termNamesCoded
     allPredictorsAliases <- LETTERS[seq_along(allPredictors)]
@@ -1814,6 +1819,24 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   return(se)
 }
 
+# TRUE when the effects (one per coefficient, NA where not defined) are uncorrelated with equal variance, as in an
+# orthogonal two-level design: their unscaled covariance, the inverse of X'X (no error df needed), is proportional to
+# the identity matrix. Lenth's method assumes this.
+.doeEffectsOrthogonal <- function(regressionFit, effects) {
+  nCoef <- length(stats::coef(regressionFit))
+  if (length(effects) != nCoef)
+    return(FALSE)
+  hasEffect <- !is.na(effects) & !is.na(stats::coef(regressionFit))
+  if (!any(hasEffect))
+    return(TRUE)
+  # unscaled covariance of the fitted coefficients from the QR decomposition of the fit, as in summary.lm()
+  fitted      <- seq_len(regressionFit[["rank"]])
+  covUnscaled <- matrix(NA_real_, nCoef, nCoef)
+  covUnscaled[regressionFit[["qr"]][["pivot"]][fitted], regressionFit[["qr"]][["pivot"]][fitted]] <- chol2inv(regressionFit[["qr"]][["qr"]][fitted, fitted, drop = FALSE])
+  covUnscaled <- covUnscaled[hasEffect, hasEffect, drop = FALSE]
+  return(all(abs(covUnscaled - diag(covUnscaled[1, 1], nrow(covUnscaled))) <= 1e-8 * covUnscaled[1, 1]))
+}
+
 # Lower and upper confidence limits for estimates with t-based standard errors; NA without error degrees of freedom.
 .doeConfidenceLimits <- function(estimates, se, df, level) {
   tCrit <- if (isTRUE(df > 0)) stats::qt((1 + level) / 2, df) else NA_real_
@@ -2137,30 +2160,38 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     plotData <- plotData[!grepl(blocks, plotData$terms), , drop = FALSE]
   if (length(covariates) > 0 && !identical(covariates, ""))
     plotData <- plotData[!plotData$terms %in% unlist(covariates), , drop = FALSE]
-  if (saturated) # terms without an effect (squared terms, discrete factors with more than 2 levels)
-    plotData <- plotData[!is.na(plotData$value), , drop = FALSE]
   return(plotData)
 }
 
 # Lenth's (1989) pseudo standard error (PSE) and margin of error (ME) of the effects of an unreplicated two-level design,
-# with m / 3 degrees of freedom for m effects. NULL when it cannot be computed (no effects, or PSE = 0).
+# with m / 3 degrees of freedom for m effects. NULL when it cannot be computed (no effects, or PSE = 0; a PSE that is
+# only rounding error relative to the largest effect counts as 0).
 .doeLenthMarginOfError <- function(effects, alpha = 0.05) {
   absEffects <- abs(effects)
   if (length(absEffects) == 0)
     return(NULL)
   s0  <- 1.5 * stats::median(absEffects)
   pse <- 1.5 * stats::median(absEffects[absEffects < 2.5 * s0])
-  if (!is.finite(pse) || pse == 0)
+  if (!is.finite(pse) || pse <= sqrt(.Machine$double.eps) * max(absEffects))
     return(NULL)
   df <- length(absEffects) / 3
   return(list(pse = pse, df = df, me = stats::qt(1 - alpha / 2, df) * pse))
 }
 
-.doeLenthError <- function(plotData) {
-  if (nrow(plotData) == 0)
-    gettext("The model is saturated (no error degrees of freedom) and has no effects of two-level factors to plot.")
-  else
-    gettext("The model is saturated (no error degrees of freedom) and Lenth's pseudo standard error of the effects is zero, so the effects cannot be assessed.")
+# Lenth's method for the effect plots of a saturated model. Like Minitab, only for two-level factorial terms (Minitab
+# draws no effect plots for saturated response surface or general full factorial models). Returns the PSE and ME, or an
+# error message.
+.doeLenthEffects <- function(result, plotData) {
+  if (isTRUE(result[["coefficients"]][["effectsOtherModel"]])) # only set for the uncoded fit
+    return(gettext("The model is saturated (no error degrees of freedom) and its effects are not available in uncoded units, because coding changes the model. Display the results in coded units to assess the effects with Lenth's method."))
+  if (anyNA(plotData$value))
+    return(gettext("The model is saturated (no error degrees of freedom). Lenth's method for assessing its effects applies to two-level factorial terms only, but the model has squared terms or terms of discrete factors with more than two levels."))
+  if (!result[["coefficients"]][["effectsOrthogonal"]])
+    return(gettext("The model is saturated (no error degrees of freedom). Lenth's method for assessing its effects needs uncorrelated effects with equal variance, as in an orthogonal two-level design, but the effects of this model are not."))
+  lenth <- .doeLenthMarginOfError(plotData$value)
+  if (is.null(lenth))
+    return(gettext("The model is saturated (no error degrees of freedom) and Lenth's pseudo standard error of its effects is zero, so the effects cannot be assessed."))
+  return(lenth)
 }
 
 .doeAnalysisPlotPareto <- function(jaspResults, dependent, options, blocks, covariates, ready) {
@@ -2177,13 +2208,17 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     }
     result <- if (options[["codeFactors"]]) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]]
     plotData <- .doeEffectPlotData(result, options, blocks, covariates)
+    if (nrow(plotData) == 0) {
+      plot$setError(gettext("There are no effects to plot."))
+      next
+    }
 
     if (result[["saturated"]]) {
       # no error df for t-values: absolute effects against Lenth's margin of error
       plot$title <- gettext("Pareto Chart of Effects")
-      lenth <- .doeLenthMarginOfError(plotData$value)
-      if (is.null(lenth)) {
-        plot$setError(.doeLenthError(plotData))
+      lenth <- .doeLenthEffects(result, plotData)
+      if (is.character(lenth)) {
+        plot$setError(lenth)
         next
       }
       crit       <- lenth[["me"]]
@@ -2227,13 +2262,17 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     }
     result <- if (options[["codeFactors"]]) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]]
     tDf <- .doeEffectPlotData(result, options, blocks, covariates)
+    if (nrow(tDf) == 0) {
+      plot$setError(gettext("There are no effects to plot."))
+      next
+    }
 
     if (result[["saturated"]]) {
       # no error df for t-values (Daniel plot): effects against N(0, PSE), significant when |effect| > Lenth's ME
       plot$title <- gettext("Normal Plot of Effects")
-      lenth <- .doeLenthMarginOfError(tDf$value)
-      if (is.null(lenth)) {
-        plot$setError(.doeLenthError(tDf))
+      lenth <- .doeLenthEffects(result, tDf)
+      if (is.character(lenth)) {
+        plot$setError(lenth)
         next
       }
       referenceSd <- lenth[["pse"]]
