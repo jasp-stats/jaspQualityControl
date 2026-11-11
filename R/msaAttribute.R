@@ -735,12 +735,12 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
   signSums <- function(m) {
     s <- matrix(0, nrow(m), nrow(m))
     for (i in seq_len(ncol(m))) for (k in seq_len(ncol(m)))
-      s <- s + sign(outer(m[, i], m[, k], "-"))
+      s <- s + outer(m[, i], m[, k], ">") - outer(m[, i], m[, k], "<")
     return(s)
   }
-  # pairs tied on one appraiser's ratings; each rating occurs once per rating of the other appraiser
+  # pairs tied on one appraiser's ratings (exact equality); each rating occurs once per rating of the other appraiser
   tiedPairs <- function(m, copies) {
-    counts <- as.vector(table(m)) * copies
+    counts <- as.numeric(tabulate(match(m, m))) * copies
     return(sum(counts * (counts - 1) / 2))
   }
   sx <- signSums(x)
