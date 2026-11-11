@@ -358,11 +358,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                                     nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
                                     tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
                                     fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList2)
-        jaspResults[["xBar"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondPlot$plotObject, xBarChart$plotObject),
-                               layout = matrix(2:1, 2), removeXYlabels= "x",
-                               shareX = TRUE, shareY = FALSE)
-        if (!identical(plotNotes, ""))
-          jaspResults[["xBar"]][["plotNote"]] <- createJaspHtml(paste0("<i>Note.</i> ", plotNotes))
+        .qcCapabilityControlChartPlot(jaspResults[["xBar"]], upperChart = xBarChart, lowerChart = secondPlot, plotNotes = plotNotes)
         jaspResults[["xBar"]][["tableXBar"]] <- xBarChart$table
         jaspResults[["xBar"]][["tableSecondPlot"]] <- secondPlot$table
       }
@@ -399,11 +395,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         mrChart <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "MR",
                                  nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                  xAxisLabels = seq_along(unlist(dataset[measurements])), movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList2)
-        jaspResults[["xmr"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
-                              layout = matrix(2:1, 2), removeXYlabels= "x",
-                              shareX = TRUE, shareY = FALSE)
-        if (!identical(plotNotes, ""))
-          jaspResults[["xmr"]][["plotNote"]] <- createJaspHtml(paste0("<i>Note.</i> ", plotNotes))
+        .qcCapabilityControlChartPlot(jaspResults[["xmr"]], upperChart = individualChart, lowerChart = mrChart, plotNotes = plotNotes)
         jaspResults[["xmr"]][["tableIndividual"]] <- individualChart$table
         jaspResults[["xmr"]][["tableMR"]] <- mrChart$table
       }
@@ -420,13 +412,38 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   }
 }
 
-# Keep a missing moving range local to its chart, including charts embedded in reports.
+# Keep a missing moving range local to its chart. On a report, the chart becomes an error panel; elsewhere,
+# .qcCapabilityControlChartPlot() leaves it out and notes the error.
 .qcCapabilityControlChart <- function(plotType, ...) {
   tryCatch(.controlChart(plotType = plotType, ...), qcDataError = function(error) {
     # only the moving range based charts can fail this way
     chartTitle <- switch(plotType, "I" = gettext("Individual value"), "MR" = , "MMR" = gettext("Moving range"), "")
-    list(plotObject = .qcReportErrorPanel(chartTitle, conditionMessage(error)), table = NULL)
+    list(plotObject = .qcReportErrorPanel(chartTitle, conditionMessage(error)), table = NULL,
+         chartTitle = chartTitle, errorMessage = conditionMessage(error))
   })
+}
+
+# Upper and lower chart of the control chart plot (outside the report). A failed chart is left out and its error is
+# noted below the plot; if both failed, the plot shows the error.
+.qcCapabilityControlChartPlot <- function(container, upperChart, lowerChart, plotNotes) {
+  charts <- list(upperChart, lowerChart)
+  failed <- vapply(charts, function(chart) !is.null(chart[["errorMessage"]]), logical(1))
+  notes  <- if (identical(plotNotes, "")) character(0) else sub("<br>$", "", plotNotes)
+
+  if (all(failed)) {
+    container[["plot"]]$setError(paste(unique(vapply(charts, `[[`, character(1), "errorMessage")), collapse = " "))
+  } else if (any(failed)) {
+    container[["plot"]]$plotObject <- charts[[which(!failed)]][["plotObject"]]
+    failedChart <- charts[[which(failed)]]
+    notes <- c(notes, gettextf("%1$s chart not shown. %2$s", failedChart[["chartTitle"]], failedChart[["errorMessage"]]))
+  } else {
+    container[["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(lowerChart$plotObject, upperChart$plotObject),
+                                                               layout = matrix(2:1, 2), removeXYlabels = "x",
+                                                               shareX = TRUE, shareY = FALSE)
+  }
+
+  if (length(notes) > 0)
+    container[["plotNote"]] <- createJaspHtml(paste0("<i>Note.</i> ", paste(notes, collapse = "<br>")))
 }
 
 # Capability tables already represent an unavailable within SD as missing. Keep the

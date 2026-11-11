@@ -164,9 +164,12 @@ timeWeightedChartsInternal <- function(jaspResults, dataset, options) {
     ### If not report mode
     ###
   } else {
+    # the containers are rebuilt on every run that shows them; their dependencies remove them (with table and note)
+    # once the report is shown or the chart is unchecked
     plotNote <- if (ready && !identical(plotNotes, "")) paste0("<i>Note.</i> ", plotNotes) else NULL
     if (options[["cumulativeSumChart"]]) {
       jaspResults[["CusumChart"]] <- createJaspContainer(position = 1)
+      jaspResults[["CusumChart"]]$dependOn(c("report", "cumulativeSumChart"))
       jaspResults[["CusumChart"]][["plot"]] <- cusumChart[["plot"]]
       if (!is.null(plotNote))
         jaspResults[["CusumChart"]][["plotNote"]] <- createJaspHtml(plotNote)
@@ -174,6 +177,7 @@ timeWeightedChartsInternal <- function(jaspResults, dataset, options) {
     }
     if (options[["exponentiallyWeightedMovingAverageChart"]]) {
       jaspResults[["EWMAPlot"]] <- createJaspContainer(position = 2)
+      jaspResults[["EWMAPlot"]]$dependOn(c("report", "exponentiallyWeightedMovingAverageChart"))
       jaspResults[["EWMAPlot"]][["plot"]] <- ewmaPlot[["plot"]]
       if (!is.null(plotNote))
         jaspResults[["EWMAPlot"]][["plotNote"]] <- createJaspHtml(plotNote)
