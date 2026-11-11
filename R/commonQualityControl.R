@@ -147,6 +147,12 @@
   return(indices)
 }
 
+# a chart that failed with a data error is shown on a report as its title and error message, so the other report elements remain
+.qcReportErrorPanel <- function(chartTitle, errorMessage) {
+  text <- c(chartTitle, strwrap(errorMessage, width = 60))
+  return(.ggplotWithText(text = text, maxRows = max(8, length(text))))
+}
+
 .ggplotWithText <- function(text, maxRows = 5) {
   nText <- length(text)
   annotation <- data.frame(x = rep(0, nText), y = (maxRows:1)[1:nText], label = text)
@@ -565,6 +571,34 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(list(ranges = ranges, n = n))
 }
 
+# Sigma from the average moving range of length k. The observations keep their order and missing values, so a moving
+# range that contains a missing value is skipped (not bridged). Stops with a "qcDataError" if no moving range is complete
+# (fewer than k observations, or every window of k consecutive observations has a missing value).
+.movingRangeSigma <- function(x, k, stage = NULL) {
+  x <- unlist(x, use.names = FALSE)
+  windowEnds <- if (length(x) >= k) seq.int(k, length(x)) else integer(0)
+  mrMatrix   <- matrix(x[outer(windowEnds, seq_len(k) - 1L, "-")], ncol = k) # row i: x[end_i], x[end_i - 1], ...
+
+  if (!any(stats::complete.cases(mrMatrix)))
+    .qcDataError(.movingRangeErrorMessage(k = k, stage = stage))
+
+  meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
+  d2              <- KnownControlStats.RS(k)$constants[1]
+  return(list(matrix = mrMatrix, meanMovingRange = meanMovingRange, sigma = meanMovingRange / d2))
+}
+
+.movingRangeErrorMessage <- function(k, stage = NULL) {
+  if (is.null(stage))
+    gettextf("Cannot estimate the standard deviation from moving ranges of length %1$s: the data have fewer than %1$s consecutive non-missing observations.", k)
+  else
+    gettextf("Cannot estimate the standard deviation from moving ranges of length %1$s: stage '%2$s' has fewer than %1$s consecutive non-missing observations.", k, stage)
+}
+
+# Error caused by the data (not by the code), for callers that show it on a plot and continue: tryCatch(..., qcDataError = )
+.qcDataError <- function(message) {
+  stop(errorCondition(message, class = "qcDataError", call = NULL))
+}
+
 KnownControlStats.RS <- function(N, sigma = 3) {
 
   # d2 and d3 are unbiasing constants as reported in D. J. Wheeler and D. S. Chambers. (1992). Understanding Statistical Process Control, Second Edition, SPC Press, Inc.
@@ -723,6 +757,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                        phase2tChartDistributionScale   = 3
 ) {
   plotType <- match.arg(plotType)
+  hasStages <- !identical(stages, "")
   if (identical(stages, "")) {
     nStages <- 1
     dataset[["stage"]] <- 1
@@ -752,6 +787,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stageLabel <- if (hasStages) as.character(stage) else NULL # names the stage in data errors
     ###
     ### Calculations for I, MR and MMR chart
     ###
@@ -763,13 +799,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       k <- movingRangeLength
       # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
       dataCurrentStageVector <- unlist(dataCurrentStage)
-      mrMatrix <- matrix(dataCurrentStageVector[seq((k), length(dataCurrentStageVector))])   # remove first k - 1 elements
-      for (j in seq(1, k-1)) {
-        mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStageVector[seq(k-j, length(dataCurrentStageVector)-j)]))
-      }
-      meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
-      d2 <- KnownControlStats.RS(k)$constants[1]
-      sigma <- meanMovingRange/d2
+      movingRanges    <- .movingRangeSigma(dataCurrentStageVector, k, stageLabel)
+      mrMatrix        <- movingRanges[["matrix"]]
+      meanMovingRange <- movingRanges[["meanMovingRange"]]
+      sigma           <- movingRanges[["sigma"]]
       if (plotType == "I") {
         processMean <- mean(dataCurrentStageVector, na.rm = TRUE) # manually calculate mean as package does not remove NAs
         qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sigma, center = processMean, nsigmas = nSigmasControlLimits)
@@ -874,16 +907,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       # sigma for subgroup size = 1 is calculated as the average moving range sd
       if (phase2) {
         sigma <- as.numeric(phase2Sd)
-      } else if (all(n <= 1)) {
-        k <- movingRangeLength
-        dataCurrentStageVector <- unlist(dataCurrentStage)
-        mrMatrix <- matrix(dataCurrentStageVector[seq((k), length(dataCurrentStageVector))])   # remove first k - 1 elements
-        for (j in seq(1, k-1)) {
-          mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStageVector[seq(k-j, length(dataCurrentStageVector)-j)]))
-        }
-        meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
-        d2 <- KnownControlStats.RS(k)$constants[1]
-        sigma <- meanMovingRange/d2
+      } else if (all(n <= 1)) { # n = 0 is a missing observation
+        # Keep one value per subgroup row, even when the observed column varies between rows.
+        sigma <- .movingRangeSigma(rowMeans(dataCurrentStage, na.rm = TRUE), movingRangeLength, stageLabel)[["sigma"]]
         # sigma for subgroup size > 1
       } else {
         sigma <- .sdXbar(dataCurrentStage, type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)
@@ -891,7 +917,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       plotStatisticUpper <- .cusumPoints(dataCurrentStage, sigma, n, cusumTarget, cusumShiftSize, cuType = "upper")
       plotStatisticLower <- .cusumPoints(dataCurrentStage, sigma, n, cusumTarget, cusumShiftSize, cuType = "lower")
       plotStatistic <- c(plotStatisticUpper, plotStatisticLower)
-      UCL <- nSigmasControlLimits*sigma/sqrt(n)
+      UCL <- .carryLimitsOverMissingSubgroups(nSigmasControlLimits*sigma/sqrt(n), n)
       UCL[is.infinite(UCL)] <- 0  # looks better in the plot to display CLs at 0 if calculation fails
       LCL <- -UCL
       center <- 0 # not to be confused with the target, even if target != 0, the center line of the plot should be at 0
@@ -902,16 +928,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else rowSums(!is.na(dataCurrentStage)) # returns the number of non NA values per row
       if (phase2) {
         sigma <- as.numeric(phase2Sd)
-      } else if (all(n == 1)) {
-        k <- movingRangeLength
-        dataCurrentStageVector <- unlist(dataCurrentStage)
-        mrMatrix <- matrix(dataCurrentStageVector[seq((k), length(dataCurrentStageVector))])   # remove first k - 1 elements
-        for (j in seq(1, k-1)) {
-          mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStageVector[seq(k-j, length(dataCurrentStageVector)-j)]))
-        }
-        meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
-        d2 <- KnownControlStats.RS(k)$constants[1]
-        sigma <- meanMovingRange/d2
+      } else if (all(n <= 1)) { # n = 0 is a missing observation, as for the cusum chart
+        sigma <- .movingRangeSigma(rowMeans(dataCurrentStage, na.rm = TRUE), movingRangeLength, stageLabel)[["sigma"]]
         # sigma for subgroup size > 1
       } else {
         sigma <- .sdXbar(dataCurrentStage, type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)
@@ -1304,58 +1322,58 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(plotObject)
 }
 
+# Missing subgroups (rows without observations) in the cusum and ewma recursions: the statistic is carried over the
+# gap (no point is drawn there) and the recursion continues with the next observed subgroup.
 .cusumPoints <- function(data, sigma, n, target, shiftSize, cuType = c("lower", "upper")) {
   cuType <- match.arg(cuType)
+  shift  <- if (cuType == "lower") -shiftSize else shiftSize
 
-  # Initialize vector and first point
-  cuSumPoints <- c()
-  rowMeanInitial <- if (length(data[1,]) == 1) data[1,] else rowMeans(data[1,], na.rm = T)
-  if (cuType == "lower") {
-    initialPoint <- rowMeanInitial - (target - shiftSize*(sigma/sqrt(n[1])))
-    cuSumPoints[1] <-  min(0, initialPoint)
-  } else {
-    initialPoint <- rowMeanInitial - (target + shiftSize*(sigma/sqrt(n[1])))
-    cuSumPoints[1] <-  max(0, initialPoint)
-  }
-
-  # Loop over remaining data
-  for (i in seq(2, nrow(data))) {
-    rowMean_i <- if (length(data[i,]) == 1) data[i,] else rowMeans(data[i,], na.rm = TRUE)
-    if (cuType == "lower") {
-      cuSumPoint <- cuSumPoints[i-1] + rowMean_i - (target - shiftSize*(sigma/sqrt(n[i])))
-      cuSumPoints[i] <-  min(0, cuSumPoint)
-    } else {
-      cuSumPoint <- cuSumPoints[i-1] + rowMean_i - (target + shiftSize*(sigma/sqrt(n[i])))
-      cuSumPoints[i] <-  max(0, cuSumPoint)
-    }
+  rowMeanVector <- rowMeans(data, na.rm = TRUE) # NaN for a missing subgroup
+  cuSumPoints   <- rep(NA_real_, length(rowMeanVector))
+  previousPoint <- 0
+  for (i in seq_along(rowMeanVector)) {
+    if (is.na(rowMeanVector[i]))
+      next
+    cuSumPoint     <- previousPoint + rowMeanVector[i] - (target + shift * sigma / sqrt(n[i]))
+    cuSumPoints[i] <- if (cuType == "lower") min(0, cuSumPoint) else max(0, cuSumPoint)
+    previousPoint  <- cuSumPoints[i]
   }
   return(cuSumPoints)
 }
 
 .ewmaPlotStatistic <- function(data, lambda) {
-  ewmaPoints <- c()
-  initialPoint <- mean(unlist(data), na.rm = TRUE)
-  rowMeanVector <- if (ncol(data) == 1) unlist(data) else rowMeans(data, na.rm = TRUE)
-  for (i in seq(1, nrow(data))) {
-    previousPoint <- if (i == 1) initialPoint else ewmaPoints[i - 1]
-    ewmaPoint <- lambda * rowMeanVector[i] + (1 - lambda) * previousPoint
-    ewmaPoints[i] <- ewmaPoint
+  rowMeanVector <- rowMeans(data, na.rm = TRUE) # NaN for a missing subgroup
+  ewmaPoints    <- rep(NA_real_, length(rowMeanVector))
+  previousPoint <- mean(unlist(data), na.rm = TRUE)
+  for (i in seq_along(rowMeanVector)) {
+    if (is.na(rowMeanVector[i]))
+      next
+    ewmaPoints[i] <- lambda * rowMeanVector[i] + (1 - lambda) * previousPoint
+    previousPoint <- ewmaPoints[i]
   }
   return(ewmaPoints)
 }
 
-.ewmaPointSigmas <- function(n = n, sigma = sigma, lambda = ewmaLambda) {
-  ewmaPointSigmas <- c()
-  initialPoint <- (lambda * sigma) / sqrt(n[1])
-  ewmaPointSigmas[1] <- initialPoint
-  for (i in seq(2, length(n))) {
-    nVector <- n[seq(i-1, 1)]
-    exponentVector <- 2*seq(1, i-1)
-    exponentiallyWeightedVector <- ((1 - lambda)^(exponentVector)) / nVector
-    ewmaPointSigma <- sigma * lambda * sqrt(sum(1/n[i], exponentiallyWeightedVector))
-    ewmaPointSigmas[i] <- ewmaPointSigma
+# sd of the ewma statistic: sigma * lambda * sqrt(sum_k (1 - lambda)^(2k) / n of the k-th previous observed subgroup);
+# a missing subgroup (n = 0) leaves the statistic, and so its sd, unchanged
+.ewmaPointSigmas <- function(n, sigma, lambda) {
+  ewmaPointSigmas  <- rep(NA_real_, length(n))
+  weightedInverseN <- 0
+  for (i in seq_along(n)) {
+    if (n[i] > 0)
+      weightedInverseN <- (1 - lambda)^2 * weightedInverseN + 1 / n[i]
+    if (weightedInverseN > 0)
+      ewmaPointSigmas[i] <- sigma * lambda * sqrt(weightedInverseN)
   }
   return(ewmaPointSigmas)
+}
+
+# a missing subgroup (n = 0) keeps the control limit of the previous subgroup
+.carryLimitsOverMissingSubgroups <- function(limits, n) {
+  for (i in seq_along(limits)[-1])
+    if (n[i] == 0)
+      limits[i] <- limits[i - 1]
+  return(limits)
 }
 
 .gChartStatistics <- function(intervals, phase2Proportion = "") {
