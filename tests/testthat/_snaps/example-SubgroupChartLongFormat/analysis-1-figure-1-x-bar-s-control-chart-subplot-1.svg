@@ -92,7 +92,7 @@
 <text x='329.71' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='42.54px' lengthAdjust='spacingAndGlyphs'>15:05</text>
 <text x='454.01' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='42.54px' lengthAdjust='spacingAndGlyphs'>20:10</text>
 <text x='578.30' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='42.54px' lengthAdjust='spacingAndGlyphs'>01:05</text>
-<text x='391.86' y='572.82' text-anchor='middle' style='font-size: 15.30px; font-family: sans;' textLength='89.31px' lengthAdjust='spacingAndGlyphs'>jaspColumn2</text>
+<text x='391.86' y='572.82' text-anchor='middle' style='font-size: 15.30px; font-family: sans;' textLength='34.00px' lengthAdjust='spacingAndGlyphs'>Time</text>
 <text transform='translate(10.53,271.17) rotate(-90)' text-anchor='middle' style='font-size: 15.30px; font-family: sans;' textLength='111.44px' lengthAdjust='spacingAndGlyphs'>Sample average</text>
 <text x='391.86' y='11.70' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='381.77px' lengthAdjust='spacingAndGlyphs'>analysis-1_figure-1_x-bar-s-control-chart-subplot-1</text>
 </g>
