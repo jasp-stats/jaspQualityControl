@@ -231,20 +231,15 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   pars$Rule4$convention = "minitab"
 
   #Evaluate all rules
-  if (chart == "p") {
-    n = length(data$statistics)
-    warnings <- data.frame(x = rep(1,n), Rule1 = rep(1,n), Rule2 = rep(1,n), Rule3 = rep(1,n))
-    for( i in 1:length(data$statistics)) {
-      warningsRaw <- Rspc::EvaluateRules(x = c(data$statistics[i],0), type = "c", lcl = data$limits[i,1], ucl = data$limits[i,2], cl = data$center, parRules = pars,
-                                         whichRules = c(1:3,5,7:8))[1,]
-      warnings[i,] <- warningsRaw
-    }
-  } else {
-    lcl <- ifelse(is.nan(data$limits[1,1]) || is.na(data$limits[1,1]), NA, data$limits[1,1])
-    ucl <- ifelse(is.nan(data$limits[1,2])  || is.na(data$limits[1,2]), NA, data$limits[1,2])
-    warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = lcl, ucl = ucl, cl = data$center[1], parRules = pars,
-                                    whichRules = c(1:3,5,7:8))
-  }
+  lcl <- ifelse(is.nan(data$limits[1,1]) || is.na(data$limits[1,1]), NA, data$limits[1,1])
+  ucl <- ifelse(is.nan(data$limits[1,2])  || is.na(data$limits[1,2]), NA, data$limits[1,2])
+  warnings <- Rspc::EvaluateRules(x = data$statistics, type = if (chart == "p") "c" else chart, lcl = lcl, ucl = ucl, cl = data$center[1], parRules = pars,
+                                  whichRules = c(1:3,5,7:8))
+
+  # With limits that vary per subgroup (unequal subgroup sizes), test 1 must use each subgroup's own limits.
+  # Tests 2 and 3 depend only on the centre line and the data, so they are evaluated on the whole series.
+  if (nrow(data$limits) > 1 && (length(unique(data$limits[, 1])) > 1 || length(unique(data$limits[, 2])) > 1))
+    warnings[["Rule1"]] <- as.numeric((data$statistics > data$limits[, 2] | data$statistics < data$limits[, 1]) %in% TRUE)
 
   if (allsix) {
     if (length(xLabels) == 0) {
