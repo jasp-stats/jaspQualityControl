@@ -28,6 +28,7 @@
 * DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
 ## Fixed
+* Probability of detection: the confidence band of the detection plot used the one-sided critical value, so a band labelled 95% was a 90% interval. It is now a two-sided interval at the chosen level (computed on the link scale and back-transformed) and therefore wider; the fitted curve and all tables are unchanged.
 * Time weighted charts: singleton subgroups across multiple measurement columns now use moving ranges in row order, preserving entirely missing rows as gaps.
 * Process Capability: missing moving ranges no longer discard the capability tables or the report. A control chart that cannot be drawn is left out with a note below the plot (or the plot shows the error if neither chart can be drawn); on the report, it is replaced by its error. Unavailable within standard deviations remain missing while overall estimates are retained.
 * Time weighted charts, variables charts for individuals: when the std. dev. is estimated from moving ranges and a stage (or the data) has no complete moving range (fewer non-missing observations than the moving range length, or every range interrupted by a missing value), the chart shows an error naming the stage instead of stopping the analysis or drawing NaN limits. In the reports, only the affected chart is replaced by its error.
