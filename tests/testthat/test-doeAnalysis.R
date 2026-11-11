@@ -5434,13 +5434,13 @@ test_that("ANOVA Model and group df follow the fit rank when coding aliases term
 
 options("jaspRoundToPrecision" = NULL) # reset default
 
-## Response optimizer default targets ####
+## Response optimizer bounds and targets ####
 
-.doeTestOptimizerRow <- function(goal, lowerBound, upperBound) {
+.doeTestOptimizerRow <- function(goal, lowerBound = 0, target = 0.5, upperBound = 1) {
   data.frame(
     variable                    = "y",
     responseOptimizerGoal       = goal,
-    responseOptimizerTarget     = "",
+    responseOptimizerTarget     = target,
     responseOptimizerLowerBound = lowerBound,
     responseOptimizerUpperBound = upperBound,
     responseOptimizerWeight     = 1,
@@ -5448,28 +5448,104 @@ options("jaspRoundToPrecision" = NULL) # reset default
   )
 }
 
-.doeTestDesirability <- function(dataset, values, roOptionsDf) {
-  vapply(values, function(v) jaspQualityControl:::.calculateDesirability(dataset, c(y = v), roOptionsDf), numeric(1))
+.doeTestResolve <- function(dataset, roOptionsDf, manualBounds, manualTarget) {
+  jaspQualityControl:::.doeResolveOptimizerSettings(roOptionsDf, dataset, manualBounds, manualTarget)
+}
+
+.doeTestDesirability <- function(values, roOptionsDf) {
+  vapply(values, function(v) jaspQualityControl:::.calculateDesirability(c(y = v), roOptionsDf), numeric(1))
 }
 
 test_that("Optimizer target defaults to observed max/min, also with manual bounds", {
-  # bounds not manual (blank): linear between observed min and max
-  expect_equal(
-    .doeTestDesirability(data.frame(y = c(0, 10)), c(3, 5, 9), .doeTestOptimizerRow("maximize", "", "")),
-    c(0.3, 0.5, 0.9)
-  )
+  # nothing manual: linear between observed min and max
+  ro <- .doeTestResolve(data.frame(y = c(0, 10)), .doeTestOptimizerRow("maximize"), FALSE, FALSE)
+  expect_equal(.doeTestDesirability(c(3, 5, 9), ro), c(0.3, 0.5, 0.9))
 
   # maximize, manual lower bound: the disabled Upper field (default 1) must not become the target
-  expect_equal(
-    .doeTestDesirability(data.frame(y = c(0, 10)), c(1, 3, 5, 9, 10), .doeTestOptimizerRow("maximize", 2, 1)),
-    c(0, 0.125, 0.375, 0.875, 1)
-  )
+  ro <- .doeTestResolve(data.frame(y = c(0, 10)), .doeTestOptimizerRow("maximize", lowerBound = 2), TRUE, FALSE)
+  expect_equal(.doeTestDesirability(c(1, 3, 5, 9, 10), ro), c(0, 0.125, 0.375, 0.875, 1))
 
   # minimize, manual upper bound: the disabled Lower field (default 0) must not become the target
-  expect_equal(
-    .doeTestDesirability(data.frame(y = c(3, 13)), c(3, 5, 8, 12), .doeTestOptimizerRow("minimize", 0, 12)),
-    c(1, 7 / 9, 4 / 9, 0)
+  ro <- .doeTestResolve(data.frame(y = c(3, 13)), .doeTestOptimizerRow("minimize", upperBound = 12), TRUE, FALSE)
+  expect_equal(.doeTestDesirability(c(3, 5, 8, 12), ro), c(1, 7 / 9, 4 / 9, 0))
+})
+
+test_that("Optimizer desirability is defined when a bound equals the target", {
+  y <- data.frame(y = c(0, 10))
+  # maximize, lower bound = observed max (= default target): step at 10, no 0/0
+  ro <- .doeTestResolve(y, .doeTestOptimizerRow("maximize", lowerBound = 10), TRUE, FALSE)
+  expect_equal(.doeTestDesirability(c(9, 10, 11), ro), c(0, 1, 1))
+  # minimize, upper bound = target
+  ro <- .doeTestResolve(y, .doeTestOptimizerRow("minimize", target = 4, upperBound = 4), TRUE, TRUE)
+  expect_equal(.doeTestDesirability(c(3, 4, 5), ro), c(1, 1, 0))
+  # target goal, one-sided: target = lower bound
+  ro <- .doeTestResolve(y, .doeTestOptimizerRow("target", lowerBound = 0, target = 0, upperBound = 5), TRUE, FALSE)
+  expect_equal(.doeTestDesirability(c(0, 2, 5, 6), ro), c(1, 0.6, 0, 0))
+  # constant response, nothing manual
+  ro <- .doeTestResolve(data.frame(y = c(4, 4)), .doeTestOptimizerRow("maximize"), FALSE, FALSE)
+  expect_equal(.doeTestDesirability(c(3, 4, 5), ro), c(0, 1, 1))
+})
+
+test_that("Optimizer settings without a defined desirability give errors, a target outside the data range a footnote", {
+  y <- data.frame(y = c(0, 10))
+  errors <- function(ro, manualBounds) jaspQualityControl:::.doeOptimizerSettingsErrors(ro, manualBounds)
+  notes  <- function(ro, manualBounds) jaspQualityControl:::.doeOptimizerTargetOutsideRangeNotes(ro, manualBounds)
+
+  # maximize, manual lower bound above the observed max (default target)
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("maximize", lowerBound = 12), TRUE, FALSE), TRUE), 1)
+  # minimize, manual target above the observed max (bounds from data)
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("minimize", target = 11), FALSE, TRUE), FALSE), 1)
+  # target goal: lower above upper, and target outside manual bounds
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("target", lowerBound = 6, target = 7, upperBound = 5), TRUE, FALSE), TRUE), 1)
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("target", lowerBound = 0, target = 7, upperBound = 5), TRUE, FALSE), TRUE), 1)
+  # equality is allowed
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("maximize", lowerBound = 10), TRUE, FALSE), TRUE), 0)
+
+  # target goal outside bounds from the data: no error, a footnote, and the optimizer moves towards the target
+  ro <- .doeTestResolve(y, .doeTestOptimizerRow("target", target = 15), FALSE, FALSE)
+  expect_length(errors(ro, FALSE), 0)
+  expect_length(notes(ro, FALSE), 1)
+  expect_equal(.doeTestDesirability(c(5, 10, 11), ro), c(1 / 3, 2 / 3, 0))
+  expect_length(notes(.doeTestResolve(y, .doeTestOptimizerRow("target", target = 5), FALSE, FALSE), FALSE), 0)
+})
+
+test_that("Response optimizer shows an error for a lower bound above the target", {
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial <- c("Strength")
+  options$fixedFactorsFactorial <- c("Material")
+  options$continuousFactorsFactorial <- c("InjPress", "InjTemp")
+  options$codeFactors <- FALSE
+  options$codeFactorsMethod <- "automatic"
+  options$highestOrder <- FALSE
+  options$modelTerms <- list(
+    list(components = "Material"),
+    list(components = "InjTemp"),
+    list(components = "InjPress")
   )
+  options$responsesResponseOptimizer <- list(
+    list(
+      responseOptimizerGoal       = "maximize",
+      responseOptimizerImportance = 1.0,
+      responseOptimizerLowerBound = 100,
+      responseOptimizerTarget     = 0.5,
+      responseOptimizerUpperBound = 1.0,
+      responseOptimizerWeight     = 1.0,
+      variable                    = "Strength"
+    )
+  )
+  options$responseOptimizerManualBounds <- TRUE
+  options$responseOptimizerManualTarget <- FALSE
+  options$optimizationSolutionTable <- FALSE
+  options$optimizationPlot <- TRUE
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+
+  expect_identical(results[["status"]], "complete")
+  settings <- results[["results"]][["tableRoSettings"]]
+  expect_identical(settings[["status"]], "error")
+  expect_match(settings[["error"]][["errorMessage"]], "lower bound")
+  expect_null(results[["results"]][["tableRoSolution"]])
+  expect_null(results[["results"]][["plotRo"]])
 })
 
 ## Contour plot ####
