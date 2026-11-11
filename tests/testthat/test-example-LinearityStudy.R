@@ -10,10 +10,9 @@ test_that("msaGaugeLinearity results match", {
   opts <- jaspTools::analysisOptions(jaspFile)
   dataset <- jaspTools::extractDatasetFromJASPFile(jaspFile)
 
-  # Encode and run analysis
-  encoded <- jaspTools:::encodeOptionsAndDataset(opts, dataset)
+  # Run analysis
   set.seed(1)
-  results <- jaspTools::runAnalysis("msaGaugeLinearity", encoded$dataset, encoded$options, encodedDataset = TRUE)
+  results <- jaspTools::runAnalysis("msaGaugeLinearity", dataset, opts)
 
   plotName <- results[["results"]][["LB"]][["collection"]][["LB_plotBias"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]

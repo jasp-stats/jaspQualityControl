@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #' @export
-probabilityOfDetection <- function(jaspResults, dataset, options) {
+probabilityOfDetectionInternal <- function(jaspResults, dataset, options) {
 
   ready <- .podReady(options)
 
@@ -141,7 +141,8 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
 
   } else {
 
-    mainTable[["parameters"]] <- c(gettext("Intercept"), unlist(options[["covariate"]]))
+    covariateLabel <- .podGetCovariateLabel(options[["covariate"]], options[["logTransformedCovariate"]])
+    mainTable[["parameters"]] <- c(gettext("Intercept"), covariateLabel)
     mainTable[["estimates"]]  <- coef(model)
 
     .podMainTableFootnotes(mainTable, model)
@@ -199,7 +200,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
     formula          = stats::formula(model),
     dataset          = dataset,
     model            = model,
-    xName            = if (options[["logTransformedCovariate"]]) gettextf("log(%s)", options[["covariate"]]) else options[["covariate"]],
+    xName            = .podGetCovariateLabel(options[["covariate"]], options[["logTransformedCovariate"]]),
     xBreaks          = options[["xAxisTicksType"]],
     addJitter        = options[["detectionPlotDataDisplayTypePointsJitter"]],
     geoms            = if (!options[["detectionPlotDataDisplay"]]) "none" else options[["detectionPlotDataDisplayType"]],
@@ -582,13 +583,24 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
     xvar <- gettext("covariate")
     levelName <- "..."
   }
+  xLabel <- .podGetCovariateLabel(xvar, options[["logTransformedCovariate"]])
   yLabel <- .podGetPlotYaxisLabel(levelName)
 
   if (length(yAsymptotes) > 0L)
-    asymptoteContainer[["yAsymptotesTable"]] <- .podAsymptoteTableMeta(gettext("Horizontal asymptotes"), xvar, yLabel, position = 1, dependencies = "horizontalAsymptotes")
+    asymptoteContainer[["yAsymptotesTable"]] <- .podAsymptoteTableMeta(
+      gettext("Horizontal asymptotes"), xLabel, yLabel, position = 1, dependencies = "horizontalAsymptotes")
 
   if (length(xAsymptotes) > 0L)
-    asymptoteContainer[["xAsymptotesTable"]] <- .podAsymptoteTableMeta(gettext("Vertical asymptotes"), xvar, yLabel, position = 2, dependencies = "verticalAsymptotes")
+    asymptoteContainer[["xAsymptotesTable"]] <- .podAsymptoteTableMeta(
+      gettext("Vertical asymptotes"), xLabel, yLabel, position = 2, dependencies = "verticalAsymptotes")
+
+  if (options[["logTransformedCovariate"]]) {
+    for (tableName in c("yAsymptotesTable", "xAsymptotesTable")) {
+      if (!is.null(asymptoteContainer[[tableName]]))
+        asymptoteContainer[[tableName]]$addFootnote(gettext(
+          "X-coordinates are on the natural-log scale, including entered values for vertical asymptotes."))
+    }
+  }
 
   container[["asymptoteContainer"]] <- asymptoteContainer
   if (!ready)
@@ -636,4 +648,8 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
 
 .podGetPlotYaxisLabel <- function(levelName) {
   gettextf("Probability of detecting %s", levelName)
+}
+
+.podGetCovariateLabel <- function(variable, logTransformed) {
+  if (logTransformed) gettextf("log(%s)", variable) else variable
 }

@@ -227,7 +227,7 @@ Form
 				{
 					name: 									"cumulativeSumChartAverageMovingRangeLength"
 					label:									qsTr("Moving range length")
-					visible:								exponentiallyWeightedMovingAverageChartSdSource.currentValue == "data" & cumulativeSumChartSdMethod.currentValue == "averageMovingRange"
+					visible:								cumulativeSumChartSdSource.currentValue == "data" & cumulativeSumChartSdMethod.currentValue == "averageMovingRange"
 					min: 									2
 					defaultValue:							2
 				}
@@ -274,7 +274,7 @@ Form
 					visible:								exponentiallyWeightedMovingAverageChartSdSource.currentValue == "data"
 					label:									qsTr("Std. dev. estimation method")
 					id: 									exponentiallyWeightedMovingAverageChartSdMethod
-					values: subgroupSizeType.value == "individual" ?
+					values: (subgroupSizeType.value == "individual" & dataFormat.currentValue == "longFormat") ?
 					[
 						{ label: qsTr("X-mR"), value: "averageMovingRange"}
 					] :

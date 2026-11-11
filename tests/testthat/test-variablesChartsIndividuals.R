@@ -1,5 +1,4 @@
 context("[Quality Control] Variables Charts for Individuals")
-.numDecimals <- 2
 set.seed(1)
 
 # Basic tests ####
@@ -106,16 +105,16 @@ test_that("4.2 Basic test to create x-mR control chart with stages - I table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableI"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Zero", "Point 3", "Point 11", "Point 4", "", "Point 4", "Point 12",
-                                      "", "One", "Point 11", "Point 7", "Point 12", "", "Point 12",
-                                      "Point 8", "", "", "", "Point 9", "", "", "", "Point 10", ""
+                                      "", "One", "Point 23", "Point 19", "Point 24", "", "Point 24",
+                                      "Point 20", "", "", "", "Point 21", "", "", "", "Point 22", ""
                                  ))
 })
 
 test_that("4.3 Basic test to create x-mR control chart with stages - MR table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Zero", "Point 3", "Point 12", "", "Point 5", "", "One", "Point 11",
-                                      "Point 8", "", "", "Point 9", "", "", "Point 10"))
+                                 list("Zero", "Point 3", "Point 12", "", "Point 5", "", "One", "Point 23",
+                                      "Point 20", "", "", "Point 21", "", "", "Point 22"))
 })
 
 
@@ -169,8 +168,8 @@ test_that("6.1 Test X-mR control chart with stages and large moving range length
 test_that("6.2 Test X-mR control chart with stages and large moving range length - I table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableI"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Zero", "Point 11", "Point 4", "", "Point 12", "", "One", "Point 7",
-                                      "Point 12", "", "Point 8", "", "", "Point 9", "", "", "Point 10",
+                                 list("Zero", "Point 11", "Point 4", "", "Point 12", "", "One", "Point 19",
+                                      "Point 24", "", "Point 20", "", "", "Point 21", "", "", "Point 22",
                                       ""))
 })
 
@@ -178,6 +177,42 @@ test_that("6.3 Test X-mR control chart with stages and large moving range length
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("No test violations occurred."))
+})
+
+## X-mR chart with stages: test results use chart positions and timestamps (jasp-issues#4672) ####
+# The second stage comes first alphabetically and has one out-of-control point (row 18)
+stagedDataset <- data.frame(
+  Viscosity = c(10, 11, 10, 11, 10, 11, 10, 11, 10, 11,
+                20, 21, 20, 21, 20, 21, 20, 40, 20, 21),
+  Stage     = rep(c("Before", "After"), each = 10),
+  Day       = paste("Day", 1:20)
+)
+options <- analysisOptions("variablesChartsIndividuals")
+options$measurement <- "Viscosity"
+options$stage <- "Stage"
+options$axisLabels <- "Day"
+options$xmrChartMovingRangeLength <- 2
+options$testSet <- "custom"
+options$rule1 <- TRUE
+options$rule2 <- FALSE
+options$rule3 <- FALSE
+options$rule4 <- FALSE
+options$rule5 <- FALSE
+options$rule6 <- FALSE
+options$rule7 <- FALSE
+options$rule8 <- FALSE
+results <- runAnalysis("variablesChartsIndividuals", stagedDataset, options)
+
+test_that("6.4 X-mR chart with stages reports chart positions in later stages - I table", {
+  table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableI"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("After", "Point 18 (Day 18)"))
+})
+
+test_that("6.5 X-mR chart with stages reports chart positions in later stages - MR table", {
+  table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("After", "Point 18 (Day 18)", "", "Point 19 (Day 19)"))
 })
 
 ## Autocorrelation plot with different number of lags ####
@@ -306,26 +341,28 @@ test_that("11.1 X-mR control chart with missing values in axis labels - plot", {
 test_that("11.2 X-mR control chart with missing values in axis labels - I table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableI"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 3 (Mar Year 1)", "Point 11 (Nov Year 1)", "Point 4 (Apr Year 1)",
-                                      "Point 4 (Apr Year 1)", "Point 12 (Dec Year 1)", "Point 24 (Dec Year 2)",
-                                      "Point 23 (Nov Year 2)", "Point 13 ()", "", "Point 24 (Dec Year 2)",
-                                      "Point 14 (Feb Year 2)", "", "", "Point 15 (Mar Year 2)", "",
-                                      "", "Point 16 (Apr Year 2)", "", "", "Point 17 (May Year 2)",
-                                      "", "", "Point 18 (Jun Year 2)", "", "", "Point 19 (Jul Year 2)",
-                                      "", "", "Point 20 (Aug Year 2)", "", "", "Point 21 (Sep Year 2)",
-                                      "", "", "Point 22 ()", "", "", "Point 31 (Jul Year 3)", "",
-                                      "", "Point 32 ()", "", "", "Point 33 (Sep Year 3)", "", "",
-                                      "Point 34 (Oct Year 3)", "", "", "Point 35 (Nov Year 3)", "",
-                                      "", "Point 36 (Dec Year 3)", ""))
+                                 list("Point 3 (Mar Year 1)", "Point 11 (Nov Year 1)",
+                                      "Point 4 (Apr Year 1)", "Point 4 (Apr Year 1)",
+                                      "Point 12 (Dec Year 1)", "Point 24 (Dec Year 2)",
+                                      "Point 23 (Nov Year 2)", "Point 13 ()", "",
+                                      "Point 24 (Dec Year 2)", "Point 14 (Feb Year 2)", "", "",
+                                      "Point 15 (Mar Year 2)", "", "", "Point 16 (Apr Year 2)", "", "",
+                                      "Point 17 (May Year 2)", "", "", "Point 18 (Jun Year 2)", "", "",
+                                      "Point 19 (Jul Year 2)", "", "", "Point 20 (Aug Year 2)", "", "",
+                                      "Point 21 (Sep Year 2)", "", "", "Point 22 ()", "", "",
+                                      "Point 31 (Jul Year 3)", "", "", "Point 32 ()", "", "",
+                                      "Point 33 (Sep Year 3)", "", "", "Point 34 (Oct Year 3)", "", "",
+                                      "Point 35 (Nov Year 3)", "", "", "Point 36 (Dec Year 3)", ""))
 })
 
 test_that("11.3 X-mR control chart with missing values in axis labels - MR table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 3 (Mar Year 1)", "Point 12 (Dec Year 1)", "Point 5 (May Year 1)",
-                                      "Point 13 ()", "Point 23 (Nov Year 2)", "Point 14 (Feb Year 2)",
-                                      "Point 25 (Jan Year 3)", "Point 15 (Mar Year 2)", "", "Point 32 ()",
-                                      "", "Point 33 (Sep Year 3)", "", "Point 34 (Oct Year 3)", "",
+                                 list("Point 3 (Mar Year 1)", "Point 12 (Dec Year 1)",
+                                      "Point 5 (May Year 1)", "Point 13 ()", "Point 23 (Nov Year 2)",
+                                      "Point 14 (Feb Year 2)", "Point 25 (Jan Year 3)",
+                                      "Point 15 (Mar Year 2)", "", "Point 32 ()", "",
+                                      "Point 33 (Sep Year 3)", "", "Point 34 (Oct Year 3)", "",
                                       "Point 35 (Nov Year 3)", "", "Point 36 (Dec Year 3)"))
 })
 
@@ -388,4 +425,47 @@ test_that("12.3 Test of all rules for x-mr chart - MR Table", {
                                       "", "Point 29", "", "Point 30", "", "Point 31", "", "Point 32",
                                       "", "Point 33", "", "Point 34", "", "Point 35", "", "Point 36",
                                       "", "Point 44"))
+})
+
+# Std. dev. from moving ranges without a complete moving range ####
+.imrOptions <- function(stage = "", movingRangeLength = 3) {
+  options <- analysisOptions("variablesChartsIndividuals")
+  options$measurement               <- "Measurement"
+  options$stage                     <- stage
+  options$xmrChartMovingRangeLength <- movingRangeLength
+  options
+}
+
+results <- runAnalysis("variablesChartsIndividuals", data.frame(Measurement = c(1.2, NA, 2.3, NA)), .imrOptions(movingRangeLength = 2))
+
+test_that("MR1 X-mR chart without stages errors when every moving range contains a missing value", {
+  plot <- results[["results"]][["Ichart"]][["collection"]][["Ichart_plot"]]
+  expect_identical(results[["status"]], "complete")
+  expect_identical(plot[["status"]], "error")
+  expect_match(plot[["error"]][["errorMessage"]], "Cannot estimate the standard deviation from moving ranges of length 2: the data have fewer than 2 consecutive non-missing observations.", fixed = TRUE)
+})
+
+data <- data.frame(Measurement = c(1.2, 2.3, 1.8, 2.9, 2.1, 1.7, NA, 2.4, NA), Stage = rep(c("A", "B"), c(6, 3)))
+results <- runAnalysis("variablesChartsIndividuals", data, .imrOptions(stage = "Stage"))
+
+test_that("MR2 X-mR chart errors for a stage whose moving ranges all contain a missing value", {
+  plot <- results[["results"]][["Ichart"]][["collection"]][["Ichart_plot"]]
+  expect_identical(results[["status"]], "complete")
+  expect_identical(plot[["status"]], "error")
+  expect_match(plot[["error"]][["errorMessage"]], "stage 'B' has fewer than 3 consecutive non-missing observations.", fixed = TRUE)
+})
+
+options <- .imrOptions(stage = "Stage")
+options$report                     <- TRUE
+options$reportAutocorrelationChart <- FALSE
+results <- runAnalysis("variablesChartsIndividuals", data, options)
+
+test_that("MR3 Report shows the X-mR chart error and keeps the meta data", {
+  report <- results[["results"]][["report"]]
+  expect_identical(results[["status"]], "complete")
+  expect_identical(report[["status"]], "complete")
+  subplots <- Filter(ggplot2::is_ggplot, results[["state"]][["figures"]][[report[["data"]]]][["obj"]]$subplots)
+  labels   <- unlist(lapply(subplots, function(p) lapply(seq_along(p$layers), function(i) as.character(ggplot2::layer_data(p, i)[["label"]]))))
+  expect_true(any(grepl("stage 'B' has fewer than 3 consecutive", labels, fixed = TRUE)))
+  expect_true(any(grepl("Chart name:", labels, fixed = TRUE)))
 })

@@ -797,11 +797,11 @@ msgstr "A través de filas"
 
 msgctxt "msaAttribute|"
 msgid "Cohen's kappa (interrater kappa)"
-msgstr "Kappa de Cohen (kappa entre cualificadores)"
+msgstr "Kappa de Cohen (kappa entre avaliadores)"
 
 msgctxt "msaAttribute|"
 msgid "Fleiss' kappa (multirater kappa)"
-msgstr "Kappa de Fleiss (kappa de multicualificadores)"
+msgstr "Kappa de Fleiss (kappa de múltiples avaliadores)"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Process variation"
@@ -1517,10 +1517,6 @@ msgctxt "doeFactorial|"
 msgid "Replications"
 msgstr "Réplicas"
 
-msgctxt "doeFactorial|"
-msgid "Repetitions"
-msgstr "Repeticións"
-
 msgctxt "doeFull|"
 msgid "Number of replications"
 msgstr "Número de réplicas"
@@ -1636,10 +1632,6 @@ msgstr "Variables da representación"
 msgctxt "doeAnalysis|"
 msgid "Contour/surface plot options"
 msgstr "Opcións da gráfica de superficie/contorno"
-
-msgctxt "doeAnalysis|"
-msgid "Show legend next to graph"
-msgstr "Amosar a lenda a carón da gráfica"
 
 msgctxt "doeAnalysis|"
 msgid "Divide response surface into N parts"
@@ -2240,7 +2232,7 @@ msgstr "Tipo de deseño"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Central composite design"
-msgstr "Deseño composto central"
+msgstr "Deseño combinado central"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Box-Behnken design"
@@ -2319,10 +2311,6 @@ msgid "Analysis options"
 msgstr "Opcións de análise"
 
 msgctxt "msaGaugeRR|"
-msgid "r&R ANOVA table"
-msgstr "Táboa ANOVA de r&R"
-
-msgctxt "msaGaugeRR|"
 msgid "Study var. multiplier type"
 msgstr "Tipo de multiplicador de var. do estudo"
 
@@ -2333,10 +2321,6 @@ msgstr "Valor do multiplicador de var. do estudo"
 msgctxt "msaGaugeRR|"
 msgid "Range charts by operator"
 msgstr "Gráficas de rango por operador"
-
-msgctxt "msaGaugeRR|"
-msgid "Average chart bys operator"
-msgstr "Gráficas medias por operador"
 
 msgctxt "msaGaugeRR|"
 msgid "Report options"
@@ -2369,10 +2353,6 @@ msgstr "Valor do Desv. padrón"
 msgctxt "msaGaugeRRnonrep|"
 msgid "Tolerance width"
 msgstr "Ancho de tolerancia"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "r&R ANOVA table"
-msgstr "Táboa ANOVA de r&R"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study var. multiplier type"
@@ -3519,3 +3499,45 @@ msgstr ""
 msgctxt "processCapabilityStudies|"
 msgid "Z (ST) / Z (LT)"
 msgstr "Z (ST) / Z (LT)"
+
+msgctxt "processCapabilityStudies|"
+msgid "Axis modifications"
+msgstr "Modificacións dos eixes"
+
+msgctxt "processCapabilityStudies|"
+msgid "Thin x-axis labels"
+msgstr "Etiquetas delgadas dos eixes X"
+
+msgctxt "processCapabilityStudies|"
+msgid "Compress x-axis"
+msgstr "Compactar os eixes X"
+
+msgctxt "msaGaugeRR|"
+msgid "r&R Analysis of Variance table"
+msgstr "Táboa da análise r&R de varianza"
+
+msgctxt "msaGaugeRR|"
+msgid "Average chart by operator"
+msgstr "Gráfica media por operador"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "r&R Analysis of Variance table"
+msgstr "Táboa da análise r&R de varianza"
+
+msgctxt "processCapabilityStudies|"
+msgid "Z.bench (ST) / Z.bench (LT)"
+msgstr "Z.bench (ST) / Z.bench (LT)"
+
+msgctxt "processCapabilityStudies|"
+msgid ""
+"Sigma level based on total defect probability across both specification "
+"limits, as opposed to Z (ST)/Z (LT) which equal 3·Cpk/3·Ppk (distance to the "
+"nearest bound)."
+msgstr ""
+"Nivel sigma baseado na probabilidade total de defectos a través de ambos "
+"límites de especificación, en oposición a Z(ST)/Z(LT) que equivale a 3·Cpk/"
+"3·Ppk (distancia ao límite máis próximo)."
+
+msgctxt "processCapabilityStudies|"
+msgid "Pooled"
+msgstr "Combinada"

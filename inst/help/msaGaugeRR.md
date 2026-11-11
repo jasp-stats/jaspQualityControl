@@ -17,13 +17,13 @@ Data can be in the form of all observations in one column ("Single column") or a
 
 ### Gauge r&R Method
 The method used in the analysis. 
-- ANOVA method: analysis is based on analysis of variance (ANOVA).
+- Analysis of Variance method: analysis is based on analysis of variance (ANOVA).
 
-### Options (ANOVA method)
+### Options (Analysis of Variance method)
 #### Analysis options 
 - Std.Deviation reference: either a historically known standard deviation (Historical process std.Deviation) or estimated from the data (Study std.Deviation).
 - Tolerance: include a value for tolerance. 
-- r&R table ANOVA method: options for the ANOVA table. 
+- r&R table Analysis of Variance method: options for the Analysis of Variance table. 
  - Alpha interaction removal: value for alpha level. 
  - Study Var. multiplier type: multiplier based on either Std.Deviation or Percent. 
  - Study Var. multiplier value: value for the multiplier. 
@@ -44,14 +44,13 @@ The method used in the analysis.
 
 ## Output 
 -------
-- ANOVA Table: Two-way anova tables with and without interactions for the input variables, repeatability, reproducibility, and total Gauge r&R.  
+- Analysis of Variance table: Two-way analysis of variance tables with and without interactions for the input variables, repeatability, reproducibility, and total Gauge r&R.  
 - Gauge r&R Variance Components: variance and contribution in percentage of the input variables, repeatability, reproducibility, and total Gauge r&R.  
 - Gauge Evaluation: the standard deviations, study variations, and percent of study variation and tolerance for input variables, repeatability, reproducibility, and total Gauge r&R.  
 
 ## References 
 -------
 - Duncan, A.J. (1986), Quality control and industrial statistics, Richard D. Irwin, Inc., and Automotive Industry Action Group (July 2005), Statistical process control (SPC) – Reference manual, AIAG.
-- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009).*Statistical process control handbook*. SKF group. 
 
 ## R Packages
 -------

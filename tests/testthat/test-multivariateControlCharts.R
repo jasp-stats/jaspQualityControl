@@ -1,5 +1,4 @@
 context("[Quality Control] Multivariate Control Charts")
-.numDecimals <- 2
 set.seed(1)
 
 # Montgomery Example 1: 2 variables, 20 observations ####
@@ -197,7 +196,8 @@ test_that("6.1 Optional timestamp - x axis title uses timestamp", {
   plotName <- results6[["results"]][["tsqChart"]][["data"]]
   testPlot <- results6[["state"]][["figures"]][[plotName]][["obj"]]
   xScale <- testPlot$scales$get_scales("x")
-  expect_equal(xScale$name, "Timestamp")
+  # the plot holds the encoded column name, JASP decodes it when it draws the plot
+  expect_equal(jaspBase::decodeColNames(xScale$name), "Timestamp")
 })
 
 test_that("6.2 Optional timestamp - T² values table includes timestamp column", {

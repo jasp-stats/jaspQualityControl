@@ -16,7 +16,7 @@
 #
 
 #' @export
-msaAttribute <- function(jaspResults, dataset, options, ...) {
+msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
   wideFormat <- options[["dataFormat"]] == "wideFormat"
   if (wideFormat){
@@ -48,25 +48,37 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     dataset         <- .readDataSetToEnd(c(numeric.vars, factor.vars))
   }
 
+  # The results lists only accept nominal variables, so numeric ratings arrive as factors:
+  # give them their numbers back, which Kendall's tau and the rating correlations need.
+  for (measurement in numeric.vars)
+    dataset[[measurement]] <- .msaAttributeAsNumberIfPossible(dataset[[measurement]])
+
   # Check for missing values and infinity
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
              all.target = c(measurements, standards, operators, parts),
              exitAnalysisIfErrors = TRUE)
 
+  if (ready)
+    .msaAttributeCheckDesign(dataset, operators, parts, standards, wideFormat)
+
   if (!wideFormat && ready) {
-    dataset <- dataset[order(dataset[[operators]]),]
-    dataset <- dataset[order(dataset[[parts]]),]
-    nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
-    index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
-    dataset <- cbind(dataset, data.frame(index = index))
+    # Trial number of each rating within its appraiser and part, in data order.
+    trial   <- stats::ave(seq_len(nrow(dataset)), .msaAttributeKey(dataset[[operators]]), .msaAttributeKey(dataset[[parts]]),
+                          FUN = seq_along)
+    dataset <- cbind(dataset, data.frame(index = paste0("V", trial)))
     dataset <- tidyr::spread(dataset, index, measurements)
-    measurements <- unique(index)
+    measurements <- paste0("V", seq_len(max(trial)))
 
     if (standards != "")
       dataset <- dataset[,c(operators, parts, measurements,standards)]
     else
       dataset <- dataset[,c(operators, parts, measurements)]
   }
+
+  # Agreement between appraisers, Fleiss' kappa between appraisers, Kendall's tau and the
+  # rating correlations compare the appraisers' rows position by position.
+  if (ready)
+    dataset <- .msaAttributeOrderByAppraiserAndPart(dataset, operators, parts)
 
 
   # Error handling
@@ -206,6 +218,16 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   return(table)
 }
 
+# irr::kappam.fleiss (>= 0.85) drops a single-column data.frame to a vector in its
+# internal NA-omit step, so ncol() is NULL and it errors on `1:nr`. Degenerate
+# single-column input has no within-agreement; return NaN as older irr versions did.
+.fleissKappaValue <- function(ratings) {
+  value <- try(irr::kappam.fleiss(ratings)$value, silent = TRUE)
+  if (jaspBase::isTryError(value))
+    return(NaN)
+  return(value)
+}
+
 .fleissKappa <- function(dataset, measurements, parts, operators, standards, options) {
 
   table <- createJaspTable(title = gettext("Fleiss' kappa"))
@@ -230,8 +252,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     onlyAppraiser <- subset(dataset, dataset[operators] == appraiser)
 
     # Within
-    fkappa <- irr::kappam.fleiss(onlyAppraiser[measurements])
-    kappaWithinVector[i] <- fkappa$value
+    kappaWithinVector[i] <- .fleissKappaValue(onlyAppraiser[measurements])
 
     # Versus Standard
     if (standards != "") {
@@ -239,7 +260,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       count = 0
       for (j in measurements){
         count = count + 1
-        Kappa0[count] <- irr::kappam.fleiss(cbind(onlyAppraiser[j], onlyAppraiser[[standards]]))$value
+        Kappa0[count] <- .fleissKappaValue(cbind(onlyAppraiser[j], onlyAppraiser[[standards]]))
       }
       kappaStandardVector[i] <- mean(Kappa0)
     }
@@ -248,7 +269,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     listBetween[[i]] <- onlyAppraiser[measurements]
   }
 
-  kappaBetweenVector <- c(rep(NA,length(unique(dataset[[operators]]))), irr::kappam.fleiss(as.data.frame(listBetween))$value)
+  kappaBetweenVector <- c(rep(NA,length(unique(dataset[[operators]]))), .fleissKappaValue(as.data.frame(listBetween)))
   appraiserVector <- c(appraiserVector, 'All')
 
   if (standards != "") {
@@ -579,6 +600,37 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   return(AAA)
 }
 
+# One integer per distinct ID, in sorted order. Checks, trial numbering and sorting all use this key, so
+# they agree on which rows hold the same part (no locale collation ties, no 15-digit string rounding).
+.msaAttributeKey <- function(x) {
+  return(match(x, sort(unique(x))))
+}
+
+# Cross-appraiser agreement compares the appraisers' ratings part by part, so every appraiser must rate
+# every part equally often (wide format: in one row), and each part needs one reference value. Checked on
+# the raw data, as the long-to-wide reshape fails or hides missing trials as NA otherwise.
+.msaAttributeCheckDesign <- function(dataset, operators, parts, standards, wideFormat) {
+  keys <- data.frame(appraiser = .msaAttributeKey(dataset[[operators]]),
+                     part      = .msaAttributeKey(dataset[[parts]]))
+
+  if (!.checkIfCrossed(keys, "appraiser", "part"))
+    .quitAnalysis(gettext("Each appraiser must rate each part, and each part the same number of times."))
+
+  if (wideFormat && any(table(keys) != 1))
+    .quitAnalysis(gettext("Each appraiser must have exactly one row per part."))
+
+  if (standards != "" && any(tapply(dataset[[standards]], keys[["part"]], function(x) length(unique(x)) > 1)))
+    .quitAnalysis(gettext("Each part must have a single reference value."))
+}
+
+# Rows ordered by appraiser (in order of appearance), then by part, so that row k of every
+# appraiser holds the same part even when the data are in run order.
+.msaAttributeOrderByAppraiserAndPart <- function(dataset, operators, parts) {
+  appraiserKey <- match(dataset[[operators]], unique(dataset[[operators]]))
+  partKey      <- .msaAttributeKey(dataset[[parts]])
+  return(dataset[order(appraiserKey, partKey), , drop = FALSE])
+}
+
 .countRowMatches <- function(data) {
   count <- 0
   for (i in 1:nrow(data)) {
@@ -589,6 +641,21 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   return(count)
 }
 
+
+# A factor (or character vector) whose values are all numbers, e.g. ratings 1 to 5, as those numbers;
+# anything else unchanged. as.numeric() on the factor itself would give the level codes instead.
+.msaAttributeAsNumberIfPossible <- function(x) {
+  if (is.numeric(x))
+    return(x)
+
+  values  <- as.character(x)
+  numbers <- suppressWarnings(as.numeric(values))
+
+  if (all(is.na(numbers) == is.na(values)))
+    return(numbers)
+
+  return(x)
+}
 
 .kendallTau <- function(dataset, measurements, parts, operators, standards, options, ready) {
 
@@ -640,7 +707,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
       if (standards != ""){
 
-        kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = as.numeric(operator1[[standards]]))
+        kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = as.numeric(.msaAttributeAsNumberIfPossible(operator1[[standards]])))
         standCorrVector <- c(standCorrVector, kt$r)
       }
     }
@@ -664,19 +731,28 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
 }
 
-.AAACI <- function(m,N){
-  v1_L <- m * 2
-  v2_L <- 2 * (N - m + 1)
+.AAACI <- function(m, N) {
+  count <- max(length(m), length(N))
+  if (!length(m) || !length(N))
+    return(list(lower = rep(NA_real_, count), upper = rep(NA_real_, count)))
+  if (!(length(m) %in% c(1L, count)) || !(length(N) %in% c(1L, count)))
+    stop(gettext("Agreement counts and totals must have compatible lengths."))
+  m <- rep_len(m, count)
+  N <- rep_len(N, count)
+  valid <- is.finite(m) & is.finite(N) & N > 0 & N == floor(N) &
+    m >= 0 & m <= N & m == floor(m)
+  lower <- upper <- rep(NA_real_, count)
 
-  v1_U <- 2*(m + 1)
-  v2_U <- 2*(N - m)
+  # Fixed 95% Clopper-Pearson interval, equivalent to the interior F-quantile formula.
+  # No interval is defined for zero observations or invalid binomial counts.
+  lower[valid & m == 0] <- 0
+  upper[valid & m == N] <- 1
+  lowerIndex <- valid & m > 0
+  upperIndex <- valid & m < N
+  lower[lowerIndex] <- stats::qbeta(0.025, m[lowerIndex], N[lowerIndex] - m[lowerIndex] + 1)
+  upper[upperIndex] <- stats::qbeta(0.975, m[upperIndex] + 1, N[upperIndex] - m[upperIndex])
 
-  return(
-    list(
-      lower = round((v1_L * qf(0.025,v1_L,v2_L))/(v2_L + v1_L*qf(0.025,v1_L,v2_L)) * 100,3) ,
-      upper = round((v1_U * qf(0.975, v1_U,v2_U))/(v2_U + v1_U*qf(0.975,v1_U,v2_U)) * 100,3)
-    )
-  )
+  return(list(lower = round(lower * 100, 3), upper = round(upper * 100, 3)))
 }
 
 .decisionNote <- function(vec, type = "Effectiveness") {
