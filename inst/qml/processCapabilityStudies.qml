@@ -544,7 +544,6 @@ Form
 						defaultValue:				10
 						min:						3;
 						max:						10000;
-						enabled:					csBinWidthType.currentValue === "manual"
 					}
 
 					CheckBox

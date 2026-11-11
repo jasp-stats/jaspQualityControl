@@ -1751,13 +1751,15 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         ciUbCpk <- cpk + (normCIrange * intervalCpk)
       }
     }
-    tableDfCurrentStage <- data.frame(cp  = round(cp, .numDecimals),
-                                      cpl = round(cpl, .numDecimals),
-                                      cpu = round(cpu, .numDecimals),
-                                      cpk = round(cpk, .numDecimals))
+    # Kept unrounded until the change vs. baseline is computed, so that change is the rounded difference of the
+    # exact values instead of the difference of rounded values (which can be off in the last decimal)
+    tableDfCurrentStage <- data.frame(cp  = cp,
+                                      cpl = cpl,
+                                      cpu = cpu,
+                                      cpk = cpk)
 
     if (options[["processCapabilityTableZ"]])
-      tableDfCurrentStage[["zSt"]] <- round(3*cpk, .numDecimals)
+      tableDfCurrentStage[["zSt"]] <- 3*cpk
 
     if (options[["processCapabilityTableZBench"]]) {
       # upper-tail forms (lower.tail = FALSE) avoid 1 - pnorm() underflow for highly capable processes,
@@ -1765,17 +1767,17 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       pLowW  <- if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) pnorm((processMean - lsl)/sdw, lower.tail = FALSE) else NA
       pHighW <- if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) pnorm((usl - processMean)/sdw, lower.tail = FALSE) else NA
       pTotW  <- if (all(is.na(c(pLowW, pHighW)))) NA else sum(c(pLowW, pHighW), na.rm = TRUE)
-      tableDfCurrentStage[["zBenchSt"]] <- round(qnorm(pTotW, lower.tail = FALSE), .numDecimals)
+      tableDfCurrentStage[["zBenchSt"]] <- qnorm(pTotW, lower.tail = FALSE)
     }
 
     if (options[["processCapabilityTableCi"]]) {
       if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
-        tableDfCurrentStage[["cplci"]] <- round(ciLbCp, .numDecimals)
-        tableDfCurrentStage[["cpuci"]] <- round(ciUbCp, .numDecimals)
+        tableDfCurrentStage[["cplci"]] <- ciLbCp
+        tableDfCurrentStage[["cpuci"]] <- ciUbCp
       }
       if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
-        tableDfCurrentStage[["cpklci"]] <- round(ciLbCpk, .numDecimals)
-        tableDfCurrentStage[["cpkuci"]] <- round(ciUbCpk, .numDecimals)
+        tableDfCurrentStage[["cpklci"]] <- ciLbCpk
+        tableDfCurrentStage[["cpkuci"]] <- ciUbCpk
       }
     }
     if (i == 1 && nStages > 1)
@@ -1795,6 +1797,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         }
       }
     }
+    tableDfCurrentStage <- round(tableDfCurrentStage, .numDecimals)
     if (nStages > 1)
       tableDfCurrentStage$stage <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
     tableDf <- rbind(tableDf, tableDfCurrentStage)
@@ -2014,33 +2017,35 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       }
     }
 
-    tableDfCurrentStage <- data.frame(pp  = round(pp, .numDecimals),
-                                      ppl = round(ppl, .numDecimals),
-                                      ppu = round(ppu, .numDecimals),
-                                      ppk = round(ppk, .numDecimals))
+    # Kept unrounded until the change vs. baseline is computed, so that change is the rounded difference of the
+    # exact values instead of the difference of rounded values (which can be off in the last decimal)
+    tableDfCurrentStage <- data.frame(pp  = pp,
+                                      ppl = ppl,
+                                      ppu = ppu,
+                                      ppk = ppk)
     if (options[["processCapabilityTableZ"]])
-      tableDfCurrentStage[["zLt"]] <- round(3*ppk, .numDecimals)
+      tableDfCurrentStage[["zLt"]] <- 3*ppk
     if (options[["processCapabilityTableZBench"]]) {
       # upper-tail forms (lower.tail = FALSE) avoid 1 - pnorm() underflow for highly capable processes,
       # so Z.bench stays finite (qnorm(1 - p) == qnorm(p, lower.tail = FALSE))
       pLowO  <- if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) pnorm((processMean - lsl)/sdo, lower.tail = FALSE) else NA
       pHighO <- if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) pnorm((usl - processMean)/sdo, lower.tail = FALSE) else NA
       pTotO  <- if (all(is.na(c(pLowO, pHighO)))) NA else sum(c(pLowO, pHighO), na.rm = TRUE)
-      tableDfCurrentStage[["zBenchLt"]] <- round(qnorm(pTotO, lower.tail = FALSE), .numDecimals)
+      tableDfCurrentStage[["zBenchLt"]] <- qnorm(pTotO, lower.tail = FALSE)
     }
     if (options[["target"]])
-      tableDfCurrentStage[["cpm"]] <- round(cpm, .numDecimals)
+      tableDfCurrentStage[["cpm"]] <- cpm
     if (options[["processCapabilityTableCi"]]) {
       if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
-        tableDfCurrentStage[["pplci"]] <- round(ciLbPp, .numDecimals)
-        tableDfCurrentStage[["ppuci"]] <- round(ciUbPp, .numDecimals)
+        tableDfCurrentStage[["pplci"]] <- ciLbPp
+        tableDfCurrentStage[["ppuci"]] <- ciUbPp
       }
       if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
-        tableDfCurrentStage[["ppklci"]] <- round(ciLbPpk, .numDecimals)
-        tableDfCurrentStage[["ppkuci"]] <- round(ciUbPpk, .numDecimals)
+        tableDfCurrentStage[["ppklci"]] <- ciLbPpk
+        tableDfCurrentStage[["ppkuci"]] <- ciUbPpk
         if (options[["target"]]) {
-          tableDfCurrentStage[["cpmlci"]] <- round(ciLbCpm, .numDecimals)
-          tableDfCurrentStage[["cpmuci"]] <- round(ciUbCpm, .numDecimals)
+          tableDfCurrentStage[["cpmlci"]] <- ciLbCpm
+          tableDfCurrentStage[["cpmuci"]] <- ciUbCpm
         }
       }
     }
@@ -2060,12 +2065,13 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
           changeDf[["ppklci"]] <- "-"
           changeDf[["ppkuci"]] <- "-"
           if (options[["target"]]) {
-            tableDfCurrentStage[["cpmlci"]] <- "-"
-            tableDfCurrentStage[["cpmuci"]] <- "-"
+            changeDf[["cpmlci"]] <- "-"
+            changeDf[["cpmuci"]] <- "-"
           }
         }
       }
     }
+    tableDfCurrentStage <- round(tableDfCurrentStage, .numDecimals)
     if (nStages > 1)
       tableDfCurrentStage$stage <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
     tableDf <- rbind(tableDf, tableDfCurrentStage)
@@ -2495,6 +2501,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   colnames(tableDf2) <- tableColNames2
 
   for (i in seq_len(nStages)) {
+    # Kept unrounded until the change vs. baseline is computed, so that change is the rounded difference of the
+    # exact values instead of the difference of rounded values (which can be off in the last decimal)
     tableDfCurrentStage2 <- data.frame(matrix(ncol = 0, nrow = 1))
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
@@ -2527,7 +2535,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       } else {
         ppl <- NA
       }
-      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
+      tableDfCurrentStage2[["ppl"]] <- ppl
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- plnorm(q = usl,  meanlog = beta, sdlog = theta)
@@ -2541,7 +2549,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       } else {
         ppu <- NA
       }
-      tableDfCurrentStage2[["ppu"]] <- round(ppu, .numDecimals)
+      tableDfCurrentStage2[["ppu"]] <- ppu
       #####################
       ####  weibull  #####
       #####################
@@ -2560,7 +2568,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       } else {
         ppl <- NA
       }
-      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
+      tableDfCurrentStage2[["ppl"]] <- ppl
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- pweibull(q = usl, shape = beta, scale = theta)
@@ -2574,7 +2582,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       } else {
         ppu <- NA
       }
-      tableDfCurrentStage2[["ppu"]] <- round(ppu, .numDecimals)
+      tableDfCurrentStage2[["ppu"]] <- ppu
       ##################################
       ####  3-parameter lognormal  #####
       ##################################
@@ -2592,7 +2600,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       } else {
         ppl <- NA
       }
-      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
+      tableDfCurrentStage2[["ppl"]] <- ppl
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
         if(options[['nonNormalMethod' ]] == "nonConformance"){
           p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
@@ -2606,7 +2614,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       } else {
         ppu <- NA
       }
-      tableDfCurrentStage2[["ppu"]] <- round(ppu, .numDecimals)
+      tableDfCurrentStage2[["ppu"]] <- ppu
       ##################################
       ####  3-parameter weibull    #####
       ##################################
@@ -2624,7 +2632,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       } else {
         ppl <- NA
       }
-      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
+      tableDfCurrentStage2[["ppl"]] <- ppl
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold)
@@ -2655,7 +2663,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       } else {
         ppl <- NA
       }
-      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
+      tableDfCurrentStage2[["ppl"]] <- ppl
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- pgamma(q = usl, shape = beta, scale = theta, lower.tail = TRUE)
@@ -2687,7 +2695,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       } else {
         ppl <- NA
       }
-      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
+      tableDfCurrentStage2[["ppl"]] <- ppl
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <-  pexp(q = usl, rate = 1/theta, lower.tail = TRUE)
@@ -2718,7 +2726,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       } else {
         ppl <- NA
       }
-      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
+      tableDfCurrentStage2[["ppl"]] <- ppl
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <-  plogis(q = usl, location = beta, scale = theta, lower.tail = TRUE)
@@ -2749,7 +2757,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       } else {
         ppl <- NA
       }
-      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
+      tableDfCurrentStage2[["ppl"]] <- ppl
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- flexsurv::pllogis(q = usl, shape = 1/theta, scale = exp(beta), lower.tail = TRUE)
@@ -2764,7 +2772,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         ppu <- NA
       }
     }
-    tableDfCurrentStage2[["ppu"]] <- round(ppu, .numDecimals)
+    tableDfCurrentStage2[["ppu"]] <- ppu
     if (options[["upperSpecificationLimit"]] && options[["lowerSpecificationLimit"]] &&
         !(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
       if (options[['nonNormalMethod' ]] == "nonConformance") {
@@ -2775,9 +2783,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     } else {
       pp <- NA
     }
-    tableDfCurrentStage2[["pp"]] <- round(pp, .numDecimals)
+    tableDfCurrentStage2[["pp"]] <- pp
     ppk <- if (all(is.na(c(ppl, ppu)))) NA else min(c(ppl, ppu), na.rm = T)
-    tableDfCurrentStage2[["ppk"]] <- round(ppk, .numDecimals)
+    tableDfCurrentStage2[["ppk"]] <- ppk
 
     if (i == 1 && nStages > 1)
       baseLineDf2 <- tableDfCurrentStage2
@@ -2786,6 +2794,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       changeDf2 <- round(changeDf2, .numDecimals)
       changeDf2$stage <- gettextf("Change (%s vs. BL)", stage)
     }
+    tableDfCurrentStage2 <- round(tableDfCurrentStage2, .numDecimals)
     if (nStages > 1)
       tableDfCurrentStage2$stage <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
     tableDf2 <- rbind(tableDf2, tableDfCurrentStage2)

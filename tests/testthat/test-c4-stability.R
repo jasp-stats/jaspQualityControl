@@ -38,30 +38,26 @@ test_that('pooled, S-bar and uncorrected estimators preserve subgroup contracts'
   expect_equal(qcFunction('.sdXbar')(data, 'pooled'), pooled / c4Reference(nu + 1), tolerance = 2e-12)
 })
 
-test_that('pooled EWMA limits reach actual analysis output', {
+# The EWMA form only offers S-bar and R-bar; the capability study is where the GUI reaches the pooled estimator.
+test_that('pooled within-subgroup sd reaches actual analysis output', {
   for (m in c(85, 86, 100)) {
     set.seed(32)
     data <- as.data.frame(matrix(rnorm(m * 5, 10, 2), m, 5))
     names(data) <- paste0('x', 1:5)
-    options <- jaspTools::analysisOptions('timeWeightedCharts')
+    options <- jaspTools::analysisOptions('processCapabilityStudies')
     options$dataFormat <- 'wideFormat'
     options$measurementsWideFormat <- names(data)
-    options$cumulativeSumChart <- FALSE
-    options$exponentiallyWeightedMovingAverageChart <- TRUE
-    options$exponentiallyWeightedMovingAverageChartSdSource <- 'data'
-    options$exponentiallyWeightedMovingAverageChartSdMethod <- 'pooled'
-    results <- jaspTools::runAnalysis('timeWeightedCharts', data, options, view = FALSE)
+    options$controlChartSdEstimationMethodGroupSize <- 'largerThanOne'
+    options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- 'pooled'
+    options$lowerSpecificationLimit <- TRUE
+    options$lowerSpecificationLimitValue <- 0
+    options$upperSpecificationLimit <- TRUE
+    options$upperSpecificationLimitValue <- 20
+    results <- jaspTools::runAnalysis('processCapabilityStudies', data, options, view = FALSE)
     expect_identical(results$status, 'complete')
-    plotKey <- results$results$EWMAPlot$collection$EWMAPlot_plot$data
-    limits <- results$state$figures[[plotKey]]$obj$data
-    lambda <- options$exponentiallyWeightedMovingAverageChartLambda
+    summaryTable <- results$results$capabilityAnalysis$collection$capabilityAnalysis_normalCapabilityAnalysis$collection$capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable$data
     sigma <- sqrt(mean(apply(data, 1, var))) / c4Reference(4 * m + 1)
-    expectedSd <- sigma / sqrt(5) * sqrt(lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * seq_len(m))))
-    # The final step endpoint repeats the last subgroup's limit.
-    expect_equal(limits$UCL, c(mean(as.matrix(data)) + 3 * expectedSd, tail(mean(as.matrix(data)) + 3 * expectedSd, 1)),
-                 tolerance = 2e-12)
-    expect_equal(limits$LCL, c(mean(as.matrix(data)) - 3 * expectedSd, tail(mean(as.matrix(data)) - 3 * expectedSd, 1)),
-                 tolerance = 2e-12)
+    expect_equal(as.numeric(summaryTable[[1]]$sdw), sigma, tolerance = 2e-12)
   }
 })
 

@@ -243,8 +243,6 @@ Form
 					{
 						Row
 						{
-							spacing:				customPriorLayout.space
-							Layout.preferredWidth:	customPriorLayout.prefWidth
 							TextField
 							{
 								name:			"lowValue"
@@ -254,8 +252,6 @@ Form
 						}
 						Row
 						{
-							spacing:				customPriorLayout.space
-							Layout.preferredWidth:	customPriorLayout.prefWidth
 							TextField
 							{
 								name:			"highValue"

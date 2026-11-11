@@ -70,13 +70,16 @@ test_that("incomplete assignments remain ready for further input", {
 
 test_that("c charts retain validation of their assigned sample-size column", {
   counts <- c(2, 20, 4, 6, 8)
-  for (sizes in list(c(10, NA, 10, 10, 10), rep(NA_real_, 5),
+  for (sizes in list(c(10, NA, 10, 10, 10),
                      c(10, Inf, 10, 10, 10), c(10, -1, 10, 10, 10))) {
     result <- .acvRun(counts, sizes, chart = "cChart")
     expect_identical(result$status, "validationError")
     expect_null(result$results$CchartPlot)
     expect_null(result$results$NelsonTable)
   }
+  # a sample-size column without any numeric value is rejected by the form, as in JASP
+  expect_error(.acvRun(counts, rep(NA_real_, 5), chart = "cChart"),
+               "Minimum number of numeric values is 1")
   result <- .acvRun(counts, rep(10, 5), chart = "cChart")
   expect_identical(result$status, "complete")
   plot <- result$state$figures[[result$results$CchartPlot$data]]$obj
