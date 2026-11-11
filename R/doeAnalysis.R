@@ -386,18 +386,16 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       formula       <- as.formula(paste(paste(deparse(formula), collapse = ""), paste(removedTerms, collapse = " - "), sep = " - "))
       regressionFit <- lm(formula, data = dataset)
     }
-    partiallyAliasedTerms <- .doeAliasedTerms(regressionFit)[["partial"]]
 
     regressionFitCoded     <- lm(formula, data = datasetCoded)
     regressionSummary      <- summary(regressionFit)
     regressionSummaryCoded <- summary(regressionFitCoded)
+    regressionFit[["nullSpace"]]      <- list(basis = .doeNullSpace(regressionFit)) # see .doeFitNullSpace
+    regressionFitCoded[["nullSpace"]] <- list(basis = .doeNullSpace(regressionFitCoded))
 
-    aliasNotes <- list(
-      removedTerms          = .doeFormatTermLabels(removedTerms),
-      partiallyAliasedTerms = .doeFormatTermLabels(partiallyAliasedTerms),
-      sharedLevelFactors    = if (length(partiallyAliasedTerms) > 0) .doeFactorsWithSharedLevels(dataset, multiLevelVars)
-    )
-    result[["regression"]][["aliasNotes"]] <- resultCoded[["regression"]][["aliasNotes"]] <- aliasNotes
+    # coding can alias other columns than in uncoded units, so each fit gets its own notes
+    result[["regression"]][["aliasNotes"]]      <- .doeAliasNotes(regressionFit, removedTerms, dataset, multiLevelVars)
+    resultCoded[["regression"]][["aliasNotes"]] <- .doeAliasNotes(regressionFitCoded, removedTerms, dataset, multiLevelVars)
 
     names(regressionFit$coefficients) <-  unname(sapply(c(names(regressionFit$coefficients)), .gsubIdentityFunction)) # remove potential identity function around squared terms
     rownames(regressionSummary$coefficients) <- unname(sapply(c(rownames(regressionSummary$coefficients)), .gsubIdentityFunction))
@@ -414,53 +412,40 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["objectSummary"]] <- regressionSummaryCoded
     resultCoded[["regression"]][["saturated"]] <- regressionSummaryCoded$df[2] == 0
 
-    # ANOVA fit and the data it was fitted on (the lack of fit test groups the runs on these variables).
-    # For factorial designs the ANOVA does not depend on the display units: it always uses the predictors in coded units.
-    anovaFitCoded   <- options[["designType"]] == "factorialDesign" || options[["codeFactors"]] ||
+    result[["regression"]][c("s", "rsq", "adjrsq", "predrsq")]      <- .doeModelSummaryValues(regressionFit, regressionSummary)
+    resultCoded[["regression"]][c("s", "rsq", "adjrsq", "predrsq")] <- .doeModelSummaryValues(regressionFitCoded, regressionSummaryCoded)
+
+    # ANOVA fit and the data it was fitted on (the lack of fit test groups the runs on these variables). For factorial
+    # designs, the ANOVA in uncoded units uses the predictors in coded units, so that it does not depend on the display
+    # units, whenever both fits are the same model. Coding changes the model when an interaction or squared term
+    # enters without its main effects; the ANOVA then follows the fit of the coefficients shown.
+    sameModelCoded  <- regressionFitCoded[["rank"]] == regressionFit[["rank"]] &&
+      isTRUE(all.equal(stats::deviance(regressionFitCoded), stats::deviance(regressionFit)))
+    anovaFitCoded   <- options[["codeFactors"]] || (options[["designType"]] == "factorialDesign" && sameModelCoded) ||
       (options[["squaredTermsCoded"]] && options[["designType"]] == "responseSurfaceDesign")
     anovaFitData    <- if (anovaFitCoded) regressionFitCoded else regressionFit
     anovaFitDataset <- if (anovaFitCoded) datasetCoded else dataset
+    anovaSaturated  <- anovaFitData[["df.residual"]] == 0
+    ssType          <- if (anovaSaturated) "type1" else options[["sumOfSquaresType"]] # aov gives sequential SS
     anovaFit        <- NULL
 
-    if (!result[["regression"]][["saturated"]]) {
-      result[["regression"]][["s"]] <- regressionSummary[["sigma"]]
-      result[["regression"]][["rsq"]] <- regressionSummary[["r.squared"]]
-      result[["regression"]][["adjrsq"]] <- max(0, regressionSummary[["adj.r.squared"]]) # Sometimes returns a negative value, so need this
-      result[["regression"]][["predrsq"]] <- .pred_r_squared(regressionFit)
-
-      resultCoded[["regression"]][["s"]] <- regressionSummaryCoded[["sigma"]]
-      resultCoded[["regression"]][["rsq"]] <- regressionSummaryCoded[["r.squared"]]
-      resultCoded[["regression"]][["adjrsq"]] <- max(0, regressionSummaryCoded[["adj.r.squared"]]) # Sometimes returns a negative value, so need this
-      resultCoded[["regression"]][["predrsq"]] <- .pred_r_squared(regressionFitCoded)
-
-      ssType <- options[["sumOfSquaresType"]]
-
+    # no type III SS with aliased columns: the test of a term then depends on how its remaining columns are parameterized
+    if (options[["sumOfSquaresType"]] == "type3" && anyNA(stats::coef(anovaFitData))) {
+      result[["anova"]][["error"]] <- resultCoded[["anova"]][["error"]] <-
+        gettext("Type III sums of squares are not defined for this model, because some of its coefficients are aliased. Use Type I or Type II sums of squares.")
+    } else if (!anovaSaturated) {
       if (ssType == "type1") {
         anovaFit <- anova(anovaFitData)
       } else if (ssType == "type2") {
         anovaFit <- car::Anova(anovaFitData, type = 2)
-      } else if (ssType == "type3" && !anyNA(coef(anovaFitData))) {
+      } else if (ssType == "type3") {
         anovaFit <- car::Anova(anovaFitData, type = 3)
         anovaFit <- anovaFit[-1,] # remove the intercept that is added when using type 3 SS
       }
-      # no type III SS with aliased columns: the test of a term then depends on how its remaining columns are parameterized
-
-      if (!is.null(anovaFit)) {
-        anovaFit[["Mean Sq"]] <- anovaFit[["Sum Sq"]] / anovaFit[["Df"]]
-        anovaFit <- anovaFit[c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")] # rearrange, so it has the same order as the aov function
-        anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, ssType, unlist(covariates), anovaFitDataset)
-      }
+      anovaFit[["Mean Sq"]] <- anovaFit[["Sum Sq"]] / anovaFit[["Df"]]
+      anovaFit <- anovaFit[c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")] # rearrange, so it has the same order as the aov function
+      anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, ssType, unlist(covariates), anovaFitDataset)
     } else {
-      result[["regression"]][["s"]] <- NA
-      result[["regression"]][["rsq"]] <- 1
-      result[["regression"]][["adjrsq"]] <- NA
-      result[["regression"]][["predrsq"]] <- NA
-
-      resultCoded[["regression"]][["s"]] <- NA
-      resultCoded[["regression"]][["rsq"]] <- 1
-      resultCoded[["regression"]][["adjrsq"]] <- NA
-      resultCoded[["regression"]][["predrsq"]] <- NA
-
       anovaFit <- summary(aov(anovaFitData))[[1]]
       errorRow <- data.frame(Df = 0, SS = 0, MS = 0) # add an error row to keep the format consistent
       colnames(errorRow) <- colnames(anovaFit)
@@ -468,14 +453,11 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       anovaFit <- rbind(anovaFit, errorRow)
       anovaFit$`F value` <- NA # add these empty columns to the saturated design so the anova fit object always has the same format
       anovaFit$`Pr(>F)` <- NA
-      anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, "type1", unlist(covariates), anovaFitDataset) # aov gives sequential SS
-
+      anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, ssType, unlist(covariates), anovaFitDataset)
     }
 
-    if (is.null(anovaFit)) {
-      result[["anova"]][["error"]] <- resultCoded[["anova"]][["error"]] <-
-        gettext("Type III sums of squares are not defined for this model, because some of its coefficients are aliased. Use Type I or Type II sums of squares.")
-    } else {
+    if (!is.null(anovaFit)) {
+      result[["anova"]][["ssType"]] <- resultCoded[["anova"]][["ssType"]] <- ssType
       result[["anova"]][["object"]] <- anovaFit
       result[["anova"]][["terms"]] <- gsubInteractionSymbol(rownames(anovaFit))
       result[["anova"]][["df"]] <- anovaFit$Df
@@ -564,23 +546,30 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     if (length(coefEffects) != length(regressionFit$coefficients)) # should not happen, but never show effects of mismatched terms
       coefEffects <- rep(NA_real_, length(regressionFit$coefficients))
 
-    # the tables only show the estimable coefficients, so drop the values of aliased (NA) coefficients
-    estimable      <- !is.na(coef(regressionFit))
-    estimableCoded <- !is.na(coef(regressionFitCoded))
+    # The tables have one row per coefficient that lm() estimated (aliased columns have NA coefficients). With aliased
+    # columns, some of these coefficients still depend on which columns lm() left out (e.g., on the order of the factor
+    # levels): their values are not unique and are not shown.
+    isFitted         <- !is.na(coef(regressionFit))
+    isFittedCoded    <- !is.na(coef(regressionFitCoded))
+    uniqueCoefs      <- .doeEstimableCoefficients(regressionFit)[isFitted]
+    uniqueCoefsCoded <- .doeEstimableCoefficients(regressionFitCoded)[isFittedCoded]
+    blankNonUnique   <- function(x, keep) replace(x, !keep, NA)
 
-    result[["regression"]][["coefficients"]][["effects"]] <- coefEffects[estimable]
-    result[["regression"]][["coefficients"]][["effectsSe"]] <- .doeEffectStandardErrors(effectsFit, coefEffects)[estimable]
+    result[["regression"]][["coefficients"]][["unique"]] <- uniqueCoefs
+    result[["regression"]][["coefficients"]][["effects"]] <- blankNonUnique(coefEffects[isFitted], uniqueCoefs)
+    result[["regression"]][["coefficients"]][["effectsSe"]] <- blankNonUnique(.doeEffectStandardErrors(effectsFit, coefEffects)[isFitted], uniqueCoefs)
     result[["regression"]][["coefficients"]][["effectsDf"]] <- effectsFit[["df.residual"]] # differs from regressionFit when coding changes the rank
-    result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[estimable]
+    result[["regression"]][["coefficients"]][["est"]] <- blankNonUnique(coef(regressionFit)[isFitted], uniqueCoefs)
     result[["regression"]][["coefficients"]][["effects"]][1] <- NA
-    result[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFit)[estimable]
+    result[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFit)[isFitted]
 
-    resultCoded[["regression"]][["coefficients"]][["effects"]] <- coefEffectsCoded[estimableCoded]
-    resultCoded[["regression"]][["coefficients"]][["effectsSe"]] <- .doeEffectStandardErrors(regressionFitCoded, coefEffectsCoded)[estimableCoded]
+    resultCoded[["regression"]][["coefficients"]][["unique"]] <- uniqueCoefsCoded
+    resultCoded[["regression"]][["coefficients"]][["effects"]] <- blankNonUnique(coefEffectsCoded[isFittedCoded], uniqueCoefsCoded)
+    resultCoded[["regression"]][["coefficients"]][["effectsSe"]] <- blankNonUnique(.doeEffectStandardErrors(regressionFitCoded, coefEffectsCoded)[isFittedCoded], uniqueCoefsCoded)
     resultCoded[["regression"]][["coefficients"]][["effectsDf"]] <- regressionFitCoded[["df.residual"]]
-    resultCoded[["regression"]][["coefficients"]][["est"]] <- coef(regressionFitCoded)[estimableCoded]
+    resultCoded[["regression"]][["coefficients"]][["est"]] <- blankNonUnique(coef(regressionFitCoded)[isFittedCoded], uniqueCoefsCoded)
     resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
-    resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded)[estimableCoded]
+    resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded)[isFittedCoded]
 
     termNamesAliased <- termNames
     termNamesAliasedCoded <- termNamesCoded
@@ -633,21 +622,18 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
                                                                                       termNamesRemovedCoded[multiLevelIndicesCoded], dataset)
 
 
-    if (!result[["regression"]][["saturated"]]) {
-      result[["regression"]][["coefficients"]][["se"]] <- coefs[["Std. Error"]][valid_coefs]
-      result[["regression"]][["coefficients"]][["t"]] <- coefs[["t value"]][valid_coefs]
-      result[["regression"]][["coefficients"]][["p"]] <- coefs[["Pr(>|t|)"]][valid_coefs]
-      resultCoded[["regression"]][["coefficients"]][["se"]] <- coefsCoded[["Std. Error"]][valid_coefsCoded]
-      resultCoded[["regression"]][["coefficients"]][["t"]] <- coefsCoded[["t value"]][valid_coefsCoded]
-      resultCoded[["regression"]][["coefficients"]][["p"]] <- coefsCoded[["Pr(>|t|)"]][valid_coefsCoded]
-    } else {
-      result[["regression"]][["coefficients"]][["se"]] <- rep(NA, length(valid_coefs))
-      result[["regression"]][["coefficients"]][["t"]] <- rep(NA, length(valid_coefs))
-      result[["regression"]][["coefficients"]][["p"]] <- rep(NA, length(valid_coefs))
-      resultCoded[["regression"]][["coefficients"]][["se"]] <- rep(NA, length(valid_coefsCoded))
-      resultCoded[["regression"]][["coefficients"]][["t"]] <- rep(NA, length(valid_coefsCoded))
-      resultCoded[["regression"]][["coefficients"]][["p"]] <- rep(NA, length(valid_coefsCoded))
+    coefficientTests <- function(coefTable, rows, saturated, keep) {
+      tests <- if (saturated) {
+        list(se = rep(NA, length(rows)), t = rep(NA, length(rows)), p = rep(NA, length(rows)))
+      } else {
+        list(se = coefTable[["Std. Error"]][rows], t = coefTable[["t value"]][rows], p = coefTable[["Pr(>|t|)"]][rows])
+      }
+      lapply(tests, blankNonUnique, keep = keep)
     }
+    result[["regression"]][["coefficients"]][c("se", "t", "p")] <-
+      coefficientTests(coefs, valid_coefs, result[["regression"]][["saturated"]], uniqueCoefs)
+    resultCoded[["regression"]][["coefficients"]][c("se", "t", "p")] <-
+      coefficientTests(coefsCoded, valid_coefsCoded, resultCoded[["regression"]][["saturated"]], uniqueCoefsCoded)
 
     ## Model formula for predictors, based on coding/aliasing
     if (options[["tableAlias"]]) {
@@ -707,7 +693,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   nCoefficients <- length(regressionFit$coefficients)
   if (ncol(regressionFit$model) < 3)
     return(rep(NA, nCoefficients))
-  VIF <- try(car::vif(regressionFit))
+  VIF <- try(car::vif(regressionFit), silent = TRUE) # fails with aliased coefficients (footnote in the table)
   if (jaspBase::isTryError(VIF))
     return(rep(NA, nCoefficients))
   VIF <- if (is.vector(VIF)) VIF else VIF[, 1]
@@ -832,6 +818,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   if (desi <= 0)
     tb2$addFootnote(gettext("No factor setting with a composite desirability above 0 was found. The optimizer starts from the design points and can miss acceptable settings that lie between them."))
   .doeAddPredictionSettingsFootnotes(tb2, blocks, covariates)
+  if (.doeOptimizerModelsAliased(models))
+    tb2$addFootnote(.doeAliasedOptimizerNote())
 }
 
 .doeResponseOptimizerPlots <- function(jaspResults, options, dataset, continuousPredictors,
@@ -961,8 +949,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
           plottingWindowDf$y <- pmax(0, pmin(1, plottingWindowDf$y))
         currentLevel <- if (is.list(currentDiscreteLevels)) currentDiscreteLevels[[currentPred]] else currentDiscreteLevels
         plottingWindowDf$color <- ifelse(as.character(plottingWindowDf$x) == as.character(currentLevel), "red", "blue")
-          yLimits <- if (outcomeType == "compDesi" | outcomeType == "individualDesirability") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
-        yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plottingWindowDf$y, yLimits))
+        yLimits <- .doeOptimizationPlotLimits(plottingWindowDf$y, outcomeType)
+        yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plottingWindowDf$y[!is.na(plottingWindowDf$y)], yLimits))
         plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y, color = color)) +
           ggplot2::scale_y_continuous(name = yAxisLabel, limits = yLimits, breaks = yBreaks) +
           ggplot2::scale_color_identity() +
@@ -988,8 +976,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
                                                            roOptionsDf = roOptionsDf)
         if (outcomeType == "compDesi"| outcomeType == "individualDesirability")
           plottingWindowDf$y <- pmax(0, pmin(1, plottingWindowDf$y))
-        yLimits <- if (outcomeType == "compDesi"| outcomeType == "individualDesirability") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
-        yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plottingWindowDf$y, yLimits))
+        yLimits <- .doeOptimizationPlotLimits(plottingWindowDf$y, outcomeType)
+        yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plottingWindowDf$y[!is.na(plottingWindowDf$y)], yLimits))
         xBreaks <- jaspGraphs::getPrettyAxisBreaks(plottingWindowDf$x)
         # Coordinates for the indication of the current parameter settings
         redPointCoordX <- currentPredValue
@@ -1064,6 +1052,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   tb$addRows(rows)
   if (options[["optimizationPlotCustomParameters"]]) # at the optimum, the solution table already carries these notes
     .doeAddPredictionSettingsFootnotes(tb, blocks, covariates)
+  if (anyNA(predValues))
+    tb$addFootnote(.doeNotEstimablePredictionNote())
+  else if (.doeOptimizerModelsAliased(models))
+    tb$addFootnote(.doeAliasedOptimizerNote())
 
   if (options[["optimizationIntervals"]] && options[["optimizationPlotCustomParameters"]]) {
     predictionTable <- createJaspTable(gettext("Predicted Responses (Manual Predictor Values)"))
@@ -1149,11 +1141,13 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     fit <- jaspResults[[response]][["doeResult"]]$object[["regression"]][["object"]]
     cbind(response = response, .doePredictionWithIntervals(fit, settings, dataset, level, blocks, covariates))
   }))
-  table$setData(rows)
+  table$setData(rows[names(rows) != "estimable"])
 
   table$addFootnote(gettext("PI: prediction interval for a single new run."))
-  if (any(is.na(rows[["se"]])))
+  if (any(is.na(rows[["se"]]) & rows[["estimable"]]))
     table$addFootnote(gettext("Intervals cannot be calculated when the model has no degrees of freedom for error."))
+  if (!all(rows[["estimable"]]))
+    table$addFootnote(.doeNotEstimablePredictionNote())
   .doeAddPredictionSettingsFootnotes(table, blocks, covariates, intervals = TRUE)
 }
 
@@ -1171,9 +1165,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     table$addFootnote(gettext("Covariates are held at their mean."))
 }
 
-# Model matrix row (1 x estimable coefficients) of the fit at the given predictor settings, a named list.
+# Model matrix row (1 x fitted coefficients) of the fit at the given predictor settings, a named list.
 # Blocks are averaged out: the block columns are averaged over the block levels of the fit, which holds for any
-# contrasts. Covariates are held at their mean.
+# contrasts. Covariates are held at their mean. Attribute "estimable": whether the prediction is unique, which fails
+# with aliased columns at settings the data cannot estimate (e.g., a combination of factor levels without runs).
 .doePredictionModelRow <- function(fit, settings, dataset, blocks = NULL, covariates = NULL) {
   blocks      <- unlist(blocks)
   blocks      <- blocks[blocks != ""]
@@ -1201,7 +1196,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   x0           <- x[1, , drop = FALSE]
   blockColumns <- attr(x, "assign") %in% which(attr(modelTerms, "term.labels") %in% blocks)
   x0[, blockColumns] <- colMeans(x[, blockColumns, drop = FALSE])
-  return(x0[, !is.na(stats::coef(fit)), drop = FALSE])
+  estimable <- .doeEstimable(fit, x0)
+  x0        <- x0[, !is.na(stats::coef(fit)), drop = FALSE]
+  attr(x0, "estimable") <- estimable
+  return(x0)
 }
 
 # Fitted response at the given predictor settings, with its standard error, the confidence interval for the mean
@@ -1213,8 +1211,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   fitValue <- drop(x0 %*% coefs[!is.na(coefs)])
 
   errorDf <- fit[["df.residual"]]
+  if (!attr(x0, "estimable"))
+    return(data.frame(fit = NA_real_, se = NA_real_, ciLower = NA_real_, ciUpper = NA_real_, piLower = NA_real_, piUpper = NA_real_, estimable = FALSE))
   if (errorDf == 0)
-    return(data.frame(fit = fitValue, se = NA_real_, ciLower = NA_real_, ciUpper = NA_real_, piLower = NA_real_, piUpper = NA_real_))
+    return(data.frame(fit = fitValue, se = NA_real_, ciLower = NA_real_, ciUpper = NA_real_, piLower = NA_real_, piUpper = NA_real_, estimable = TRUE))
 
   sigma  <- sqrt(sum(stats::residuals(fit)^2) / errorDf)
   seFit  <- sqrt(drop(x0 %*% stats::vcov(fit, complete = FALSE) %*% t(x0)))
@@ -1225,7 +1225,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
              ciLower = fitValue - tCrit * seFit,
              ciUpper = fitValue + tCrit * seFit,
              piLower = fitValue - tCrit * sePred,
-             piUpper = fitValue + tCrit * sePred)
+             piUpper = fitValue + tCrit * sePred,
+             estimable = TRUE)
 }
 
 .calculateOptimalResponse <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, dependent, roOptionsDf, models) {
@@ -1263,6 +1264,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
                                                       models, dependent, roOptionsDf)
         optimalResultDf[i, "outcomeValue"] <- currrentOptimResult$value * -1  # after optimization the sign can be switched again
         optimalResultDf[i, continuousPredictors] <- currrentOptimResult$par
+        # leave out a combination whose optimum has no unique prediction (aliased contrasts)
+        if (is.na(.predictDesirability(currrentOptimResult$par, continuousPredictors, discretePredictors, currentDiscreteLevels,
+                                       models, dependent, roOptionsDf)))
+          optimalResultDf[i, "outcomeValue"] <- NA
       } else {
         optimalResultDf[i, "outcomeValue"]  <-  .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent,
                                                                      roOptionsDf) * -1
@@ -1276,8 +1281,9 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     optimalResultDf[continuousPredictors] <- currrentOptimResult$par
   }
   # drop = FALSE keeps a named one-row data frame also with a single predictor
+  # which.max() and na.rm skip the settings without a unique prediction (NA); the design points always have one
   optimalParameters <- optimalResultDf[which.max(optimalResultDf$outcomeValue), names(optimalResultDf) != "outcomeValue", drop = FALSE]
-  maxDesirability <- max(optimalResultDf$outcomeValue)
+  maxDesirability <- max(optimalResultDf$outcomeValue, na.rm = TRUE)
 
   return(list(parameters = optimalParameters, desirability = maxDesirability))
 }
@@ -1289,8 +1295,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 # highest desirability, and keep the best optimum.
 .doeOptimizeContinuous <- function(startPoints, lower, upper, continuousPredictors, discretePredictors, currentDiscreteLevels,
                                    models, dependent, roOptionsDf, nStarts = 3) {
-  negDesirability <- function(par) .predictDesirability(par, continuousPredictors, discretePredictors, currentDiscreteLevels,
-                                                         models, dependent, roOptionsDf)
+  negDesirability <- function(par) {
+    value <- .predictDesirability(par, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent, roOptionsDf)
+    if (is.na(value)) 0 else value # settings without a unique prediction count as desirability 0
+  }
   startValue <- vapply(seq_len(nrow(startPoints)), function(s) negDesirability(startPoints[s, ]), numeric(1))
   startRows  <- unique(c(1, order(startValue)[seq_len(min(nStarts, nrow(startPoints)))])) # order() keeps ties in design order
   best <- NULL
@@ -1333,7 +1341,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
                                             currentDiscreteLevels, models, dependent)
       rawPrediction <- rawPrediction[dependentTarget]
 
-      indDesi <- .calculateDesirability(rawPrediction, roOptionsDf)
+      indDesi <- if (anyNA(rawPrediction)) NA_real_ else .calculateDesirability(rawPrediction, roOptionsDf)
     }
     returnedValue[i] <- switch(outcomeType,
                                "response" = rawPrediction,
@@ -1361,14 +1369,37 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     fit   <- models[["fits"]][[response]]
     coefs <- stats::coef(fit)
     x0    <- .doePredictionModelRow(fit, settings, models[["dataset"]], models[["blocks"]], models[["covariates"]])
-    drop(x0 %*% coefs[!is.na(coefs)])
+    if (attr(x0, "estimable")) drop(x0 %*% coefs[!is.na(coefs)]) else NA_real_
   }, numeric(1))
+}
+
+# y-axis limits of an optimization plot panel; settings without a unique prediction (NA) are left out
+.doeOptimizationPlotLimits <- function(y, outcomeType) {
+  y <- y[!is.na(y)]
+  if (outcomeType != "response" || length(y) == 0)
+    return(c(0, 1))
+  c(min(y) - 0.1 * abs(min(y)), max(y) + 0.1 * abs(max(y)))
+}
+
+.doeAliasedOptimizerNote <- function() {
+  gettext("Some contrasts of the model are aliased, so the data cannot estimate the response at some settings (e.g., combinations of factor levels without runs). These settings are left out.")
+}
+
+.doeNotEstimablePredictionNote <- function() {
+  gettext("Not shown: the data cannot estimate the response at these settings, because some contrasts of the model are aliased (e.g., a combination of factor levels without runs).")
+}
+
+# Whether any of the optimizer models has aliased columns, so that some settings have no unique prediction
+.doeOptimizerModelsAliased <- function(models) {
+  any(vapply(models[["fits"]], function(fit) !is.null(.doeFitNullSpace(fit)), logical(1)))
 }
 
 
 .predictDesirability <- function(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent,
                                  roOptionsDf) {
   outcome <- .doePredictResponses(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent)
+  if (anyNA(outcome)) # no unique prediction at these settings
+    return(NA_real_)
   desirabilityOutcome <- .calculateDesirability(outcome, roOptionsDf)
   desirabilityOutcome <- desirabilityOutcome * -1  # because optimization minimizes
   return(desirabilityOutcome)
@@ -1626,6 +1657,76 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   factorVars[shared]
 }
 
+# Alias notes of a fit for the table footnotes: terms removed from the model (all their columns aliased), terms of
+# the fit with all or some columns aliased (possible in coded units only, or after removal), and discrete factors of
+# the model whose levels share runs.
+.doeAliasNotes <- function(fit, removedTerms, dataset, multiLevelVars) {
+  aliased   <- .doeAliasedTerms(fit)
+  modelVars <- all.vars(stats::delete.response(stats::terms(fit)))
+  list(
+    removedTerms          = .doeFormatTermLabels(removedTerms),
+    notEstimatedTerms     = .doeFormatTermLabels(aliased[["full"]]),
+    partiallyAliasedTerms = .doeFormatTermLabels(aliased[["partial"]]),
+    sharedLevelFactors    = if (length(aliased[["partial"]]) > 0) .doeFactorsWithSharedLevels(dataset, intersect(multiLevelVars, modelVars))
+  )
+}
+
+# S, R², adjusted and predictive R² of a fit. A saturated fit has no error, so only R² (1) is defined.
+.doeModelSummaryValues <- function(fit, fitSummary) {
+  if (fit[["df.residual"]] == 0)
+    return(list(s = NA, rsq = 1, adjrsq = NA, predrsq = NA))
+  list(s       = fitSummary[["sigma"]],
+       rsq     = fitSummary[["r.squared"]],
+       adjrsq  = max(0, fitSummary[["adj.r.squared"]]), # can be negative
+       predrsq = .pred_r_squared(fit))
+}
+
+# Basis of the null space of the model matrix of a fit with aliased (NA) coefficients; NULL without aliasing. A linear
+# combination of the coefficients, such as a prediction, has a unique estimate (does not depend on which aliased
+# columns lm() left out) only when it is orthogonal to this null space.
+.doeNullSpace <- function(fit) {
+  modelMatrix <- stats::model.matrix(fit)
+  if (fit[["rank"]] == ncol(modelMatrix))
+    return(NULL)
+  svd(modelMatrix, nu = 0, nv = ncol(modelMatrix))[["v"]][, -seq_len(fit[["rank"]]), drop = FALSE]
+}
+
+# Null space of a fit, stored on the fit by .doeAnalysisMakeState so that the optimizer does not recompute it
+.doeFitNullSpace <- function(fit) {
+  if ("nullSpace" %in% names(fit)) fit[["nullSpace"]][["basis"]] else .doeNullSpace(fit)
+}
+
+# Whether each row of x (rows of the model matrix of the fit, over all its columns including the aliased ones) has a
+# unique estimate
+.doeEstimable <- function(fit, x) {
+  nullSpace <- .doeFitNullSpace(fit)
+  if (is.null(nullSpace))
+    return(rep(TRUE, nrow(x)))
+  apply(abs(x %*% nullSpace), 1, max) <= 1e-7 * pmax(1, sqrt(rowSums(x^2)))
+}
+
+# Whether each coefficient of the fit has a unique estimate; FALSE for the aliased (NA) coefficients
+.doeEstimableCoefficients <- function(fit) {
+  .doeEstimable(fit, diag(length(stats::coef(fit))))
+}
+
+# Whether the contour or surface plot of a pair of variables has a unique prediction everywhere. Like rsm::contour.lm,
+# the other numeric variables are held at their mean and the predictions are averaged over the levels of the factors.
+.doeContourEstimable <- function(fit, dataset, variablePair, nPoints = 5) {
+  if (is.null(.doeFitNullSpace(fit)))
+    return(TRUE)
+  modelTerms <- stats::delete.response(stats::terms(fit))
+  slice      <- lapply(stats::setNames(nm = all.vars(modelTerms)), function(v) {
+    x <- dataset[[v]]
+    if (v %in% variablePair) seq(min(x), max(x), length.out = nPoints) else if (is.factor(x)) factor(levels(x), levels = levels(x)) else mean(x)
+  })
+  newdata <- do.call(expand.grid, slice)
+  x       <- stats::model.matrix(modelTerms, stats::model.frame(modelTerms, newdata, xlev = fit[["xlevels"]]),
+                                 contrasts.arg = fit[["contrasts"]])
+  x       <- rowsum(x, interaction(newdata[variablePair], drop = TRUE)) # sum over the factor levels (estimable as the average)
+  all(.doeEstimable(fit, x))
+}
+
 .gsubIdentityFunction <- function(term) {
   splitTerm <- unlist(strsplit(term, "")) # split into individual letters
   if (all(splitTerm[c(1,2, length(splitTerm))] == c("I", "(", ")"))) {
@@ -1756,8 +1857,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 .doeAddAliasFootnotes <- function(table, aliasNotes) {
   if (length(aliasNotes[["removedTerms"]]) > 0)
     table$addFootnote(gettextf("The following aliased terms were removed: %s.", paste(aliasNotes[["removedTerms"]], collapse = ", ")))
+  if (length(aliasNotes[["notEstimatedTerms"]]) > 0)
+    table$addFootnote(gettextf("The following terms are aliased and were not estimated: %s.", paste(aliasNotes[["notEstimatedTerms"]], collapse = ", ")))
   if (length(aliasNotes[["partiallyAliasedTerms"]]) > 0)
-    table$addFootnote(gettextf("Some contrasts of the following terms are aliased and were not estimated, so these terms have fewer degrees of freedom: %s.",
+    table$addFootnote(gettextf("Some contrasts of the following terms are aliased and were not estimated: %s.",
                                paste(aliasNotes[["partiallyAliasedTerms"]], collapse = ", ")))
   if (length(aliasNotes[["sharedLevelFactors"]]) > 0)
     table$addFootnote(gettextf("Each of these factors has a level that only occurs in the same runs as a level of another of these factors (e.g., center points entered as a factor level): %s. To estimate one effect per factor, enter these factors as continuous predictors.",
@@ -1794,7 +1897,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     )
     tb$addRows(rows)
 
-    ssFootnote <- switch (options[["sumOfSquaresType"]],
+    ssFootnote <- switch (result[["ssType"]], # sequential (type I) when the model has no error df
                           "type1" = gettext("Type I sums of squares."),
                           "type2" = gettext("Type II sums of squares."),
                           "type3" = gettext("Type III sums of squares."))
@@ -1866,6 +1969,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
         tb$addFootnote(gettext("Confidence intervals cannot be calculated: the model has no degrees of freedom for error."))
     }
     tb$addRows(rows)
+    if (!all(result[["unique"]]))
+      tb$addFootnote(.doeNonUniqueCoefficientsNote())
+    if (anyNA(stats::coef(resultRegression[["object"]])))
+      tb$addFootnote(gettext("VIF is not available when some coefficients are aliased."))
 
     # coded: only discrete factors with more than 2 levels have level-specific terms that need a legend
     result2 <- if (coded) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]][["factorLevels"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]][["factorLevels"]]
@@ -1906,7 +2013,13 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     result <- if (coded) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]]
     row <- data.frame(formula = result[["filledFormula"]])
     tb$addRows(row)
+    if (!all(result[["coefficients"]][["unique"]]))
+      tb$addFootnote(gettext("Some contrasts of the model are aliased, so this is one of several equations with the same fitted values; its coefficients depend on, e.g., the order of the factor levels."))
   }
+}
+
+.doeNonUniqueCoefficientsNote <- function() {
+  gettext("Some contrasts of the model are aliased. Values left empty depend on which aliased contrasts are left out (e.g., on the order of the factor levels), so they are not shown.")
 }
 
 .doeAnalysisStepwiseTable <- function(jaspResults, dependent, options, ready, coded, stepwiseMethod) {
@@ -1974,6 +2087,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     coefDf <- data.frame(result[["objectSummary"]]$coefficients)
     tDf <- data.frame("tValue" = coefDf[["t.value"]],
                       terms = result[["coefficients"]][["terms"]])
+    # leave out coefficients without a unique value (aliased contrasts)
+    uniqueCoefs <- result[["coefficients"]][["unique"]]
+    tDf <- tDf[c(TRUE, uniqueCoefs[-1]), , drop = FALSE] # the intercept row is removed below
+    fac <- fac[uniqueCoefs[-1]]
 
     # Do not include intercept, covariates and blocks in pareto plot
     tDf <- tDf[-1, ] # remove intercept
@@ -2025,6 +2142,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     tDf <- data.frame("tValue" = coefDf[["t.value"]],
                       "terms" = result[["coefficients"]][["terms"]],
                       "pValue" = result[["coefficients"]][["p"]])
+    # leave out coefficients without a unique value (aliased contrasts)
+    uniqueCoefs <- result[["coefficients"]][["unique"]]
+    tDf <- tDf[c(TRUE, uniqueCoefs[-1]), , drop = FALSE] # the intercept row is removed below
+    fac <- fac[uniqueCoefs[-1]]
 
     # Do not include intercept, covariates and blocks in normal effects plot
     tDf <- tDf[-1, ] # remove intercept
@@ -2258,6 +2379,11 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
           "Could not plot because the following selected variable(s) were not included in the final model: %1$s. They might have been removed during model selection.",
           paste(missingVars, collapse = ", ")
         ))
+        jaspResults[[dep]][["contourSurfacePlot"]][[plotTitle]] <- plot
+        next
+      }
+      if (!.doeContourEstimable(result[["object"]], dataset, variablePair)) {
+        plot$setError(gettext("Could not plot: some contrasts of the model are aliased, so the data cannot estimate the predicted response over this plot (averaged over the levels of the discrete predictors)."))
         jaspResults[[dep]][["contourSurfacePlot"]][[plotTitle]] <- plot
         next
       }
