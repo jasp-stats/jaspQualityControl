@@ -3908,8 +3908,9 @@ test_that("39.1 Data example 3 (response surface, coded) - Coded Coefficients ta
 
 test_that("39.2 Data example 3 (response surface, coded) - Regression equation in Coded Units table results match", {
   table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableEquation"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list("Syruploss = 6.444 + 6.25 A + 3.333 B + 70.583 A^2 <unicode> 75.667 B^2 + 5.556 C1 <unicode> 4.889 C2"))
+  # exact comparison: expect_equal_tables() skips cells with non-ASCII characters such as the minus sign "\u2013"
+  expect_identical(table[[1]][["formula"]],
+                   "Syruploss = 6.444 + 6.25 A + 3.333 B + 70.583 A^2 \u2013 75.667 B^2 + 5.556 C1 \u2013 4.889 C2")
 })
 
 test_that("39.3 Data example 3 (response surface, coded) - Model Summary table results match", {
@@ -6552,3 +6553,38 @@ test_that("57.3 Discrete factor with 3 levels, one without runs - no effect, foo
   footnotes <- vapply(coefTable[["footnotes"]], function(note) note[["text"]], character(1))
   expect_true(any(grepl("left out of the model: Membrane (PVDF).", footnotes, fixed = TRUE)))
 })
+
+### Discrete Predictor Levels legend with two discrete factors of more than 2 levels, model terms not in list order ####
+# Each legend row must name the level of its own coefficient (sum-to-zero contrast k belongs to level k)
+legendData <- expand.grid(Material = c("aluminium", "brass", "steel"), Machine = c("lathe", "mill", "press"), replicate = 1:2,
+                          stringsAsFactors = FALSE)
+legendData$Result <- c(aluminium = 0, brass = 1, steel = 2)[legendData$Material] +
+  c(lathe = 0, mill = 10, press = 20)[legendData$Machine] + rep(c(-0.1, 0.05, 0.1, -0.05), length.out = nrow(legendData))
+legendData$replicate <- NULL
+
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- "Result"
+options$fixedFactorsFactorial <- c("Material", "Machine")
+options$highestOrder <- FALSE
+options$tableAlias <- FALSE
+options$modelTerms <- list(
+  list(components = "Machine"),
+  list(components = "Material")
+)
+
+for (codeFactors in c(TRUE, FALSE)) {
+  options$codeFactors <- codeFactors
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", legendData, options)
+
+  test_that(paste0("57.4 Discrete Predictor Levels legend follows the coefficients (codeFactors = ", codeFactors, ")"), {
+    legend <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficientsLegend"]][["data"]]
+    legendLevels <- setNames(vapply(legend, function(row) row[["factorLevel"]], character(1)),
+                             vapply(legend, function(row) row[["factorName"]], character(1)))
+    expect_equal(legendLevels, c(Machine1 = "lathe", Machine2 = "mill", Material1 = "aluminium", Material2 = "brass"))
+    # Machine1 is the lathe deviation from the mean (0 - 10), Material1 the aluminium deviation (0 - 1)
+    coefs <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
+    coefs <- setNames(vapply(coefs, function(row) row[["coef"]], numeric(1)), vapply(coefs, function(row) row[["terms"]], character(1)))
+    expect_equal(unname(round(coefs[c("Machine1", "Material1")])), c(-10, -1))
+  })
+}
