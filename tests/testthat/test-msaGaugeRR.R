@@ -309,7 +309,8 @@ test_that("LF3.1b Fixed effect ANOVA - F and p-values match two-way fixed-effect
   reference <- anova(lm(Dm ~ Parts * Operators, data = dataset))
   for (i in 1:3) {
     expect_equal(table[[i]][["F value"]], reference[["F value"]][i], tolerance = 1e-8)
-    expect_equal(table[[i]][["Pr(>F)"]], reference[["Pr(>F)"]][i], tolerance = 1e-8)
+    # compare on log scale so that tiny p-values (e.g., Parts) are checked with relative precision
+    expect_equal(log(table[[i]][["Pr(>F)"]]), log(reference[["Pr(>F)"]][i]), tolerance = 1e-8)
   }
 })
 
