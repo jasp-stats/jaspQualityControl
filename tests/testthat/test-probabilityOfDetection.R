@@ -74,3 +74,26 @@ test_that("Parameter estimates table results matches for example 3", {
   table <- results[["results"]][["mainContainer"]][["collection"]][["mainContainer_mainTable"]][["data"]]
   jaspTools::expect_equal_tables(table, list(17.6573206618451, "Intercept", 4.39007841700679, "log(depth.inch)"))
 })
+
+test_that("Detection plot confidence band is a two-sided interval on the link scale", {
+  dataset          <- read.csv("EXAMPLE 3 hm.csv")
+  dataset$logDepth <- log(dataset$depth.inch)
+  dataset          <- na.omit(dataset[is.finite(dataset$logDepth), ])
+  model            <- glm(hit.miss ~ logDepth, family = binomial("logit"), data = dataset)
+
+  checkBand <- function(results, ciLevel) {
+    plotName <- results[["results"]][["mainContainer"]][["collection"]][["mainContainer_detectionPlot"]][["data"]]
+    layers   <- ggplot2::ggplot_build(results[["state"]][["figures"]][[plotName]][["obj"]])[["data"]]
+    band     <- layers[[which(vapply(layers, function(l) "ymin" %in% names(l), logical(1)))]]
+    pred     <- predict(model, data.frame(logDepth = band[["x"]]), se.fit = TRUE)
+    z        <- qnorm(1 - (1 - ciLevel) / 2)
+    expect_equal(band[["ymin"]], unname(plogis(pred[["fit"]] - z * pred[["se.fit"]])), tolerance = 1e-6)
+    expect_equal(band[["ymax"]], unname(plogis(pred[["fit"]] + z * pred[["se.fit"]])), tolerance = 1e-6)
+  }
+
+  checkBand(results, 0.95)
+
+  options$detectionPlotCiLevel <- 0.8
+  set.seed(1)
+  checkBand(runAnalysis("probabilityOfDetection", "EXAMPLE 3 hm.csv", options), 0.8)
+})
