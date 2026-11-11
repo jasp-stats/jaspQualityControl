@@ -6010,9 +6010,9 @@ test_that("Lack of fit in factorial designs does not depend on the coding", {
   expect_equal(ref[["Df"]][2], 6)
 })
 
-test_that("Effect intervals use the error df of the fit the effects come from", {
+test_that("Effects are not shown when the coded fit they come from is another model", {
   # Uncoded, the effects come from a fit on coded continuous predictors. Here the coded A^2 and B^2 coincide, so that
-  # fit has one coefficient less and one more error df than the uncoded fit.
+  # fit has one coefficient less and one more error df than the uncoded fit: it is another model, so no effects.
   set.seed(3)
   sqData <- data.frame(A = c(0, 2, 1, 0, 2, 1, 0, 2, 1, 0),
                        B = c(10, 12, 11, 12, 10, 11, 10, 10, 11, 12),
@@ -6037,9 +6037,8 @@ test_that("Effect intervals use the error df of the fit the effects come from", 
   codedFit  <- stats::lm(y ~ C + I(A^2) + I(B^2), data = codedData)
   expect_equal(codedFit[["df.residual"]], 7)
   expect_equal(stats::lm(y ~ C + I(A^2) + I(B^2), data = sqData)[["df.residual"]], 6)
-  row <- which(doeTableTerms(table) == "C")
-  expect_equal(c(doeTableColumn(table, "effectsLower")[row], doeTableColumn(table, "effectsUpper")[row]),
-               2 * unname(stats::confint(codedFit)["C", ]))
+  expect_true(all(is.na(c(doeTableColumn(table, "effects"), doeTableColumn(table, "effectsLower"), doeTableColumn(table, "effectsUpper")))))
+  expect_true(any(startsWith(vapply(table[["footnotes"]], function(f) f[["text"]], character(1)), "Effects are not shown: coding the continuous predictors changes this model")))
 })
 
 etchOptimizerOptions <- function(...) {
@@ -6634,7 +6633,7 @@ test_that("58.3 Discrete factors with a shared center level - aliased contrasts 
 
 test_that("58.4 Discrete factors with a shared center level - Type III sums of squares give an error in the ANOVA table only", {
   collection <- resultsEtchDiscreteIII[["results"]][["EtchRate"]][["collection"]]
-  expect_match(collection[["EtchRate_tableAnova"]][["error"]][["errorMessage"]], "Type III sums of squares are not defined")
+  expect_match(collection[["EtchRate_tableAnova"]][["error"]][["errorMessage"]], "Type III sums of squares are unavailable for this model")
   expect_length(collection[["EtchRate_tableCoefficients"]][["data"]], 12)
 })
 
@@ -6728,7 +6727,9 @@ test_that("60.1 Coefficients that depend on the order of the factor levels are n
     expect_true(all(is.na(doeTableColumn(coefTable, "coef"))), label = paste(levelOrder, collapse = ""))
     expect_true(all(is.na(doeTableColumn(coefTable, "effects"))))
     expect_true(any(grepl("Values left empty depend on which aliased contrasts are left out", doeFootnotes(coefTable), fixed = TRUE)))
-    expect_true(any(grepl("one of several equations", doeFootnotes(doeTable(results, "y", "tableEquation")), fixed = TRUE)))
+    equation <- doeTable(results, "y", "tableEquation")
+    expect_length(equation[["data"]], 0)
+    expect_true(any(grepl("the coefficients of the equation are not unique", doeFootnotes(equation), fixed = TRUE)))
   }
   # a coefficient of an aliased fit that does not depend on the left-out column is still shown: with A:F only, A is 0 in
   # the run at level c, so only the all-zero column A:Fc is aliased
@@ -6788,10 +6789,10 @@ test_that("60.6 Saturated model: sequential sums of squares are labelled Type I,
   etchFour  <- c(as.list(etchTerms), combn(etchTerms, 2, simplify = FALSE), combn(etchTerms, 3, simplify = FALSE), list(etchTerms))
   set.seed(123)
   saturated <- runAnalysis("doeAnalysis", etchData[1:16, ], doeTestOptions("EtchRate", etchTerms, character(0), etchFour, ssType = "type3"))
-  expect_true("Type I sums of squares." %in% doeFootnotes(doeTable(saturated, "EtchRate", "tableAnova")))
+  expect_true(any(startsWith(doeFootnotes(doeTable(saturated, "EtchRate", "tableAnova")), "Type I (sequential) sums of squares, whatever type is selected")))
   set.seed(123)
   aliased <- runAnalysis("doeAnalysis", afData[c(1, 2, 5, 6, 9), ], doeTestOptions("y", "A", "F", afTerms, ssType = "type3"))
-  expect_match(doeTable(aliased, "y", "tableAnova")[["error"]][["errorMessage"]], "Type III sums of squares are not defined")
+  expect_match(doeTable(aliased, "y", "tableAnova")[["error"]][["errorMessage"]], "Type III sums of squares are unavailable for this model")
 })
 
 test_that("60.7 Fully aliased terms are removed with a footnote", {
@@ -6805,7 +6806,7 @@ test_that("60.7 Fully aliased terms are removed with a footnote", {
 })
 
 ## Response optimizer and predictions with aliased contrasts ####
-etchOptimizerOptions <- function(terms = etchTerms, manual = NULL) {
+etchAliasedOptimizerOptions <- function(terms = etchTerms, manual = NULL) {
   options <- etchSsOptions("type2", discrete = terms, coded = FALSE)
   options$modelTerms <- lapply(c(as.list(terms), combn(terms, 2, simplify = FALSE)), function(x) list(components = x))
   options$responsesResponseOptimizer <- list(list(responseOptimizerGoal = "target", responseOptimizerImportance = 1, responseOptimizerLowerBound = 0,
@@ -6827,7 +6828,7 @@ test_that("60.8 Response optimizer only considers settings with a unique predict
   # change with the order of the model terms
   solutions <- lapply(list(etchTerms, rev(etchTerms)), function(terms) {
     set.seed(123)
-    results  <- runAnalysis("doeAnalysis", etchDataDiscrete, etchOptimizerOptions(terms))
+    results  <- runAnalysis("doeAnalysis", etchDataDiscrete, etchAliasedOptimizerOptions(terms))
     solution <- results[["results"]][["tableRoSolution"]]
     expect_true(any(grepl("These settings are left out", doeFootnotes(solution), fixed = TRUE)))
     row <- solution[["data"]][[1]]
@@ -6840,7 +6841,7 @@ test_that("60.8 Response optimizer only considers settings with a unique predict
 test_that("60.9 Prediction table leaves out the response at a setting without a unique prediction", {
   manual <- list(Gap = "1", Pressure = "0", Flow = "1", Power = "0") # never run
   set.seed(123)
-  results    <- runAnalysis("doeAnalysis", etchDataDiscrete, etchOptimizerOptions(manual = manual))
+  results    <- runAnalysis("doeAnalysis", etchDataDiscrete, etchAliasedOptimizerOptions(manual = manual))
   prediction <- results[["results"]][["plotRo"]][["collection"]][["plotRo_predictionTable"]]
   expect_true(is.na(doeTableColumn(prediction, "fit")))
   expect_true(any(grepl("the data cannot estimate the response at these settings", doeFootnotes(prediction), fixed = TRUE)))
@@ -6857,4 +6858,61 @@ test_that("60.10 Contour plot with aliased contrasts in its slice gives an error
   results <- runAnalysis("doeAnalysis", data, options)
   plots   <- results[["results"]][["y"]][["collection"]][["y_contourSurfacePlot"]][["collection"]]
   expect_match(plots[[1]][["error"]][["errorMessage"]], "some contrasts of the model are aliased")
+})
+
+test_that("60.11 Uncoded ANOVA says which units it uses; effects of a model that coding changes are not shown", {
+  set.seed(123)
+  sameModel <- runAnalysis("doeAnalysis", etchDataUncoded, etchOptions(continuous = etchTerms, coded = FALSE))
+  expect_true(any(startsWith(doeFootnotes(doeTable(sameModel, "EtchRate", "tableAnova")), "Calculated with the continuous predictors in coded")))
+  set.seed(123)
+  otherModel <- runAnalysis("doeAnalysis", etchDataUncoded, doeTestOptions("EtchRate", c("Gap", "Power"), character(0), list("Gap", c("Gap", "Power"))))
+  expect_true(any(startsWith(doeFootnotes(doeTable(otherModel, "EtchRate", "tableAnova")), "Calculated in uncoded units")))
+  coefTable <- doeTable(otherModel, "EtchRate", "tableCoefficients")
+  expect_true(all(is.na(doeTableColumn(coefTable, "effects"))))
+  expect_true(any(startsWith(doeFootnotes(coefTable), "Effects are not shown: coding the continuous predictors changes this model")))
+  set.seed(123)
+  coded <- runAnalysis("doeAnalysis", etchData, etchOptions(continuous = etchTerms, coded = TRUE))
+  expect_false(any(startsWith(doeFootnotes(doeTable(coded, "EtchRate", "tableAnova")), "Calculated")))
+})
+
+test_that("60.12 Coded and uncoded fits are compared as models, not by their fit to the response", {
+  # a response exactly linear in Gap fits Gap + Gap:Power and its coded version equally well (same rank and RSS), but
+  # the two are different models
+  data <- transform(etchDataUncoded, EtchRate = 500 + 300 * Gap)
+  fitU <- stats::lm(EtchRate ~ Gap + Gap:Power, data = data)
+  fitC <- stats::lm(EtchRate ~ Gap + Gap:Power, data = etchData)
+  expect_equal(fitU$rank, fitC$rank)
+  expect_false(jaspQualityControl:::.doeSameColumnSpace(stats::model.matrix(fitU), stats::model.matrix(fitC)))
+  expect_true(jaspQualityControl:::.doeSameColumnSpace(stats::model.matrix(stats::lm(EtchRate ~ Gap * Power, data = data)),
+                                                       stats::model.matrix(stats::lm(EtchRate ~ Gap * Power, data = etchData))))
+})
+
+test_that("60.13 Estimability does not depend on the units of the predictors", {
+  # A is constant within level c of F: the response at A = +1 and F = c has no unique prediction, at A = -1 it has
+  for (unit in c(1, 1e6)) {
+    data <- transform(afData, A = A * unit, F = factor(F))
+    contrasts(data[["F"]]) <- "contr.sum"
+    fit  <- stats::lm(y ~ A * F, data = data)
+    rows <- stats::model.matrix(stats::delete.response(stats::terms(fit)),
+                                data.frame(A = c(1, -1) * unit, F = factor("c", levels = levels(data[["F"]]))),
+                                contrasts.arg = fit[["contrasts"]])
+    expect_equal(unname(jaspQualityControl:::.doeEstimable(fit, rows)), c(FALSE, TRUE), label = paste("unit", unit))
+  }
+})
+
+test_that("60.14 Optimizer falls back to a start point with a unique prediction", {
+  # A is constant (-1) within level c of F, so at F = c only A = -1 has a unique prediction. All desirabilities are 0
+  # (predictions below the lower bound), so the search stays at its first start point A = +1, which has none.
+  data <- transform(afData, F = factor(F))
+  contrasts(data[["F"]]) <- "contr.sum"
+  models <- list(fits = list(y = stats::lm(y ~ A * F, data = data)), dataset = data, blocks = "", covariates = "")
+  roOptionsDf <- data.frame(variable = "y", responseOptimizerGoal = "maximize", responseOptimizerLowerBound = 20,
+                            responseOptimizerTarget = 25, responseOptimizerUpperBound = 30, responseOptimizerWeight = 1,
+                            responseOptimizerImportance = 1)
+  startPoints <- matrix(c(1, -1), ncol = 1, dimnames = list(NULL, "A"))
+  result <- jaspQualityControl:::.doeOptimizeContinuous(startPoints, lower = c(A = -1), upper = c(A = 1), continuousPredictors = "A",
+                                                        discretePredictors = "F", currentDiscreteLevels = factor("c", levels = levels(data[["F"]])),
+                                                        models = models, dependent = "y", roOptionsDf = roOptionsDf)
+  expect_equal(unname(result[["par"]]), -1)
+  expect_equal(result[["value"]], 0)
 })
