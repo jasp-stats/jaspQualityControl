@@ -59,6 +59,10 @@
 * DOE Analysis, response optimizer: with blocks or covariates in the model, the fitted responses and desirabilities added every block and covariate coefficient in full. Predictions are now averaged over the blocks and covariates are held at their mean, matching the new prediction table ([Issue #4665](https://github.com/jasp-stats/jasp-issues/issues/4665)).
 * DOE Analysis, response optimizer: with two or more discrete factors, the optimization plot, its summary table and the solution table's fitted response gave some factor levels no contribution (e.g. the last level of the first factor), because the factor levels were merged. The optimal settings themselves were not affected ([Issue #4665](https://github.com/jasp-stats/jasp-issues/issues/4665)).
 * DOE Analysis: block and discrete factor levels without runs (e.g. all their rows filtered out or with missing responses) are dropped. Such a level made the model fall back from sum-to-zero to treatment contrasts, which the effects and the response optimizer assume.
+* Gauge r&R: the gauge evaluation table of the report shows the name of the operator variable instead of its internal (encoded) column name.
+* Control charts: the CL, LCL and UCL labels of values of 1000 or more keep all their decimals (e.g. 1908.333 instead of 1908.33); the shortened labels could also be rounded wrong (2092.49 instead of 2092.495).
+* Process Capability, stages: the Cpm confidence interval is no longer blanked for the stages after the baseline, and the change row no longer shows the difference of the interval bounds as an interval.
+* Process Capability, stages: the change (vs. baseline) rows are computed from the unrounded values, so they are the rounded difference; the difference of the rounded values could be off in the last decimal.
 
 ---
 
