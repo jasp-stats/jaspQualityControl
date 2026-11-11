@@ -6608,7 +6608,7 @@ resultsEtchDiscrete      <- runAnalysis("doeAnalysis", etchDataDiscrete, etchSsO
 resultsEtchDiscreteCoded <- runAnalysis("doeAnalysis", etchDataDiscrete, etchSsOptions("type2", discrete = etchTerms, coded = TRUE))
 resultsEtchDiscreteIII   <- runAnalysis("doeAnalysis", etchDataDiscrete, etchSsOptions("type3", discrete = etchTerms, coded = FALSE))
 
-test_that("57.1 Discrete factors with a shared center level keep their estimable contrasts", {
+test_that("58.1 Discrete factors with a shared center level keep their estimable contrasts", {
   anova     <- doeAnovaSources(resultsEtchDiscrete, "EtchRate")
   centerFit <- stats::lm(EtchRate ~ (Gap + Pressure + Flow + Power)^2 + I(Gap == 0), data = etchData)
   expect_equal(anova[["df"]][anova[["source"]] %in% c("Model", "Error")], c(11, 8))
@@ -6619,21 +6619,20 @@ test_that("57.1 Discrete factors with a shared center level keep their estimable
   expect_equal(terms[["ss"]], 4 * etchMinitabEffects^2)
 })
 
-test_that("57.2 Discrete factors with a shared center level - coded and uncoded ANOVA are identical", {
+test_that("58.2 Discrete factors with a shared center level - coded and uncoded ANOVA are identical", {
   expect_equal(doeAnovaSources(resultsEtchDiscreteCoded, "EtchRate"), doeAnovaSources(resultsEtchDiscrete, "EtchRate"))
 })
 
-test_that("57.3 Discrete factors with a shared center level - aliased contrasts are left out and named in footnotes", {
+test_that("58.3 Discrete factors with a shared center level - aliased contrasts are left out and named in footnotes", {
   coefs <- resultsEtchDiscrete[["results"]][["EtchRate"]][["collection"]][["EtchRate_tableCoefficients"]][["data"]]
   expect_length(coefs, 12) # intercept, 2 Gap contrasts, 1 contrast of each other main effect and interaction
-  expect_false(anyNA(vapply(coefs, function(row) as.numeric(row[["coef"]]), numeric(1))))
   notes <- doeSummaryFootnotes(resultsEtchDiscrete, "EtchRate")
   expect_true(any(grepl("Some contrasts of the following terms are aliased", notes) & grepl("Pressure, Flow, Power", notes)))
   expect_true(any(grepl("Gap, Pressure, Flow, Power. To estimate one effect per factor, enter these factors as continuous predictors.", notes, fixed = TRUE)))
   expect_false(any(grepl("were removed", notes)))
 })
 
-test_that("57.4 Discrete factors with a shared center level - Type III sums of squares give an error in the ANOVA table only", {
+test_that("58.4 Discrete factors with a shared center level - Type III sums of squares give an error in the ANOVA table only", {
   collection <- resultsEtchDiscreteIII[["results"]][["EtchRate"]][["collection"]]
   expect_match(collection[["EtchRate_tableAnova"]][["error"]][["errorMessage"]], "Type III sums of squares are not defined")
   expect_length(collection[["EtchRate_tableCoefficients"]][["data"]], 12)
@@ -6647,7 +6646,7 @@ afData <- data.frame(
   y = c(12.1, 15.9, 11.7, 16.4, 11.2, 14.8, 11.9, 15.1, 12.6, 13.3, 12.9, 13.1)
 )
 
-test_that("57.5 Partially aliased interaction keeps its estimable contrast", {
+test_that("58.5 Partially aliased interaction keeps its estimable contrast", {
   options <- analysisOptions("doeAnalysis")
   options$dependentFactorial         <- "y"
   options$continuousFactorsFactorial <- "A"
@@ -6659,14 +6658,17 @@ test_that("57.5 Partially aliased interaction keeps its estimable contrast", {
   options$modelTerms <- list(list(components = "A"), list(components = "F"), list(components = c("A", "F")))
   set.seed(123)
   results <- runAnalysis("doeAnalysis", afData, options)
-  refData <- transform(afData, F = factor(F))
-  contrasts(refData[["F"]]) <- "contr.sum"
-  ref   <- car::Anova(stats::lm(y ~ A * F, data = refData), type = 2)
+  # type II references from nested models: SS and df are the differences in residual SS and residual df
+  fitRef <- function(formula) stats::lm(formula, data = afData)
+  nested <- function(smaller, larger) c(df = smaller$df.residual - larger$df.residual, ss = stats::deviance(smaller) - stats::deviance(larger))
+  ref <- rbind(nested(fitRef(y ~ F), fitRef(y ~ A + F)),
+               nested(fitRef(y ~ A), fitRef(y ~ A + F)),
+               nested(fitRef(y ~ A + F), fitRef(y ~ A * F)))
   anova <- doeAnovaSources(results, "y")
   terms <- anova[match(c("A", "F", "A:F"), anova[["source"]]), ]
-  expect_equal(terms[["df"]], ref[["Df"]][1:3])
+  expect_equal(terms[["df"]], unname(ref[, "df"]))
   expect_equal(terms[["df"]][3], 1)
-  expect_equal(terms[["ss"]], ref[["Sum Sq"]][1:3])
+  expect_equal(terms[["ss"]], unname(ref[, "ss"]))
   notes <- doeSummaryFootnotes(results, "y")
   expect_true(any(grepl("Some contrasts of the following terms are aliased", notes)))
   expect_false(any(grepl("enter these factors as continuous predictors", notes)))
@@ -6675,7 +6677,7 @@ test_that("57.5 Partially aliased interaction keeps its estimable contrast", {
 ## ANOVA in uncoded units equals the coded one ####
 # The factorial ANOVA uses the continuous predictors in coded units, whatever units the results are shown in.
 
-test_that("58.1 Uncoded ANOVA with a continuous predictor with many values equals the coded one (jasp-stats/INTERNAL-jasp#3178)", {
+test_that("59.1 Uncoded ANOVA with a continuous predictor with many values equals the coded one (jasp-stats/INTERNAL-jasp#3178)", {
   options <- analysisOptions("doeAnalysis")
   options$dependentFactorial         <- "contNormal"
   options$continuousFactorsFactorial <- "contcor1"
@@ -6692,8 +6694,167 @@ test_that("58.1 Uncoded ANOVA with a continuous predictor with many values equal
   expect_equal(anova[["uncoded"]][["df"]][anova[["uncoded"]][["source"]] %in% c("Model", "Error")], c(3, 96))
 })
 
-test_that("58.2 Uncoded ANOVA of continuous predictors with center points equals the coded one", {
+test_that("59.2 Uncoded ANOVA of continuous predictors with center points equals the coded one", {
   anova <- doeAnovaSources(resultsEtchUncoded, "EtchRate")
   expect_equal(anova, doeAnovaSources(resultsEtchCoded, "EtchRate"))
   expect_equal(anova[["df"]][anova[["source"]] %in% c("Model", "Error")], c(10, 9))
+})
+
+## Aliased contrasts: coefficients, predictions and the fit of the ANOVA ####
+
+doeTable    <- function(results, dep, name) results[["results"]][[dep]][["collection"]][[paste0(dep, "_", name)]]
+doeFootnotes <- function(table) vapply(table[["footnotes"]], function(footnote) footnote[["text"]], character(1))
+doeTestOptions <- function(dependent, continuous, discrete, terms, coded = FALSE, ssType = "type2") {
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial         <- dependent
+  options$continuousFactorsFactorial <- continuous
+  options$fixedFactorsFactorial      <- discrete
+  options$codeFactors                <- coded
+  options$codeFactorsMethod          <- "automatic"
+  options$highestOrder               <- FALSE
+  options$sumOfSquaresType           <- ssType
+  options$modelTerms                 <- lapply(terms, function(x) list(components = x))
+  options
+}
+afTerms <- list("A", "F", c("A", "F"))
+
+test_that("60.1 Coefficients that depend on the order of the factor levels are not shown", {
+  # A x F with one aliased contrast: each coefficient changes when the levels of F are reordered (e.g. A 1.7 vs 2.125)
+  for (levelOrder in list(c("a", "b", "c"), c("b", "a", "c"))) {
+    data <- transform(afData, F = factor(F, levels = levelOrder))
+    set.seed(123)
+    results   <- runAnalysis("doeAnalysis", data, doeTestOptions("y", "A", "F", afTerms))
+    coefTable <- doeTable(results, "y", "tableCoefficients")
+    expect_true(all(is.na(doeTableColumn(coefTable, "coef"))), label = paste(levelOrder, collapse = ""))
+    expect_true(all(is.na(doeTableColumn(coefTable, "effects"))))
+    expect_true(any(grepl("Values left empty depend on which aliased contrasts are left out", doeFootnotes(coefTable), fixed = TRUE)))
+    expect_true(any(grepl("one of several equations", doeFootnotes(doeTable(results, "y", "tableEquation")), fixed = TRUE)))
+  }
+  # a coefficient of an aliased fit that does not depend on the left-out column is still shown: with A:F only, A is 0 in
+  # the run at level c, so only the all-zero column A:Fc is aliased
+  data <- data.frame(A = c(0, 2, 2, 0, 0, 2, 2, 0), F = c("a", "a", "b", "c", "a", "a", "b", "c"), y = c(10, 12, 15, 17, 10.3, 11.8, 15.1, 16.6))
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", data, doeTestOptions("y", "A", "F", list(c("A", "F"))))
+  ref     <- stats::coef(stats::lm(y ~ A:F, data = transform(data, F = factor(F))))
+  expect_equal(doeTableColumn(doeTable(results, "y", "tableCoefficients"), "coef"), unname(ref[!is.na(ref)]))
+})
+
+test_that("60.2 Partial aliasing with Type I sums of squares", {
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", etchDataDiscrete, etchSsOptions("type1", discrete = etchTerms, coded = FALSE))
+  anova   <- doeAnovaSources(results, "EtchRate")
+  ref     <- stats::anova(stats::lm(EtchRate ~ (Gap + Pressure + Flow + Power)^2, data = etchDataDiscrete))
+  terms   <- anova[match(etchTwoWayTerms, anova[["source"]]), ]
+  expect_equal(terms[["ss"]], ref[["Sum Sq"]][1:10])
+  expect_equal(terms[["df"]], ref[["Df"]][1:10])
+  expect_equal(anova[["df"]][anova[["source"]] %in% c("Model", "Error")], c(11, 8))
+})
+
+test_that("60.3 Model with an interaction but no main effects: the ANOVA follows the fit of the coefficients shown", {
+  # in coded units A:F has 3 estimable columns (saturated); in uncoded units A is 0 in the run at level c, so only 2
+  data <- data.frame(A = c(0, 2, 2, 0), F = c("a", "a", "b", "c"), y = c(10, 12, 15, 17))
+  for (coded in c(FALSE, TRUE)) {
+    set.seed(123)
+    results <- runAnalysis("doeAnalysis", data, doeTestOptions("y", "A", "F", list(c("A", "F")), coded = coded, ssType = "type1"))
+    expect_identical(results[["status"]], "complete")
+    fit   <- stats::lm(y ~ A:F, data = if (coded) transform(data, A = A - 1) else data)
+    anova <- doeAnovaSources(results, "y")
+    expect_equal(anova[["df"]][anova[["source"]] %in% c("Model", "Error")], c(fit$rank - 1, fit$df.residual), label = paste("coded:", coded))
+  }
+})
+
+test_that("60.4 Uncoded ANOVA of a model that coding changes agrees with the Model Summary", {
+  # Gap + Gap:Power without Power: centering Power changes the model, so the uncoded ANOVA cannot use the coded fit
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", etchDataUncoded, doeTestOptions("EtchRate", c("Gap", "Power"), character(0), list("Gap", c("Gap", "Power")), ssType = "type3"))
+  anova   <- doeAnovaSources(results, "EtchRate")
+  rsq     <- doeTable(results, "EtchRate", "tableSummary")[["data"]][[1]][["rsq"]]
+  ref     <- summary(stats::lm(EtchRate ~ Gap + Gap:Power, data = etchDataUncoded))
+  expect_equal(anova[["ss"]][anova[["source"]] == "Model"] / anova[["ss"]][anova[["source"]] == "Total"], ref$r.squared)
+  expect_equal(rsq, ref$r.squared)
+})
+
+test_that("60.5 Alias footnotes follow the fit shown: coded units can alias other columns than uncoded units", {
+  data <- data.frame(A = c(0, 2, 2, 0, 0, 2, 2, 0), F = c("a", "a", "b", "c", "a", "a", "b", "c"), y = c(10, 12, 15, 17, 10.3, 11.8, 15.1, 16.6))
+  notes <- lapply(c(uncoded = FALSE, coded = TRUE), function(coded) {
+    set.seed(123)
+    doeSummaryFootnotes(runAnalysis("doeAnalysis", data, doeTestOptions("y", "A", "F", list(c("A", "F")), coded = coded)), "y")
+  })
+  expect_true(any(grepl("Some contrasts of the following terms are aliased", notes[["uncoded"]])))
+  expect_false(any(grepl("aliased", notes[["coded"]])))
+})
+
+test_that("60.6 Saturated model: sequential sums of squares are labelled Type I, and Type III with aliasing gives the error", {
+  etchFour  <- c(as.list(etchTerms), combn(etchTerms, 2, simplify = FALSE), combn(etchTerms, 3, simplify = FALSE), list(etchTerms))
+  set.seed(123)
+  saturated <- runAnalysis("doeAnalysis", etchData[1:16, ], doeTestOptions("EtchRate", etchTerms, character(0), etchFour, ssType = "type3"))
+  expect_true("Type I sums of squares." %in% doeFootnotes(doeTable(saturated, "EtchRate", "tableAnova")))
+  set.seed(123)
+  aliased <- runAnalysis("doeAnalysis", afData[c(1, 2, 5, 6, 9), ], doeTestOptions("y", "A", "F", afTerms, ssType = "type3"))
+  expect_match(doeTable(aliased, "y", "tableAnova")[["error"]][["errorMessage"]], "Type III sums of squares are not defined")
+})
+
+test_that("60.7 Fully aliased terms are removed with a footnote", {
+  # half fraction: C = A x B
+  data   <- data.frame(A = rep(c(-1, 1, -1, 1), 2), B = rep(c(-1, -1, 1, 1), 2), y = c(5, 7, 6, 9, 5.5, 7.4, 6.2, 8.7))
+  data$C <- data$A * data$B
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", data, doeTestOptions("y", c("A", "B", "C"), character(0), list("A", "B", "C", c("A", "B"))))
+  expect_true(any(grepl("^The following aliased terms were removed: A[^,]+B[.]$", doeSummaryFootnotes(results, "y"))))
+  expect_false("A:B" %in% doeAnovaSources(results, "y")[["source"]])
+})
+
+## Response optimizer and predictions with aliased contrasts ####
+etchOptimizerOptions <- function(terms = etchTerms, manual = NULL) {
+  options <- etchSsOptions("type2", discrete = terms, coded = FALSE)
+  options$modelTerms <- lapply(c(as.list(terms), combn(terms, 2, simplify = FALSE)), function(x) list(components = x))
+  options$responsesResponseOptimizer <- list(list(responseOptimizerGoal = "target", responseOptimizerImportance = 1, responseOptimizerLowerBound = 0,
+                                                  responseOptimizerTarget = 700, responseOptimizerUpperBound = 1100, responseOptimizerWeight = 1,
+                                                  variable = "EtchRate"))
+  options$responseOptimizerManualBounds <- TRUE
+  options$responseOptimizerManualTarget <- TRUE
+  options$optimizationIntervals         <- TRUE
+  if (!is.null(manual)) {
+    options$optimizationPlotCustomParameters      <- TRUE
+    options$optimizationPlotCustomParameterValues <- lapply(names(manual), function(v) list(value = manual[[v]], variable = v))
+  }
+  options
+}
+etchRunSettings <- unique(apply(etchDataDiscrete[etchTerms], 1, paste, collapse = "/"))
+
+test_that("60.8 Response optimizer only considers settings with a unique prediction", {
+  # most combinations of the -1/0/1 levels were never run and have no unique prediction; their predictions also
+  # change with the order of the model terms
+  solutions <- lapply(list(etchTerms, rev(etchTerms)), function(terms) {
+    set.seed(123)
+    results  <- runAnalysis("doeAnalysis", etchDataDiscrete, etchOptimizerOptions(terms))
+    solution <- results[["results"]][["tableRoSolution"]]
+    expect_true(any(grepl("These settings are left out", doeFootnotes(solution), fixed = TRUE)))
+    row <- solution[["data"]][[1]]
+    list(setting = paste(unlist(row[etchTerms]), collapse = "/"), fit = row[["EtchRate_fit"]])
+  })
+  expect_true(solutions[[1]][["setting"]] %in% etchRunSettings)
+  expect_equal(solutions[[1]], solutions[[2]], tolerance = 1e-3)
+})
+
+test_that("60.9 Prediction table leaves out the response at a setting without a unique prediction", {
+  manual <- list(Gap = "1", Pressure = "0", Flow = "1", Power = "0") # never run
+  set.seed(123)
+  results    <- runAnalysis("doeAnalysis", etchDataDiscrete, etchOptimizerOptions(manual = manual))
+  prediction <- results[["results"]][["plotRo"]][["collection"]][["plotRo_predictionTable"]]
+  expect_true(is.na(doeTableColumn(prediction, "fit")))
+  expect_true(any(grepl("the data cannot estimate the response at these settings", doeFootnotes(prediction), fixed = TRUE)))
+})
+
+test_that("60.10 Contour plot with aliased contrasts in its slice gives an error", {
+  set.seed(5)
+  data   <- data.frame(F = rep(c("a", "b", "c"), each = 4), A = c(-1, -1, -1, -1, -1, 1, -1, 1, -1, 1, -1, 1), B = rep(c(-1, -1, 1, 1), 3))
+  data$y <- round(10 + data$A + data$B + stats::rnorm(12, 0, 0.3), 2)
+  options <- doeTestOptions("y", c("A", "B"), "F", list("A", "B", "F", c("A", "F")))
+  options$contourSurfacePlot          <- TRUE
+  options$contourSurfacePlotVariables <- c("A", "B")
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", data, options)
+  plots   <- results[["results"]][["y"]][["collection"]][["y_contourSurfacePlot"]][["collection"]]
+  expect_match(plots[[1]][["error"]][["errorMessage"]], "some contrasts of the model are aliased")
 })
