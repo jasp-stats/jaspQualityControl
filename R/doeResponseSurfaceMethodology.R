@@ -454,12 +454,14 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
 
 .doeRsmComputeAlphaRotational <- function(k) { 2^(k / 4) }
 
-.doeRsmComputeAlphaOrthogonal <- function(k, centerPointsInCube, centerPointsInStar) {
+.doeRsmComputeAlphaOrthogonal <- function(k, designtype, centerPointsInCube, centerPointsInStar) {
   # based on rsm::star with reps set to 1
-  cubeSize <- 2^k + centerPointsInCube
+  # the factorial core has 2^(k - designtype) points, the star always has 2 * k points
+  factorialPoints <- 2^(k - designtype)
+  cubeSize <- factorialPoints + centerPointsInCube
   # N <- 2 * k * reps + n0
   N <- 2 * k + centerPointsInStar
-  ratio <- 2^k / cubeSize
+  ratio <- factorialPoints / cubeSize
   # sqrt(N * ratio / (2 * reps))
   sqrt(N * ratio / 2)
 }
@@ -469,7 +471,7 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
   if (alphaType == "rotatable")
     .doeRsmComputeAlphaRotational(k - designtype)
   else
-    .doeRsmComputeAlphaOrthogonal(k - designtype, centerPointsInCube, centerPointsInStar)
+    .doeRsmComputeAlphaOrthogonal(k, designtype, centerPointsInCube, centerPointsInStar)
 }
 
 .doeRsmComputeRuns <- function(k, designtype, centerPointsInCube, centerPointsInStar) {
