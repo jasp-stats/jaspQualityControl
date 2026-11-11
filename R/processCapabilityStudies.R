@@ -3700,7 +3700,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         densDf <- .qcDensityCurveData(dlogis, list(location = location, scale = scale), xGrid, "logisticDist")
         legendLabel <- gettext("Logistic dist.")
       } else if(options[['nullDistribution']]  == "loglogistic") {
-        fitLoglogis <- .distributionParameters(dataCurrentStage, distribution = "logistic", fix.arg = NULL)
+        fitLoglogis <- .distributionParameters(dataCurrentStage, distribution = "loglogistic", fix.arg = NULL)
         shape <- 1/fitLoglogis[["theta"]]
         scale <- exp(fitLoglogis[["beta"]])
         densDf <- .qcDensityCurveData(flexsurv::dllogis, list(shape = shape, scale = scale), xGrid, "loglogisticDist")
