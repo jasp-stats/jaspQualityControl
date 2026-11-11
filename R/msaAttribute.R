@@ -58,20 +58,27 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
              all.target = c(measurements, standards, operators, parts),
              exitAnalysisIfErrors = TRUE)
 
+  if (ready)
+    .msaAttributeCheckDesign(dataset, operators, parts, standards, wideFormat)
+
   if (!wideFormat && ready) {
-    dataset <- dataset[order(dataset[[operators]]),]
-    dataset <- dataset[order(dataset[[parts]]),]
-    nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
-    index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
-    dataset <- cbind(dataset, data.frame(index = index))
+    # Trial number of each rating within its appraiser and part, in data order.
+    trial   <- stats::ave(seq_len(nrow(dataset)), .msaAttributeKey(dataset[[operators]]), .msaAttributeKey(dataset[[parts]]),
+                          FUN = seq_along)
+    dataset <- cbind(dataset, data.frame(index = paste0("V", trial)))
     dataset <- tidyr::spread(dataset, index, measurements)
-    measurements <- unique(index)
+    measurements <- paste0("V", seq_len(max(trial)))
 
     if (standards != "")
       dataset <- dataset[,c(operators, parts, measurements,standards)]
     else
       dataset <- dataset[,c(operators, parts, measurements)]
   }
+
+  # Agreement between appraisers, Fleiss' kappa between appraisers, Kendall's tau and the
+  # rating correlations compare the appraisers' rows position by position.
+  if (ready)
+    dataset <- .msaAttributeOrderByAppraiserAndPart(dataset, operators, parts)
 
 
   # Error handling
@@ -591,6 +598,37 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
       AAA[["StudyEffectiveness"]] <- tableDecisions
   }
   return(AAA)
+}
+
+# One integer per distinct ID, in sorted order. Checks, trial numbering and sorting all use this key, so
+# they agree on which rows hold the same part (no locale collation ties, no 15-digit string rounding).
+.msaAttributeKey <- function(x) {
+  return(match(x, sort(unique(x))))
+}
+
+# Cross-appraiser agreement compares the appraisers' ratings part by part, so every appraiser must rate
+# every part equally often (wide format: in one row), and each part needs one reference value. Checked on
+# the raw data, as the long-to-wide reshape fails or hides missing trials as NA otherwise.
+.msaAttributeCheckDesign <- function(dataset, operators, parts, standards, wideFormat) {
+  keys <- data.frame(appraiser = .msaAttributeKey(dataset[[operators]]),
+                     part      = .msaAttributeKey(dataset[[parts]]))
+
+  if (!.checkIfCrossed(keys, "appraiser", "part"))
+    .quitAnalysis(gettext("Each appraiser must rate each part, and each part the same number of times."))
+
+  if (wideFormat && any(table(keys) != 1))
+    .quitAnalysis(gettext("Each appraiser must have exactly one row per part."))
+
+  if (standards != "" && any(tapply(dataset[[standards]], keys[["part"]], function(x) length(unique(x)) > 1)))
+    .quitAnalysis(gettext("Each part must have a single reference value."))
+}
+
+# Rows ordered by appraiser (in order of appearance), then by part, so that row k of every
+# appraiser holds the same part even when the data are in run order.
+.msaAttributeOrderByAppraiserAndPart <- function(dataset, operators, parts) {
+  appraiserKey <- match(dataset[[operators]], unique(dataset[[operators]]))
+  partKey      <- .msaAttributeKey(dataset[[parts]])
+  return(dataset[order(appraiserKey, partKey), , drop = FALSE])
 }
 
 .countRowMatches <- function(data) {
