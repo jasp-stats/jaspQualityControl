@@ -5654,6 +5654,72 @@ test_that("Response optimizer settings footnote does not call an entered target 
   expect_identical(footnotes, "The lower and upper bounds are estimated from data.")
 })
 
+test_that("Response optimizer error names data-derived values only when some are", {
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial <- "Strength"
+  options$fixedFactorsFactorial <- "Material"
+  options$continuousFactorsFactorial <- c("InjPress", "InjTemp")
+  options$codeFactors <- FALSE
+  options$codeFactorsMethod <- "automatic"
+  options$highestOrder <- FALSE
+  options$modelTerms <- list(list(components = "Material"), list(components = "InjTemp"), list(components = "InjPress"))
+  options$responseOptimizerManualBounds <- TRUE
+  options$responseOptimizerManualTarget <- FALSE
+  options$responsesResponseOptimizer <- list(
+    list(
+      responseOptimizerGoal       = "target",
+      responseOptimizerImportance = 1.0,
+      responseOptimizerLowerBound = 0.0,
+      responseOptimizerTarget     = 7,
+      responseOptimizerUpperBound = 5,
+      responseOptimizerWeight     = 1.0,
+      variable                    = "Strength"
+    )
+  )
+  # goal target with manual bounds: every value is entered
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+  expect_identical(results[["results"]][["tableRoSettings"]][["error"]][["errorMessage"]],
+                   "Strength: the target (7) is outside the bounds (0 to 5).")
+
+  # maximize: the target comes from the data
+  options$responsesResponseOptimizer[[1]]$responseOptimizerGoal       <- "maximize"
+  options$responsesResponseOptimizer[[1]]$responseOptimizerLowerBound <- 100
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+  expect_match(results[["results"]][["tableRoSettings"]][["error"]][["errorMessage"]], "not set manually are the observed", fixed = TRUE)
+})
+
+test_that("Response optimizer optimum on the design boundary is not flagged as extrapolation", {
+  # L-BFGS-B returned A = 1 + 2e-16 here, which the plot summary reported as outside the design space
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial <- "Result"
+  options$continuousFactorsFactorial <- "A"
+  options$covariates <- "Covariate"
+  options$codeFactors <- FALSE
+  options$codeFactorsMethod <- "automatic"
+  options$highestOrder <- FALSE
+  options$modelTerms <- list(list(components = "A"))
+  options$responsesResponseOptimizer <- list(
+    list(
+      responseOptimizerGoal       = "maximize",
+      responseOptimizerImportance = 1.0,
+      responseOptimizerLowerBound = 0.0,
+      responseOptimizerTarget     = 0.5,
+      responseOptimizerUpperBound = 1.0,
+      responseOptimizerWeight     = 1.0,
+      variable                    = "Result"
+    )
+  )
+  options$optimizationSolutionTable <- TRUE
+  options$optimizationPlot <- TRUE
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2level5facFullCovariate.csv", options)
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]]
+  jaspTools::expect_equal_tables(table[["data"]], list(1, 104.04, 0.598558434916087))
+  expect_length(table[["footnotes"]], 0)
+})
+
 ## Contour plot ####
 
 options <- analysisOptions("doeAnalysis")
