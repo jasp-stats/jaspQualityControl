@@ -5598,6 +5598,62 @@ test_that("Response optimizer flags a solution with desirability 0", {
   expect_match(table[["footnotes"]][[1]][["text"]], "desirability above 0")
 })
 
+.doeTestOptimizerOneDesign <- function(continuous, discrete, goal, target = 0.5, custom = NULL) {
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial <- "Strength"
+  if (length(continuous)) options$continuousFactorsFactorial <- continuous
+  if (length(discrete)) options$fixedFactorsFactorial <- discrete
+  options$codeFactors <- FALSE
+  options$codeFactorsMethod <- "automatic"
+  options$highestOrder <- FALSE
+  options$modelTerms <- lapply(c(continuous, discrete), function(v) list(components = v))
+  options$responsesResponseOptimizer <- list(
+    list(
+      responseOptimizerGoal       = goal,
+      responseOptimizerImportance = 1.0,
+      responseOptimizerLowerBound = 0.0,
+      responseOptimizerTarget     = target,
+      responseOptimizerUpperBound = 1.0,
+      responseOptimizerWeight     = 1.0,
+      variable                    = "Strength"
+    )
+  )
+  options$optimizationSolutionTable <- TRUE
+  options$optimizationPlot <- TRUE
+  options$optimizationIntervals <- TRUE
+  if (!is.null(custom)) {
+    options$optimizationPlotCustomParameters <- TRUE
+    options$optimizationPlotCustomParameterValues <- custom
+  }
+  set.seed(123)
+  runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+}
+
+test_that("Response optimizer works with a single continuous predictor", {
+  results <- .doeTestOptimizerOneDesign("InjPress", character(0), "maximize")
+  expect_identical(results[["status"]], "complete")
+  jaspTools::expect_equal_tables(results[["results"]][["tableRoSolution"]][["data"]], list(150, 32.287, 0.689125870790799))
+  jaspTools::expect_equal_tables(results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]], list(150, 32.287, 0.689125870790799))
+  expect_length(results[["results"]][["tableRoPrediction"]][["data"]], 1)
+
+  results <- .doeTestOptimizerOneDesign("InjPress", character(0), "maximize", custom = list(list(value = 100, variable = "InjPress")))
+  expect_identical(results[["status"]], "complete")
+  jaspTools::expect_equal_tables(results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]], list(100, 28.749, 0.50256108967879))
+})
+
+test_that("Response optimizer works with a single discrete predictor", {
+  results <- .doeTestOptimizerOneDesign(character(0), "Material", "minimize")
+  expect_identical(results[["status"]], "complete")
+  jaspTools::expect_equal_tables(results[["results"]][["tableRoSolution"]][["data"]], list("Formula1", 26.269, 0.628236767317847))
+  expect_length(results[["results"]][["tableRoPrediction"]][["data"]], 1)
+})
+
+test_that("Response optimizer settings footnote does not call an entered target estimated", {
+  results <- .doeTestOptimizerOneDesign(c("InjPress", "InjTemp"), "Material", "target", target = 30)
+  footnotes <- vapply(results[["results"]][["tableRoSettings"]][["footnotes"]], function(f) f[["text"]], character(1))
+  expect_identical(footnotes, "The lower and upper bounds are estimated from data.")
+})
+
 ## Contour plot ####
 
 options <- analysisOptions("doeAnalysis")
