@@ -20,8 +20,9 @@ test_that("1.1 Test of G chart with MD date format", {
 
 test_that("1.2 Test of G chart with MD date format table", {
   table <- results[["results"]][["gChart"]][["collection"]][["gChart_table"]][["data"]]
+  # gaps of 0 are not below the LCL of 0
   jaspTools::expect_equal_tables(table,
-                                 list("Point 28", "Point 29", "Point 30", "Point 31"))
+                                 list("No test violations occurred."))
 })
 
 
@@ -496,10 +497,10 @@ test_that("15.1 Test of all rules for G chart", {
 test_that("15.2 Test of all rules for G chart table", {
   table <- results[["results"]][["gChart"]][["collection"]][["gChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 2", "Point 9", "Point 11", "Point 26", "Point 4", "Point 3",
-                                      "Point 18", "Point 12", "Point 27", "Point 5", "Point 4", "Point 19",
-                                      "Point 13", "Point 28", "", "Point 5", "Point 20", "", "Point 29",
-                                      "", "Point 32", "Point 21", "", "Point 30", "", "", "Point 22",
+                                 list("Point 32", "Point 9", "Point 11", "Point 26", "Point 4", "",
+                                      "Point 18", "Point 12", "Point 27", "Point 5", "", "Point 19",
+                                      "Point 13", "Point 28", "", "", "Point 20", "", "Point 29",
+                                      "", "", "Point 21", "", "Point 30", "", "", "Point 22",
                                       "", "Point 31", "", "", "Point 23", "", "", "", "", "Point 24",
                                       "", "", "", "", "Point 25", "", "", "", "", "Point 26", "",
                                       "", "", "", "Point 27", "", "", "", "", "Point 28", "", "",
@@ -568,4 +569,47 @@ test_that("16.4 Test of G chart with interval type time and intervals of at leas
 test_that("16.5 Test of T chart with interval type time and intervals of at least one hour", {
   expect_equal(.rareEventPlotData(resultsTimeLong, "tChart"), .rareEventPlotData(resultsHoursLong, "tChart"))
   expect_identical(.rareEventYLabel(resultsTimeLong, "tChart"), .rareEventYLabel(resultsHoursLong, "tChart"))
+})
+
+# G chart probability limits ####
+# Reference: G ~ number of trials until an event, F(g) = 1 - (1 - p)^g. For each alpha find Ga, Gb = Ga + 1
+# with F(Ga) < alpha <= F(Gb), interpolate G = Ga + (alpha - F(Ga)) / (F(Gb) - F(Ga)); the plotted limit is G - 1.
+.gChartReferenceLimit <- function(alpha, p) {
+  cdf <- function(g) 1 - (1 - p)^g
+  Ga <- 0
+  while (!(cdf(Ga) < alpha && alpha <= cdf(Ga + 1)))
+    Ga <- Ga + 1
+  max(0, Ga + (alpha - cdf(Ga)) / (cdf(Ga + 1) - cdf(Ga)) - 1)
+}
+
+test_that("17.1 G chart limits for a known event probability", {
+  limits <- jaspQualityControl:::.gChartStatistics(intervals = 1, phase2Proportion = 0.01)
+  expect_equal(limits$LCL, 0)
+  expect_equal(limits$CL, 67.96772, tolerance = 1e-6)
+  expect_equal(limits$UCL, 656.45696, tolerance = 1e-6)
+  # interpolation from F(0) = 0: p = 0.5 gives CL = 0.5 / 0.5 - 1 = 0
+  expect_equal(jaspQualityControl:::.gChartStatistics(intervals = 1, phase2Proportion = 0.5)$CL, 0)
+  # for p < 0.00135 the LCL is above 0
+  expect_equal(jaspQualityControl:::.gChartStatistics(intervals = 1, phase2Proportion = 0.001)$LCL,
+               .gChartReferenceLimit(0.00135, 0.001))
+  expect_gt(jaspQualityControl:::.gChartStatistics(intervals = 1, phase2Proportion = 0.001)$LCL, 0)
+})
+
+test_that("17.2 G chart limits match the probability-limit definition over a grid of event probabilities", {
+  for (p in c(seq(0.0002, 0.3, length.out = 150), 0.6, 0.9, 0.999)) {
+    limits <- jaspQualityControl:::.gChartStatistics(intervals = 1, phase2Proportion = p)
+    expect_equal(limits$LCL, .gChartReferenceLimit(0.00135, p), tolerance = 1e-9, info = paste("p =", p))
+    expect_equal(limits$CL,  .gChartReferenceLimit(0.5,     p), tolerance = 1e-9, info = paste("p =", p))
+    expect_equal(limits$UCL, .gChartReferenceLimit(0.99865, p), tolerance = 1e-9, info = paste("p =", p))
+  }
+})
+
+test_that("17.3 G chart limits estimated from data", {
+  intervals <- c(3, 0, 12, 7, 0, 25, 4, 9)
+  n <- length(intervals)
+  p <- ((n - 1) / n) / (mean(intervals) + 1)
+  limits <- jaspQualityControl:::.gChartStatistics(intervals = intervals)
+  expect_equal(limits$p, p)
+  expect_equal(c(limits$LCL, limits$CL, limits$UCL),
+               c(.gChartReferenceLimit(0.00135, p), .gChartReferenceLimit(0.5, p), .gChartReferenceLimit(0.99865, p)))
 })

@@ -1412,39 +1412,22 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   n <- sum(!is.na(intervals))
   p <- if (identical(phase2Proportion, "")) ((n - 1) / n) / (intervalsMean + 1) else phase2Proportion
 
-  # calculate CL
-  p2a <- pgeom(qgeom(0.5, prob = p) - 1, prob = p, lower.tail = T)      # p2a is the CDF at G2a
-  p2b <- pgeom(qgeom(0.5, prob = p), prob = p, lower.tail = T)  # p2b is the CDF at G2b
-  # Find G2a and G2b
-  G2a <- qgeom(p2a, prob = p) + 1  # Add 1 to get trials count
-  G2b <- G2a + 1                   # Since G2b = G2a + 1
-  # Perform linear interpolation to find G2
-  G2 <- G2a + (0.5 - p2a) / (p2b - p2a)
-  # Calculate CL = G2 - 1
-  CL <- G2 - 1
-
-  # calculate LCL
-  p1a <- pgeom(qgeom(0.99865, prob = p, lower.tail = F) - 1, prob = p, lower.tail = T)
-  p1b <- pgeom(qgeom(0.99865, prob = p, lower.tail = F), prob = p, lower.tail = T)
-  # Find G2a and G2b
-  G1a <- qgeom(p1a, prob = p) + 1
-  G1b <- G1a + 1
-  # Perform linear interpolation to find G1
-  G1 <- G1a + (0.00135  - p1a) / (p1b - p1a)
-  LCL <- G1 - 1
-  LCL <- max(0, LCL)
-
-  # calculate UCL
-  p3a <- pgeom(qgeom(0.00135, prob = p, lower.tail = F) - 1, prob = p, lower.tail = T)      # p2a is the CDF at G2a
-  p3b <- pgeom(qgeom(0.00135, prob = p, lower.tail = F), prob = p, lower.tail = T)  # p2b is the CDF at G2b
-  # Find G2a and G2b
-  G3a <- qgeom(p3a, prob = p) + 1  # Add 1 to get trials count
-  G3b <- G3a + 1                   # Since G2b = G2a + 1
-  # Perform linear interpolation to find G2
-  G3 <- G3a + (0.99865  - p3a) / (p3b - p3a)
-  UCL <- G3 - 1
+  CL  <- .gChartProbabilityLimit(0.5,     p)
+  LCL <- .gChartProbabilityLimit(0.00135, p)
+  UCL <- .gChartProbabilityLimit(0.99865, p)
 
   return(list(p = p, CL = CL, UCL = UCL, LCL = LCL))
+}
+
+# Interpolated quantile of the number of trials until an event, G ~ geometric with CDF F(g) = 1 - (1 - p)^g:
+# Ga, Gb = Ga + 1 with F(Ga) < alpha <= F(Gb), G = Ga + (alpha - F(Ga)) / (F(Gb) - F(Ga)).
+# The chart plots the number between events, so the limit is G - 1 (floored at 0, the smallest possible gap).
+.gChartProbabilityLimit <- function(alpha, p) {
+  Ga <- qgeom(alpha, prob = p)      # F(g) = pgeom(g - 1), so qgeom() returns Ga directly
+  Fa <- pgeom(Ga - 1, prob = p)
+  Fb <- pgeom(Ga, prob = p)
+  G  <- Ga + (alpha - Fa) / (Fb - Fa)
+  return(max(0, G - 1))
 }
 
 .allParametersFixed <- function(distribution, fix.arg) {
