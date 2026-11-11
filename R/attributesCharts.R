@@ -266,13 +266,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   subgroups = c(1:length(sixsigma$statistics))
   data_plot <- data.frame(subgroups = subgroups, P = sixsigma$statistics)
   center <- sixsigma$center
-  if (min(sample)/max(sample) >= 0.75) {
-    # Sizes within 25%: constant limits from the average size, around the pooled CL, bounded to [0, 1].
-    # Stored in sixsigma so the test table uses the plotted limits.
-    halfWidth <- 3 * sqrt(center * (1 - center) / mean(sample))
-    sixsigma$limits[, "LCL"] <- max(0, center - halfWidth)
-    sixsigma$limits[, "UCL"] <- min(1, center + halfWidth)
-  }
+  # Limits per subgroup size around the pooled CL, bounded to [0, 1] (qcc), as in Minitab
   UCL <- sixsigma$limits[,2]
   LCL <- sixsigma$limits[,1]
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
