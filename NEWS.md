@@ -70,7 +70,7 @@
 * Control charts: the CL, LCL and UCL labels of values of 1000 or more keep all their decimals (e.g. 1908.333 instead of 1908.33); the shortened labels could also be rounded wrong (2092.49 instead of 2092.495).
 * Process Capability, stages: the Cpm confidence interval is no longer blanked for the stages after the baseline, and the change row no longer shows the difference of the interval bounds as an interval.
 * Process Capability, stages: the change (vs. baseline) rows are computed from the unrounded values, so they are the rounded difference; the difference of the rounded values could be off in the last decimal.
-* Process Capability: the confidence bands of the Weibull probability plot (also in the report) are 95% bands, as for the normal and log-normal plots. They multiplied the standard error of the log percentile by the 97.5% quantile of the smallest extreme value distribution (1.31) instead of the normal quantile (1.96), which made them about a third too narrow (about 81% coverage).
+* Process Capability: the confidence bands of the Weibull probability plot (also in the report) are nominal 95% pointwise intervals, as for the normal and log-normal plots. They multiplied the standard error of the log percentile by the 97.5% quantile of the smallest extreme value distribution (1.31) instead of the normal quantile (1.96), which made them about a third too narrow (approximately 81% asymptotic pointwise coverage).
 
 ---
 
