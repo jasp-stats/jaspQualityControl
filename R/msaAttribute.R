@@ -729,10 +729,28 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
 # Kendall's tau-b between two appraisers' ratings (parts x trials, rows matched by part). Every rating of a
 # part by one appraiser is paired with every rating of that part by the other, so the value does not depend
-# on trial labels or order; with one trial each it is the ordinary tau-b.
+# on trial labels or order; with one trial each it is the ordinary tau-b. Computed without expanding the
+# pairs: pairs within a part add nothing to C - D, pairs of parts p, q add signSums(x)[p, q] * signSums(y)[p, q].
 .kendallTauBetweenAppraisers <- function(x, y) {
-  pairs <- expand.grid(part = seq_len(nrow(x)), trialX = seq_len(ncol(x)), trialY = seq_len(ncol(y)))
-  return(stats::cor(x[cbind(pairs$part, pairs$trialX)], y[cbind(pairs$part, pairs$trialY)], method = "kendall"))
+  signSums <- function(m) {
+    s <- matrix(0, nrow(m), nrow(m))
+    for (i in seq_len(ncol(m))) for (k in seq_len(ncol(m)))
+      s <- s + sign(outer(m[, i], m[, k], "-"))
+    return(s)
+  }
+  # pairs tied on one appraiser's ratings; each rating occurs once per rating of the other appraiser
+  tiedPairs <- function(m, copies) {
+    counts <- as.vector(table(m)) * copies
+    return(sum(counts * (counts - 1) / 2))
+  }
+  sx <- signSums(x)
+  sy <- signSums(y)
+  concordance <- sum((sx * sy)[upper.tri(sx)])
+  pairs       <- choose(nrow(x) * ncol(x) * ncol(y), 2)
+  denominator <- sqrt((pairs - tiedPairs(x, ncol(y))) * (pairs - tiedPairs(y, ncol(x))))
+  if (denominator == 0)
+    return(NA_real_)
+  return(concordance / denominator)
 }
 
 .msaCheckErrors <- function(dataset, options) {
