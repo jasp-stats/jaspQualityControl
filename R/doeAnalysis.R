@@ -585,11 +585,6 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
     resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded)[isFittedCoded]
 
-    # Lenth's method (effect plots of a saturated model) needs uncorrelated effects with equal variance
-    result[["regression"]][["coefficients"]][["effectsOrthogonal"]] <- .doeEffectsOrthogonal(effectsFit, coefEffects)
-    resultCoded[["regression"]][["coefficients"]][["effectsOrthogonal"]] <- .doeEffectsOrthogonal(
-      regressionFitCoded, replace(coefEffectsCoded, !.doeEstimableCoefficients(regressionFitCoded), NA))
-
     termNamesAliased <- termNames
     termNamesAliasedCoded <- termNamesCoded
     allPredictorsAliases <- LETTERS[seq_along(allPredictors)]
@@ -1819,24 +1814,6 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   return(se)
 }
 
-# TRUE when the effects (one per coefficient, NA where not defined) are uncorrelated with equal variance, as in an
-# orthogonal two-level design: their unscaled covariance, the inverse of X'X (no error df needed), is proportional to
-# the identity matrix. Lenth's method assumes this.
-.doeEffectsOrthogonal <- function(regressionFit, effects) {
-  nCoef <- length(stats::coef(regressionFit))
-  if (length(effects) != nCoef)
-    return(FALSE)
-  hasEffect <- !is.na(effects) & !is.na(stats::coef(regressionFit))
-  if (!any(hasEffect))
-    return(TRUE)
-  # unscaled covariance of the fitted coefficients from the QR decomposition of the fit, as in summary.lm()
-  fitted      <- seq_len(regressionFit[["rank"]])
-  covUnscaled <- matrix(NA_real_, nCoef, nCoef)
-  covUnscaled[regressionFit[["qr"]][["pivot"]][fitted], regressionFit[["qr"]][["pivot"]][fitted]] <- chol2inv(regressionFit[["qr"]][["qr"]][fitted, fitted, drop = FALSE])
-  covUnscaled <- covUnscaled[hasEffect, hasEffect, drop = FALSE]
-  return(all(abs(covUnscaled - diag(covUnscaled[1, 1], nrow(covUnscaled))) <= 1e-8 * covUnscaled[1, 1]))
-}
-
 # Lower and upper confidence limits for estimates with t-based standard errors; NA without error degrees of freedom.
 .doeConfidenceLimits <- function(estimates, se, df, level) {
   tCrit <- if (isTRUE(df > 0)) stats::qt((1 + level) / 2, df) else NA_real_
@@ -2186,9 +2163,9 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     return(gettext("The model is saturated (no error degrees of freedom) and its effects are not available in uncoded units, because coding changes the model."))
   if (anyNA(plotData$value))
     return(gettext("The model is saturated (no error degrees of freedom). Lenth's method for assessing its effects applies to two-level factorial terms only, but the model has squared terms or terms of discrete factors with more than two levels."))
-  if (!result[["coefficients"]][["effectsOrthogonal"]])
-    return(gettext("The model is saturated (no error degrees of freedom). Lenth's method for assessing its effects needs uncorrelated effects with equal variance, as in an orthogonal two-level design, but the effects of this model are not."))
-  # rounding error of effects from an orthogonal fit is of the order of n * eps * max|y|; a PSE below 100 times that is 0
+  # Like Minitab, no check that the effects are uncorrelated with equal variance (orthogonal design), which Lenth's
+  # method assumes; e.g. a two-level design with missing runs still gets Lenth's method.
+  # rounding error of the effects is of the order of n * eps * max|y|; a PSE below 100 times that counts as 0
   response      <- result[["object"]][["model"]][[1]]
   zeroTolerance <- 100 * length(response) * .Machine$double.eps * max(abs(response))
   lenth <- .doeLenthMarginOfError(plotData$value, zeroTolerance)

@@ -480,14 +480,14 @@ Form
 			{
 				name:									"plotPareto"
 				label:									qsTr("Pareto plot of effects")
-				info:									qsTr("Show a Pareto plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms in an orthogonal design, the plot shows the absolute effects with the margin of error based on Lenth's pseudo standard error; other saturated models give an error.")
+				info:									qsTr("Show a Pareto plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the absolute effects with the margin of error based on Lenth's pseudo standard error; other saturated models give an error.")
 			}
 
 			CheckBox
 			{
 				name:									"normalEffectsPlot"
 				label:									qsTr("Normal plot of effects")
-				info:									qsTr("Show a normal probability plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms in an orthogonal design, the plot shows the effects with a reference line based on Lenth's pseudo standard error, and effects larger than its margin of error are marked significant; other saturated models give an error.")
+				info:									qsTr("Show a normal probability plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the effects with a reference line based on Lenth's pseudo standard error, and effects larger than its margin of error are marked significant; other saturated models give an error.")
 			}
 		}
 
