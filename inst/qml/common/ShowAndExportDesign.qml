@@ -21,16 +21,20 @@ Group
 {
 
 	columns : 1
-	CheckBox { name: "displayDesign"; label: qsTr("Display design"); checked: true 
-		CheckBox{ name: "codedOutput";	label: qsTr("Coded units")}
+	CheckBox { name: "displayDesign"; label: qsTr("Display design"); checked: true
+		info: qsTr("Display the design table in the output. If a design table is shown in the options, one of its designs needs to be selected first.")
+		CheckBox{ name: "codedOutput";	label: qsTr("Coded units"); info: qsTr("Display the factor levels in coded units instead of the given units.")}
 		RadioButtonGroup
 		{
 			name:								"runOrder"
+			infoLabel:							qsTr("Sort order")
+			info:								qsTr("Whether to sort the runs in the design by run order or standard order.")
 
 			RadioButton
 			{
 				name:							"runOrderRandom"
 				label:							qsTr("Sort by run order")
+				info:							qsTr("Sort the runs in the randomized order in which they should be carried out.")
 				checked:						true
 			}
 
@@ -38,6 +42,7 @@ Group
 			{
 				name:							"runOrderStandard"
 				label:							qsTr("Sort by standard order")
+				info:							qsTr("Sort the runs in standard (non-randomized) order.")
 			}
 		}
 	}
@@ -49,6 +54,7 @@ Group
 			id:			exportDesignFile
 			name:		"exportDesignFile"
 			label:		qsTr("Save as:")
+			info:		qsTr("Option to save the design as a .csv file. Specify a name and path for the file or use the browse option.")
 			placeholderText: qsTr("e.g. design.csv")
 			filter:		"*.csv"
 			save:		true
@@ -59,6 +65,7 @@ Group
 			id:					actualExporter
 			name:				"actualExporter"
 			label:				qsTr("Export design")
+			info:				qsTr("Check to save the selected design to the specified file.")
 			Layout.leftMargin:  25 * preferencesModel.uiScale
 			enabled: 			exportDesignFile.value != ""
 		}
