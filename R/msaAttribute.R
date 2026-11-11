@@ -192,30 +192,48 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
   table$addColumnInfo(name = "appraiserVector",  title = gettext("Appraiser"), type = "string")
 
   appraiserVector <- vector(mode = "character")
-  listCor <- list()
+  listRatings <- list()
   for (i in 1:length(unique(dataset[[operators]]))) {
     appraiser <- as.character(unique(dataset[[operators]])[i])
     appraiserVector[i] <- appraiser
     onlyAppraiser <- subset(dataset, dataset[operators] == appraiser)
 
-    DataPerAppriaser <- unlist(onlyAppraiser[,measurements])
+    DataPerAppriaser <- as.matrix(onlyAppraiser[measurements])
 
     if (!is.numeric(DataPerAppriaser))
-      DataPerAppriaser <- ifelse(DataPerAppriaser == options[["positiveReference"]], 1, 0)
+      DataPerAppriaser <- (DataPerAppriaser == options[["positiveReference"]]) * 1
 
-
-    listCor[[appraiser]] <- c(DataPerAppriaser)
+    listRatings[[appraiser]] <- DataPerAppriaser
     table$addColumnInfo(name = appraiser,  title = gettext(appraiser), type = "integer")
 
   }
-  cors <- cbind(appraiserVector, round(cor(as.data.frame(listCor)), 2))
+
+  corMatrix <- diag(length(appraiserVector))
+  dimnames(corMatrix) <- list(appraiserVector, appraiserVector)
+  for (i in seq_along(appraiserVector))
+    for (j in seq_along(appraiserVector)[-i])
+      corMatrix[i, j] <- .msaAttributeAllTrialPairsCor(listRatings[[i]], listRatings[[j]])
+
+  cors <- round(corMatrix, 2)
+  diag(cors) <- "-"
+  cors <- cbind(appraiserVector, cors)
 
   if (!any(options[["positiveReference"]] == as.character(unique(unlist(dataset[measurements])))) && !identical(options[["positiveReference"]], "") && !options[["kendallsTau"]])
     table$setError(gettext("Please inseret a vaild positive reference as used in the results variables."))
 
 
-  table$setData(ifelse(cors == "1", "-", cors))
+  table$setData(cors)
   return(table)
+}
+
+# Correlation of two appraisers' ratings (parts x trials, rows matched by part), pairing every trial of
+# one appraiser with every trial of the other on the same part. Trial numbers only label repeated ratings
+# of a part, so pairing trial k with trial k would depend on them; with one trial both are the same.
+.msaAttributeAllTrialPairsCor <- function(ratings1, ratings2) {
+  pairs <- expand.grid(trial1 = seq_len(ncol(ratings1)), trial2 = seq_len(ncol(ratings2)))
+  x     <- as.vector(ratings1[, pairs[["trial1"]], drop = FALSE])
+  y     <- as.vector(ratings2[, pairs[["trial2"]], drop = FALSE])
+  return(stats::cor(x, y))
 }
 
 # irr::kappam.fleiss (>= 0.85) drops a single-column data.frame to a vector in its
@@ -254,7 +272,8 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
     # Within
     kappaWithinVector[i] <- .fleissKappaValue(onlyAppraiser[measurements])
 
-    # Versus Standard
+    # Versus Standard: as in Minitab, the kappa of each trial with the standard as another trial, averaged
+    # over trials. It depends on which rating is trial k (long format: the k-th row of that appraiser and part).
     if (standards != "") {
       Kappa0 <- NULL
       count = 0
