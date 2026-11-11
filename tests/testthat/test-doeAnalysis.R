@@ -5975,7 +5975,7 @@ test_that("Blocks without runs are dropped, so predictions still average over th
 
   # the prediction interval is for a run in an average block
   notes <- vapply(prediction[["footnotes"]], function(note) note[["text"]], character(1))
-  expect_true(any(grepl("does not include the variation between blocks", notes, fixed = TRUE)))
+  expect_true(any(grepl("the prediction interval excludes variation between blocks", notes, fixed = TRUE)))
 })
 
 test_that("Contour plot averages over the blocks and holds covariates at their mean", {

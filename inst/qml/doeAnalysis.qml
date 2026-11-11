@@ -21,7 +21,7 @@ Form
 				+ "- **" + qsTr("Single terms") + "**: " + qsTr("Test of one term (listed below its group), adjusted according to the selected sums of squares type.") + "\n"
 				+ "- **" + qsTr("Block") + "**: " + qsTr("Test of the differences between blocks.") + "\n"
 				+ "- **" + qsTr("Error") + "**: " + qsTr("Variation the model does not explain. Its mean square estimates the noise variance and is the denominator of all F-tests.") + "\n"
-				+ "- **" + qsTr("Lack of fit, Pure error") + "**: " + qsTr("Shown below Error when the design contains replicated runs, i.e. runs with identical settings of all variables in the model, such as repeated center points. Pure error is the variation between replicated runs; it measures the noise alone. Lack of fit is the remaining error variation. Its F-test (lack of fit mean square divided by pure error mean square) tests whether the model fits the means at the distinct settings; a small p-value indicates that the model misses systematic variation, e.g. curvature or interactions. Not shown when the model has as many coefficients as there are distinct settings.") + "\n"
+				+ "- **" + qsTr("Lack of fit, Pure error") + "**: " + qsTr("Shown below Error when the design has replicated runs, e.g. center points. Pure error is the variation between replicates. Lack of fit tests whether the model misses systematic variation such as curvature; a small p-value indicates a poor fit.") + "\n"
 				+ "- **" + qsTr("Total") + "**: " + qsTr("Total variation of the response around its mean, with df equal to the number of runs minus 1. Model plus Error equals Total.") + "\n\n"
 				+ qsTr("With type I sums of squares, and in balanced (orthogonal) designs, the term rows add up to their group row, and the group rows and Block add up to Model. With type II or III sums of squares in unbalanced designs this is generally not the case: when terms are correlated, part of the variation can be explained by several terms, and this shared part is not attributed to any single term.") + "\n\n"
 				+ "---\n"
@@ -706,7 +706,7 @@ Form
 			{
 				name:						"optimizationIntervals"
 				label:						qsTr("Confidence and prediction intervals")
-				info:						qsTr("Show the predicted (fitted) response of each included response at the optimal solution, with its standard error, the confidence interval (CI) for the mean response and the prediction interval (PI) for the response of a single new run. With 'Set input parameters manually', the same is shown for the manually set factor levels. Blocks are averaged out and covariates are held at their mean. With blocks, the prediction interval is for a new run in an average block: it does not include the variation between blocks.")
+				info:						qsTr("Predicted response at the optimal (or manually set) factor levels, with the confidence interval for the mean response and the prediction interval for a single new run. Blocks are averaged out; covariates are held at their mean.")
 				childrenOnSameRow:			true
 
 				CIField

@@ -1097,7 +1097,8 @@ get_levels <- function(var, num_levels, dataset) {
   for (dep in roDependent)
     rows[[paste0(dep, " fit")]] <- round(as.numeric(predValues[[dep]]), .numDecimals)
   tb$addRows(rows)
-  .doeAddPredictionSettingsFootnotes(tb, blocks, covariates)
+  if (options[["optimizationPlotCustomParameters"]]) # at the optimum, the solution table already carries these notes
+    .doeAddPredictionSettingsFootnotes(tb, blocks, covariates)
 
   if (options[["optimizationIntervals"]] && options[["optimizationPlotCustomParameters"]]) {
     predictionTable <- createJaspTable(gettext("Predicted Responses (Manual Predictor Values)"))
@@ -1176,7 +1177,7 @@ get_levels <- function(var, num_levels, dataset) {
   }))
   table$setData(rows)
 
-  table$addFootnote(gettext("CI: confidence interval for the mean response. PI: prediction interval for a single new run."))
+  table$addFootnote(gettext("PI: prediction interval for a single new run."))
   if (any(is.na(rows[["se"]])))
     table$addFootnote(gettext("Intervals cannot be calculated when the model has no degrees of freedom for error."))
   .doeAddPredictionSettingsFootnotes(table, blocks, covariates, intervals = TRUE)
@@ -1186,7 +1187,7 @@ get_levels <- function(var, num_levels, dataset) {
   if (length(blocks) > 0 && !identical(blocks, "")) {
     # the block effects are averaged out, so the PI is for a run in an average block
     blockNote <- if (intervals) {
-      gettext("Predictions are averaged over the blocks. The prediction interval is for a new run in an average block: it does not include the variation between blocks.")
+      gettext("Predictions are averaged over the blocks; the prediction interval excludes variation between blocks.")
     } else {
       gettext("Predictions are averaged over the blocks.")
     }
