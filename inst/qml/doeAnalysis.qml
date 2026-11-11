@@ -21,6 +21,7 @@ Form
 				+ "- **" + qsTr("Single terms") + "**: " + qsTr("Test of one term (listed below its group), adjusted according to the selected sums of squares type.") + "\n"
 				+ "- **" + qsTr("Block") + "**: " + qsTr("Test of the differences between blocks.") + "\n"
 				+ "- **" + qsTr("Error") + "**: " + qsTr("Variation the model does not explain. Its mean square estimates the noise variance and is the denominator of all F-tests.") + "\n"
+				+ "- **" + qsTr("Lack of fit, Pure error") + "**: " + qsTr("Shown below Error when the design has replicated runs, e.g. center points. Pure error is the variation between replicates. Lack of fit tests whether the model misses systematic variation such as curvature; a small p-value indicates a poor fit.") + "\n"
 				+ "- **" + qsTr("Total") + "**: " + qsTr("Total variation of the response around its mean, with df equal to the number of runs minus 1. Model plus Error equals Total.") + "\n\n"
 				+ qsTr("With type I sums of squares, and in balanced (orthogonal) designs, the term rows add up to their group row, and the group rows and Block add up to Model. With type II or III sums of squares in unbalanced designs this is generally not the case: when terms are correlated, part of the variation can be explained by several terms, and this shared part is not attributed to any single term.") + "\n\n"
 				+ "---\n"
@@ -287,6 +288,20 @@ Form
 				checked:							true
 				label:								qsTr("Display results in coded units")
 				info:								qsTr("Display the results in coded units. This means that all factor levels are rescaled to lie between -1 and 1. For factorial designs, continuous factors are treated as categorical in the ANOVA table when this option is unchecked.")
+			}
+
+			CheckBox
+			{
+				name:								"tableCoefficientsCi"
+				label:								qsTr("Confidence intervals")
+				info:								qsTr("Add confidence intervals for the effects and the coefficients to the coefficients table, based on the t-distribution with the error degrees of freedom. The interval for an effect is twice the interval for its coefficient (in coded units).")
+				childrenOnSameRow:					true
+
+				CIField
+				{
+					name:							"tableCoefficientsCiLevel"
+					info:							qsTr("Confidence level of the intervals.")
+				}
 			}
 		}
 	}
@@ -620,7 +635,7 @@ Form
 					{
 						name:							"responseOptimizerLowerBound"
 						infoLabel:						qsTr("Lower")
-						info:							qsTr("Response value at and below which the individual desirability is 0. Used for the goals maximize and target. Only editable with 'Set all bounds manually'; otherwise the minimum of the observed response is used.")
+						info:							qsTr("Response value below which the individual desirability is 0. Used for the goals maximize and target. Only editable with 'Set all bounds manually'; otherwise the minimum of the observed response is used.")
 						defaultValue:					0
 						negativeValues:					true
 						fieldWidth:						1.2 * responsesResponseOptimizer.rowWidth
@@ -640,7 +655,7 @@ Form
 					{
 						name:							"responseOptimizerUpperBound"
 						infoLabel:						qsTr("Upper")
-						info:							qsTr("Response value at and above which the individual desirability is 0. Used for the goals minimize and target. Only editable with 'Set all bounds manually'; otherwise the maximum of the observed response is used.")
+						info:							qsTr("Response value above which the individual desirability is 0. Used for the goals minimize and target. Only editable with 'Set all bounds manually'; otherwise the maximum of the observed response is used.")
 						defaultValue:					1
 						negativeValues:					true
 						fieldWidth:						responsesResponseOptimizer.rowWidth
@@ -681,6 +696,20 @@ Form
 				label:						qsTr("Show optimal solution")
 				info:						qsTr("Show the optimizer settings per response and the optimal solution: the factor levels with the highest composite desirability, that desirability, and the predicted (fitted) responses at these levels.")
 				checked:					true
+			}
+
+			CheckBox
+			{
+				name:						"optimizationIntervals"
+				label:						qsTr("Confidence and prediction intervals")
+				info:						qsTr("Predicted response at the optimal (or manually set) factor levels, with the confidence interval for the mean response and the prediction interval for a single new run. Blocks are averaged out; covariates are held at their mean.")
+				childrenOnSameRow:			true
+
+				CIField
+				{
+					name:					"optimizationIntervalsLevel"
+					info:					qsTr("Confidence level of the intervals.")
+				}
 			}
 
 			CheckBox

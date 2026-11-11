@@ -869,7 +869,9 @@ test_that("8.1 Two center points ANOVA table results match", {
                                       79.8250414862997, 1, 0.368910103124928, 0.605373737327509, "<unicode> <unicode> A<unicode><unicode><unicode>C",
                                       10.0740828427166, 10.0740828427166, 1, 0.0465572065005877, 0.849172159620473,
                                       "<unicode> <unicode> A<unicode><unicode><unicode>B<unicode><unicode><unicode>C",
-                                      216.380741026406, 432.761482052811, 2, "", "", "Error", "",
+                                      216.380741026406, 432.761482052811, 2, "", "", "Error",
+                                      321.4372104348, 321.4372104348, 1, 2.88739558555347, 0.338631485697663, "<unicode> Lack of fit",
+                                      111.324271618011, 111.324271618011, 1, "", "", "<unicode> Pure error", "",
                                       1355.28759860441, 9, "", "", "Total"))
 })
 
@@ -946,7 +948,9 @@ test_that("9.1 Four center points ANOVA table results match", {
                                       80.029040114527, 1, 0.984911198227457, 0.377164601363556, "<unicode> <unicode> A<unicode><unicode><unicode>C",
                                       355.088123106801, 355.088123106801, 1, 4.37004202855576, 0.104775693491955,
                                       "<unicode> <unicode> A<unicode><unicode><unicode>B<unicode><unicode><unicode>C",
-                                      81.2550819389151, 325.02032775566, 4, "", "", "Error", "", 2358.62895110231,
+                                      81.2550819389151, 325.02032775566, 4, "", "", "Error",
+                                      7.74439016872452, 7.74439016872452, 1, 0.0732270170970892, 0.804244438916616, "<unicode> Lack of fit",
+                                      105.758645862312, 317.275937586936, 3, "", "", "<unicode> Pure error", "", 2358.62895110231,
                                       11, "", "", "Total"))
 })
 
@@ -1906,7 +1910,9 @@ test_that("19.1 Three continuous predictors CCD ANOVA table results match", {
                                       0.010619694879324, 1, 0.000191866261516248, 0.989220847538756,
                                       "<unicode> <unicode> A<unicode><unicode><unicode>C", 45.4428891448914,
                                       45.4428891448914, 1, 0.821017680056229, 0.386194705961586, "<unicode> <unicode> B<unicode><unicode><unicode>C",
-                                      55.3494647542537, 553.494647542537, 10, "", "", "Error", "",
+                                      55.3494647542537, 553.494647542537, 10, "", "", "Error",
+                                      48.8613807093688, 244.306903546844, 5, 0.79015714009106, 0.598817547391391, "<unicode> Lack of fit",
+                                      61.8375487991387, 309.187743995693, 5, "", "", "<unicode> Pure error", "",
                                       860.555356667762, 19, "", "", "Total"))
 })
 
@@ -2009,7 +2015,9 @@ test_that("20.1 Five continuous predictors CCD ANOVA table results match", {
                                       19.0204310412573, 1, 0.15546439968421, 0.695903744576438, "<unicode> <unicode> C<unicode><unicode><unicode>E",
                                       14.4626287069341, 14.4626287069341, 1, 0.11821098506664, 0.733164116033324,
                                       "<unicode> <unicode> D<unicode><unicode><unicode>E", 122.345894493485,
-                                      4037.414518285, 33, "", "", "Error", "", 5061.94699138736, 53,
+                                      4037.414518285, 33, "", "", "Error",
+                                      157.915713961015, 3474.14570714232, 22, 3.08391449909547, 0.0285138595953329, "<unicode> Lack of fit",
+                                      51.2062555584249, 563.268811142674, 11, "", "", "<unicode> Pure error", "", 5061.94699138736, 53,
                                       "", "", "Total"))
 })
 
@@ -2131,7 +2139,9 @@ test_that("21.1 Three continuous and two categorical predictors CCD ANOVA table 
                                       0.997922195618352, "<unicode> <unicode> C<unicode><unicode><unicode>E",
                                       89.272337024252, 89.272337024252, 1, 1.0432699301623, 0.311096028475122,
                                       "<unicode> <unicode> D<unicode><unicode><unicode>E", 85.5697403359106,
-                                      5219.75416049055, 61, "", "", "Error", "", 6550.82369459921,
+                                      5219.75416049055, 61, "", "", "Error",
+                                      94.2142915480024, 3862.7859534681, 41, 1.38859983690751, 0.217045590170124, "<unicode> Lack of fit",
+                                      67.8484103511223, 1356.96820702245, 20, "", "", "<unicode> Pure error", "", 6550.82369459921,
                                       79, "", "", "Total"))
 })
 
@@ -2248,7 +2258,9 @@ test_that("22.1 Four continuous and one categorical predictor CCD ANOVA table re
                                       25.2672062937827, 1, 0.388588649858534, 0.53658076120345, "<unicode> <unicode> C<unicode><unicode><unicode>E",
                                       287.587603138256, 287.587603138256, 1, 4.42285851155001, 0.0417985945131366,
                                       "<unicode> <unicode> D<unicode><unicode><unicode>E", 65.023016763308,
-                                      2600.92067053232, 40, "", "", "Error", "", 4746.44656169555,
+                                      2600.92067053232, 40, "", "", "Error",
+                                      73.5787031530137, 2207.36109459041, 30, 1.86956963191446, 0.148447596110743, "<unicode> Lack of fit",
+                                      39.3559575941915, 393.559575941915, 10, "", "", "<unicode> Pure error", "", 4746.44656169555,
                                       59, "", "", "Total"))
 })
 
@@ -2348,7 +2360,9 @@ test_that("23.1 Three continuous predictors BBD ANOVA table results match", {
                                       1.37244973825602, 1.37244973825602, 1, 0.0246244155820777, 0.8814462450247,
                                       "<unicode> <unicode> A<unicode><unicode><unicode>C", 52.852233851999,
                                       52.852233851999, 1, 0.948271790606002, 0.374883301192008, "<unicode> <unicode> B<unicode><unicode><unicode>C",
-                                      55.7353222731884, 278.676611365942, 5, "", "", "Error", "",
+                                      55.7353222731884, 278.676611365942, 5, "", "", "Error",
+                                      58.3840378701924, 175.152113610577, 3, 1.12792699575627, 0.501721335031091, "<unicode> Lack of fit",
+                                      51.7622488776824, 103.524497755365, 2, "", "", "<unicode> Pure error", "",
                                       1286.01250967536, 14, "", "", "Total"))
 })
 
@@ -2439,7 +2453,9 @@ test_that("24.1 Four continuous predictors BBD ANOVA table results match", {
                                       190.244330544465, 1, 2.85396711044145, 0.116939413446734, "<unicode> <unicode> B<unicode><unicode><unicode>D",
                                       0.754956442564435, 0.754956442564435, 1, 0.0113255456850063,
                                       0.91700630379072, "<unicode> <unicode> C<unicode><unicode><unicode>D",
-                                      66.6596086018096, 799.915303221715, 12, "", "", "Error", "",
+                                      66.6596086018096, 799.915303221715, 12, "", "", "Error",
+                                      75.4932933109536, 754.932933109537, 10, 3.35657250263535, 0.251275869595491, "<unicode> Lack of fit",
+                                      22.4911850560896, 44.9823701121793, 2, "", "", "<unicode> Pure error", "",
                                       1998.90651747504, 26, "", "", "Total"))
 })
 
@@ -2549,7 +2565,9 @@ test_that("25.1 Five continuous predictors BBD ANOVA table results match", {
                                       211.413343349594, 211.413343349594, 1, 3.21628420107367, 0.0850160563448271,
                                       "<unicode> <unicode> C<unicode><unicode><unicode>E", 10.0173564745314,
                                       10.0173564745314, 1, 0.152396555747579, 0.699562125344016, "<unicode> <unicode> D<unicode><unicode><unicode>E",
-                                      65.7321710808453, 1643.30427702113, 25, "", "", "Error", "",
+                                      65.7321710808453, 1643.30427702113, 25, "", "", "Error",
+                                      65.8215531107329, 1316.43106221466, 20, 1.0068361390471, 0.553262684173187, "<unicode> Lack of fit",
+                                      65.3746429612948, 326.873214806474, 5, "", "", "<unicode> Pure error", "",
                                       3088.68870395618, 45, "", "", "Total"))
 })
 
@@ -2692,7 +2710,9 @@ test_that("26.1 Six continuous predictors one discrete predictor BBD ANOVA table
                                       2.68492531643733, 2.68492531643733, 1, 0.0253393735205992, 0.873963928278907,
                                       "<unicode> <unicode> E<unicode><unicode><unicode>G", 50.5082867312094,
                                       50.5082867312094, 1, 0.476679308557414, 0.492119696740909, "<unicode> <unicode> F<unicode><unicode><unicode>G",
-                                      105.958630518417, 7734.98002784443, 73, "", "", "Error", "",
+                                      105.958630518417, 7734.98002784443, 73, "", "", "Error",
+                                      111.49180696861, 7023.98383902241, 63, 1.5681069564287, 0.223982208900462, "<unicode> Lack of fit",
+                                      71.0996188822014, 710.996188822014, 10, "", "", "<unicode> Pure error", "",
                                       9680.58066999365, 107, "", "", "Total"))
 })
 
@@ -2977,7 +2997,9 @@ test_that("28.1 Type 1 SS ANOVA table results match", {
                                       22.7705818446913, 22.7705818446913, 1, 0.212347987920946, 0.647255519334776,
                                       "<unicode> <unicode> D^2", 42.6396333147808, 42.6396333147808,
                                       1, 0.397637636220155, 0.531649118010972, "<unicode> <unicode> E^2",
-                                      107.232388060906, 4610.99268661894, 43, "", "", "Error", "",
+                                      107.232388060906, 4610.99268661894, 43, "", "", "Error",
+                                      126.491371108633, 4047.72387547627, 32, 2.47023278170203, 0.0565385678743626, "<unicode> Lack of fit",
+                                      51.2062555584249, 563.268811142674, 11, "", "", "<unicode> Pure error", "",
                                       5061.94699138736, 53, "", "", "Total"))
 })
 
@@ -3064,7 +3086,9 @@ test_that("29.1 Type 2 SS ANOVA table results match", {
                                       19.7879088296077, 19.7879088296077, 1, 0.1845329493023, 0.669651253139693,
                                       "<unicode> <unicode> D^2", 42.6396333147804, 42.6396333147804,
                                       1, 0.397637636220151, 0.531649118010973, "<unicode> <unicode> E^2",
-                                      107.232388060906, 4610.99268661894, 43, "", "", "Error", "",
+                                      107.232388060906, 4610.99268661894, 43, "", "", "Error",
+                                      126.491371108633, 4047.72387547627, 32, 2.47023278170203, 0.0565385678743626, "<unicode> Lack of fit",
+                                      51.2062555584249, 563.268811142674, 11, "", "", "<unicode> Pure error", "",
                                       5061.94699138736, 53, "", "", "Total"))
 })
 
@@ -3149,7 +3173,9 @@ test_that("30.1 Coded Squared Terms ANOVA table results match", {
                                       19.6252348513958, 19.6252348513958, 1, 0.269042622706554, 0.609397684905525,
                                       "<unicode> <unicode> C^2", 201.539843694872, 201.539843694872,
                                       1, 2.76291257343506, 0.111328352752227, "<unicode> <unicode> D^2",
-                                      72.9447053926513, 1531.83881324568, 21, "", "", "Error", "",
+                                      72.9447053926513, 1531.83881324568, 21, "", "", "Error",
+                                      72.162972374947, 1154.60755799915, 16, 0.9564818844052, 0.574682905038343, "<unicode> Lack of fit",
+                                      75.446251049305, 377.231255246525, 5, "", "", "<unicode> Pure error", "",
                                       2008.74320954026, 29, "", "", "Total"))
 })
 
@@ -3230,7 +3256,9 @@ test_that("31.1 Uncoded Squared Terms ANOVA table results match", {
                                       19.6252348513958, 19.6252348513958, 1, 0.269042622706554, 0.609397684905525,
                                       "<unicode> <unicode> C^2", 201.539843694872, 201.539843694872,
                                       1, 2.76291257343506, 0.111328352752227, "<unicode> <unicode> D^2",
-                                      72.9447053926513, 1531.83881324568, 21, "", "", "Error", "",
+                                      72.9447053926513, 1531.83881324568, 21, "", "", "Error",
+                                      72.162972374947, 1154.60755799915, 16, 0.9564818844052, 0.574682905038344, "<unicode> Lack of fit",
+                                      75.446251049305, 377.231255246525, 5, "", "", "<unicode> Pure error", "",
                                       2008.74320954026, 29, "", "", "Total"))
 })
 
@@ -3396,7 +3424,9 @@ test_that("33.1 RSM analysis with nominal levels ANOVA table results match", {
                                       299.346939991402, 299.346939991402, 1, 3.87873886449694, 0.0553656265712983,
                                       "<unicode> <unicode> B<unicode><unicode><unicode>D", 20.4837990981441,
                                       20.4837990981441, 1, 0.265415466270679, 0.609062330372558, "<unicode> <unicode> C<unicode><unicode><unicode>D",
-                                      77.1763582053433, 3318.58340282976, 43, "", "", "Error", "",
+                                      77.1763582053433, 3318.58340282976, 43, "", "", "Error",
+                                      77.6817143207964, 1786.67942937832, 23, 1.0141851665255, 0.491195258187962, "<unicode> Lack of fit",
+                                      76.5951986725722, 1531.90397345144, 20, "", "", "<unicode> Pure error", "",
                                       4268.2424984321, 55, "", "", "Total"))
 })
 
@@ -3491,7 +3521,9 @@ test_that("34.1 Data example 1 (factorial, coded) - ANOVA table results match", 
                                       0.858752480786647, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
                                       0.00209114349880224, 0.00209114349880224, 1, 0.00020494551883179,
                                       0.988890269483188, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
-                                      10.2034116711698, 91.8307050405284, 9, "", "", "Error", "",
+                                      10.2034116711698, 91.8307050405284, 9, "", "", "Error",
+                                      1.76791075799493, 1.76791075799493, 1, 0.157038055243888, 0.702258218866732, "<unicode> Lack of fit",
+                                      11.2578492853167, 90.0627942825334, 8, "", "", "<unicode> Pure error", "",
                                       460.478006896861, 15, "", "", "Total"))
 })
 
@@ -3566,7 +3598,9 @@ test_that("35.1 Data example 1 (factorial, uncoded) - ANOVA table results match"
                                       0.858752480786647, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
                                       0.00209114349880224, 0.00209114349880224, 1, 0.00020494551883179,
                                       0.988890269483188, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
-                                      10.2034116711698, 91.8307050405284, 9, "", "", "Error", "",
+                                      10.2034116711698, 91.8307050405284, 9, "", "", "Error",
+                                      1.76791075799493, 1.76791075799493, 1, 0.157038055243888, 0.702258218866732, "<unicode> Lack of fit",
+                                      11.2578492853167, 90.0627942825334, 8, "", "", "<unicode> Pure error", "",
                                       460.478006896861, 15, "", "", "Total"))
 })
 
@@ -3648,7 +3682,9 @@ test_that("36.1 Data example 2 (factorial, coded) - ANOVA table results match", 
                                       280.5625, 280.5625, 1, 2.31008062210532, 0.162858010109754,
                                       "<unicode> <unicode> Angle<unicode><unicode><unicode>Vertical",
                                       14.0625, 14.0625, 1, 0.115787066155869, 0.741456839635441, "<unicode> <unicode> Ball<unicode><unicode><unicode>Vertical",
-                                      121.451388888889, 1093.0625, 9, "", "", "Error", "", 21747.9375,
+                                      121.451388888889, 1093.0625, 9, "", "", "Error",
+                                      162.562499999999, 162.562499999999, 1, 1.39763567974207, 0.27106435980379, "<unicode> Lack of fit",
+                                      116.3125, 930.5, 8, "", "", "<unicode> Pure error", "", 21747.9375,
                                       15, "", "", "Total"))
 })
 
@@ -3719,7 +3755,9 @@ test_that("37.1 Data example 2 (factorial, uncoded) - ANOVA table results match"
                                       280.5625, 280.5625, 1, 2.31008062210532, 0.162858010109754,
                                       "<unicode> <unicode> Angle<unicode><unicode><unicode>Vertical",
                                       14.0625, 14.0625, 1, 0.115787066155869, 0.741456839635441, "<unicode> <unicode> Ball<unicode><unicode><unicode>Vertical",
-                                      121.451388888889, 1093.0625, 9, "", "", "Error", "", 21747.9375,
+                                      121.451388888889, 1093.0625, 9, "", "", "Error",
+                                      162.562499999999, 162.562499999999, 1, 1.39763567974207, 0.27106435980379, "<unicode> Lack of fit",
+                                      116.3125, 930.5, 8, "", "", "<unicode> Pure error", "", 21747.9375,
                                       15, "", "", "Total"))
 })
 
@@ -3800,7 +3838,9 @@ test_that("38.1 Data example 3 (factorial, coded) - ANOVA table results match", 
                                       "<unicode> <unicode> Nozzle<unicode><unicode><unicode>Pressure",
                                       425.041666666657, 425.041666666657, 1, 0.118086748717771, 0.732651462637135,
                                       "<unicode> <unicode> Speed<unicode><unicode><unicode>Pressure",
-                                      3599.40189125296, 169171.888888889, 47, "", "", "Error", "",
+                                      3599.40189125296, 169171.888888889, 47, "", "", "Error",
+                                      7882.81944444445, 157656.388888889, 20, 18.4825778298815, 6.24259819237881e-11, "<unicode> Lack of fit",
+                                      426.5, 11515.5, 27, "", "", "<unicode> Pure error", "",
                                       174102.833333333, 53, "", "", "Total"))
 })
 
@@ -4031,7 +4071,9 @@ test_that("42.1 Aliased terms handling - ANOVA table results match", {
                                       "Model", 163.523994574973, 327.047989149947, 2, 1.11323076012616,
                                       0.380382061844365, "<unicode> Linear terms", 163.523994574973,
                                       327.047989149946, 2, 1.11323076012615, 0.380382061844365, "<unicode> <unicode> A",
-                                      146.891372779209, 1028.23960945446, 7, "", "", "Error", "",
+                                      146.891372779209, 1028.23960945446, 7, "", "", "Error",
+                                      152.819222972742, 916.915337836453, 6, 1.37273948215995, 0.573864954396147, "<unicode> Lack of fit",
+                                      111.324271618011, 111.324271618011, 1, "", "", "<unicode> Pure error", "",
                                       1355.28759860441, 9, "", "", "Total"))
 })
 
@@ -4119,7 +4161,9 @@ test_that("43.1 Response Optimizer Factorial Basic Test - ANOVA table results ma
                                       0.858752480786647, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
                                       0.00209114349880224, 0.00209114349880224, 1, 0.00020494551883179,
                                       0.988890269483188, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
-                                      10.2034116711698, 91.8307050405284, 9, "", "", "Error", "",
+                                      10.2034116711698, 91.8307050405284, 9, "", "", "Error",
+                                      1.76791075799493, 1.76791075799493, 1, 0.157038055243888, 0.702258218866732, "<unicode> Lack of fit",
+                                      11.2578492853167, 90.0627942825334, 8, "", "", "<unicode> Pure error", "",
                                       460.478006896861, 15, "", "", "Total"))
 })
 
@@ -4370,6 +4414,8 @@ test_that("45.1 Response Optimizer Factorial Multivariate Outcome - ANOVA table 
                                       0.0027057718079512, 0.0027057718079512, 1, 0.279867976282665,
                                       0.609585425025631, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
                                       0.00966802934687458, 0.0870122641218712, 9, "", "", "Error",
+                                      0.00114437119258799, 0.00114437119258799, 1, 0.106616911495005, 0.752407691342665, "<unicode> Lack of fit",
+                                      0.0107334866161604, 0.0858678929292833, 8, "", "", "<unicode> Pure error",
                                       "", 1.78282476739951, 15, "", "", "Total"))
 })
 
@@ -4429,7 +4475,9 @@ test_that("45.6 Response Optimizer Factorial Multivariate Outcome - ANOVA table 
                                       0.858752480786647, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
                                       0.00209114349880224, 0.00209114349880224, 1, 0.00020494551883179,
                                       0.988890269483188, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
-                                      10.2034116711698, 91.8307050405284, 9, "", "", "Error", "",
+                                      10.2034116711698, 91.8307050405284, 9, "", "", "Error",
+                                      1.76791075799493, 1.76791075799493, 1, 0.157038055243888, 0.702258218866732, "<unicode> Lack of fit",
+                                      11.2578492853167, 90.0627942825334, 8, "", "", "<unicode> Pure error", "",
                                       460.478006896861, 15, "", "", "Total"))
 })
 
@@ -4555,7 +4603,9 @@ test_that("46.1 Response Optimizer Factorial Manual Input - ANOVA table results 
                                       0.858752480786647, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
                                       0.00209114349880224, 0.00209114349880224, 1, 0.00020494551883179,
                                       0.988890269483188, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
-                                      10.2034116711698, 91.8307050405284, 9, "", "", "Error", "",
+                                      10.2034116711698, 91.8307050405284, 9, "", "", "Error",
+                                      1.76791075799493, 1.76791075799493, 1, 0.157038055243888, 0.702258218866732, "<unicode> Lack of fit",
+                                      11.2578492853167, 90.0627942825334, 8, "", "", "<unicode> Pure error", "",
                                       460.478006896861, 15, "", "", "Total"))
 })
 
@@ -4683,6 +4733,8 @@ test_that("47.1 Response Optimizer Factorial Changing All Options - ANOVA table 
                                       0.0027057718079512, 0.0027057718079512, 1, 0.279867976282665,
                                       0.609585425025631, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
                                       0.00966802934687458, 0.0870122641218712, 9, "", "", "Error",
+                                      0.00114437119258799, 0.00114437119258799, 1, 0.106616911495005, 0.752407691342665, "<unicode> Lack of fit",
+                                      0.0107334866161604, 0.0858678929292833, 8, "", "", "<unicode> Pure error",
                                       "", 1.78282476739951, 15, "", "", "Total"))
 })
 
@@ -4742,7 +4794,9 @@ test_that("47.6 Response Optimizer Factorial Changing All Options - ANOVA table 
                                       0.858752480786647, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
                                       0.00209114349880224, 0.00209114349880224, 1, 0.00020494551883179,
                                       0.988890269483188, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
-                                      10.2034116711698, 91.8307050405284, 9, "", "", "Error", "",
+                                      10.2034116711698, 91.8307050405284, 9, "", "", "Error",
+                                      1.76791075799493, 1.76791075799493, 1, 0.157038055243888, 0.702258218866732, "<unicode> Lack of fit",
+                                      11.2578492853167, 90.0627942825334, 8, "", "", "<unicode> Pure error", "",
                                       460.478006896861, 15, "", "", "Total"))
 })
 
@@ -4856,7 +4910,9 @@ test_that("48.1 Response Optimizer Response Surface No Squares - ANOVA table res
                                       "<unicode> <unicode> Speed<unicode><unicode><unicode>Nozzle",
                                       651.041666666657, 651.041666666657, 1, 0.180874958211468, 0.672563404439722,
                                       "<unicode> <unicode> Pressure<unicode><unicode><unicode>Nozzle",
-                                      3599.40189125296, 169171.888888889, 47, "", "", "Error", "",
+                                      3599.40189125296, 169171.888888889, 47, "", "", "Error",
+                                      7882.81944444444, 157656.388888889, 20, 18.4825778298815, 6.24259819237881e-11, "<unicode> Lack of fit",
+                                      426.5, 11515.5, 27, "", "", "<unicode> Pure error", "",
                                       174102.833333333, 53, "", "", "Total"))
 })
 
@@ -5225,7 +5281,7 @@ if (jaspTools:::getOS() == "windows") { # randomly fails on linux and mac
 test_that("53.2 Response Optimizer Response Surface Change All Options - Optimization Plot Summary table results match", {
   table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(99.999, 2, 12.296, 120.83, -22.004, 0.885700020509264))
+                                 list(100, 2, 18.79, 122.565, -37.422, 0.929732546561872))
 })
 
 test_that("53.3 Response Optimizer Response Surface Change All Options - Response Optimizer Settings table results match", {
@@ -5238,7 +5294,7 @@ test_that("53.3 Response Optimizer Response Surface Change All Options - Respons
 test_that("53.4 Response Optimizer Response Surface Change All Options - Response Optimizer Solution table results match", {
   table <- results[["results"]][["tableRoSolution"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(99.999, 2, 12.296, 120.83, -22.004, 0.885700020509264))
+                                 list(100, 2, 18.79, 122.565, -37.422, 0.929732546561872))
 })
 
 test_that("Stepwise marginality works without explicit data and preserves keep", {
@@ -5378,6 +5434,292 @@ test_that("ANOVA Model and group df follow the fit rank when coding aliases term
 
 options("jaspRoundToPrecision" = NULL) # reset default
 
+## Response optimizer bounds and targets ####
+
+.doeTestOptimizerRow <- function(goal, lowerBound = 0, target = 0.5, upperBound = 1) {
+  data.frame(
+    variable                    = "y",
+    responseOptimizerGoal       = goal,
+    responseOptimizerTarget     = target,
+    responseOptimizerLowerBound = lowerBound,
+    responseOptimizerUpperBound = upperBound,
+    responseOptimizerWeight     = 1,
+    responseOptimizerImportance = 1
+  )
+}
+
+.doeTestResolve <- function(dataset, roOptionsDf, manualBounds, manualTarget) {
+  jaspQualityControl:::.doeResolveOptimizerSettings(roOptionsDf, dataset, manualBounds, manualTarget)
+}
+
+.doeTestDesirability <- function(values, roOptionsDf) {
+  vapply(values, function(v) jaspQualityControl:::.calculateDesirability(c(y = v), roOptionsDf), numeric(1))
+}
+
+test_that("Optimizer target defaults to observed max/min, also with manual bounds", {
+  # nothing manual: linear between observed min and max
+  ro <- .doeTestResolve(data.frame(y = c(0, 10)), .doeTestOptimizerRow("maximize"), FALSE, FALSE)
+  expect_equal(.doeTestDesirability(c(3, 5, 9), ro), c(0.3, 0.5, 0.9))
+
+  # maximize, manual lower bound: the disabled Upper field (default 1) must not become the target
+  ro <- .doeTestResolve(data.frame(y = c(0, 10)), .doeTestOptimizerRow("maximize", lowerBound = 2), TRUE, FALSE)
+  expect_equal(.doeTestDesirability(c(1, 3, 5, 9, 10), ro), c(0, 0.125, 0.375, 0.875, 1))
+
+  # minimize, manual upper bound: the disabled Lower field (default 0) must not become the target
+  ro <- .doeTestResolve(data.frame(y = c(3, 13)), .doeTestOptimizerRow("minimize", upperBound = 12), TRUE, FALSE)
+  expect_equal(.doeTestDesirability(c(3, 5, 8, 12), ro), c(1, 7 / 9, 4 / 9, 0))
+})
+
+test_that("Optimizer desirability is defined when a bound equals the target", {
+  y <- data.frame(y = c(0, 10))
+  # maximize, lower bound = observed max (= default target): step at 10, no 0/0
+  ro <- .doeTestResolve(y, .doeTestOptimizerRow("maximize", lowerBound = 10), TRUE, FALSE)
+  expect_equal(.doeTestDesirability(c(9, 10, 11), ro), c(0, 1, 1))
+  # minimize, upper bound = target
+  ro <- .doeTestResolve(y, .doeTestOptimizerRow("minimize", target = 4, upperBound = 4), TRUE, TRUE)
+  expect_equal(.doeTestDesirability(c(3, 4, 5), ro), c(1, 1, 0))
+  # target goal, one-sided: target = lower bound
+  ro <- .doeTestResolve(y, .doeTestOptimizerRow("target", lowerBound = 0, target = 0, upperBound = 5), TRUE, FALSE)
+  expect_equal(.doeTestDesirability(c(0, 2, 5, 6), ro), c(1, 0.6, 0, 0))
+  # constant response, nothing manual
+  ro <- .doeTestResolve(data.frame(y = c(4, 4)), .doeTestOptimizerRow("maximize"), FALSE, FALSE)
+  expect_equal(.doeTestDesirability(c(3, 4, 5), ro), c(0, 1, 1))
+})
+
+test_that("Optimizer settings without a defined desirability give errors, a target outside the data range a footnote", {
+  y <- data.frame(y = c(0, 10))
+  errors <- function(ro, manualBounds) jaspQualityControl:::.doeOptimizerSettingsErrors(ro, manualBounds)
+  notes  <- function(ro, manualBounds) jaspQualityControl:::.doeOptimizerTargetOutsideRangeNotes(ro, manualBounds)
+
+  # maximize, manual lower bound above the observed max (default target)
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("maximize", lowerBound = 12), TRUE, FALSE), TRUE), 1)
+  # minimize, manual target above the observed max (bounds from data)
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("minimize", target = 11), FALSE, TRUE), FALSE), 1)
+  # target goal: lower above upper, and target outside manual bounds
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("target", lowerBound = 6, target = 7, upperBound = 5), TRUE, FALSE), TRUE), 1)
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("target", lowerBound = 0, target = 7, upperBound = 5), TRUE, FALSE), TRUE), 1)
+  # equality is allowed
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("maximize", lowerBound = 10), TRUE, FALSE), TRUE), 0)
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("minimize", upperBound = 0), TRUE, FALSE), TRUE), 0)
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("target", lowerBound = 5, target = 5, upperBound = 5), TRUE, FALSE), TRUE), 0)
+  # close values stay distinguishable in the message
+  expect_match(errors(.doeTestResolve(y, .doeTestOptimizerRow("maximize", lowerBound = 10.004), TRUE, FALSE), TRUE), "(10.004)", fixed = TRUE)
+
+  # target goal outside bounds from the data: no error, a footnote, and the optimizer moves towards the target
+  ro <- .doeTestResolve(y, .doeTestOptimizerRow("target", target = 15), FALSE, FALSE)
+  expect_length(errors(ro, FALSE), 0)
+  expect_length(notes(ro, FALSE), 1)
+  expect_equal(.doeTestDesirability(c(5, 10, 11), ro), c(1 / 3, 2 / 3, 0))
+  expect_length(notes(.doeTestResolve(y, .doeTestOptimizerRow("target", target = 5), FALSE, FALSE), FALSE), 0)
+})
+
+test_that("Response optimizer shows an error for a lower bound above the target", {
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial <- c("Strength")
+  options$fixedFactorsFactorial <- c("Material")
+  options$continuousFactorsFactorial <- c("InjPress", "InjTemp")
+  options$codeFactors <- FALSE
+  options$codeFactorsMethod <- "automatic"
+  options$highestOrder <- FALSE
+  options$modelTerms <- list(
+    list(components = "Material"),
+    list(components = "InjTemp"),
+    list(components = "InjPress")
+  )
+  options$responsesResponseOptimizer <- list(
+    list(
+      responseOptimizerGoal       = "maximize",
+      responseOptimizerImportance = 1.0,
+      responseOptimizerLowerBound = 100,
+      responseOptimizerTarget     = 0.5,
+      responseOptimizerUpperBound = 1.0,
+      responseOptimizerWeight     = 1.0,
+      variable                    = "Strength"
+    )
+  )
+  options$responseOptimizerManualBounds <- TRUE
+  options$responseOptimizerManualTarget <- FALSE
+  options$optimizationSolutionTable <- TRUE
+  options$optimizationPlot <- TRUE
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+
+  expect_identical(results[["status"]], "complete")
+  settings <- results[["results"]][["tableRoSettings"]]
+  expect_identical(settings[["status"]], "error")
+  expect_match(settings[["error"]][["errorMessage"]], "lower bound")
+  expect_null(results[["results"]][["tableRoSolution"]])
+  expect_null(results[["results"]][["plotRo"]])
+})
+
+.doeTestOptimizerSolution <- function(lowerBound, target) {
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial <- c("Strength")
+  options$fixedFactorsFactorial <- c("Material")
+  options$continuousFactorsFactorial <- c("InjPress", "InjTemp")
+  options$codeFactors <- FALSE
+  options$codeFactorsMethod <- "automatic"
+  options$highestOrder <- FALSE
+  options$modelTerms <- list(
+    list(components = "Material"),
+    list(components = "InjTemp"),
+    list(components = "InjPress")
+  )
+  options$responsesResponseOptimizer <- list(
+    list(
+      responseOptimizerGoal       = "maximize",
+      responseOptimizerImportance = 1.0,
+      responseOptimizerLowerBound = lowerBound,
+      responseOptimizerTarget     = target,
+      responseOptimizerUpperBound = 1.0,
+      responseOptimizerWeight     = 1.0,
+      variable                    = "Strength"
+    )
+  )
+  options$responseOptimizerManualBounds <- TRUE
+  options$responseOptimizerManualTarget <- TRUE
+  options$optimizationSolutionTable <- TRUE
+  options$optimizationPlot <- FALSE
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+  results[["results"]][["tableRoSolution"]]
+}
+
+test_that("Response optimizer leaves a flat desirability region around the first run", {
+  # the first run predicts 21.5, far below the lower bound; a single start there stalled at desirability 0
+  table <- .doeTestOptimizerSolution(lowerBound = 36.8, target = 37.8)
+  jaspTools::expect_equal_tables(table[["data"]], list(150, 100, "Formula2", 37.798, 0.998364696249993))
+  expect_length(table[["footnotes"]], 0)
+})
+
+test_that("Response optimizer flags a solution with desirability 0", {
+  table <- .doeTestOptimizerSolution(lowerBound = 50, target = 60)
+  jaspTools::expect_equal_tables(table[["data"]], list(75, 85, "Formula1", 21.469, 0))
+  expect_match(table[["footnotes"]][[1]][["text"]], "desirability above 0")
+})
+
+.doeTestOptimizerOneDesign <- function(continuous, discrete, goal, target = 0.5, custom = NULL) {
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial <- "Strength"
+  if (length(continuous)) options$continuousFactorsFactorial <- continuous
+  if (length(discrete)) options$fixedFactorsFactorial <- discrete
+  options$codeFactors <- FALSE
+  options$codeFactorsMethod <- "automatic"
+  options$highestOrder <- FALSE
+  options$modelTerms <- lapply(c(continuous, discrete), function(v) list(components = v))
+  options$responsesResponseOptimizer <- list(
+    list(
+      responseOptimizerGoal       = goal,
+      responseOptimizerImportance = 1.0,
+      responseOptimizerLowerBound = 0.0,
+      responseOptimizerTarget     = target,
+      responseOptimizerUpperBound = 1.0,
+      responseOptimizerWeight     = 1.0,
+      variable                    = "Strength"
+    )
+  )
+  options$optimizationSolutionTable <- TRUE
+  options$optimizationPlot <- TRUE
+  options$optimizationIntervals <- TRUE
+  if (!is.null(custom)) {
+    options$optimizationPlotCustomParameters <- TRUE
+    options$optimizationPlotCustomParameterValues <- custom
+  }
+  set.seed(123)
+  runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+}
+
+test_that("Response optimizer works with a single continuous predictor", {
+  results <- .doeTestOptimizerOneDesign("InjPress", character(0), "maximize")
+  expect_identical(results[["status"]], "complete")
+  jaspTools::expect_equal_tables(results[["results"]][["tableRoSolution"]][["data"]], list(150, 32.287, 0.689125870790799))
+  jaspTools::expect_equal_tables(results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]], list(150, 32.287, 0.689125870790799))
+  expect_length(results[["results"]][["tableRoPrediction"]][["data"]], 1)
+
+  results <- .doeTestOptimizerOneDesign("InjPress", character(0), "maximize", custom = list(list(value = 100, variable = "InjPress")))
+  expect_identical(results[["status"]], "complete")
+  jaspTools::expect_equal_tables(results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]], list(100, 28.749, 0.50256108967879))
+})
+
+test_that("Response optimizer works with a single discrete predictor", {
+  results <- .doeTestOptimizerOneDesign(character(0), "Material", "minimize")
+  expect_identical(results[["status"]], "complete")
+  jaspTools::expect_equal_tables(results[["results"]][["tableRoSolution"]][["data"]], list("Formula1", 26.269, 0.628236767317847))
+  expect_length(results[["results"]][["tableRoPrediction"]][["data"]], 1)
+})
+
+test_that("Response optimizer settings footnote does not call an entered target estimated", {
+  results <- .doeTestOptimizerOneDesign(c("InjPress", "InjTemp"), "Material", "target", target = 30)
+  footnotes <- vapply(results[["results"]][["tableRoSettings"]][["footnotes"]], function(f) f[["text"]], character(1))
+  expect_identical(footnotes, "The lower and upper bounds are estimated from data.")
+})
+
+test_that("Response optimizer error names data-derived values only when some are", {
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial <- "Strength"
+  options$fixedFactorsFactorial <- "Material"
+  options$continuousFactorsFactorial <- c("InjPress", "InjTemp")
+  options$codeFactors <- FALSE
+  options$codeFactorsMethod <- "automatic"
+  options$highestOrder <- FALSE
+  options$modelTerms <- list(list(components = "Material"), list(components = "InjTemp"), list(components = "InjPress"))
+  options$responseOptimizerManualBounds <- TRUE
+  options$responseOptimizerManualTarget <- FALSE
+  options$responsesResponseOptimizer <- list(
+    list(
+      responseOptimizerGoal       = "target",
+      responseOptimizerImportance = 1.0,
+      responseOptimizerLowerBound = 0.0,
+      responseOptimizerTarget     = 7,
+      responseOptimizerUpperBound = 5,
+      responseOptimizerWeight     = 1.0,
+      variable                    = "Strength"
+    )
+  )
+  # goal target with manual bounds: every value is entered
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+  expect_identical(results[["results"]][["tableRoSettings"]][["error"]][["errorMessage"]],
+                   "Strength: the target (7) is outside the bounds (0 to 5).")
+
+  # maximize: the target comes from the data
+  options$responsesResponseOptimizer[[1]]$responseOptimizerGoal       <- "maximize"
+  options$responsesResponseOptimizer[[1]]$responseOptimizerLowerBound <- 100
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+  expect_match(results[["results"]][["tableRoSettings"]][["error"]][["errorMessage"]], "not set manually are the observed", fixed = TRUE)
+})
+
+test_that("Response optimizer optimum on the design boundary is not flagged as extrapolation", {
+  # L-BFGS-B returned A = 1 + 2e-16 here, which the plot summary reported as outside the design space
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial <- "Result"
+  options$continuousFactorsFactorial <- "A"
+  options$covariates <- "Covariate"
+  options$codeFactors <- FALSE
+  options$codeFactorsMethod <- "automatic"
+  options$highestOrder <- FALSE
+  options$modelTerms <- list(list(components = "A"))
+  options$responsesResponseOptimizer <- list(
+    list(
+      responseOptimizerGoal       = "maximize",
+      responseOptimizerImportance = 1.0,
+      responseOptimizerLowerBound = 0.0,
+      responseOptimizerTarget     = 0.5,
+      responseOptimizerUpperBound = 1.0,
+      responseOptimizerWeight     = 1.0,
+      variable                    = "Result"
+    )
+  )
+  options$optimizationSolutionTable <- TRUE
+  options$optimizationPlot <- TRUE
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2level5facFullCovariate.csv", options)
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]]
+  jaspTools::expect_equal_tables(table[["data"]], list(1, 104.04, 0.598558434916087))
+  expect_length(table[["footnotes"]], 0)
+})
+
 ## Contour plot ####
 
 options <- analysisOptions("doeAnalysis")
@@ -5497,4 +5839,479 @@ test_that("Effects are 2 x coefficient for -1/+1 terms and missing for squared, 
   expect_true(all(is.na(effects[setdiff(names(effects), defined)]))) # intercept, F1, F2, I(X^2), Cov, X:F1, X:F2
 
   expect_true(is.na(jaspQualityControl:::.doeCoefficientEffects(stats::lm(y ~ 1, data = toy))))
+})
+
+
+## Confidence intervals, lack of fit and prediction intervals (jasp-issues#4640) ####
+# Plasma etch data from above. References come from independent lm() fits: confint() for the coefficients (effect
+# intervals: 2 x the interval of the coefficient in coded units), predict() for fitted values with confidence and
+# prediction intervals, and the F-test of the model against the cell-means model (one mean per distinct setting),
+# which is the lack-of-fit test.
+
+doeTableColumn <- function(table, column) {
+  vapply(table[["data"]], function(row) {
+    value <- row[[column]]
+    if (is.null(value) || identical(value, "")) NA_real_ else as.numeric(value)
+  }, numeric(1))
+}
+doeTableTerms <- function(table) vapply(table[["data"]], function(row) as.character(row[["terms"]]), character(1))
+doeAnovaRow   <- function(table, label) table[["data"]][[which(doeTableTerms(table) == label)]]
+
+etchCiOptions <- function(...) {
+  options <- etchOptions(...)
+  options$tableCoefficientsCi      <- TRUE
+  options$tableCoefficientsCiLevel <- 0.9
+  options
+}
+
+etchFitCoded   <- stats::lm(EtchRate ~ (Gap + Pressure + Flow + Power)^2, data = etchData)
+etchFitUncoded <- stats::lm(EtchRate ~ (Gap + Pressure + Flow + Power)^2, data = etchDataUncoded)
+
+set.seed(123)
+resultsEtchCiCoded   <- runAnalysis("doeAnalysis", etchData, etchCiOptions(continuous = etchTerms, coded = TRUE))
+resultsEtchCiUncoded <- runAnalysis("doeAnalysis", etchDataUncoded, etchCiOptions(continuous = etchTerms, coded = FALSE))
+
+test_that("Coefficient and effect confidence intervals match confint() in coded units", {
+  table <- resultsEtchCiCoded[["results"]][["EtchRate"]][["collection"]][["EtchRate_tableCoefficients"]]
+  ref   <- stats::confint(etchFitCoded, level = 0.9)
+  expect_equal(doeTableColumn(table, "coefLower"), unname(ref[, 1]))
+  expect_equal(doeTableColumn(table, "coefUpper"), unname(ref[, 2]))
+  expect_equal(doeTableColumn(table, "effectsLower")[-1], 2 * unname(ref[-1, 1]))
+  expect_equal(doeTableColumn(table, "effectsUpper")[-1], 2 * unname(ref[-1, 2]))
+  expect_true(is.na(doeTableColumn(table, "effectsLower")[1])) # no effect for the intercept
+  overtitles <- vapply(table[["schema"]][["fields"]], function(field) if (is.null(field[["overTitle"]])) "" else field[["overTitle"]], character(1))
+  expect_true(all(c("90% CI for effect", "90% CI for coefficient") %in% overtitles))
+})
+
+test_that("Coefficient and effect confidence intervals match confint() in uncoded units", {
+  table <- resultsEtchCiUncoded[["results"]][["EtchRate"]][["collection"]][["EtchRate_tableCoefficients"]]
+  ref   <- stats::confint(etchFitUncoded, level = 0.9)
+  expect_equal(doeTableColumn(table, "coefLower"), unname(ref[, 1]))
+  expect_equal(doeTableColumn(table, "coefUpper"), unname(ref[, 2]))
+  # effects are defined in coded units, and so are their intervals
+  refCoded <- stats::confint(etchFitCoded, level = 0.9)
+  expect_equal(doeTableColumn(table, "effectsLower")[-1], 2 * unname(refCoded[-1, 1]))
+  expect_equal(doeTableColumn(table, "effectsUpper")[-1], 2 * unname(refCoded[-1, 2]))
+})
+
+test_that("No confidence interval columns by default", {
+  fields <- resultsEtchCoded[["results"]][["EtchRate"]][["collection"]][["EtchRate_tableCoefficients"]][["schema"]][["fields"]]
+  expect_false(any(c("coefLower", "effectsLower") %in% vapply(fields, `[[`, character(1), "name")))
+})
+
+test_that("Lack of fit and pure error match the test against the cell-means model", {
+  table <- resultsEtchCiCoded[["results"]][["EtchRate"]][["collection"]][["EtchRate_tableAnova"]]
+  ref   <- stats::anova(etchFitCoded, stats::lm(EtchRate ~ factor(paste(Gap, Pressure, Flow, Power)), data = etchData))
+  lof   <- doeAnovaRow(table, "\u00A0 Lack of fit")
+  pure  <- doeAnovaRow(table, "\u00A0 Pure error")
+  error <- doeAnovaRow(table, "Error")
+  expect_equal(c(lof[["df"]], lof[["adjss"]], lof[["fval"]], lof[["pval"]]),
+               c(ref[["Df"]][2], ref[["Sum of Sq"]][2], ref[["F"]][2], ref[["Pr(>F)"]][2]))
+  expect_equal(c(pure[["df"]], pure[["adjss"]]), c(ref[["Res.Df"]][2], ref[["RSS"]][2]))
+  centerRuns <- etchData$EtchRate[17:20]
+  expect_equal(c(pure[["df"]], pure[["adjss"]]), c(3, sum((centerRuns - mean(centerRuns))^2))) # the 4 center points
+  expect_equal(lof[["df"]] + pure[["df"]], error[["df"]])
+  expect_equal(lof[["adjss"]] + pure[["adjss"]], error[["adjss"]])
+})
+
+test_that("Center point indicator: effect interval and lack of fit after the curvature term", {
+  # 0/1 center point indicator as a discrete factor: its effect is the difference between center point and factorial mean
+  etchDataCenter <- transform(etchData, Center = ifelse(Gap == 0, "1", "0"))
+  options <- etchCiOptions(continuous = etchTerms, discrete = "Center", coded = TRUE)
+  options$modelTerms <- c(options$modelTerms, list(list(components = "Center")))
+  set.seed(123)
+  results    <- runAnalysis("doeAnalysis", etchDataCenter, options)
+  coefTable  <- results[["results"]][["EtchRate"]][["collection"]][["EtchRate_tableCoefficients"]]
+  anovaTable <- results[["results"]][["EtchRate"]][["collection"]][["EtchRate_tableAnova"]]
+
+  refData <- transform(etchDataCenter, Center = ifelse(Center == "1", 1, -1))
+  refFit  <- stats::lm(EtchRate ~ (Gap + Pressure + Flow + Power)^2 + Center, data = refData)
+  center  <- which(doeTableTerms(coefTable) == "Center")
+  expect_equal(doeTableColumn(coefTable, "effects")[center], 2 * unname(stats::coef(refFit)["Center"]))
+  expect_equal(c(doeTableColumn(coefTable, "effectsLower")[center], doeTableColumn(coefTable, "effectsUpper")[center]),
+               2 * unname(stats::confint(refFit, level = 0.9)["Center", ]))
+
+  ref <- stats::anova(refFit, stats::lm(EtchRate ~ factor(paste(Gap, Pressure, Flow, Power)), data = refData))
+  lof <- doeAnovaRow(anovaTable, "\u00A0 Lack of fit")
+  expect_equal(c(lof[["df"]], lof[["adjss"]], lof[["fval"]], lof[["pval"]]),
+               c(ref[["Df"]][2], ref[["Sum of Sq"]][2], ref[["F"]][2], ref[["Pr(>F)"]][2]))
+})
+
+test_that("No lack of fit split without replicates or without degrees of freedom for lack of fit", {
+  colNames <- c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")
+  set.seed(1)
+  design     <- expand.grid(A = c(-1, 1), B = c(-1, 1))
+  replicated <- transform(rbind(design, design), y = rnorm(8))
+  single     <- transform(design, y = rnorm(4))
+  expect_null(jaspQualityControl:::.doeAnovaLackOfFitRows(stats::lm(y ~ A + B, data = single), colNames))     # no replicates
+  expect_null(jaspQualityControl:::.doeAnovaLackOfFitRows(stats::lm(y ~ A * B, data = replicated), colNames)) # one coefficient per setting
+  rows <- jaspQualityControl:::.doeAnovaLackOfFitRows(stats::lm(y ~ A + B, data = replicated), colNames)
+  expect_equal(rows[["Df"]], c(1, 4))
+  expect_equal(rownames(rows), c("\u00A0 Lack of fit", "\u00A0 Pure error"))
+})
+
+test_that("Lack of fit groups the runs on the variables, not on the model terms", {
+  # with I(A^2) but not A in the model, the runs at A = -a and A = +a are distinct settings, not replicates
+  colNames <- c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")
+  squares  <- data.frame(A = rep(c(-2, -1, 1, 2), each = 2))
+  squares$y <- squares$A + rep(c(-0.1, 0.1), 4)
+  fit  <- stats::lm(y ~ I(A^2), data = squares)
+  ref  <- stats::anova(fit, stats::lm(y ~ factor(A), data = squares))
+  rows <- jaspQualityControl:::.doeAnovaLackOfFitRows(fit, colNames, squares)
+  expect_equal(rows[["Df"]], c(ref[["Df"]][2], ref[["Res.Df"]][2]))
+  expect_equal(c(rows[["Sum Sq"]][1], rows[["F value"]][1], rows[["Pr(>F)"]][1]),
+               c(ref[["Sum of Sq"]][2], ref[["F"]][2], ref[["Pr(>F)"]][2]))
+})
+
+test_that("Lack of fit in uncoded factorial designs follows the ANOVA fit with the predictors as factors", {
+  # Uncoded, the factorial ANOVA treats continuous predictors as factors (3 levels here: 2 df each), coded as numeric
+  # (1 df each), so the split of Error changes with the coding. A full 3 x 3 grid, so no factor column is aliased.
+  set.seed(1)
+  grid    <- expand.grid(A = c(100, 150, 200), B = c(1, 2, 3))
+  lofData <- rbind(grid, grid[c(1, 3, 5, 9), ])
+  lofData$y <- round(10 + 0.02 * lofData$A + 3 * lofData$B - 2 * (lofData$B - 2)^2 + rnorm(nrow(lofData)), 2)
+  lofOptions <- function(coded) {
+    options <- analysisOptions("doeAnalysis")
+    options$dependentFactorial         <- "y"
+    options$continuousFactorsFactorial <- c("A", "B")
+    options$codeFactors                <- coded
+    options$codeFactorsMethod          <- "automatic"
+    options$highestOrder               <- FALSE
+    options$modelTerms                 <- list(list(components = "A"), list(components = "B"))
+    options
+  }
+  cellMeans <- stats::lm(y ~ factor(paste(A, B)), data = lofData)
+  refs <- list(uncoded = stats::anova(stats::lm(y ~ factor(A) + factor(B), data = lofData), cellMeans),
+               coded   = stats::anova(stats::lm(y ~ A + B, data = lofData), cellMeans))
+  for (coding in names(refs)) {
+    set.seed(123)
+    results <- runAnalysis("doeAnalysis", lofData, lofOptions(coded = coding == "coded"))
+    table   <- results[["results"]][["y"]][["collection"]][["y_tableAnova"]]
+    lof     <- doeAnovaRow(table, "  Lack of fit")
+    pure    <- doeAnovaRow(table, "  Pure error")
+    ref     <- refs[[coding]]
+    expect_equal(c(lof[["df"]], lof[["adjss"]], lof[["fval"]], lof[["pval"]]),
+                 c(ref[["Df"]][2], ref[["Sum of Sq"]][2], ref[["F"]][2], ref[["Pr(>F)"]][2]), label = coding)
+    expect_equal(c(pure[["df"]], pure[["adjss"]]), c(ref[["Res.Df"]][2], ref[["RSS"]][2]), label = coding)
+  }
+  expect_equal(c(refs[["uncoded"]][["Df"]][2], refs[["coded"]][["Df"]][2]), c(4, 6)) # the split differs
+})
+
+test_that("Effect intervals use the error df of the fit the effects come from", {
+  # Uncoded, the effects come from a fit on coded continuous predictors. Here the coded A^2 and B^2 coincide, so that
+  # fit has one coefficient less and one more error df than the uncoded fit.
+  set.seed(3)
+  sqData <- data.frame(A = c(0, 2, 1, 0, 2, 1, 0, 2, 1, 0),
+                       B = c(10, 12, 11, 12, 10, 11, 10, 10, 11, 12),
+                       C = c(-1, -1, -1, 1, 1, 1, 0, 0, 1, -1))
+  sqData$y <- round(5 + sqData$C + 0.3 * sqData$A^2 + 0.01 * sqData$B^2 + rnorm(10, sd = 0.2), 2)
+  options <- analysisOptions("doeAnalysis")
+  options$designType                       <- "responseSurfaceDesign"
+  options$dependentResponseSurface         <- "y"
+  options$continuousFactorsResponseSurface <- c("A", "B", "C")
+  options$rsmPredefinedModel               <- FALSE
+  options$modelTerms                       <- list(list(components = "C"))
+  options$squaredTerms                     <- c("A", "B")
+  options$codeFactors                      <- FALSE
+  options$codeFactorsMethod                <- "automatic"
+  options$tableCoefficientsCi              <- TRUE
+  options$tableCoefficientsCiLevel         <- 0.95
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", sqData, options)
+  table   <- results[["results"]][["y"]][["collection"]][["y_tableCoefficients"]]
+
+  codedData <- transform(sqData, A = A - 1, B = B - 11) # automatic coding: -1/0/+1
+  codedFit  <- stats::lm(y ~ C + I(A^2) + I(B^2), data = codedData)
+  expect_equal(codedFit[["df.residual"]], 7)
+  expect_equal(stats::lm(y ~ C + I(A^2) + I(B^2), data = sqData)[["df.residual"]], 6)
+  row <- which(doeTableTerms(table) == "C")
+  expect_equal(c(doeTableColumn(table, "effectsLower")[row], doeTableColumn(table, "effectsUpper")[row]),
+               2 * unname(stats::confint(codedFit)["C", ]))
+})
+
+etchOptimizerOptions <- function(...) {
+  options <- etchOptions(...)
+  options$responsesResponseOptimizer <- list(list(
+    responseOptimizerGoal       = "maximize",
+    responseOptimizerImportance = 1,
+    responseOptimizerLowerBound = 0,
+    responseOptimizerTarget     = 0.5,
+    responseOptimizerUpperBound = 1,
+    responseOptimizerWeight     = 1,
+    variable                    = "EtchRate"
+  ))
+  options$optimizationIntervals      <- TRUE
+  options$optimizationIntervalsLevel <- 0.9
+  options
+}
+
+doePredictionReference <- function(fit, newdata, level) {
+  ci <- stats::predict(fit, newdata, interval = "confidence", level = level)
+  pi <- stats::predict(fit, newdata, interval = "prediction", level = level)
+  c(fit = ci[1, "fit"], se = stats::predict(fit, newdata, se.fit = TRUE)[["se.fit"]][[1]],
+    ciLower = ci[1, "lwr"], ciUpper = ci[1, "upr"], piLower = pi[1, "lwr"], piUpper = pi[1, "upr"])
+}
+
+doePredictionRow <- function(table) {
+  row <- table[["data"]][[1]]
+  vapply(c("fit", "se", "ciLower", "ciUpper", "piLower", "piUpper"), function(column) as.numeric(row[[column]]), numeric(1))
+}
+
+test_that("Prediction table at the optimal solution matches predict()", {
+  # discrete predictors only, so the optimal settings are exact factor levels
+  set.seed(123)
+  results  <- runAnalysis("doeAnalysis", etchDataShared, etchOptimizerOptions(discrete = etchTerms, coded = FALSE))
+  solution <- results[["results"]][["tableRoSolution"]][["data"]][[1]]
+  newdata  <- as.data.frame(lapply(stats::setNames(etchTerms, etchTerms), function(term) factor(solution[[term]], levels = c("hi", "lo"))))
+
+  refData <- etchDataShared
+  for (term in etchTerms) {
+    refData[[term]] <- factor(refData[[term]], levels = c("hi", "lo"))
+    contrasts(refData[[term]]) <- "contr.sum"
+  }
+  refFit <- stats::lm(EtchRate ~ (Gap + Pressure + Flow + Power)^2, data = refData)
+
+  prediction <- results[["results"]][["tableRoPrediction"]]
+  expect_equal(prediction[["data"]][[1]][["response"]], "EtchRate")
+  expect_equal(doePredictionRow(prediction), doePredictionReference(refFit, newdata, 0.9))
+  expect_equal(doePredictionRow(prediction)[["fit"]], as.numeric(solution[["EtchRate_fit"]]), tolerance = 1e-3)
+})
+
+test_that("Prediction table at manually set factor levels matches predict()", {
+  options <- etchOptimizerOptions(continuous = etchTerms, coded = FALSE)
+  options$optimizationPlotCustomParameters      <- TRUE
+  options$optimizationPlotCustomParameterValues <- list(
+    list(value = 1.1, variable = "Gap"),
+    list(value = 420, variable = "Pressure"),
+    list(value = 150, variable = "Flow"),
+    list(value = 310, variable = "Power")
+  )
+  set.seed(123)
+  results    <- runAnalysis("doeAnalysis", etchDataUncoded, options)
+  prediction <- results[["results"]][["plotRo"]][["collection"]][["plotRo_predictionTable"]]
+  newdata    <- data.frame(Gap = 1.1, Pressure = 420, Flow = 150, Power = 310)
+  expect_equal(doePredictionRow(prediction), doePredictionReference(etchFitUncoded, newdata, 0.9))
+  expect_false(is.null(results[["results"]][["tableRoPrediction"]])) # the table for the optimal solution is shown as well
+})
+
+test_that("Predictions average over blocks and hold covariates at their mean", {
+  blockData <- read.csv("datasets/doeAnalysis/fourBlocksFactorial.csv")
+  blockData$Block <- factor(blockData$Blocks)
+  contrasts(blockData$Block) <- "contr.sum"
+  set.seed(1)
+  blockData$Cov <- rnorm(nrow(blockData))
+  fit <- stats::lm(Result ~ A + B + Cov + Block, data = blockData)
+
+  prediction <- jaspQualityControl:::.doePredictionWithIntervals(fit, list(A = 1, B = -1), blockData, 0.95, blocks = "Block", covariates = "Cov")
+  perBlock   <- data.frame(A = 1, B = -1, Cov = mean(blockData$Cov), Block = factor(levels(blockData$Block), levels = levels(blockData$Block)))
+  x          <- colMeans(stats::model.matrix(~ A + B + Cov + Block, perBlock, contrasts.arg = list(Block = "contr.sum")))
+  expect_equal(prediction[["fit"]], mean(stats::predict(fit, perBlock)))
+  expect_equal(prediction[["se"]], sqrt(drop(t(x) %*% stats::vcov(fit) %*% x)))
+})
+
+test_that("Response optimizer averages over blocks and holds covariates at their mean", {
+  # The optimizer used to add every block and covariate coefficient in full (as if each was 1)
+  blockData <- read.csv("datasets/doeAnalysis/fourBlocksFactorial.csv")
+  set.seed(1)
+  blockData$Cov <- round(rnorm(nrow(blockData), mean = 10), 2)
+
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial         <- "Result"
+  options$continuousFactorsFactorial <- c("A", "B")
+  options$blocksFactorial            <- "Blocks"
+  options$covariates                 <- "Cov"
+  options$codeFactors                <- TRUE
+  options$codeFactorsMethod          <- "automatic"
+  options$highestOrder               <- FALSE
+  options$modelTerms                 <- list(list(components = "A"), list(components = "B"))
+  options$responsesResponseOptimizer <- list(list(
+    responseOptimizerGoal       = "maximize",
+    responseOptimizerImportance = 1,
+    responseOptimizerLowerBound = 0,
+    responseOptimizerTarget     = 0.5,
+    responseOptimizerUpperBound = 1,
+    responseOptimizerWeight     = 1,
+    variable                    = "Result"
+  ))
+  options$optimizationPlot           <- TRUE
+  options$optimizationIntervals      <- TRUE
+  options$optimizationIntervalsLevel <- 0.95
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", blockData, options)
+
+  refData <- blockData
+  refData$Block <- factor(refData$Blocks)
+  contrasts(refData$Block) <- "contr.sum"
+  refFit <- stats::lm(Result ~ A + B + Block + Cov, data = refData)
+
+  solution <- results[["results"]][["tableRoSolution"]][["data"]][[1]]
+  perBlock <- data.frame(A = as.numeric(solution[["A"]]), B = as.numeric(solution[["B"]]), Cov = mean(blockData$Cov),
+                         Block = factor(levels(refData$Block), levels = levels(refData$Block)))
+  expected <- mean(stats::predict(refFit, perBlock))
+
+  plotSummary <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]][[1]]
+  prediction  <- results[["results"]][["tableRoPrediction"]][["data"]][[1]]
+  expect_equal(as.numeric(solution[["Result_fit"]]), expected, tolerance = 1e-3)
+  expect_equal(as.numeric(plotSummary[["Result fit"]]), expected, tolerance = 1e-3)
+  expect_equal(as.numeric(prediction[["fit"]]), expected, tolerance = 1e-3)
+})
+
+test_that("Response optimizer predicts every level of several discrete factors (jasp-issues#4665)", {
+  # Merging the factor levels used to drop the contribution of the last Strain level (D) and of Conc 1 and 2.
+  # The data make D / 1 the optimum, so the solution table, the summary plot and its table all hit those levels.
+  set.seed(1)
+  levelData <- expand.grid(Strain = c("A", "B", "C", "D"), Conc = c("1", "2", "3"), Rep = 1:2, stringsAsFactors = FALSE)
+  levelData$Yield <- 80 + c(A = -15, B = -8, C = 5, D = 18)[levelData$Strain] + c(20, 2, -22)[as.integer(levelData$Conc)] +
+    round(rnorm(nrow(levelData), sd = 3), 2)
+  levelData$Rep <- NULL
+
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial    <- "Yield"
+  options$fixedFactorsFactorial <- c("Strain", "Conc")
+  options$codeFactors           <- FALSE
+  options$highestOrder          <- FALSE
+  options$modelTerms            <- list(list(components = "Strain"), list(components = "Conc"))
+  options$responsesResponseOptimizer <- list(list(
+    responseOptimizerGoal       = "maximize",
+    responseOptimizerImportance = 1,
+    responseOptimizerLowerBound = 0,
+    responseOptimizerTarget     = 0.5,
+    responseOptimizerUpperBound = 1,
+    responseOptimizerWeight     = 1,
+    variable                    = "Yield"
+  ))
+  options$optimizationPlot <- TRUE
+
+  refData <- levelData
+  refData$Strain <- factor(refData$Strain)
+  refData$Conc   <- factor(refData$Conc)
+  refFit <- stats::lm(Yield ~ Strain + Conc, data = refData, contrasts = list(Strain = "contr.sum", Conc = "contr.sum"))
+  refPredict <- function(strain, conc)
+    unname(stats::predict(refFit, data.frame(Strain = factor(strain, levels(refData$Strain)), Conc = factor(conc, levels(refData$Conc)))))
+
+  # summary plot: subplots in column-major order, row 1 composite desirability and row 2 the response
+  # ($subplots, not [["subplots"]]: the plot object defines its own [[)
+  plotResponses <- function(results) {
+    plot <- results[["state"]][["figures"]][[results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]]][["obj"]]
+    lapply(plot$subplots[c(2, 4)], function(p) stats::setNames(p[["data"]][["y"]], as.character(p[["data"]][["x"]])))
+  }
+
+  set.seed(123)
+  results  <- runAnalysis("doeAnalysis", levelData, options)
+  solution <- results[["results"]][["tableRoSolution"]][["data"]][[1]]
+  expect_equal(c(solution[["Strain"]], solution[["Conc"]]), c("D", "1"))
+  expect_equal(as.numeric(solution[["Yield_fit"]]), refPredict("D", "1"), tolerance = 1e-3)
+  plotSummary <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]][[1]]
+  expect_equal(as.numeric(plotSummary[["Yield fit"]]), refPredict("D", "1"), tolerance = 1e-3)
+  responses <- plotResponses(results)
+  expect_equal(unname(responses[[1]][c("A", "B", "C", "D")]), refPredict(c("A", "B", "C", "D"), "1"))
+  expect_equal(unname(responses[[2]][c("1", "2", "3")]), refPredict("D", c("1", "2", "3")))
+
+  # manual predictor values
+  options$optimizationPlotCustomParameters      <- TRUE
+  options$optimizationPlotCustomParameterValues <- list(list(value = "D", variable = "Strain"), list(value = "2", variable = "Conc"))
+  set.seed(123)
+  results     <- runAnalysis("doeAnalysis", levelData, options)
+  plotSummary <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]][[1]]
+  expect_equal(as.numeric(plotSummary[["Yield fit"]]), refPredict("D", "2"), tolerance = 1e-3)
+  responses <- plotResponses(results)
+  expect_equal(unname(responses[[1]][c("A", "B", "C", "D")]), refPredict(c("A", "B", "C", "D"), "2"))
+  expect_equal(unname(responses[[2]][c("1", "2", "3")]), refPredict("D", c("1", "2", "3")))
+})
+
+test_that("Blocks without runs are dropped, so predictions still average over the blocks", {
+  # All responses of the last block are missing. Its level used to make lm() fall back to treatment contrasts, so the
+  # optimizer and the prediction table predicted at the first block instead of averaging over the blocks.
+  blockData <- read.csv("datasets/doeAnalysis/fourBlocksFactorial.csv")
+  blockData$Result[blockData$Blocks == max(blockData$Blocks)] <- NA
+
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial         <- "Result"
+  options$continuousFactorsFactorial <- c("A", "B")
+  options$blocksFactorial            <- "Blocks"
+  options$codeFactors                <- TRUE
+  options$codeFactorsMethod          <- "automatic"
+  options$highestOrder               <- FALSE
+  options$modelTerms                 <- list(list(components = "A"), list(components = "B"))
+  options$responsesResponseOptimizer <- list(list(
+    responseOptimizerGoal       = "maximize",
+    responseOptimizerImportance = 1,
+    responseOptimizerLowerBound = 0,
+    responseOptimizerTarget     = 0.5,
+    responseOptimizerUpperBound = 1,
+    responseOptimizerWeight     = 1,
+    variable                    = "Result"
+  ))
+  options$optimizationIntervals      <- TRUE
+  options$optimizationIntervalsLevel <- 0.95
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", blockData, options)
+
+  refData <- stats::na.omit(blockData)
+  refData$Block <- factor(refData$Blocks)
+  refFit <- stats::lm(Result ~ A + B + Block, data = refData, contrasts = list(Block = "contr.sum"))
+
+  solution   <- results[["results"]][["tableRoSolution"]][["data"]][[1]]
+  prediction <- results[["results"]][["tableRoPrediction"]]
+  perBlock   <- data.frame(A = as.numeric(solution[["A"]]), B = as.numeric(solution[["B"]]),
+                           Block = factor(levels(refData$Block), levels = levels(refData$Block)))
+  expected   <- mean(stats::predict(refFit, perBlock))
+  expect_equal(as.numeric(solution[["Result_fit"]]), expected, tolerance = 1e-3)
+  expect_equal(as.numeric(prediction[["data"]][[1]][["fit"]]), expected)
+
+  # the prediction interval is for a run in an average block
+  notes <- vapply(prediction[["footnotes"]], function(note) note[["text"]], character(1))
+  expect_true(any(grepl("the prediction interval excludes variation between blocks", notes, fixed = TRUE)))
+})
+
+test_that("Contour plot averages over the blocks and holds covariates at their mean", {
+  # rsm::contour.lm averages the predictions over all factor levels (here the blocks), like the prediction table
+  blockData <- read.csv("datasets/doeAnalysis/fourBlocksFactorial.csv")
+  set.seed(1)
+  blockData$Cov <- round(rnorm(nrow(blockData), mean = 10), 2)
+
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial          <- "Result"
+  options$continuousFactorsFactorial  <- c("A", "B")
+  options$blocksFactorial             <- "Blocks"
+  options$covariates                  <- "Cov"
+  options$codeFactors                 <- TRUE
+  options$codeFactorsMethod           <- "automatic"
+  options$highestOrder                <- FALSE
+  options$modelTerms                  <- list(list(components = "A"), list(components = "B"))
+  options$contourSurfacePlot          <- TRUE
+  options$contourSurfacePlotType      <- "contourPlot"
+  options$contourSurfacePlotVariables <- c("A", "B")
+  set.seed(123)
+  results  <- runAnalysis("doeAnalysis", blockData, options)
+  plots    <- results[["results"]][["Result"]][["collection"]][["Result_contourSurfacePlot"]][["collection"]]
+  plotData <- results[["state"]][["figures"]][[plots[[1]][["data"]]]][["obj"]][["data"]] # x = A, y = B
+
+  refData <- blockData
+  refData$Block <- factor(refData$Blocks)
+  refFit  <- stats::lm(Result ~ A + B + Block + Cov, data = refData, contrasts = list(Block = "contr.sum"))
+  blocks  <- factor(levels(refData$Block), levels = levels(refData$Block))
+  grid    <- data.frame(point = rep(seq_len(nrow(plotData)), each = length(blocks)),
+                        A = rep(plotData$x, each = length(blocks)), B = rep(plotData$y, each = length(blocks)),
+                        Block = rep(blocks, nrow(plotData)), Cov = mean(blockData$Cov))
+  expected <- as.vector(tapply(stats::predict(refFit, grid), grid$point, mean))
+  expect_equal(plotData$z, expected)
+})
+
+test_that("Prediction table at manual values outside the design space notes the extrapolation", {
+  options <- etchOptimizerOptions(continuous = etchTerms, coded = FALSE)
+  options$optimizationPlotCustomParameters      <- TRUE
+  options$optimizationPlotCustomParameterValues <- list(
+    list(value = 1.1, variable = "Gap"),
+    list(value = 420, variable = "Pressure"),
+    list(value = 150, variable = "Flow"),
+    list(value = 350, variable = "Power") # design space: 275 to 325
+  )
+  set.seed(123)
+  results    <- runAnalysis("doeAnalysis", etchDataUncoded, options)
+  prediction <- results[["results"]][["plotRo"]][["collection"]][["plotRo_predictionTable"]]
+  newdata    <- data.frame(Gap = 1.1, Pressure = 420, Flow = 150, Power = 350)
+  expect_equal(doePredictionRow(prediction), doePredictionReference(etchFitUncoded, newdata, 0.9))
+  notes <- vapply(prediction[["footnotes"]], function(note) note[["text"]], character(1))
+  expect_true(any(grepl("outside of the design space", notes, fixed = TRUE)))
 })

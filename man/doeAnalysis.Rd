@@ -30,6 +30,8 @@ doeAnalysis(
   histogramManualNumberOfBins = 30,
   modelTerms = list(optionKey = "components", types = list(), value = list()),
   normalEffectsPlot = FALSE,
+  optimizationIntervals = FALSE,
+  optimizationIntervalsLevel = 0.95,
   optimizationPlot = TRUE,
   optimizationPlotCustomParameterValues = list(optionKey = "variable", types = list(),
     value = list()),
@@ -58,6 +60,8 @@ doeAnalysis(
   surfacePlotHorizontalRotation = 330,
   surfacePlotVerticalRotation = 20,
   tableAlias = TRUE,
+  tableCoefficientsCi = FALSE,
+  tableCoefficientsCiLevel = 0.95,
   tableEquation = TRUE
 )
 }
@@ -118,6 +122,11 @@ Defaults to \code{TRUE}.}
 
 \item{normalEffectsPlot, }{Show a normal probability plot of the standardized effects.
 Defaults to \code{FALSE}.}
+
+\item{optimizationIntervals, }{Predicted response at the optimal (or manually set) factor levels, with the confidence interval for the mean response and the prediction interval for a single new run. Blocks are averaged out; covariates are held at their mean.
+Defaults to \code{FALSE}.}
+
+\item{optimizationIntervalsLevel, }{Confidence level of the intervals.}
 
 \item{optimizationPlot, }{Show a matrix of plots with one column per factor. The top row shows the composite desirability, the other rows one per response. Each plot varies one factor while the other factors are held at the optimal (or manually set) levels, which are marked in red.
 Defaults to \code{TRUE}.}
@@ -200,6 +209,11 @@ Defaults to \code{FALSE}.}
 
 \item{tableAlias, }{Assign alias names to the factors. Useful when factors have long names.
 Defaults to \code{TRUE}.}
+
+\item{tableCoefficientsCi, }{Add confidence intervals for the effects and the coefficients to the coefficients table, based on the t-distribution with the error degrees of freedom. The interval for an effect is twice the interval for its coefficient (in coded units).
+Defaults to \code{FALSE}.}
+
+\item{tableCoefficientsCiLevel, }{Confidence level of the intervals.}
 
 \item{tableEquation, }{Display the regression coefficients as an equation predicting the response.
 Defaults to \code{TRUE}.}

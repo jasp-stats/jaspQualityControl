@@ -227,7 +227,7 @@ Form
 				{
 					name: 									"cumulativeSumChartAverageMovingRangeLength"
 					label:									qsTr("Moving range length")
-					visible:								exponentiallyWeightedMovingAverageChartSdSource.currentValue == "data" & cumulativeSumChartSdMethod.currentValue == "averageMovingRange"
+					visible:								cumulativeSumChartSdSource.currentValue == "data" & cumulativeSumChartSdMethod.currentValue == "averageMovingRange"
 					min: 									2
 					defaultValue:							2
 				}
