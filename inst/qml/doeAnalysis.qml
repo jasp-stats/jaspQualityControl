@@ -639,7 +639,7 @@ Form
 					{
 						name:							"responseOptimizerLowerBound"
 						infoLabel:						qsTr("Lower")
-						info:							qsTr("Response value at and below which the individual desirability is 0. Used for the goals maximize and target. Only editable with 'Set all bounds manually'; otherwise the minimum of the observed response is used.")
+						info:							qsTr("Response value below which the individual desirability is 0. Used for the goals maximize and target. Only editable with 'Set all bounds manually'; otherwise the minimum of the observed response is used.")
 						defaultValue:					0
 						negativeValues:					true
 						fieldWidth:						1.2 * responsesResponseOptimizer.rowWidth
@@ -659,7 +659,7 @@ Form
 					{
 						name:							"responseOptimizerUpperBound"
 						infoLabel:						qsTr("Upper")
-						info:							qsTr("Response value at and above which the individual desirability is 0. Used for the goals minimize and target. Only editable with 'Set all bounds manually'; otherwise the maximum of the observed response is used.")
+						info:							qsTr("Response value above which the individual desirability is 0. Used for the goals minimize and target. Only editable with 'Set all bounds manually'; otherwise the maximum of the observed response is used.")
 						defaultValue:					1
 						negativeValues:					true
 						fieldWidth:						responsesResponseOptimizer.rowWidth

@@ -741,38 +741,49 @@ get_levels <- function(var, num_levels, dataset) {
   if (!readyModelPresent || !readyRO)
     return()
 
-  if (!options[["responseOptimizerManualBounds"]]) {
-    roOptionsDf[["responseOptimizerLowerBound"]] <- ""
-    roOptionsDf[["responseOptimizerUpperBound"]] <- ""
+  # the optimizer is the expensive part: rerun it only when the states are invalidated (optimizer options or model changed)
+  if (is.null(jaspResults[["roOptions"]]) || is.null(jaspResults[["roResult"]])) {
+    roOptionsDf <- .doeResolveOptimizerSettings(roOptionsDf, dataset, options[["responseOptimizerManualBounds"]], options[["responseOptimizerManualTarget"]])
+    settingsErrors <- .doeOptimizerSettingsErrors(roOptionsDf, options[["responseOptimizerManualBounds"]])
+    if (length(settingsErrors) > 0) {
+      tb1 <- createJaspTable(gettext("Response Optimizer Settings"))
+      tb1$dependOn(options = .doeResponseOptimizerDependencies())
+      tb1$position <- 1
+      jaspResults[["tableRoSettings"]] <- tb1
+      fromData <- .doeOptimizerValuesFromData(roOptionsDf, options)
+      if (fromData[["bounds"]] || fromData[["targets"]])
+        settingsErrors <- c(settingsErrors, gettext("Bounds and targets that are not set manually are the observed minimum or maximum of the response."))
+      tb1$setError(paste(settingsErrors, collapse = " "))
+      return()
+    }
+
+    roOptionsState <- createJaspState()
+    jaspResults[["roOptions"]] <- roOptionsState
+    jaspResults[["roOptions"]]$dependOn(options = .doeResponseOptimizerDependencies())
+    roOptionsState$object <- roOptionsDf
+
+    models    <- .doeOptimizerModels(jaspResults, roOptionsDf$variable, dataset, blocks, covariates)
+    roOutcome <- .calculateOptimalResponse(jaspResults, options, dataset, continuousPredictors, discretePredictors, roOptionsDf$variable, roOptionsDf, models)
+    roOutcomeState <- createJaspState()
+    jaspResults[["roResult"]] <- roOutcomeState
+    jaspResults[["roResult"]]$dependOn(options = .doeResponseOptimizerDependencies())
+    roOutcomeState$object <- roOutcome
   }
-  if (!options[["responseOptimizerManualTarget"]]) {
-    roOptionsDf[["responseOptimizerTarget"]][which(roOptionsDf$responseOptimizerGoal != "target")] <- ""
-  }
-
-
-  roOptionsState <- createJaspState()
-  jaspResults[["roOptions"]] <- roOptionsState
-  jaspResults[["roOptions"]]$dependOn(options = .doeResponseOptimizerDependencies())
-  roOptionsState$object <- roOptionsDf
-
+  roOptionsDf <- jaspResults[["roOptions"]]$object
+  roOutcome   <- jaspResults[["roResult"]]$object
   roDependent <- roOptionsDf$variable
+  models      <- .doeOptimizerModels(jaspResults, roDependent, dataset, blocks, covariates)
 
-  models <- .doeOptimizerModels(jaspResults, roDependent, dataset, blocks, covariates)
-  roOutcome <- .calculateOptimalResponse(jaspResults, options, dataset, continuousPredictors, discretePredictors, roDependent, roOptionsDf, models)
   optimParam <- roOutcome$parameters
   desi <- roOutcome$desirability
   desi <- pmax(0, pmin(1, desi)) # after optim. desi can be bounded to 0 and 1
   if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, ""))
-    contLevels <- if (length(optimParam) > 1) optimParam[names(optimParam) %in% continuousPredictors] else optimParam
+    contLevels <- optimParam[names(optimParam) %in% continuousPredictors]
   if (length(discretePredictors) >= 1 && !identical(discretePredictors, ""))
     discLevels <- .doeDiscreteSettings(optimParam, discretePredictors)
 
   predValues <- .doePredictResponses(continuousLevels = contLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
                                      currentDiscreteLevels = discLevels, models = models, dependent = roDependent)
-  roOutcomeState <- createJaspState()
-  jaspResults[["roResult"]] <- roOutcomeState
-  jaspResults[["roResult"]]$dependOn(options = .doeResponseOptimizerDependencies())
-  roOutcomeState$object <- roOutcome
 
   # Did all the required calculations and saved to state, if tables should not be displayed return now
   if (!options[["optimizationSolutionTable"]])
@@ -786,45 +797,26 @@ get_levels <- function(var, num_levels, dataset) {
   tb1$addColumnInfo(name = "ub", title = "Upper", type = "number")
   tb1$addColumnInfo(name = "weight", title = "Weight", type = "number")
   tb1$addColumnInfo(name = "importance", title = "Importance", type = "number")
-  tb1$dependOn(options = .doeResponseOptimizerDependencies())
+  tb1$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationSolutionTable"))
   tb1$position <- 1
   jaspResults[["tableRoSettings"]] <- tb1
 
-  lbVector <- c()
-  targetVector <- c()
-  ubVector <- c()
-  for (i in seq_len(nrow(roOptionsDf))) {
-    if (roOptionsDf$responseOptimizerGoal[i] == "maximize") {
-      ubVector[i] <- NA
-      lbVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
-      targetVector[i] <- if (options[["responseOptimizerManualTarget"]]) roOptionsDf$responseOptimizerTarget[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
-    } else if (roOptionsDf$responseOptimizerGoal[i] == "minimize") {
-      ubVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerUpperBound[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
-      lbVector[i] <- NA
-      targetVector[i] <- if (options[["responseOptimizerManualTarget"]]) roOptionsDf$responseOptimizerTarget[i] else min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
-    } else if (roOptionsDf$responseOptimizerGoal[i] == "target") {
-      ubVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerUpperBound[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
-      lbVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
-      targetVector[i] <- roOptionsDf$responseOptimizerTarget[i]
-    }
-  }
-
   rows1 <- data.frame(response = roOptionsDf$variable, goal = roOptionsDf$responseOptimizerGoal,
-                      lb = lbVector, target = targetVector, ub = ubVector, weight = roOptionsDf$responseOptimizerWeight,
+                      lb = roOptionsDf$responseOptimizerLowerBound, target = roOptionsDf$responseOptimizerTarget,
+                      ub = roOptionsDf$responseOptimizerUpperBound, weight = roOptionsDf$responseOptimizerWeight,
                       importance = roOptionsDf$responseOptimizerImportance)
   rows1$goal <- paste0(toupper(substr(rows1$goal, 1, 1)), substr(rows1$goal, 2, nchar(rows1$goal))) # Capitalize
   tb1$addRows(rows1)
 
-  if (!options[["responseOptimizerManualBounds"]] || !options[["responseOptimizerManualTarget"]]) {
-    if (!options[["responseOptimizerManualTarget"]] && !options[["responseOptimizerManualBounds"]]) {
-      estimationTarget <- gettext("lower and upper bounds and target are")
-    } else if (!options[["responseOptimizerManualBounds"]]) {
-      estimationTarget <- gettext("lower and upper bounds are")
-    } else if (!options[["responseOptimizerManualTarget"]]) {
-      estimationTarget <- gettext("target is")
-    }
-    tb1$addFootnote(gettextf("The %s estimated from data.", estimationTarget))
-  }
+  fromData <- .doeOptimizerValuesFromData(roOptionsDf, options)
+  if (fromData[["bounds"]] && fromData[["targets"]])
+    tb1$addFootnote(gettext("The lower and upper bounds, and the targets of the goals maximize and minimize, are estimated from data."))
+  else if (fromData[["bounds"]])
+    tb1$addFootnote(gettext("The lower and upper bounds are estimated from data."))
+  else if (fromData[["targets"]])
+    tb1$addFootnote(gettext("The targets of the goals maximize and minimize are estimated from data."))
+  for (note in .doeOptimizerTargetOutsideRangeNotes(roOptionsDf, options[["responseOptimizerManualBounds"]]))
+    tb1$addFootnote(note)
 
   tb2 <- createJaspTable(gettext("Response Optimizer Solution"))
   tb2$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
@@ -856,6 +848,8 @@ get_levels <- function(var, num_levels, dataset) {
     rows2[[colName]] <- round(as.numeric(predValues[[dep]]), .numDecimals)
   }
   tb2$addRows(rows2)
+  if (desi <= 0)
+    tb2$addFootnote(gettext("No factor setting with a composite desirability above 0 was found. The optimizer starts from the design points and can miss acceptable settings that lie between them."))
   .doeAddPredictionSettingsFootnotes(tb2, blocks, covariates)
 }
 
@@ -877,6 +871,7 @@ get_levels <- function(var, num_levels, dataset) {
   continuousPredictors <- unlist(continuousPredictors)
 
   jaspResults[["plotRo"]] <- createJaspContainer(title = gettext("Optimization Plot"))
+  jaspResults[["plotRo"]]$dependOn(options = .doeOptimizationPlotDependencies()) # no empty container after a settings error
   jaspResults[["plotRo"]]$position <- 4
 
   # Create Df if custom parameters are entered
@@ -894,7 +889,7 @@ get_levels <- function(var, num_levels, dataset) {
       jaspTable$addColumnInfo(name = "weight", title = "Weight", type = "number")
       jaspTable$addColumnInfo(name = "importance", title = "Importance", type = "number")
       jaspTable$addFootnote(gettext("Enter values for all predictors to create an optimization Plot with manual input parameters."))
-      jaspTable$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationPlot"))
+      jaspTable$dependOn(options = .doeOptimizationPlotDependencies())
       jaspResults[["plotRo"]][["table"]] <- jaspTable
       return()
     }
@@ -908,15 +903,11 @@ get_levels <- function(var, num_levels, dataset) {
           jaspPlot$setError(paste0(gettextf("Enter plausible values for all discrete predictors.
                                    Value %1$s is not a possible for the discrete predictor %2$s. Allowed values: ",
                                             unlist(currentSettings[discPred]), discPred), paste0(levels(dataset[[discPred]]), collapse = ", "), "."))
-          jaspPlot$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationPlot"))
+          jaspPlot$dependOn(options = .doeOptimizationPlotDependencies())
           jaspResults[["plotRo"]][["plot"]] <- jaspPlot
           return()
         }
-        if (length(currentSettings) > 1) {
-          currentSettings[discPred] <- factor(currentSettings[discPred], levels = levels(dataset[[discPred]]))
-        } else {
-          currentSettings <- factor(currentSettings, levels = levels(dataset[[discPred]]))
-        }
+        currentSettings[discPred] <- factor(currentSettings[discPred], levels = levels(dataset[[discPred]])) # a named data frame, also with one predictor
       }
       currentDiscreteLevels <- .doeDiscreteSettings(currentSettings, discretePredictors)
     } else {
@@ -930,24 +921,20 @@ get_levels <- function(var, num_levels, dataset) {
         if (is.na(as.numeric(currentSettings[contPred]))) {
           jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
           jaspPlot$setError(gettext("Enter plausible values for all continuous predictors. Only numeric values are allowed."))
-          jaspPlot$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationPlot"))
+          jaspPlot$dependOn(options = .doeOptimizationPlotDependencies())
           jaspResults[["plotRo"]][["plot"]] <- jaspPlot
           return()
         }
-        if (length(currentSettings) > 1) {
-          currentSettings[contPred] <- as.numeric(currentSettings[contPred])
-        } else {
-          currentSettings <- as.numeric(currentSettings)
-        }
+        currentSettings[contPred] <- as.numeric(currentSettings[contPred]) # a named data frame, also with one predictor
       }
-      continuousLevels <- if (length(currentSettings) > 1) currentSettings[continuousPredictors] else currentSettings
+      continuousLevels <- currentSettings[continuousPredictors]
     } else {
       continuousLevels <- ""
     }
   } else { # if default optimal parameters should be used
     currentSettings <- roOutcome$parameters
     if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
-      continuousLevels <- if (length(currentSettings) > 1) currentSettings[continuousPredictors] else currentSettings
+      continuousLevels <- currentSettings[continuousPredictors]
     } else {
       continuousLevels <- ""
     }
@@ -988,7 +975,6 @@ get_levels <- function(var, num_levels, dataset) {
                                                            models = models,
                                                            dependent = roDependent,
                                                            dependentTarget = dependentTarget,
-                                                           dataset = dataset,
                                                            roOptionsDf = roOptionsDf)
         if (outcomeType == "compDesi"| outcomeType == "individualDesirability")
           plottingWindowDf$y <- pmax(0, pmin(1, plottingWindowDf$y))
@@ -1004,7 +990,7 @@ get_levels <- function(var, num_levels, dataset) {
           jaspGraphs::themeJaspRaw() +
           jaspGraphs::geom_rangeframe()
       } else {
-        currentPredValue <- if (length(allPredictors) > 1) as.numeric(continuousLevels[currentPred]) else continuousLevels
+        currentPredValue <- as.numeric(continuousLevels[[currentPred]])
         plottingWindowDf <- data.frame(x = seq(from = min(dataset[[currentPred]], currentPredValue),
                                                to = max(dataset[[currentPred]], currentPredValue),
                                                 length.out = 50))
@@ -1018,7 +1004,6 @@ get_levels <- function(var, num_levels, dataset) {
                                                            models = models,
                                                            dependent = roDependent,
                                                            dependentTarget = dependentTarget,
-                                                           dataset = dataset,
                                                            roOptionsDf = roOptionsDf)
         if (outcomeType == "compDesi"| outcomeType == "individualDesirability")
           plottingWindowDf$y <- pmax(0, pmin(1, plottingWindowDf$y))
@@ -1039,7 +1024,6 @@ get_levels <- function(var, num_levels, dataset) {
                                                        models = models,
                                                        dependent = roDependent,
                                                        dependentTarget = dependentTarget,
-                                                       dataset = dataset,
                                                        roOptionsDf = roOptionsDf)
         if (outcomeType == "compDesi"| outcomeType == "individualDesirability")
           redPointCoordY <- pmax(0, pmin(1, redPointCoordY))
@@ -1056,7 +1040,7 @@ get_levels <- function(var, num_levels, dataset) {
   }
 
   jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 300*ncol, height = 300*nrow)
-  jaspPlot$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationPlot"))
+  jaspPlot$dependOn(options = .doeOptimizationPlotDependencies())
   plotObject <- jaspGraphs::ggMatrixPlot(plotList = plotMat, nr = nrow, nc = ncol)
   jaspPlot$plotObject <- plotObject
   jaspResults[["plotRo"]][["plot"]] <- jaspPlot
@@ -1075,14 +1059,14 @@ get_levels <- function(var, num_levels, dataset) {
     tb$addColumnInfo(name = colName, title = colTitle, type = "number")
   }
 
-  tb$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationPlot"))
+  tb$dependOn(options = .doeOptimizationPlotDependencies())
   extrapolationNote <- gettext("One or more input parameters for continuous predictors are outside of the design space. Extrapolation beyond the design space might not be valid.")
   if (extrapolationNoteBol)
     tb$addFootnote(extrapolationNote)
   jaspResults[["plotRo"]][["table"]] <- tb
 
   desi <- .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, models, roDependent,
-                                           dataset, roOptionsDf) * -1 # because it is returned as negative for optim. but in this case we want the true value
+                                           roOptionsDf) * -1 # because it is returned as negative for optim. but in this case we want the true value
   desi <- pmax(0, pmin(1, desi))
   predValues <- .doePredictResponses(continuousLevels = continuousLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
                                      currentDiscreteLevels = currentDiscreteLevels, models = models, dependent = roDependent)
@@ -1102,7 +1086,7 @@ get_levels <- function(var, num_levels, dataset) {
 
   if (options[["optimizationIntervals"]] && options[["optimizationPlotCustomParameters"]]) {
     predictionTable <- createJaspTable(gettext("Predicted Responses (Manual Predictor Values)"))
-    predictionTable$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationPlot", "optimizationPlotCustomParameterValues",
+    predictionTable$dependOn(options = c(.doeOptimizationPlotDependencies(), "optimizationPlotCustomParameterValues",
                                          "optimizationIntervals", "optimizationIntervalsLevel"))
     jaspResults[["plotRo"]][["predictionTable"]] <- predictionTable
     .doeFillPredictionTable(predictionTable, jaspResults, roDependent, .doeSettingsAsList(currentSettings, allPredictors), dataset,
@@ -1148,17 +1132,26 @@ get_levels <- function(var, num_levels, dataset) {
 .doeResponseOptimizerDependencies <- function() {
   c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
     "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
-    "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
+    "responseOptimizerManualBounds", "responseOptimizerManualTarget",
     .doeAnalysisBaseDependencies())
 }
 
-# Predictor settings (a data frame row, or a single value when there is only one predictor) as a named list
+# Whether any bound or target comes from the observed responses. The goal target always uses the entered target,
+# so only maximize/minimize targets can come from the data.
+.doeOptimizerValuesFromData <- function(roOptionsDf, options) {
+  list(bounds  = !options[["responseOptimizerManualBounds"]],
+       targets = !options[["responseOptimizerManualTarget"]] && any(roOptionsDf$responseOptimizerGoal != "target"))
+}
+
+# The optimization plot also depends on the plot-only options; the optimizer states above do not, so toggling them
+# does not rerun the optimizer.
+.doeOptimizationPlotDependencies <- function() {
+  c(.doeResponseOptimizerDependencies(), "optimizationPlot", "optimizationPlotCustomParameters")
+}
+
+# Predictor settings (a one-row data frame, also with a single predictor) as a named list
 .doeSettingsAsList <- function(settings, predictors) {
-  if (is.data.frame(settings))
-    return(as.list(settings[1, predictors, drop = FALSE]))
-  if (length(predictors) == 1)
-    return(stats::setNames(list(settings), predictors))
-  return(as.list(settings)[predictors])
+  return(as.list(settings[1, predictors, drop = FALSE]))
 }
 
 .doeFillPredictionTable <- function(table, jaspResults, responses, settings, dataset, blocks, covariates, level) {
@@ -1257,9 +1250,9 @@ get_levels <- function(var, num_levels, dataset) {
 .calculateOptimalResponse <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, dependent, roOptionsDf, models) {
 
   if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
-    # need initial guesses and limits for cont. variables
+    # starting points (the design points) and limits for cont. variables
     continuousPredictorsData <- dataset[continuousPredictors]
-    continuousPredictorsInital <- continuousPredictorsData[1,]
+    continuousPredictorsStarts <- unique(as.matrix(continuousPredictorsData))
     continuousPredictorsMin <- sapply(continuousPredictorsData, min)
     continuousPredictorsMax <- sapply(continuousPredictorsData, max)
   }
@@ -1284,58 +1277,57 @@ get_levels <- function(var, num_levels, dataset) {
     for (i in seq_len(nrow(gridSearchDf))) {
       currentDiscreteLevels <- gridSearchDf[i,]
       if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
-        currrentOptimResult <- optim(
-          par = continuousPredictorsInital,   # Initial guesses
-          fn = .predictDesirability,     # Objective function
-          method = "L-BFGS-B",         # Optimization method
-          lower = continuousPredictorsMin,  # Lower bounds
-          upper = continuousPredictorsMax,  # Upper bounds
-          continuousPredictors = continuousPredictors,
-          discretePredictors = discretePredictors,
-          currentDiscreteLevels = currentDiscreteLevels,
-          models = models,
-          dependent = dependent,
-          dataset = dataset,
-          roOptionsDf = roOptionsDf
-        )
+        currrentOptimResult <- .doeOptimizeContinuous(continuousPredictorsStarts, continuousPredictorsMin, continuousPredictorsMax,
+                                                      continuousPredictors, discretePredictors, currentDiscreteLevels,
+                                                      models, dependent, roOptionsDf)
         optimalResultDf[i, "outcomeValue"] <- currrentOptimResult$value * -1  # after optimization the sign can be switched again
         optimalResultDf[i, continuousPredictors] <- currrentOptimResult$par
       } else {
         optimalResultDf[i, "outcomeValue"]  <-  .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent,
-                                                                     dataset, roOptionsDf) * -1
+                                                                     roOptionsDf) * -1
       }
     }
   } else {
-    currrentOptimResult <- optim(
-      par = continuousPredictorsInital,   # Initial guesses
-      fn = .predictDesirability,     # Objective function
-      method = "L-BFGS-B",         # Optimization method
-      lower = continuousPredictorsMin,  # Lower bounds
-      upper = continuousPredictorsMax,  # Upper bounds
-      continuousPredictors = continuousPredictors,
-      discretePredictors = discretePredictors,
-      currentDiscreteLevels = currentDiscreteLevels,
-      models = models,
-      dependent = dependent,
-      dataset = dataset,
-      roOptionsDf = roOptionsDf
-    )
+    currrentOptimResult <- .doeOptimizeContinuous(continuousPredictorsStarts, continuousPredictorsMin, continuousPredictorsMax,
+                                                  continuousPredictors, discretePredictors, currentDiscreteLevels,
+                                                  models, dependent, roOptionsDf)
     optimalResultDf <- data.frame("outcomeValue" = currrentOptimResult$value * -1)  # after optimization the sign can be switched again
     optimalResultDf[continuousPredictors] <- currrentOptimResult$par
   }
-  optimalParameters <- optimalResultDf[which.max(optimalResultDf$outcomeValue), names(optimalResultDf) != "outcomeValue"]
+  # drop = FALSE keeps a named one-row data frame also with a single predictor
+  optimalParameters <- optimalResultDf[which.max(optimalResultDf$outcomeValue), names(optimalResultDf) != "outcomeValue", drop = FALSE]
   maxDesirability <- max(optimalResultDf$outcomeValue)
 
   return(list(parameters = optimalParameters, desirability = maxDesirability))
 }
 
 
+# Maximizes the composite desirability over the continuous predictors (L-BFGS-B within the observed ranges).
+# The desirability is flat (0 beyond a bound, 1 beyond a target), so a single start can stall there; instead start from the
+# first design point (the former single start, so the result is never worse) and the nStarts design points with the
+# highest desirability, and keep the best optimum.
+.doeOptimizeContinuous <- function(startPoints, lower, upper, continuousPredictors, discretePredictors, currentDiscreteLevels,
+                                   models, dependent, roOptionsDf, nStarts = 3) {
+  negDesirability <- function(par) .predictDesirability(par, continuousPredictors, discretePredictors, currentDiscreteLevels,
+                                                         models, dependent, roOptionsDf)
+  startValue <- vapply(seq_len(nrow(startPoints)), function(s) negDesirability(startPoints[s, ]), numeric(1))
+  startRows  <- unique(c(1, order(startValue)[seq_len(min(nStarts, nrow(startPoints)))])) # order() keeps ties in design order
+  best <- NULL
+  for (s in startRows) {
+    result <- optim(par = startPoints[s, ], fn = negDesirability, method = "L-BFGS-B", lower = lower, upper = upper)
+    if (is.null(best) || result$value < best$value)
+      best <- result
+  }
+  best$par <- pmin(pmax(best$par, lower), upper) # L-BFGS-B can overshoot a bound by rounding (1 + 2e-16), which looks like extrapolation
+  return(best)
+}
+
 .individualValueROprediction <- function(value, valueName,
                                          outcomeType = c("response", "individualDesirability", "compDesi"),
                                          continuousLevels, continuousPredictors,
                                          discretePredictors, currentDiscreteLevels,
                                          models, dependent, dependentTarget = "",
-                                         dataset, roOptionsDf) {
+                                         roOptionsDf) {
   returnedValue <- numeric(length = length(value))
   for (i in seq_along(value)) {
     if (valueName %in% continuousPredictors) {
@@ -1353,14 +1345,14 @@ get_levels <- function(var, num_levels, dataset) {
       }
     }
     compDesi <- .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent,
-                                     dataset, roOptionsDf) * -1  # flip sign again
+                                     roOptionsDf) * -1  # flip sign again
 
     if (dependentTarget != "") {
       rawPrediction <- .doePredictResponses(continuousLevels, continuousPredictors, discretePredictors,
                                             currentDiscreteLevels, models, dependent)
       rawPrediction <- rawPrediction[dependentTarget]
 
-      indDesi <- .calculateDesirability(dataset, rawPrediction, roOptionsDf)
+      indDesi <- .calculateDesirability(rawPrediction, roOptionsDf)
     }
     returnedValue[i] <- switch(outcomeType,
                                "response" = rawPrediction,
@@ -1394,58 +1386,38 @@ get_levels <- function(var, num_levels, dataset) {
 
 
 .predictDesirability <- function(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent,
-                                 dataset, roOptionsDf) {
+                                 roOptionsDf) {
   outcome <- .doePredictResponses(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent)
-  desirabilityOutcome <- .calculateDesirability(dataset, outcome, roOptionsDf)
+  desirabilityOutcome <- .calculateDesirability(outcome, roOptionsDf)
   desirabilityOutcome <- desirabilityOutcome * -1  # because optimization minimizes
   return(desirabilityOutcome)
 }
 
 # Desirability function formulas follow Derringer & Suich (1980), Journal of Quality Technology, 12(4), 214-219.
-.calculateDesirability <- function(dataset, outcome, roOptionsDf) {
+# roOptionsDf holds the resolved bounds and targets of .doeResolveOptimizerSettings, checked by .doeOptimizerSettingsErrors.
+.calculateDesirability <- function(outcome, roOptionsDf) {
   outcomeNames <- names(outcome)
-  desiVector <- c()
-  goals <- setNames(roOptionsDf$responseOptimizerGoal, roOptionsDf$variable)
-  targets <- setNames(roOptionsDf$responseOptimizerTarget, roOptionsDf$variable)
-  lowerbounds <- setNames(roOptionsDf$responseOptimizerLowerBound, roOptionsDf$variable)
-  upperbounds <- setNames(roOptionsDf$responseOptimizerUpperBound, roOptionsDf$variable)
-  weights <- setNames(roOptionsDf$responseOptimizerWeight, roOptionsDf$variable)
-  importances <- setNames(roOptionsDf$responseOptimizerImportance, roOptionsDf$variable)
+  desiVector   <- c()
+  goals        <- setNames(roOptionsDf$responseOptimizerGoal, roOptionsDf$variable)
+  targets      <- setNames(roOptionsDf$responseOptimizerTarget, roOptionsDf$variable)
+  lowerbounds  <- setNames(roOptionsDf$responseOptimizerLowerBound, roOptionsDf$variable)
+  upperbounds  <- setNames(roOptionsDf$responseOptimizerUpperBound, roOptionsDf$variable)
+  weights      <- setNames(roOptionsDf$responseOptimizerWeight, roOptionsDf$variable)
+  importances  <- setNames(roOptionsDf$responseOptimizerImportance, roOptionsDf$variable)
 
   for (outcomeName in outcomeNames) {
-    outcomeValue <- unname(outcome[outcomeName])
-    outcomeGoal <- unname(goals[outcomeName])
-    lb <- if (lowerbounds[outcomeName] == "") min(dataset[[outcomeName]]) else as.numeric(lowerbounds[outcomeName])
-    ub <- if (upperbounds[outcomeName] == "") max(dataset[[outcomeName]]) else as.numeric(upperbounds[outcomeName])
-    weight <- as.numeric(weights[outcomeName])
-    if (outcomeGoal == "minimize") {
-      target <- if (targets[outcomeName] == "") lb else as.numeric(targets[outcomeName])
-      if (outcomeValue < target) {
-        desi <- 1
-      } else if (outcomeValue > ub) {
-        desi <- 0
-      } else {
-        desi <- ((ub - outcomeValue) / (ub - target))^weight
-      }
-    } else if (outcomeGoal == "maximize") {
-      target <- if (targets[outcomeName] == "") ub else as.numeric(targets[outcomeName])
-      if (outcomeValue < lb) {
-        desi <- 0
-      } else if (outcomeValue > target) {
-        desi <- 1
-      } else {
-        desi <- ((outcomeValue - lb) / (target - lb))^weight
-      }
-    } else if (outcomeGoal == "target") {
-      target <- as.numeric(targets[outcomeName])
-      if (outcomeValue < lb || outcomeValue > ub) {
-        desi <- 0
-      } else if (outcomeValue <= target) {
-        desi <- ((outcomeValue - lb) / (target - lb))^weight
-      } else {
-        desi <- ((ub - outcomeValue) / (ub - target))^weight
-      }
-    }
+    value  <- unname(outcome[outcomeName])
+    lb     <- lowerbounds[[outcomeName]]
+    target <- targets[[outcomeName]]
+    ub     <- upperbounds[[outcomeName]]
+    weight <- weights[[outcomeName]]
+    # the target is checked before the ratios, so a bound equal to the target gives no 0/0
+    desi <- switch(goals[[outcomeName]],
+      "maximize" = if (value < lb) 0 else if (value >= target) 1 else ((value - lb) / (target - lb))^weight,
+      "minimize" = if (value > ub) 0 else if (value <= target) 1 else ((ub - value) / (ub - target))^weight,
+      "target"   = if (value < lb || value > ub) 0 else if (value == target) 1 else if (value < target)
+        ((value - lb) / (target - lb))^weight else ((ub - value) / (ub - target))^weight
+    )
     desiVector[outcomeName] <- desi
   }
   if (length(outcome) > 1)
@@ -1455,6 +1427,59 @@ get_levels <- function(var, num_levels, dataset) {
   compoundDesi <- prod(desiVector^importances)
   return(compoundDesi)
 }
+
+# Lower bound, target and upper bound of each response as used by the desirability: the entered values, or the
+# observed minimum/maximum of the response when they are not set manually. Bounds a goal does not use are NA.
+.doeResolveOptimizerSettings <- function(roOptionsDf, dataset, manualBounds, manualTarget) {
+  for (i in seq_len(nrow(roOptionsDf))) {
+    response <- dataset[[roOptionsDf$variable[i]]]
+    goal     <- roOptionsDf$responseOptimizerGoal[i]
+    lower    <- if (manualBounds) roOptionsDf$responseOptimizerLowerBound[i] else min(response)
+    upper    <- if (manualBounds) roOptionsDf$responseOptimizerUpperBound[i] else max(response)
+    target   <- if (manualTarget || goal == "target") roOptionsDf$responseOptimizerTarget[i]
+                else if (goal == "maximize") max(response) else min(response)
+    roOptionsDf$responseOptimizerLowerBound[i] <- if (goal == "minimize") NA else lower
+    roOptionsDf$responseOptimizerTarget[i]     <- target
+    roOptionsDf$responseOptimizerUpperBound[i] <- if (goal == "maximize") NA else upper
+  }
+  return(roOptionsDf)
+}
+
+# Settings for which the desirability is undefined (e.g., maximize with the lower bound above the target).
+# A target outside bounds from the data is allowed and gets a footnote instead (.doeOptimizerTargetOutsideRangeNotes).
+.doeOptimizerSettingsErrors <- function(roOptionsDf, manualBounds) {
+  fmt    <- .doeFormatOptimizerValue
+  errors <- character(0)
+  for (i in seq_len(nrow(roOptionsDf))) {
+    response <- roOptionsDf$variable[i]
+    lb       <- roOptionsDf$responseOptimizerLowerBound[i]
+    target   <- roOptionsDf$responseOptimizerTarget[i]
+    ub       <- roOptionsDf$responseOptimizerUpperBound[i]
+    errors <- c(errors, switch(roOptionsDf$responseOptimizerGoal[i],
+      "maximize" = if (lb > target) gettextf("%1$s: the lower bound (%2$s) is above the target (%3$s).", response, fmt(lb), fmt(target)),
+      "minimize" = if (target > ub) gettextf("%1$s: the target (%2$s) is above the upper bound (%3$s).", response, fmt(target), fmt(ub)),
+      "target"   = if (lb > ub) gettextf("%1$s: the lower bound (%2$s) is above the upper bound (%3$s).", response, fmt(lb), fmt(ub))
+                   else if (manualBounds && (target < lb || target > ub)) gettextf("%1$s: the target (%2$s) is outside the bounds (%3$s to %4$s).", response, fmt(target), fmt(lb), fmt(ub))
+    ))
+  }
+  return(errors)
+}
+
+# Goal target with the target outside bounds taken from the data: allowed, as the optimizer still moves towards the target.
+.doeOptimizerTargetOutsideRangeNotes <- function(roOptionsDf, manualBounds) {
+  if (manualBounds)
+    return(character(0))
+  outside <- roOptionsDf$responseOptimizerGoal == "target" &
+    (roOptionsDf$responseOptimizerTarget < roOptionsDf$responseOptimizerLowerBound |
+       roOptionsDf$responseOptimizerTarget > roOptionsDf$responseOptimizerUpperBound)
+  gettextf("The target of %1$s is outside its observed range (%2$s to %3$s), so predictions beyond that range have desirability 0. Set the bounds manually to allow them.",
+           roOptionsDf$variable[outside],
+           .doeFormatOptimizerValue(roOptionsDf$responseOptimizerLowerBound[outside]),
+           .doeFormatOptimizerValue(roOptionsDf$responseOptimizerUpperBound[outside]))
+}
+
+# Six significant digits, never scientific: distinguishes close bounds (10.004 vs 10) and keeps 100000 readable.
+.doeFormatOptimizerValue <- function(x) trimws(formatC(x, digits = 6, format = "fg"))
 
 .addModelHeaderTerms <- function(anovaFit, fit, ssType, covariates = "", data = NULL) {
   rownames(anovaFit) <- gsub(" ", "", row.names(anovaFit), fixed = TRUE)
