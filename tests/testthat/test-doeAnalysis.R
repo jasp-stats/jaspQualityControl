@@ -6544,3 +6544,11 @@ test_that("57.2 Discrete factor with 3 levels, one without runs (manual low/high
   errorDf <- as.numeric(Filter(function(row) row[["terms"]] == "Error", errorDf)[[1]][["df"]])
   expect_equal(errorDf, 12)
 })
+
+test_that("57.3 Discrete factor with 3 levels, one without runs - no effect, footnote names the level without runs", {
+  coefTable <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]]
+  membraneRow <- Filter(function(row) row[["terms"]] == "Membrane1", coefTable[["data"]])[[1]]
+  expect_identical(membraneRow[["effects"]], "")
+  footnotes <- vapply(coefTable[["footnotes"]], function(note) note[["text"]], character(1))
+  expect_true(any(grepl("left out of the model: Membrane (PVDF).", footnotes, fixed = TRUE)))
+})
