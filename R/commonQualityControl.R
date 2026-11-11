@@ -606,6 +606,32 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   stop(errorCondition(message, class = "qcDataError", call = NULL))
 }
 
+.normalRangeConstantsCache <- new.env(parent = emptyenv())
+
+# Mean (d2) and standard deviation (d3) of the range of N standard normal observations, Tippett (1925):
+# E[W]   = int 1 - Phi(x)^N - (1 - Phi(x))^N dx
+# E[W^2] = 2 int int_{x < y} 1 - Phi(y)^N - (1 - Phi(x))^N + (Phi(y) - Phi(x))^N dx dy
+# Integrands are negligible beyond |x| = 9 for any practical N. Results are memoised per N.
+.normalRangeConstants <- function(N) {
+  key <- as.character(N)
+  if (!is.null(.normalRangeConstantsCache[[key]]))
+    return(.normalRangeConstantsCache[[key]])
+
+  bound     <- 9
+  powUpper  <- function(y) exp(N * stats::pnorm(y, log.p = TRUE))                      # Phi(y)^N
+  powLower  <- function(x) exp(N * stats::pnorm(x, lower.tail = FALSE, log.p = TRUE))  # (1 - Phi(x))^N
+  d2        <- stats::integrate(function(x) 1 - powUpper(x) - powLower(x), -bound, bound, rel.tol = 1e-10)$value
+  innerEW2  <- function(y) vapply(y, function(yi) {
+    stats::integrate(function(x) 1 - powUpper(yi) - powLower(x) + (stats::pnorm(yi) - stats::pnorm(x))^N,
+                     -bound, yi, rel.tol = 1e-10)$value
+  }, numeric(1))
+  ew2       <- 2 * stats::integrate(innerEW2, -bound, bound, rel.tol = 1e-10)$value
+  constants <- c(d2 = d2, d3 = sqrt(ew2 - d2^2))
+
+  .normalRangeConstantsCache[[key]] <- constants
+  return(constants)
+}
+
 KnownControlStats.RS <- function(N, sigma = 3) {
 
   # d2 and d3 are unbiasing constants as reported in D. J. Wheeler and D. S. Chambers. (1992). Understanding Statistical Process Control, Second Edition, SPC Press, Inc.
@@ -626,8 +652,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     d3 <- 0.80818 - 0.0051871 * N + 0.00005098 * N^2 - 0.00000019 * N^3
     d2 <- Data.d2[N == Data.d2$n,2]
   } else if (N > 50) {
-    d3 <- 0.80818 - 0.0051871 * N + 0.00005098 * N^2 - 0.00000019 * N^3
-    d2 <- 2.88606 + 0.051313 * N - 0.00049243 * N^2 + 0.00000188 * N^3
+    # beyond the tables, exact values by numerical integration (polynomial approximations fail for large N)
+    exact <- .normalRangeConstants(N)
+    d2 <- exact[["d2"]]
+    d3 <- exact[["d3"]]
   } else {
     d2 <- Data.d2[N == Data.d2$n,2]
     d3 <- Data.d3[N == Data.d3$n,2]
