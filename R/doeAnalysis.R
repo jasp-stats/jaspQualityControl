@@ -619,14 +619,14 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     result[["regression"]][["coefficients"]][["effectsDf"]] <- effectsFit[["df.residual"]] # differs from regressionFit when coding changes the rank
     result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
     result[["regression"]][["coefficients"]][["effects"]][1] <- NA
-    result[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFit, predictorsForLevelRemoval)
+    result[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFit)
 
     resultCoded[["regression"]][["coefficients"]][["effects"]] <- coefEffectsCoded
     resultCoded[["regression"]][["coefficients"]][["effectsSe"]] <- .doeEffectStandardErrors(regressionFitCoded, coefEffectsCoded)
     resultCoded[["regression"]][["coefficients"]][["effectsDf"]] <- regressionFitCoded[["df.residual"]]
     resultCoded[["regression"]][["coefficients"]][["est"]] <- coef(regressionFitCoded)[!is.na(coef(regressionFitCoded))]
     resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
-    resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded, predictorsForLevelRemoval)
+    resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded)
 
     termNamesAliased <- termNames
     termNamesAliasedCoded <- termNamesCoded
@@ -747,26 +747,18 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   }, character(1))
 }
 
-.getVIF <- function(regressionFit, predictors) {
-  if (ncol(regressionFit$model) < 3) {
-    VIF <- rep(NA, length(regressionFit$coefficients))
-  } else {
-    VIF <- try(car::vif(regressionFit))
-    if (!jaspBase::isTryError(VIF)) {
-      VIF <- if (is.vector(VIF)) VIF else VIF[,1]
-      terms <- names(regressionFit$coefficients)
-      regexExpression <- paste0("(", paste(predictors, collapse = "|"), ")((\\^2)?)([^✻]+)(✻?)")
-      for (term_i in seq_along(terms)) {
-        replacements <- if (grepl("^2", terms[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
-        terms[term_i] <- gsub(regexExpression, replacements, terms[term_i], perl=TRUE)
-        terms[term_i] <- gsub("\\s", "", terms[term_i])
-      }
-      VIF <- VIF[terms]
-    } else {
-      VIF <- rep(NA, length(regressionFit$coefficients))
-    }
-  }
-  return(VIF)
+# VIF of each coefficient: car::vif() gives one (generalized) VIF per model term, so each coefficient gets the VIF of
+# the term it belongs to (lm's "assign"; 0 = intercept, no VIF). For terms with more than 1 df this is the GVIF.
+.getVIF <- function(regressionFit) {
+  nCoefficients <- length(regressionFit$coefficients)
+  if (ncol(regressionFit$model) < 3)
+    return(rep(NA, nCoefficients))
+  VIF <- try(car::vif(regressionFit))
+  if (jaspBase::isTryError(VIF))
+    return(rep(NA, nCoefficients))
+  VIF <- if (is.vector(VIF)) VIF else VIF[, 1]
+  termLabels <- attr(stats::terms(regressionFit), "term.labels")
+  return(unname(c(NA, VIF[termLabels])[regressionFit$assign + 1]))
 }
 
 .doeResponseOptimizerTables <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, blocks, covariates, readyModelPresent) {
