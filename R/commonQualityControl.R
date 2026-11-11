@@ -547,7 +547,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       sdWithin <- mean(rowSd, na.rm = TRUE)
     } else if (unbiasingConstantUsed) {
       n <- apply(df, 1, function(x) return(sum(!is.na(x))))
-      c4s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[3]))
+      c4s <- sapply(n, function(x) return(.c4Constants(x)[["c4"]]))
       hs <- c4s^2/(1-c4s^2)
       sdWithin <- sum((hs*rowSd)/c4s)/sum(hs)
     }
@@ -560,7 +560,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       sdWithin <- 0
     } else {
       Sp <- sqrt(sum((n - 1) * rowSd^2) / nu)
-      sdWithin <- if (unbiasingConstantUsed) Sp / KnownControlStats.RS(nu + 1, 0)$constants[3] else Sp
+      sdWithin <- if (unbiasingConstantUsed) Sp / .c4Constants(nu + 1)[["c4"]] else Sp
     }
   }
   return(sdWithin)
@@ -608,28 +608,45 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
 .normalRangeConstantsCache <- new.env(parent = emptyenv())
 
-# Mean (d2) and standard deviation (d3) of the range of N standard normal observations, Tippett (1925):
-# E[W]   = int 1 - Phi(x)^N - (1 - Phi(x))^N dx
-# E[W^2] = 2 int int_{x < y} 1 - Phi(y)^N - (1 - Phi(x))^N + (Phi(y) - Phi(x))^N dx dy
-# Integrands are negligible beyond |x| = 9 for any practical N. Results are memoised per N.
+# Mean (d2) and standard deviation (d3) of the range W of N standard normal observations (Tippett, 1925):
+# E[W]   = 2 E[max] = 2 int_0^Inf P(max > y) - P(max < -y) dy
+# E[W^2] = 2 int int_{x < y} P(min <= x, max > y) dx dy
+# Probabilities are evaluated on the log scale without cancellation, so tails stay accurate for large N
+# (checked for N = 51 to 1e9). Results are memoised per N.
 .normalRangeConstants <- function(N) {
   key <- as.character(N)
   if (!is.null(.normalRangeConstantsCache[[key]]))
     return(.normalRangeConstantsCache[[key]])
 
-  bound     <- 9
-  powUpper  <- function(y) exp(N * stats::pnorm(y, log.p = TRUE))                      # Phi(y)^N
-  powLower  <- function(x) exp(N * stats::pnorm(x, lower.tail = FALSE, log.p = TRUE))  # (1 - Phi(x))^N
-  d2        <- stats::integrate(function(x) 1 - powUpper(x) - powLower(x), -bound, bound, rel.tol = 1e-10)$value
-  innerEW2  <- function(y) vapply(y, function(yi) {
-    stats::integrate(function(x) 1 - powUpper(yi) - powLower(x) + (stats::pnorm(yi) - stats::pnorm(x))^N,
-                     -bound, yi, rel.tol = 1e-10)$value
+  pMaxAbove <- function(y) -expm1(N * stats::pnorm(y, log.p = TRUE))  # 1 - Phi(y)^N
+  # P(min <= x, max > y) = P(max > y) - P(min > x, max > y), with P(min > x, max > y) = Q(x)^N (1 - (1 - Q(y) / Q(x))^N)
+  pMinBelowMaxAbove <- function(x, y) {
+    logQx <- stats::pnorm(x, lower.tail = FALSE, log.p = TRUE)
+    ratio <- exp(stats::pnorm(y, lower.tail = FALSE, log.p = TRUE) - logQx)
+    pmax(pMaxAbove(y) - exp(N * logQx) * -expm1(N * log1p(-ratio)), 0)
+  }
+  d2       <- 2 * stats::integrate(function(y) pMaxAbove(y) - exp(N * stats::pnorm(-y, log.p = TRUE)), 0, Inf, rel.tol = 1e-10)$value
+  innerEW2 <- function(y) vapply(y, function(yi) {
+    stats::integrate(function(x) pMinBelowMaxAbove(x, yi), -Inf, yi, rel.tol = 1e-10)$value
   }, numeric(1))
-  ew2       <- 2 * stats::integrate(innerEW2, -bound, bound, rel.tol = 1e-10)$value
+  ew2       <- 2 * stats::integrate(innerEW2, -Inf, Inf, rel.tol = 1e-10)$value
   constants <- c(d2 = d2, d3 = sqrt(ew2 - d2^2))
 
   .normalRangeConstantsCache[[key]] <- constants
   return(constants)
+}
+
+# c4 (mean of the sample std. dev. of N standard normal observations) and c5 = sqrt(1 - c4^2); separate from the range
+# constants so that S-bar, pooled and S chart calculations do not depend on them
+.c4Constants <- function(N) {
+  if (N > 1) {
+    c4 <- sqrt(2/(N-1)) * exp(lgamma(N/2) - lgamma((N-1)/2))
+    c5 <- sqrt(1 - c4^2)
+  } else {
+    c4 <- 0
+    c5 <- 0
+  }
+  return(list(c4 = c4, c5 = c5)) # list, as c() would mangle the names when N is named (e.g. from rowSums)
 }
 
 KnownControlStats.RS <- function(N, sigma = 3) {
@@ -661,13 +678,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     d3 <- Data.d3[N == Data.d3$n,2]
   }
 
-  if (N > 1) {
-    c4 <- sqrt(2/(N-1)) * exp(lgamma(N/2) - lgamma((N-1)/2))
-    c5 <- sqrt(1 - c4^2)
-  } else {
-    c4 <- 0
-    c5 <- 0
-  }
+  c4c5 <- .c4Constants(N)
+  c4   <- c4c5[["c4"]]
+  c5   <- c4c5[["c5"]]
 
   UCL <- d2 * sigma + 3 * d3 * sigma
   CL <- d2 * sigma
@@ -692,8 +705,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       LCL <- max(0, LCL) # LCL in R-chart must be >= 0
     } else  if (type == "s") {
       if (n[i] > 1) {
-        c4 <- KnownControlStats.RS(n[i], 0)$constants[3]
-        c5 <- KnownControlStats.RS(n[i], 0)$constants[4]
+        c4 <- .c4Constants(n[i])[["c4"]]
+        c5 <- .c4Constants(n[i])[["c5"]]
         if (unbiasingConstantUsed) {
           UCL <- c4 * sigma + k * sigma * c5
           LCL <- c4 * sigma - k * sigma * c5
@@ -934,7 +947,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else rowSums(!is.na(dataCurrentStage)) # returns the number of non NA values per row
       limits <- .controlLimits(sigma = sigma, n = n, type = "s", unbiasingConstantUsed = unbiasingConstantUsed, k = nSigmasControlLimits)
       if (unbiasingConstantUsed) {
-        c4s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[3]))
+        c4s <- sapply(n, function(x) return(.c4Constants(x)[["c4"]]))
         center <- sigma * c4s
       } else {
         center <- sigma
