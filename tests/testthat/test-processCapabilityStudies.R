@@ -4446,6 +4446,103 @@ test_that("Johnson works", {
                                              2.467))
 })
 
+# Box-Cox with negative lambda: x^lambda is decreasing, so it is negated to keep LSL below USL
+.boxCoxNegativeLambdaOptions <- function(dataset, transformation, continuityAdjustment) {
+  options <- analysisOptions("processCapabilityStudies")
+  options$testSet <- "jaspDefault"
+  options$dataFormat <- "wideFormat"
+  options$measurementsWideFormat <- names(dataset)
+  options$axisLabels <- ""
+  options$capabilityStudyType <- "normalCapabilityAnalysis"
+  options$controlChartType <- "xBarR"
+  options$controlChart <- FALSE
+  options$histogram <- FALSE
+  options$probabilityPlot <- FALSE
+  options$dataTransformation <- transformation
+  options$dataTransformationLambda <- -1
+  options$dataTransformationContinuityAdjustment <- continuityAdjustment
+  options$lowerSpecificationLimit <- TRUE
+  options$lowerSpecificationLimitValue <- 1
+  options$upperSpecificationLimit <- TRUE
+  options$upperSpecificationLimitValue <- 4
+  options$target <- TRUE
+  options$targetValue <- 2
+  return(options)
+}
+
+.boxCoxNegativeLambdaTables <- function(results) {
+  collection <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]]
+  tableNames <- paste0("capabilityAnalysis_normalCapabilityAnalysis_",
+                       c("processSummaryTable", "capabilityTableWithin", "capabilityTableOverall", "capabilityTablePerformance"))
+  tables <- lapply(collection[tableNames], function(x) x[["data"]])
+  names(tables) <- c("summary", "within", "overall", "performance")
+  return(tables)
+}
+
+test_that("Box-Cox with negative lambda keeps specification limits in order", {
+  dataset <- data.frame(x = c(1.5, 2, 2.5, 3))
+  options <- .boxCoxNegativeLambdaOptions(dataset, "boxCox", continuityAdjustment = FALSE)
+  results <- runAnalysis("processCapabilityStudies", dataset, options)
+  tables  <- .boxCoxNegativeLambdaTables(results)
+
+  # LSL = -1^-1, target = -2^-1, USL = -4^-1; mean = -mean(1/x)
+  jaspTools::expect_equal_tables(tables[["summary"]],
+                                 list(-1, -0.475, 4, 0.14497764834111, 0.0985027580772262, -0.5, -0.25))
+  jaspTools::expect_equal_tables(tables[["within"]],
+                                 list(1.269, 0.761, 0.157, 1.366, 1.777, 0.396, 0.761, 2.085))
+  jaspTools::expect_equal_tables(tables[["overall"]],
+                                 list(0.651, 0.275, 1.002, 0.862, 0.517, 0.075, 0.96, 1.207, 0.295, 0.517, 1.392))
+  jaspTools::expect_equal_tables(tables[["performance"]],
+                                 list(146.593, 0.049, 0, "ppm &lt; LSL", 60335.494, 11179.89, 0, "ppm &gt; USL",
+                                      60482.087, 11179.939, 0, "ppm total"))
+
+  formula <- results[["results"]][["dataTransformationContainer"]][["collection"]][["dataTransformationContainer_formula"]][["text"]]
+  expect_true(grepl("y = -x^\\lambda", formula, fixed = TRUE))
+
+  # (x^lambda - 1) / lambda is a positive affine map of -x^lambda, so capability results must be identical
+  optionsAdjusted <- .boxCoxNegativeLambdaOptions(dataset, "boxCox", continuityAdjustment = TRUE)
+  tablesAdjusted  <- .boxCoxNegativeLambdaTables(runAnalysis("processCapabilityStudies", dataset, optionsAdjusted))
+  expect_equal(tables[c("within", "overall", "performance")], tablesAdjusted[c("within", "overall", "performance")])
+})
+
+test_that("Box-Cox with negative lambda and only a lower specification limit", {
+  dataset <- data.frame(x = c(1.5, 2, 2.5, 3))
+  options <- .boxCoxNegativeLambdaOptions(dataset, "boxCox", continuityAdjustment = FALSE)
+  options$upperSpecificationLimit <- FALSE
+  options$target <- FALSE
+  tables <- .boxCoxNegativeLambdaTables(runAnalysis("processCapabilityStudies", dataset, options))
+
+  # all observations conform to LSL = 1
+  jaspTools::expect_equal_tables(tables[["overall"]], list(1.207, 0.351, 2.063, 1.207))
+  jaspTools::expect_equal_tables(tables[["within"]], list(1.777, 0.49, 3.064, 1.777))
+  jaspTools::expect_equal_tables(tables[["performance"]],
+                                 list(146.593, 0.049, 0, "ppm &lt; LSL", "*", "*", "*", "ppm &gt; USL",
+                                      146.593, 0.049, 0, "ppm total"))
+})
+
+test_that("Box-Cox (auto) with negative estimated lambda keeps specification limits in order", {
+  dataset <- data.frame(x1 = c(1.1, 1.3, 1.5, 2.0, 3.0), x2 = c(1.2, 1.4, 1.7, 2.4, 4.5))
+  options <- .boxCoxNegativeLambdaOptions(dataset, "boxCoxAuto", continuityAdjustment = FALSE)
+  options$upperSpecificationLimitValue <- 5
+  options$target <- FALSE
+  results <- runAnalysis("processCapabilityStudies", dataset, options)
+  tables  <- .boxCoxNegativeLambdaTables(results)
+
+  lambda <- results[["results"]][["dataTransformationContainer"]][["collection"]][["dataTransformationContainer_table"]][["data"]][[1]][["value"]]
+  expect_equal(lambda, -1.10421797241949)
+  jaspTools::expect_equal_tables(tables[["summary"]],
+                                 list(-1, -0.568432072972538, 10, 0.232657470563089, 0.0737364718667231, -0.169))
+  jaspTools::expect_equal_tables(tables[["overall"]], list(0.595, 0.572, 0.291, 0.854, 0.618, 0.362, 0.572, 0.816))
+  jaspTools::expect_equal_tables(tables[["performance"]],
+                                 list(31801.698, 0.002, 0, "ppm &lt; LSL", 43051.203, 0.031, 0, "ppm &gt; USL",
+                                      74852.901, 0.033, 0, "ppm total"))
+
+  optionsAdjusted <- options
+  optionsAdjusted$dataTransformationContinuityAdjustment <- TRUE
+  tablesAdjusted  <- .boxCoxNegativeLambdaTables(runAnalysis("processCapabilityStudies", dataset, optionsAdjusted))
+  expect_equal(tables[c("within", "overall", "performance")], tablesAdjusted[c("within", "overall", "performance")])
+})
+
 test_that("Thin x-axis labels snapshot matches", {
   values <- 38 + qnorm(ppoints(100), sd = 0.004)
   values[length(values)] <- 38.012
