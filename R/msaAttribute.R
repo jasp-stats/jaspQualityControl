@@ -73,6 +73,11 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
       dataset <- dataset[,c(operators, parts, measurements)]
   }
 
+  # Agreement between appraisers, Fleiss' kappa between appraisers, Kendall's tau and the
+  # rating correlations compare the appraisers' rows position by position.
+  if (ready)
+    dataset <- .msaAttributeOrderByAppraiserAndPart(dataset, operators, parts)
+
 
   # Error handling
 
@@ -591,6 +596,20 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
       AAA[["StudyEffectiveness"]] <- tableDecisions
   }
   return(AAA)
+}
+
+# Rows ordered by appraiser (in order of appearance), then by part, so that row k of every
+# appraiser holds the same part even when the data are in run order. Requires exactly one row
+# (wide format) or one set of trials (long format) per appraiser and part.
+.msaAttributeOrderByAppraiserAndPart <- function(dataset, operators, parts) {
+  appraiser <- as.character(dataset[[operators]])
+  part      <- as.character(dataset[[parts]])
+
+  if (any(table(appraiser, part) != 1))
+    .quitAnalysis(gettext("Each appraiser must rate each part, and each part the same number of times."))
+
+  appraiserOrder <- match(appraiser, unique(appraiser))
+  return(dataset[order(appraiserOrder, dataset[[parts]]), , drop = FALSE])
 }
 
 .countRowMatches <- function(data) {
