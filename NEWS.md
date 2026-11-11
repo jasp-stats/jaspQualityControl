@@ -70,7 +70,7 @@
 * Control charts: the CL, LCL and UCL labels of values of 1000 or more keep all their decimals (e.g. 1908.333 instead of 1908.33); the shortened labels could also be rounded wrong (2092.49 instead of 2092.495).
 * Process Capability, stages: the Cpm confidence interval is no longer blanked for the stages after the baseline, and the change row no longer shows the difference of the interval bounds as an interval.
 * Process Capability, stages: the change (vs. baseline) rows are computed from the unrounded values, so they are the rounded difference; the difference of the rounded values could be off in the last decimal.
-* Process Capability: the histogram density line for the log-logistic distribution now uses the log-logistic fit (it used the logistic fit, which drew an essentially flat line).
+* Process Capability: the histogram density line for the log-logistic distribution now uses the log-logistic fit (it used the logistic fit, which drew an essentially flat line); a failed fit is shown on the histogram instead of stopping the analysis.
 
 ---
 
