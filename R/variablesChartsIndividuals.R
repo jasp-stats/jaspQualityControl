@@ -92,17 +92,19 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
       )
       if (inherits(individualChart, "qcDataError")) {
         jaspResults[["Ichart"]][["plot"]]$setError(conditionMessage(individualChart))
-        return()
+        if (!options[["report"]]) # in report mode, the error replaces the X-mR chart on the report
+          return()
+      } else {
+        mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
+                                 xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, ruleList = ruleList2,
+                                 movingRangeLength = options[["xmrChartMovingRangeLength"]])
+        jaspResults[["Ichart"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
+        if (!identical(stages, "") && nDroppedRows > 0)
+          jaspResults[["Ichart"]][["plotNote"]] <- createJaspHtml(droppedStagesNote)
+        jaspResults[["Ichart"]][["tableI"]] <- individualChart$table
+        jaspResults[["Ichart"]][["tableMR"]] <- mrChart$table
       }
-      mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                               xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, ruleList = ruleList2,
-                               movingRangeLength = options[["xmrChartMovingRangeLength"]])
     }
-    jaspResults[["Ichart"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
-    if (!identical(stages, "") && nDroppedRows > 0)
-      jaspResults[["Ichart"]][["plotNote"]] <- createJaspHtml(droppedStagesNote)
-    jaspResults[["Ichart"]][["tableI"]] <- individualChart$table
-    jaspResults[["Ichart"]][["tableMR"]] <- mrChart$table
   }
 
   # Autocorrelation Plot
@@ -163,7 +165,10 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
     plots <- list()
     plotIndexCounter <- 1
     if (options[["reportIMRChart"]]) {
-      plots[[plotIndexCounter]] <- list(individualChart$plotObject, mrChart$plotObject)
+      plots[[plotIndexCounter]] <- if (inherits(individualChart, "qcDataError")) # keep the I/MR slots, the error panel replaces both
+        list(.qcReportErrorPanel(gettext("X-mR control chart"), conditionMessage(individualChart)), ggplot2::ggplot() + ggplot2::theme_void())
+      else
+        list(individualChart$plotObject, mrChart$plotObject)
       plotIndexCounter <- plotIndexCounter + 1
     }
     if (options[["reportAutocorrelationChart"]]) {

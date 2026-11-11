@@ -147,6 +147,12 @@
   return(indices)
 }
 
+# a chart that failed with a data error is shown on a report as its title and error message, so the other report elements remain
+.qcReportErrorPanel <- function(chartTitle, errorMessage) {
+  text <- c(chartTitle, strwrap(errorMessage, width = 60))
+  return(.ggplotWithText(text = text, maxRows = max(8, length(text))))
+}
+
 .ggplotWithText <- function(text, maxRows = 5) {
   nText <- length(text)
   annotation <- data.frame(x = rep(0, nText), y = (maxRows:1)[1:nText], label = text)
@@ -920,7 +926,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       plotStatisticUpper <- .cusumPoints(dataCurrentStage, sigma, n, cusumTarget, cusumShiftSize, cuType = "upper")
       plotStatisticLower <- .cusumPoints(dataCurrentStage, sigma, n, cusumTarget, cusumShiftSize, cuType = "lower")
       plotStatistic <- c(plotStatisticUpper, plotStatisticLower)
-      UCL <- nSigmasControlLimits*sigma/sqrt(n)
+      UCL <- .carryLimitsOverMissingSubgroups(nSigmasControlLimits*sigma/sqrt(n), n)
       UCL[is.infinite(UCL)] <- 0  # looks better in the plot to display CLs at 0 if calculation fails
       LCL <- -UCL
       center <- 0 # not to be confused with the target, even if target != 0, the center line of the plot should be at 0
@@ -1325,58 +1331,58 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(plotObject)
 }
 
+# Missing subgroups (rows without observations) in the cusum and ewma recursions: the statistic is carried over the
+# gap (no point is drawn there) and the recursion continues with the next observed subgroup.
 .cusumPoints <- function(data, sigma, n, target, shiftSize, cuType = c("lower", "upper")) {
   cuType <- match.arg(cuType)
+  shift  <- if (cuType == "lower") -shiftSize else shiftSize
 
-  # Initialize vector and first point
-  cuSumPoints <- c()
-  rowMeanInitial <- if (length(data[1,]) == 1) data[1,] else rowMeans(data[1,], na.rm = T)
-  if (cuType == "lower") {
-    initialPoint <- rowMeanInitial - (target - shiftSize*(sigma/sqrt(n[1])))
-    cuSumPoints[1] <-  min(0, initialPoint)
-  } else {
-    initialPoint <- rowMeanInitial - (target + shiftSize*(sigma/sqrt(n[1])))
-    cuSumPoints[1] <-  max(0, initialPoint)
-  }
-
-  # Loop over remaining data
-  for (i in seq(2, nrow(data))) {
-    rowMean_i <- if (length(data[i,]) == 1) data[i,] else rowMeans(data[i,], na.rm = TRUE)
-    if (cuType == "lower") {
-      cuSumPoint <- cuSumPoints[i-1] + rowMean_i - (target - shiftSize*(sigma/sqrt(n[i])))
-      cuSumPoints[i] <-  min(0, cuSumPoint)
-    } else {
-      cuSumPoint <- cuSumPoints[i-1] + rowMean_i - (target + shiftSize*(sigma/sqrt(n[i])))
-      cuSumPoints[i] <-  max(0, cuSumPoint)
-    }
+  rowMeanVector <- rowMeans(data, na.rm = TRUE) # NaN for a missing subgroup
+  cuSumPoints   <- rep(NA_real_, length(rowMeanVector))
+  previousPoint <- 0
+  for (i in seq_along(rowMeanVector)) {
+    if (is.na(rowMeanVector[i]))
+      next
+    cuSumPoint     <- previousPoint + rowMeanVector[i] - (target + shift * sigma / sqrt(n[i]))
+    cuSumPoints[i] <- if (cuType == "lower") min(0, cuSumPoint) else max(0, cuSumPoint)
+    previousPoint  <- cuSumPoints[i]
   }
   return(cuSumPoints)
 }
 
 .ewmaPlotStatistic <- function(data, lambda) {
-  ewmaPoints <- c()
-  initialPoint <- mean(unlist(data), na.rm = TRUE)
-  rowMeanVector <- if (ncol(data) == 1) unlist(data) else rowMeans(data, na.rm = TRUE)
-  for (i in seq(1, nrow(data))) {
-    previousPoint <- if (i == 1) initialPoint else ewmaPoints[i - 1]
-    ewmaPoint <- lambda * rowMeanVector[i] + (1 - lambda) * previousPoint
-    ewmaPoints[i] <- ewmaPoint
+  rowMeanVector <- rowMeans(data, na.rm = TRUE) # NaN for a missing subgroup
+  ewmaPoints    <- rep(NA_real_, length(rowMeanVector))
+  previousPoint <- mean(unlist(data), na.rm = TRUE)
+  for (i in seq_along(rowMeanVector)) {
+    if (is.na(rowMeanVector[i]))
+      next
+    ewmaPoints[i] <- lambda * rowMeanVector[i] + (1 - lambda) * previousPoint
+    previousPoint <- ewmaPoints[i]
   }
   return(ewmaPoints)
 }
 
-.ewmaPointSigmas <- function(n = n, sigma = sigma, lambda = ewmaLambda) {
-  ewmaPointSigmas <- c()
-  initialPoint <- (lambda * sigma) / sqrt(n[1])
-  ewmaPointSigmas[1] <- initialPoint
-  for (i in seq(2, length(n))) {
-    nVector <- n[seq(i-1, 1)]
-    exponentVector <- 2*seq(1, i-1)
-    exponentiallyWeightedVector <- ((1 - lambda)^(exponentVector)) / nVector
-    ewmaPointSigma <- sigma * lambda * sqrt(sum(1/n[i], exponentiallyWeightedVector))
-    ewmaPointSigmas[i] <- ewmaPointSigma
+# sd of the ewma statistic: sigma * lambda * sqrt(sum_k (1 - lambda)^(2k) / n of the k-th previous observed subgroup);
+# a missing subgroup (n = 0) leaves the statistic, and so its sd, unchanged
+.ewmaPointSigmas <- function(n, sigma, lambda) {
+  ewmaPointSigmas  <- rep(NA_real_, length(n))
+  weightedInverseN <- 0
+  for (i in seq_along(n)) {
+    if (n[i] > 0)
+      weightedInverseN <- (1 - lambda)^2 * weightedInverseN + 1 / n[i]
+    if (weightedInverseN > 0)
+      ewmaPointSigmas[i] <- sigma * lambda * sqrt(weightedInverseN)
   }
   return(ewmaPointSigmas)
+}
+
+# a missing subgroup (n = 0) keeps the control limit of the previous subgroup
+.carryLimitsOverMissingSubgroups <- function(limits, n) {
+  for (i in seq_along(limits)[-1])
+    if (n[i] == 0)
+      limits[i] <- limits[i - 1]
+  return(limits)
 }
 
 .gChartStatistics <- function(intervals, phase2Proportion = "") {

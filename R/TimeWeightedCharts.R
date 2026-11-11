@@ -164,14 +164,19 @@ timeWeightedChartsInternal <- function(jaspResults, dataset, options) {
     ### If not report mode
     ###
   } else {
+    plotNote <- if (ready && !identical(plotNotes, "")) paste0("<i>Note.</i> ", plotNotes) else NULL
     if (options[["cumulativeSumChart"]]) {
       jaspResults[["CusumChart"]] <- createJaspContainer(position = 1)
       jaspResults[["CusumChart"]][["plot"]] <- cusumChart[["plot"]]
+      if (!is.null(plotNote))
+        jaspResults[["CusumChart"]][["plotNote"]] <- createJaspHtml(plotNote)
       jaspResults[["CusumChart"]][["table"]] <- cusumChart[["table"]]
     }
     if (options[["exponentiallyWeightedMovingAverageChart"]]) {
       jaspResults[["EWMAPlot"]] <- createJaspContainer(position = 2)
       jaspResults[["EWMAPlot"]][["plot"]] <- ewmaPlot[["plot"]]
+      if (!is.null(plotNote))
+        jaspResults[["EWMAPlot"]][["plotNote"]] <- createJaspHtml(plotNote)
       jaspResults[["EWMAPlot"]][["table"]] <- ewmaPlot[["table"]]
     }
   }
@@ -260,11 +265,9 @@ timeWeightedChartsInternal <- function(jaspResults, dataset, options) {
   return(list("plot" = plot, "table" = chart$table))
 }
 
-# a failed chart is shown on the report as its title and error message, so the other chart and the meta data remain
 .timeWeightedReportChart <- function(chartResult, chartTitle) {
   if (is.null(chartResult[["errorMessage"]]))
     return(chartResult[["plot"]]$plotObject)
 
-  text <- c(chartTitle, strwrap(chartResult[["errorMessage"]], width = 60))
-  return(.ggplotWithText(text = text, maxRows = max(8, length(text))))
+  return(.qcReportErrorPanel(chartTitle, chartResult[["errorMessage"]]))
 }
