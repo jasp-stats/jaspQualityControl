@@ -7018,12 +7018,15 @@ test_that("62.2 Unreplicated 2^4 design - normal plot ranks effects by value", {
   expect_equal(plotData[["fac"]][which.min(plotData[["percentile"]])], "AC")
 })
 
-test_that("62.3 Unreplicated 2^4 design - same margin of error in uncoded units", {
+test_that("62.3 Unreplicated 2^4 design - same effects and margin of error in uncoded units", {
+  filtrationData <- read.csv("datasets/doeAnalysis/doe_filtrationRate.csv")
+  filtrationData <- transform(filtrationData, A = 10 + 5 * A, B = 200 + 50 * B) # uncoded units: A in 5/15, B in 150/250
   options$codeFactors <- FALSE
-  results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_filtrationRate.csv", options)
+  results <- runAnalysis("doeAnalysis", filtrationData, options)
   plotName <- results[["results"]][["Rate"]][["collection"]][["Rate_plotPareto"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   expect_equal(ggplot2::layer_data(testPlot, 2)[["yintercept"]], qt(0.975, 5) * 2.625)
+  expect_equal(sort(testPlot[["data"]][["t"]], decreasing = TRUE)[1:5], c(21.625, 18.125, 16.625, 14.625, 9.875))
 })
 
 test_that("62.4 Lenth's pseudo standard error follows Lenth (1989)", {
@@ -7032,22 +7035,130 @@ test_that("62.4 Lenth's pseudo standard error follows Lenth (1989)", {
   expect_equal(lenth[["pse"]], 3)
   expect_equal(lenth[["df"]], 3)
   expect_equal(lenth[["me"]], qt(0.975, 3) * 3)
+  # strict inequality in the trimming step: s0 = 1.5, so 3.75 (= 2.5 * s0) is left out and PSE = 1.5 * median(0.5, 1),
+  # while 3.7 is kept and PSE = 1.5 * median(0.5, 1, 3.7)
+  expect_equal(jaspQualityControl:::.doeLenthMarginOfError(c(0.5, 1, 3.75))[["pse"]], 1.125)
+  expect_equal(jaspQualityControl:::.doeLenthMarginOfError(c(0.5, 1, 3.7))[["pse"]], 1.5)
   expect_null(jaspQualityControl:::.doeLenthMarginOfError(c(0, 0, 0, 5)))
+  expect_null(jaspQualityControl:::.doeLenthMarginOfError(c(1e-15, -1e-15, 2e-15, 10), zeroTolerance = 1e-12))
+  expect_equal(jaspQualityControl:::.doeLenthMarginOfError(c(1e-15, -1e-15, 2e-15, 10))[["pse"]], 1.5e-15)
   expect_null(jaspQualityControl:::.doeLenthMarginOfError(numeric(0)))
 })
 
-test_that("62.5 Saturated model without effects of two-level factors gives a plot error", {
-  options <- analysisOptions("doeAnalysis")
-  options$dependentFactorial <- "y"
-  options$fixedFactorsFactorial <- "F"
-  options$codeFactors <- TRUE
-  options$codeFactorsMethod <- "automatic"
-  options$highestOrder <- FALSE
+saturatedPlotErrors <- function(data, options, dependent) {
   options$plotPareto <- TRUE
   options$normalEffectsPlot <- TRUE
-  options$modelTerms <- list(list(components = "F"))
-  results <- runAnalysis("doeAnalysis", data.frame(F = c("a", "b", "c"), y = c(1, 4, 2)), options)
-  for (plot in c("y_plotPareto", "y_normalEffectsPlot"))
-    expect_identical(results[["results"]][["y"]][["collection"]][[plot]][["error"]][["errorMessage"]],
-                     "The model is saturated (no error degrees of freedom) and has no effects of two-level factors to plot.")
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", data, options)
+  collection <- results[["results"]][[dependent]][["collection"]]
+  vapply(paste0(dependent, c("_plotPareto", "_normalEffectsPlot")),
+         function(plot) collection[[plot]][["error"]][["errorMessage"]], character(1), USE.NAMES = FALSE)
+}
+
+saturatedFactorialOptions <- function(dependent, continuous = NULL, fixed = NULL, terms, codeFactors = TRUE) {
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial <- dependent
+  if (!is.null(continuous))
+    options$continuousFactorsFactorial <- continuous
+  if (!is.null(fixed))
+    options$fixedFactorsFactorial <- fixed
+  options$codeFactors <- codeFactors
+  options$codeFactorsMethod <- "automatic"
+  options$highestOrder <- FALSE
+  options$modelTerms <- lapply(terms, function(x) list(components = x))
+  options
+}
+
+test_that("62.5 Saturated model with a discrete factor of more than two levels gives a plot error (no Lenth's method)", {
+  # Minitab draws no effect plots for saturated general full factorial models
+  errors <- saturatedPlotErrors(data.frame(F = c("a", "b", "c"), y = c(1, 4, 2)),
+                                saturatedFactorialOptions("y", fixed = "F", terms = list("F")), "y")
+  expect_identical(errors, rep("The model is saturated (no error degrees of freedom). Lenth's method for assessing its effects applies to two-level factorial terms only, but the model has squared terms or terms of discrete factors with more than two levels.", 2))
+})
+
+test_that("62.6 Saturated full quadratic response surface model gives a plot error (no Lenth's method)", {
+  # Minitab draws no effect plots for saturated response surface models
+  options <- analysisOptions("doeAnalysis")
+  options$designType <- "responseSurfaceDesign"
+  options$dependentResponseSurface <- "y"
+  options$continuousFactorsResponseSurface <- c("A", "B")
+  options$codeFactors <- TRUE
+  options$codeFactorsMethod <- "automatic"
+  options$rsmPredefinedModel <- TRUE
+  options$rsmPredefinedTerms <- "fullQuadratic"
+  options$modelTerms <- NULL
+  errors <- saturatedPlotErrors(data.frame(A = c(-1, 0, 1, -1, 0, -1), B = c(-1, -1, -1, 0, 0, 1), y = c(1, 4, 2, 7, 5, 9)), options, "y")
+  expect_identical(errors, rep("The model is saturated (no error degrees of freedom). Lenth's method for assessing its effects applies to two-level factorial terms only, but the model has squared terms or terms of discrete factors with more than two levels.", 2))
+})
+
+test_that("62.7 Saturated non-orthogonal two-level design gives a plot error (correlated effects)", {
+  # three runs of a 2^2 design: the effects of A and B are correlated, (X'X)^-1 is not proportional to the identity
+  errors <- saturatedPlotErrors(data.frame(A = c(-1, 1, -1), B = c(-1, -1, 1), y = c(3, 7, 4)),
+                                saturatedFactorialOptions("y", c("A", "B"), terms = list("A", "B")), "y")
+  expect_identical(errors, rep("The model is saturated (no error degrees of freedom). Lenth's method for assessing its effects needs uncorrelated effects with equal variance, as in an orthogonal two-level design, but the effects of this model are not.", 2))
+})
+
+test_that("62.8 Saturated model whose effects are not available in uncoded units gives a plot error", {
+  # interaction without its main effects: coding changes the model, so there are no uncoded effects
+  errors <- saturatedPlotErrors(data.frame(A = c(1, 2), B = c(3, 5), y = c(1, 4)),
+                                saturatedFactorialOptions("y", c("A", "B"), terms = list(c("A", "B")), codeFactors = FALSE), "y")
+  expect_identical(errors, rep("The model is saturated (no error degrees of freedom) and its effects are not available in uncoded units, because coding changes the model.", 2))
+})
+
+test_that("62.9 Saturated model with only one nonzero effect gives a plot error (PSE = 0)", {
+  data <- expand.grid(A = c(-1, 1), B = c(-1, 1), C = c(-1, 1))
+  data$y <- 10 + 5 * data$A # all effects but A are 0 (up to rounding)
+  terms <- unlist(lapply(1:3, function(k) combn(c("A", "B", "C"), k, simplify = FALSE)), recursive = FALSE)
+  errors <- saturatedPlotErrors(data, saturatedFactorialOptions("y", c("A", "B", "C"), terms = terms), "y")
+  expect_identical(errors, rep("The model is saturated (no error degrees of freedom) and Lenth's pseudo standard error of its effects is zero, so the effects cannot be assessed.", 2))
+})
+
+test_that("62.10 Effect plots without effects to plot give an error instead of failing", {
+  # no coefficient of this model on the data of test 58.5 has a unique value, so nothing is plotted
+  for (codeFactors in c(TRUE, FALSE)) {
+    options <- saturatedFactorialOptions("y", "A", "F", terms = list("A", "F", c("A", "F")), codeFactors = codeFactors)
+    expect_identical(saturatedPlotErrors(afData, options, "y"), rep("There are no effects to plot.", 2))
+  }
+})
+
+test_that("62.11 Orthogonality check for Lenth's method: uncorrelated effects with equal variance", {
+  orthogonal <- function(fit) jaspQualityControl:::.doeEffectsOrthogonal(fit, c(NA, 2 * stats::coef(fit)[-1]))
+  covUnscaled <- function(fit) solve(crossprod(stats::model.matrix(fit)))[-1, -1] # independent reference
+  set.seed(1)
+  data <- expand.grid(A = c(-1, 1), B = c(-1, 1), C = c(-1, 1))
+  data$y <- rnorm(8)
+
+  fit <- stats::lm(y ~ A * B * C, data = data) # full 2^3: (X'X)^-1 = I / 8
+  expect_equal(unname(covUnscaled(fit)), diag(1 / 8, 7))
+  expect_true(orthogonal(fit))
+
+  fit <- stats::lm(y ~ A * B * C, data = rbind(data, data.frame(A = 0, B = 0, C = 0, y = 0.3))) # with a center point
+  expect_equal(unname(diag(covUnscaled(fit))), rep(1 / 8, 7))
+  expect_true(orthogonal(fit))
+
+  fit <- stats::lm(y ~ A + D + B + A:B, data = transform(data, D = A * B)) # D = AB: lm leaves out A:B (pivoting)
+  expect_true(is.na(stats::coef(fit)[["A:B"]]))
+  expect_true(orthogonal(fit))
+
+  fit <- stats::lm(y ~ A * B, data = transform(data[1:4, ], B = 2 * B)) # uncorrelated, unequal variance (B on -2/2)
+  expect_equal(unname(covUnscaled(fit)), diag(c(1 / 4, 1 / 16, 1 / 16)))
+  expect_false(orthogonal(fit))
+
+  fit <- stats::lm(y ~ A + B, data = data[1:3, ]) # equal variance, correlated
+  expect_equal(unname(covUnscaled(fit)), matrix(c(0.5, 0.25, 0.25, 0.5), 2))
+  expect_false(orthogonal(fit))
+})
+
+test_that("62.12 Lenth's method with one very large effect", {
+  # effects 1e9, 1, ..., 6: s0 = 6, the 6 effects below 15 have median 3.5, so PSE = 5.25 (not rounding error)
+  data <- expand.grid(A = c(-1, 1), B = c(-1, 1), C = c(-1, 1))
+  data$y <- with(data, (1e9 * A + 1 * B + 2 * C + 3 * A * B + 4 * A * C + 5 * B * C + 6 * A * B * C) / 2)
+  terms <- unlist(lapply(1:3, function(k) combn(c("A", "B", "C"), k, simplify = FALSE)), recursive = FALSE)
+  options <- saturatedFactorialOptions("y", c("A", "B", "C"), terms = terms)
+  options$plotPareto <- TRUE
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", data, options)
+  plotName <- results[["results"]][["y"]][["collection"]][["y_plotPareto"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  expect_equal(ggplot2::layer_data(testPlot, 2)[["yintercept"]], qt(0.975, 7 / 3) * 5.25, tolerance = 1e-6)
 })
