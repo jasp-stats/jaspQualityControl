@@ -79,26 +79,30 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
                                        "stage", "controlLimitsNumberOfSigmas", .getDependenciesControlChartRules()))
     jaspResults[["Ichart"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
     if (ready) {
-      # Error conditions for stages
-      if(!identical(stages, "") && any(table(dataset[[stages]]) < options[["xmrChartMovingRangeLength"]])) {
-        jaspResults[["Ichart"]][["plot"]]$setError(gettext("Moving range length is larger than the number of observations
-                                                           in one of the stages."))
-        return()
-      }
       columnsToPass <- c(variables, stages)
       columnsToPass <- columnsToPass[columnsToPass != ""]
-      individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                                       xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, ruleList = ruleList1,
-                                       movingRangeLength = options[["xmrChartMovingRangeLength"]])
-      mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                               xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, ruleList = ruleList2,
-                               movingRangeLength = options[["xmrChartMovingRangeLength"]])
+      # a stage (or the data) without a complete moving range gives a "qcDataError", shown on the chart
+      individualChart <- tryCatch(
+        .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
+                      xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, ruleList = ruleList1,
+                      movingRangeLength = options[["xmrChartMovingRangeLength"]]),
+        qcDataError = identity
+      )
+      if (inherits(individualChart, "qcDataError")) {
+        jaspResults[["Ichart"]][["plot"]]$setError(conditionMessage(individualChart))
+        if (!options[["report"]]) # in report mode, the error replaces the X-mR chart on the report
+          return()
+      } else {
+        mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
+                                 xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, ruleList = ruleList2,
+                                 movingRangeLength = options[["xmrChartMovingRangeLength"]])
+        jaspResults[["Ichart"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
+        if (!identical(stages, "") && nDroppedRows > 0)
+          jaspResults[["Ichart"]][["plotNote"]] <- createJaspHtml(droppedStagesNote)
+        jaspResults[["Ichart"]][["tableI"]] <- individualChart$table
+        jaspResults[["Ichart"]][["tableMR"]] <- mrChart$table
+      }
     }
-    jaspResults[["Ichart"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
-    if (!identical(stages, "") && nDroppedRows > 0)
-      jaspResults[["Ichart"]][["plotNote"]] <- createJaspHtml(droppedStagesNote)
-    jaspResults[["Ichart"]][["tableI"]] <- individualChart$table
-    jaspResults[["Ichart"]][["tableMR"]] <- mrChart$table
   }
 
   # Autocorrelation Plot
@@ -159,7 +163,10 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
     plots <- list()
     plotIndexCounter <- 1
     if (options[["reportIMRChart"]]) {
-      plots[[plotIndexCounter]] <- list(individualChart$plotObject, mrChart$plotObject)
+      plots[[plotIndexCounter]] <- if (inherits(individualChart, "qcDataError")) # keep the I/MR slots, the error panel replaces both
+        list(.qcReportErrorPanel(gettext("X-mR control chart"), conditionMessage(individualChart)), ggplot2::ggplot() + ggplot2::theme_void())
+      else
+        list(individualChart$plotObject, mrChart$plotObject)
       plotIndexCounter <- plotIndexCounter + 1
     }
     if (options[["reportAutocorrelationChart"]]) {

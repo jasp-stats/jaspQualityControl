@@ -19,12 +19,23 @@
 ## Added
 * Process Capability: optional Z.bench (ST) / Z.bench (LT) columns, reporting the sigma level based on the total expected defect probability across both specification limits, alongside the existing Z (ST) / Z (LT) = 3·Cpk / 3·Ppk.
 * Process Capability / control charts: added "Pooled" as a within-subgroup standard deviation estimation method (in addition to R-bar and S-bar).
+* DOE Analysis: optional confidence intervals for the effects and coefficients in the coefficients table ([Issue #4640](https://github.com/jasp-stats/jasp-issues/issues/4640)).
+* DOE Analysis: the ANOVA table splits the Error row into Lack of fit (with F-test) and Pure error when the design has replicated runs, e.g. center points ([Issue #4640](https://github.com/jasp-stats/jasp-issues/issues/4640)).
+* DOE Analysis, response optimizer: optional table with the predicted responses at the optimal solution (and at manually set factor levels), with standard error, confidence interval for the mean response and prediction interval for a single new run ([Issue #4640](https://github.com/jasp-stats/jasp-issues/issues/4640)).
 
 ## Changed
 * DOE Analysis, Factorial Design and Response Surface Design: help moved from markdown files into the QML `info` properties.
 * DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
 ## Fixed
+* Time weighted charts: singleton subgroups across multiple measurement columns now use moving ranges in row order, preserving entirely missing rows as gaps.
+* Process Capability: missing moving ranges no longer discard the capability tables or the report. A control chart that cannot be drawn is left out with a note below the plot (or the plot shows the error if neither chart can be drawn); on the report, it is replaced by its error. Unavailable within standard deviations remain missing while overall estimates are retained.
+* Time weighted charts, variables charts for individuals: when the std. dev. is estimated from moving ranges and a stage (or the data) has no complete moving range (fewer non-missing observations than the moving range length, or every range interrupted by a missing value), the chart shows an error naming the stage instead of stopping the analysis or drawing NaN limits. In the reports, only the affected chart is replaced by its error.
+* Time weighted charts: the EWMA chart estimates the std. dev. of individual observations with missing values from moving ranges, like the CUSUM chart (previously it stopped with an error, or, with a grouping variable or across-rows data, drew zero-width control limits).
+* Time weighted charts: after a subgroup without observations, the CUSUM and EWMA charts continue from the last observed subgroup with finite control limits (previously both lines stopped at the gap and the EWMA limits became infinite).
+* Time weighted charts: notes about removed observations (not assigned to a stage or subgroup) are shown below the charts.
+* Time weighted charts: the chart tables no longer stay in the output when the report is shown.
+* Time weighted charts: the CUSUM moving range length field is shown based on the CUSUM (not the EWMA) std. dev. source.
 * DOE Analysis: with type II/III sums of squares, the ANOVA table's Model and Total rows no longer just add up the individual term SS (which is only valid for type I). Model SS is now SST − SSE, with F/p from the overall regression test, and Total SS is SST. The grouped rows (Linear, Squared, Interaction terms, Covariates) are now tested jointly and report MS, F and p.
 * Test–retest: limit across-rows input to two measurement columns, reject extra single-column measurement sets (previously the third set was silently ignored) and report duplicate or unmatched readings; rows with missing values are still excluded.
 * Attribute agreement: return valid confidence-interval endpoints for zero or perfect agreement.
@@ -46,6 +57,9 @@
 * Attributes agreement analysis: Fleiss' kappa no longer crashes with newer `irr` (>= 0.85) when a within-appraiser input has a single measurement column; returns NaN as before.
 * DOE Analysis: the Effect column of the coefficients table is now 2 × coefficient (on the −1/+1 scale) for main effects and interactions of every order. Previously 2-way and 3-way interactions were inflated (4× and 6×), effects depended on the factor level labels, and uncoded continuous predictors and manual coding beyond ±1 gave wrong values. Effects are left blank for squared terms and factors with more than two levels, and a footnote explains the definition ([PR #525](https://github.com/jasp-stats/jaspQualityControl/pull/525)).
 * DOE Analysis: no longer crashes when a discrete factor is fully removed from the model due to aliasing ([PR #525](https://github.com/jasp-stats/jaspQualityControl/pull/525)).
+* DOE Analysis, response optimizer: with blocks or covariates in the model, the fitted responses and desirabilities added every block and covariate coefficient in full. Predictions are now averaged over the blocks and covariates are held at their mean, matching the new prediction table ([Issue #4665](https://github.com/jasp-stats/jasp-issues/issues/4665)).
+* DOE Analysis, response optimizer: with two or more discrete factors, the optimization plot, its summary table and the solution table's fitted response gave some factor levels no contribution (e.g. the last level of the first factor), because the factor levels were merged. The optimal settings themselves were not affected ([Issue #4665](https://github.com/jasp-stats/jasp-issues/issues/4665)).
+* DOE Analysis: block and discrete factor levels without runs (e.g. all their rows filtered out or with missing responses) are dropped. Such a level made the model fall back from sum-to-zero to treatment contrasts, which the effects and the response optimizer assume.
 
 ---
 

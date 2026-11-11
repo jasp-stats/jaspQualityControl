@@ -54,6 +54,9 @@
 #' @param modelTerms, Allows manually defining the main effects and interactions in the model.
 #' @param normalEffectsPlot, Show a normal probability plot of the standardized effects.
 #'    Defaults to \code{FALSE}.
+#' @param optimizationIntervals, Predicted response at the optimal (or manually set) factor levels, with the confidence interval for the mean response and the prediction interval for a single new run. Blocks are averaged out; covariates are held at their mean.
+#'    Defaults to \code{FALSE}.
+#' @param optimizationIntervalsLevel, Confidence level of the intervals.
 #' @param optimizationPlot, Show a matrix of plots with one column per factor. The top row shows the composite desirability, the other rows one per response. Each plot varies one factor while the other factors are held at the optimal (or manually set) levels, which are marked in red.
 #'    Defaults to \code{TRUE}.
 #' @param optimizationPlotCustomParameters, Draw the optimization plot at manually entered factor levels instead of the optimal solution. Enter a value for every factor; discrete factors need one of their observed levels.
@@ -109,6 +112,9 @@
 #' @param surfacePlotVerticalRotation, Rotation of the surface plot in the vertical plane, in degrees.
 #' @param tableAlias, Assign alias names to the factors. Useful when factors have long names.
 #'    Defaults to \code{TRUE}.
+#' @param tableCoefficientsCi, Add confidence intervals for the effects and the coefficients to the coefficients table, based on the t-distribution with the error degrees of freedom. The interval for an effect is twice the interval for its coefficient (in coded units).
+#'    Defaults to \code{FALSE}.
+#' @param tableCoefficientsCiLevel, Confidence level of the intervals.
 #' @param tableEquation, Display the regression coefficients as an equation predicting the response.
 #'    Defaults to \code{TRUE}.
 doeAnalysis <- function(
@@ -137,6 +143,8 @@ doeAnalysis <- function(
           histogramManualNumberOfBins = 30,
           modelTerms = list(optionKey = "components", types = list(), value = list()),
           normalEffectsPlot = FALSE,
+          optimizationIntervals = FALSE,
+          optimizationIntervalsLevel = 0.95,
           optimizationPlot = TRUE,
           optimizationPlotCustomParameterValues = list(optionKey = "variable", types = list(), value = list()),
           optimizationPlotCustomParameters = FALSE,
@@ -163,6 +171,8 @@ doeAnalysis <- function(
           surfacePlotHorizontalRotation = 330,
           surfacePlotVerticalRotation = 20,
           tableAlias = TRUE,
+          tableCoefficientsCi = FALSE,
+          tableCoefficientsCiLevel = 0.95,
           tableEquation = TRUE) {
 
    options <- mget(names(formals(sys.function())), envir = environment(), inherits = FALSE)
