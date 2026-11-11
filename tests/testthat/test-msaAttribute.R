@@ -72,7 +72,7 @@ test_that("LF1.8 AAA and Fleiss - Cohen's Kappa for Appraiser vs Standard table 
 test_that("LF1.9 AAA and Fleiss - Cohen's Kappa correlations summary table results match", {
   table <- results[["results"]][["cohensKappaCor"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("-", 0.87, 0.52, "BL", 0.87, "-", 0.6, "EG", 0.52, 0.6, "-", "MH"
+                                 list("-", 0.81, 0.52, "BL", 0.81, "-", 0.6, "EG", 0.52, 0.6, "-", "MH"
                                  ))
 })
 
@@ -159,7 +159,7 @@ test_that("LF2.8 Kendall Tau - Fleiss' kappa table results match", {
 ## Rows in run order ####
 # Agreement between appraisers matches the appraisers' ratings by part, not by row position (INTERNAL-jasp#2812).
 # Run order: each trial round rates the parts in a random order, appraisers interleaved. Trial k of a part
-# stays the k-th row of that part, as the Cohen's kappa correlations pair trial k across appraisers.
+# stays the k-th row of that part, as Fleiss' kappa vs standard averages the kappas of the trials (as in Minitab).
 options <- analysisOptions("msaAttribute")
 options$dataFormat <- "longFormat"
 options$operatorLongFormat <- "Operator"
@@ -191,7 +191,7 @@ test_that("LF3.2 Rows in run order - Between appraisers table results match", {
 test_that("LF3.3 Rows in run order - Cohen's kappa correlations summary table results match", {
   table <- results[["results"]][["cohensKappaCor"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("-", 0.87, 0.52, "BL", 0.87, "-", 0.6, "EG", 0.52, 0.6, "-", "MH"
+                                 list("-", 0.81, 0.52, "BL", 0.81, "-", 0.6, "EG", 0.52, 0.6, "-", "MH"
                                  ))
 })
 
@@ -417,4 +417,122 @@ test_that("WF4.4 Kendall Tau, rows in run order - Fleiss' kappa table results ma
                                  list("A", "", 0.532871972318339, "NaN", "B", "", 0.529616724738676,
                                       "NaN", "C", "", 0.52, "NaN", "D", "", 0.440820130475303, "NaN",
                                       "All", 0.405850091407678, 0.505827206883079))
+})
+
+# Trial order ####
+# Trial numbers only label an appraiser's repeated ratings of a part (jasp-issues#4678), so the rating
+# correlations pair every trial of one appraiser with every trial of the other on the same part.
+# Reference: with m trials each, r = m * sum_i (a_i - a)(b_i - b) / sqrt(SS_a * SS_b), where a_i is the mean
+# rating of part i, a the mean of all ratings and SS_a the sum of squares of all ratings around a.
+allTrialPairsCor <- function(ratings1, ratings2) {
+  m <- ncol(ratings1)
+  m * sum((rowMeans(ratings1) - mean(ratings1)) * (rowMeans(ratings2) - mean(ratings2))) /
+    sqrt(sum((ratings1 - mean(ratings1))^2) * sum((ratings2 - mean(ratings2))^2))
+}
+# Table cells: rows in the given order (long format: sorted, wide format: order of appearance), columns sorted
+# by appraiser name, then the appraiser.
+expectedCorTable <- function(ratings, rowOrder) {
+  unlist(lapply(rowOrder, function(a) {
+    c(lapply(sort(names(ratings)), function(b) if (a == b) "-" else round(allTrialPairsCor(ratings[[a]], ratings[[b]]), 2)), a)
+  }), recursive = FALSE)
+}
+# Parts x trials matrix of 0/1 ratings ("Yes" = 1) per appraiser, from long data.
+ratingsLong <- function(data) {
+  lapply(split(data, as.character(data$Operator)), function(d) do.call(rbind, split(as.numeric(d$Results == "Yes"), d$Part)))
+}
+
+options <- analysisOptions("msaAttribute")
+options$dataFormat <- "longFormat"
+options$operatorLongFormat <- "Operator"
+options$partLongFormat <- "Part"
+options$measurementLongFormat <- c("Results")
+options$standardLongFormat <- "Reference"
+options$cohensKappa <- TRUE
+options$fleissKappa <- TRUE
+options$positiveReference <- "Yes"
+dataset <- read.csv("datasets/msaAttributeAgreement/msaAttributeKappa_long.csv")
+dataset <- dataset[c("Part", "Operator", "Results", "Reference")]
+
+test_that("TO1 Shuffled rows (long) - rating correlations pair all trials", {
+  set.seed(3)
+  shuffled <- dataset[sample(nrow(dataset)), ]
+  results  <- runAnalysis("msaAttribute", shuffled, options)
+  table    <- results[["results"]][["cohensKappaCor"]][["data"]]
+  jaspTools::expect_equal_tables(table, expectedCorTable(ratingsLong(dataset), c("BL", "EG", "MH")))
+})
+
+test_that("TO2 Numeric appraiser names (long) - rating correlations columns match the appraisers", {
+  numericNames <- dataset
+  numericNames$Operator <- match(numericNames$Operator, c("EG", "BL", "MH"))
+  results <- runAnalysis("msaAttribute", numericNames, options)
+  table   <- results[["results"]][["cohensKappaCor"]][["data"]]
+  jaspTools::expect_equal_tables(table, expectedCorTable(ratingsLong(numericNames), c("1", "2", "3")))
+})
+
+options <- analysisOptions("msaAttribute")
+options$dataFormat <- "wideFormat"
+options$operatorWideFormat <- "Operator"
+options$partWideFormat <- "Part"
+options$measurementsWideFormat <- c("Repeat.1", "Repeat.2", "Repeat.3")
+options$standardWideFormat <- "Reference"
+options$cohensKappa <- TRUE
+options$positiveReference <- "Yes"
+dataset <- read.csv("datasets/msaAttributeAgreement/msaAttributeKappa_wide.csv")
+dataset <- dataset[c("Operator", "Part", "Repeat.1", "Repeat.2", "Repeat.3", "Reference")]
+trials  <- c("Repeat.1", "Repeat.2", "Repeat.3")
+ratingsWide <- lapply(split(dataset, dataset$Operator), function(d) as.matrix(d[order(d$Part), trials] == "Yes") * 1)
+
+test_that("TO3 Rotated trial columns of one appraiser (wide) - rating correlations pair all trials", {
+  rotated <- dataset
+  isBL    <- rotated$Operator == "BL"
+  rotated[isBL, trials] <- dataset[isBL, c("Repeat.2", "Repeat.3", "Repeat.1")]
+  results <- runAnalysis("msaAttribute", rotated, options)
+  table   <- results[["results"]][["cohensKappaCor"]][["data"]]
+  jaspTools::expect_equal_tables(table, expectedCorTable(ratingsWide, unique(dataset$Operator)))
+})
+
+test_that("TO4 Trials permuted per part (wide) - rating correlations pair all trials", {
+  set.seed(5)
+  permuted <- dataset
+  for (row in seq_len(nrow(permuted)))
+    permuted[row, trials] <- dataset[row, trials][sample(3)]
+  results <- runAnalysis("msaAttribute", permuted, options)
+  table   <- results[["results"]][["cohensKappaCor"]][["data"]]
+  jaspTools::expect_equal_tables(table, expectedCorTable(ratingsWide, unique(dataset$Operator)))
+})
+
+test_that("TO5 Perfectly correlated appraisers (wide) - correlation of 1 is shown, not replaced by the diagonal dash", {
+  # BL and EG rate every part as the reference in every trial: all their trial pairs agree.
+  perfect <- dataset
+  for (trial in trials)
+    perfect[perfect$Operator %in% c("BL", "EG"), trial] <- perfect$Reference[perfect$Operator %in% c("BL", "EG")]
+  ratingsPerfect <- lapply(split(perfect, perfect$Operator), function(d) as.matrix(d[order(d$Part), trials] == "Yes") * 1)
+  results <- runAnalysis("msaAttribute", perfect, options)
+  table   <- results[["results"]][["cohensKappaCor"]][["data"]]
+  expect_identical(allTrialPairsCor(ratingsPerfect[["BL"]], ratingsPerfect[["EG"]]), 1)
+  jaspTools::expect_equal_tables(table, expectedCorTable(ratingsPerfect, unique(dataset$Operator)))
+})
+
+test_that("TO6 Numeric ratings with several trials (wide) - correlations pair all trials", {
+  numericRatings <- dataset
+  numericRatings[c(trials, "Reference")] <- lapply(numericRatings[c(trials, "Reference")], function(x) as.numeric(x == "Yes"))
+  numericOptions <- options
+  numericOptions$positiveReference <- ""
+  results <- runAnalysis("msaAttribute", numericRatings, numericOptions)
+  table   <- results[["results"]][["cohensKappaCor"]][["data"]]
+  jaspTools::expect_equal_tables(table, expectedCorTable(ratingsWide, unique(dataset$Operator)))
+})
+
+test_that("TO7 Fleiss' kappa vs standard (long) - footnote says how trials are numbered", {
+  options <- analysisOptions("msaAttribute")
+  options$dataFormat <- "longFormat"
+  options$operatorLongFormat <- "Operator"
+  options$partLongFormat <- "Part"
+  options$measurementLongFormat <- c("Results")
+  options$standardLongFormat <- "Reference"
+  options$fleissKappa <- TRUE
+  results <- runAnalysis("msaAttribute", "datasets/msaAttributeAgreement/msaAttributeKappa_long.csv", options)
+  footnotes <- results[["results"]][["fleissKappa"]][["footnotes"]]
+  expect_identical(footnotes[[1]][["text"]],
+                   "Averaged over trials; trial k is the k-th row of an appraiser and part in the data.")
 })
