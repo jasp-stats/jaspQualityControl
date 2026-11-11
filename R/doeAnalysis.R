@@ -425,9 +425,9 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     # say which units the ANOVA of an uncoded factorial analysis with continuous predictors uses
     if (options[["designType"]] == "factorialDesign" && !options[["codeFactors"]] && length(setdiff(unlist(continuousPredictors), "")) > 0) {
       result[["anova"]][["codingNote"]] <- if (sameModelCoded) {
-        gettext("Calculated with the continuous predictors in coded (−1/+1) units, so the table is the same in coded and uncoded units.")
+        gettext("Calculated with the continuous predictors in coded (\u22121/+1) units, so the table is the same in coded and uncoded units.")
       } else {
-        gettext("Calculated in uncoded units: coding the continuous predictors changes this model (e.g., an interaction or squared term without its main effects).")
+        gettext("Calculated in uncoded units: coding the predictors changes this model (e.g., an interaction or squared term without its main effects).")
       }
     }
     anovaFitData    <- if (anovaFitCoded) regressionFitCoded else regressionFit
@@ -755,6 +755,15 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   roDependent <- roOptionsDf$variable
   models      <- .doeOptimizerModels(jaspResults, roDependent, dataset, blocks, covariates)
 
+  if (isTRUE(roOutcome[["notEstimable"]])) { # isTRUE: states saved before this flag existed lack it
+    tb2 <- createJaspTable(gettext("Response Optimizer Solution"))
+    tb2$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationSolutionTable"))
+    tb2$position <- 2
+    jaspResults[["tableRoSolution"]] <- tb2
+    tb2$setError(.doeOptimizerNotEstimableError())
+    return()
+  }
+
   optimParam <- roOutcome$parameters
   desi <- roOutcome$desirability
   desi <- pmax(0, pmin(1, desi)) # after optim. desi can be bounded to 0 and 1
@@ -856,6 +865,14 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   jaspResults[["plotRo"]] <- createJaspContainer(title = gettext("Optimization Plot"))
   jaspResults[["plotRo"]]$dependOn(options = .doeOptimizationPlotDependencies()) # no empty container after a settings error
   jaspResults[["plotRo"]]$position <- 4
+
+  if (isTRUE(roOutcome[["notEstimable"]])) { # isTRUE: states saved before this flag existed lack it
+    jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
+    jaspPlot$dependOn(options = .doeOptimizationPlotDependencies())
+    jaspResults[["plotRo"]][["plot"]] <- jaspPlot
+    jaspPlot$setError(.doeOptimizerNotEstimableError())
+    return()
+  }
 
   # Create Df if custom parameters are entered
   if (options[["optimizationPlotCustomParameters"]]) {
@@ -1091,6 +1108,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   table$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationIntervals", "optimizationIntervalsLevel"))
   table$position <- 3
   jaspResults[["tableRoPrediction"]] <- table
+  if (isTRUE(jaspResults[["roResult"]]$object[["notEstimable"]])) {
+    table$setError(.doeOptimizerNotEstimableError())
+    return()
+  }
 
   predictors <- c(unlist(discretePredictors), unlist(continuousPredictors))
   predictors <- predictors[predictors != ""]
@@ -1291,12 +1312,15 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     optimalResultDf <- data.frame("outcomeValue" = currrentOptimResult$value * -1)  # after optimization the sign can be switched again
     optimalResultDf[continuousPredictors] <- currrentOptimResult$par
   }
+  # Settings without a unique prediction (aliased contrasts) have NA and are skipped. Averaged over the blocks, there can
+  # be no such setting at all, e.g. when a factor is held constant within blocks (a block contrast aliased with it).
+  if (all(is.na(optimalResultDf$outcomeValue)))
+    return(list(parameters = NULL, desirability = NA_real_, notEstimable = TRUE))
   # drop = FALSE keeps a named one-row data frame also with a single predictor
-  # which.max() and na.rm skip the settings without a unique prediction (NA); the design points always have one
   optimalParameters <- optimalResultDf[which.max(optimalResultDf$outcomeValue), names(optimalResultDf) != "outcomeValue", drop = FALSE]
   maxDesirability <- max(optimalResultDf$outcomeValue, na.rm = TRUE)
 
-  return(list(parameters = optimalParameters, desirability = maxDesirability))
+  return(list(parameters = optimalParameters, desirability = maxDesirability, notEstimable = FALSE))
 }
 
 
@@ -1406,6 +1430,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
 .doeAliasedOptimizerNote <- function() {
   gettext("Some contrasts of the model are aliased, so the data cannot estimate the response at some settings (e.g., combinations of factor levels without runs). These settings are left out.")
+}
+
+.doeOptimizerNotEstimableError <- function() {
+  gettext("The response optimizer cannot be used with this model: some contrasts are aliased, so the data cannot estimate the response at any setting (averaged over the blocks, e.g. when a factor is held constant within blocks).")
 }
 
 .doeNotEstimablePredictionNote <- function() {
@@ -2144,6 +2172,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     uniqueCoefs <- result[["coefficients"]][["unique"]]
     tDf <- tDf[c(TRUE, uniqueCoefs[-1]), , drop = FALSE] # the intercept row is removed below
     fac <- fac[uniqueCoefs[-1]]
+    if (!any(uniqueCoefs[-1])) {
+      plot$setError(gettext("No effects to plot: some contrasts of the model are aliased, so no effect has a unique estimate."))
+      next
+    }
 
     # Do not include intercept, covariates and blocks in pareto plot
     tDf <- tDf[-1, ] # remove intercept
@@ -2199,6 +2231,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     uniqueCoefs <- result[["coefficients"]][["unique"]]
     tDf <- tDf[c(TRUE, uniqueCoefs[-1]), , drop = FALSE] # the intercept row is removed below
     fac <- fac[uniqueCoefs[-1]]
+    if (!any(uniqueCoefs[-1])) {
+      plot$setError(gettext("No effects to plot: some contrasts of the model are aliased, so no effect has a unique estimate."))
+      next
+    }
 
     # Do not include intercept, covariates and blocks in normal effects plot
     tDf <- tDf[-1, ] # remove intercept
