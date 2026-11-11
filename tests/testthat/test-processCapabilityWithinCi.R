@@ -62,7 +62,8 @@ test_that("S-bar degrees of freedom factor matches the reference table", {
   results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]]
 }
 
-# 20 subgroups of size 2, N = 40; the interval follows from Cp, Cpk and the degrees of freedom of the method
+# the interval follows from Cp, Cpk, the number of observations N (20 subgroups of size 2 by default) and the
+# degrees of freedom of the method
 .pcExpectedWithinCi <- function(row, df, level = 0.9, N = 40) {
   alpha <- 1 - level
   halfWidth <- qnorm(1 - alpha / 2) * sqrt(1 / (9 * N) + row[["cpk"]]^2 / (2 * df))
@@ -80,6 +81,27 @@ for (sdMethod in c("rBar", "sBar", "pooled")) {
     expect_equal(unlist(row[names(expected)]), expected, tolerance = 2e-3)
   })
 }
+
+# individuals (subgroup size 1) use the moving range estimate, whatever method is set for subgroups larger than 1
+options <- .pcWithinCiOptions("pooled")
+options$dataFormat <- "longFormat"
+options$measurementsWideFormat <- list()
+options$measurementLongFormat <- "X1"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 1
+options$controlChartType <- "xmr"
+options$controlChartSdEstimationMethodGroupSize <- "equalOne"
+options$controlChartSdEstimationMethodMeanMovingRangeLength <- 3
+individualsData <- .pcWithinCiData["X1"]
+individualsData$X1[c(5, 12)] <- NA
+results <- runAnalysis("processCapabilityStudies", individualsData, options)
+
+test_that("Within Cp/Cpk confidence intervals of individuals use the number of complete moving ranges", {
+  row <- .pcWithinTable(results)[["data"]][[1]]
+  # 18 moving ranges of length 3 in 20 observations, 6 of them contain one of the 2 missing values
+  expected <- .pcExpectedWithinCi(row, df = 12, N = 18)
+  expect_equal(unlist(row[names(expected)]), expected, tolerance = 2e-3)
+})
 
 results <- runAnalysis("processCapabilityStudies", .pcWithinCiData, .pcWithinCiOptions("rBar"))
 
