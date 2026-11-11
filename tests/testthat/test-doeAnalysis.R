@@ -5500,6 +5500,10 @@ test_that("Optimizer settings without a defined desirability give errors, a targ
   expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("target", lowerBound = 0, target = 7, upperBound = 5), TRUE, FALSE), TRUE), 1)
   # equality is allowed
   expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("maximize", lowerBound = 10), TRUE, FALSE), TRUE), 0)
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("minimize", upperBound = 0), TRUE, FALSE), TRUE), 0)
+  expect_length(errors(.doeTestResolve(y, .doeTestOptimizerRow("target", lowerBound = 5, target = 5, upperBound = 5), TRUE, FALSE), TRUE), 0)
+  # close values stay distinguishable in the message
+  expect_match(errors(.doeTestResolve(y, .doeTestOptimizerRow("maximize", lowerBound = 10.004), TRUE, FALSE), TRUE), "(10.004)", fixed = TRUE)
 
   # target goal outside bounds from the data: no error, a footnote, and the optimizer moves towards the target
   ro <- .doeTestResolve(y, .doeTestOptimizerRow("target", target = 15), FALSE, FALSE)
@@ -5535,7 +5539,7 @@ test_that("Response optimizer shows an error for a lower bound above the target"
   )
   options$responseOptimizerManualBounds <- TRUE
   options$responseOptimizerManualTarget <- FALSE
-  options$optimizationSolutionTable <- FALSE
+  options$optimizationSolutionTable <- TRUE
   options$optimizationPlot <- TRUE
   set.seed(123)
   results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
