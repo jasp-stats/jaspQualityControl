@@ -4669,3 +4669,35 @@ test_that("WF interleaved stages - x-bar chart test results use the flagged subg
   table <- results[["results"]][["xBar"]][["collection"]][["xBar_tableXBar"]][["data"]]
   jaspTools::expect_equal_tables(table, list("B", "Point 8 (R4)"))
 })
+
+##### Weibull probability plot confidence band ####
+options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
+options$measurementLongFormat <- "x"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$probabilityPlotRankMethod <- "bernard"
+options$controlChartType <- "xBarR"
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "weibull"
+options$nullDistribution <- "weibull"
+options$lowerSpecificationLimit <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 10
+options$upperSpecificationLimitValue <- 100
+weibullData <- data.frame(x = qweibull(ppoints(60), shape = 2.5, scale = 50))
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies", weibullData, options, view = FALSE)
+
+test_that("Weibull probability plot has a 95% Wald band for the log percentile", {
+  plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+  plot <- results[["state"]][["figures"]][[plotName]][["obj"]]$subplots[[1]]
+  zMedian <- log(log(2)) # y of the 50th percentile
+  atMedian <- function(layer) { d <- ggplot2::layer_data(plot, layer); d$x[which.min(abs(d$y - zMedian))] } # x = log(percentile)
+  halfWidth <- c(atMedian(1) - atMedian(3), atMedian(4) - atMedian(1)) # fit minus lower band, upper band minus fit
+  # delta method: log t_p = log(scale) + z_p / shape
+  fit <- fitdistrplus::fitdist(weibullData$x, "weibull")
+  gradient <- c(-zMedian / fit$estimate[["shape"]]^2, 1 / fit$estimate[["scale"]])
+  seLogMedian <- sqrt(drop(t(gradient) %*% fit$vcov[c("shape", "scale"), c("shape", "scale")] %*% gradient))
+  testthat::expect_equal(halfWidth, rep(qnorm(0.975) * seLogMedian, 2), tolerance = 0.02)
+})

@@ -3457,7 +3457,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         covarSS <- matrix$varcov[1,2]
       }
       zp <- log(-1*log(1-pSeq))
-      zalpha <- log(-1*log(1-0.975))
+      zalpha <- qnorm(0.975) # normal quantile for the Wald interval on log(percentile), as for the other distributions
       percentileEstimate <- scale * (- log(1 - pSeq))^(1/shape)
       if (hasConfidenceBands) {
         varPercentile <- (percentileEstimate^2 / scale^2) * varScale + (percentileEstimate^2/shape^4)*zp^2*varShape - 2*((zp*percentileEstimate^2) / (scale * shape^2))*covarSS
