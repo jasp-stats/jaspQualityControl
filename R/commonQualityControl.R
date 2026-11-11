@@ -237,7 +237,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                                   whichRules = c(1:3,5,7:8))
 
   # With limits that vary per subgroup (unequal subgroup sizes), test 1 must use each subgroup's own limits.
-  # Tests 2 and 3 depend only on the centre line and the data, so they are evaluated on the whole series.
+  # Tests 2 and 3 depend only on the centre line and the plotted statistics, so they are evaluated on the whole series.
   if (nrow(data$limits) > 1 && (length(unique(data$limits[, 1])) > 1 || length(unique(data$limits[, 2])) > 1))
     warnings[["Rule1"]] <- as.numeric((data$statistics > data$limits[, 2] | data$statistics < data$limits[, 1]) %in% TRUE)
 

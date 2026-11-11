@@ -37,6 +37,32 @@ test_that("test 1 uses each subgroup's own limits and agrees with the plot", {
     expect_equal(as.integer(.nelsonColumn(results, "test1")), .redPoints(results, chart), info = chart)
   }
   expect_equal(.nelsonColumn(.nelsonRun(counts, sizes, "uChart"), "test1"), 6)
+
+  # Laney charts: subgroup 6 is beyond its own limits but within those of the first subgroup
+  lCounts <- c(0, 45, 0, 44, 0, 74, 1, 52, 0, 44, 0, 42)
+  for (chart in c("laneyPPrimeChart", "laneyUPrimeChart")) {
+    results <- .nelsonRun(lCounts, sizes, chart)
+    expect_identical(results$status, "complete")
+    expect_equal(.nelsonColumn(results, "test1"), 6, info = chart)
+    expect_equal(.redPoints(results, chart), 6L, info = chart)
+  }
+})
+
+test_that("p chart with equal subgroup sizes reports the same tests as the np chart", {
+  counts <- c(3, 5, 2, 8, 4, 6, 20, 3, 4, 5, 6, 7, 8, 9, 10)
+  sizes  <- rep(50, 15)
+  pResults <- .nelsonRun(counts, sizes, "pChart")
+  options  <- jaspTools::analysisOptions("attributesCharts")
+  options$defectiveOrDefect <- "count"
+  options$total <- "size"
+  options$attributesChart <- "defectives"
+  options$attributesChartDefectivesChartType <- "npChart"
+  npResults <- jaspTools::runAnalysis("attributesCharts", data.frame(count = counts, size = sizes), options, view = FALSE)
+  expect_identical(pResults$status, "complete")
+  expect_identical(npResults$status, "complete")
+  expect_equal(pResults$results$NelsonTable$data, npResults$results$NelsonTable$data)
+  expect_equal(.nelsonColumn(pResults, "test1"), 7)
+  expect_equal(.nelsonColumn(pResults, "test3"), 15)
 })
 
 test_that("p chart reports shifts and trends with unequal subgroup sizes", {
