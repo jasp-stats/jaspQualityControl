@@ -378,87 +378,26 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
     regressionFit <- lm(formula, data = dataset)
 
-    # For the factorial design ANOVA, if data are not coded, we want to treat all predictors as factors, unlike for the regression fit
-    anovaDataset <- dataset
-    if (options[["designType"]] == "factorialDesign" && !options[["codeFactors"]] &&
-        length(continuousPredictors) > 0 && !identical(continuousPredictors, "")) {
-      for (contPred in continuousPredictors) {
-        anovaDataset[[contPred]] <- as.factor(anovaDataset[[contPred]])
-        # Set contrasts for the converted factors to match discretePredictors
-        contrasts(anovaDataset[[contPred]]) <- "contr.sum"
-      }
+    # A term is removed only when all its columns are aliased. A term with only some aliased columns (e.g., a discrete
+    # factor with a level that only occurs in the runs of a level of another factor) keeps its estimable columns:
+    # lm() gives the aliased columns NA coefficients and fits the model without them.
+    removedTerms <- .doeAliasedTerms(regressionFit)[["full"]]
+    if (length(removedTerms) > 0) {
+      formula       <- as.formula(paste(paste(deparse(formula), collapse = ""), paste(removedTerms, collapse = " - "), sep = " - "))
+      regressionFit <- lm(formula, data = dataset)
     }
-    anovaRegressionFit <- lm(formula, data = anovaDataset)
+    partiallyAliasedTerms <- .doeAliasedTerms(regressionFit)[["partial"]]
 
-    regressionFitCoded <- lm(formula, data = datasetCoded)
-    regressionSummary <- summary(regressionFit)
+    regressionFitCoded     <- lm(formula, data = datasetCoded)
+    regressionSummary      <- summary(regressionFit)
     regressionSummaryCoded <- summary(regressionFitCoded)
 
-    aliasedTerms <- attributes(alias(regressionFit)$Complete)$dimnames[[1]]
-    regressionAliasedTermsForNote <- NULL
-
-    if (!is.null(aliasedTerms)) {
-      allPredictors <- unlist(c(continuousPredictors, discretePredictors, blocks, covariates))
-      allPredictors <- allPredictors[allPredictors != ""]
-      aliasedTerms <- .removeAppendedFactorLevels(predictorNames = allPredictors, terms = aliasedTerms, interactionSymbol = ":")
-
-      # store for footnote (format the terms)
-      aliasedTermsFootnote <- unique(unname(sapply(aliasedTerms, .gsubIdentityFunction)))
-      aliasedTermsFootnote <- gsubInteractionSymbol(aliasedTermsFootnote)
-      regressionAliasedTermsForNote <- aliasedTermsFootnote
-
-      formula <- as.formula(paste(paste(deparse(formula), collapse=""), paste(aliasedTerms, collapse="-"), sep="-")) # remove the aliased term(s) from the model
-      # fit the model again
-      regressionFit <- lm(formula, data = dataset)
-      regressionFitCoded <- lm(formula, data = datasetCoded)
-      regressionSummary <- summary(regressionFit)
-      regressionSummaryCoded <- summary(regressionFitCoded)
-    }
-
-    # Check for aliasing in anovaDataset (which may have converted factors) and remove those terms
-    anovaAliasedTerms <- attributes(alias(anovaRegressionFit)$Complete)$dimnames[[1]]
-    anovaAliasedTermsForNote <- NULL
-
-    if (!is.null(anovaAliasedTerms)) {
-      allPredictors <- unlist(c(continuousPredictors, discretePredictors, blocks, covariates))
-      allPredictors <- allPredictors[allPredictors != ""]
-      anovaAliasedTerms <- .removeAppendedFactorLevels(predictorNames = allPredictors, terms = anovaAliasedTerms, interactionSymbol = ":")
-
-      # store for footnote (format the terms)
-      anovaAliasedTermsFootnote <- unique(unname(sapply(anovaAliasedTerms, .gsubIdentityFunction)))
-      anovaAliasedTermsFootnote <- gsubInteractionSymbol(anovaAliasedTermsFootnote)
-      anovaAliasedTermsForNote <- anovaAliasedTermsFootnote
-
-      anovaFormula <- as.formula(paste(paste(deparse(formula), collapse=""), paste(anovaAliasedTerms, collapse="-"), sep="-"))
-      anovaRegressionFit <- lm(anovaFormula, data = anovaDataset)
-    }
-
-    # Set footnotes for aliased terms (combine regression and ANOVA if both exist)
-    if (!is.null(regressionAliasedTermsForNote) || !is.null(anovaAliasedTermsForNote)) {
-      footnoteText <- NULL
-      if (!is.null(regressionAliasedTermsForNote)) {
-        regressionTermsText <- if (is.character(regressionAliasedTermsForNote) && length(regressionAliasedTermsForNote) > 1) {
-          paste(regressionAliasedTermsForNote, collapse=", ")
-        } else {
-          regressionAliasedTermsForNote
-        }
-        footnoteText <- paste(gettext("Terms removed from Regression:"), regressionTermsText)
-      }
-      if (!is.null(anovaAliasedTermsForNote)) {
-        anovaTermsText <- if (is.character(anovaAliasedTermsForNote) && length(anovaAliasedTermsForNote) > 1) {
-          paste(anovaAliasedTermsForNote, collapse=", ")
-        } else {
-          anovaAliasedTermsForNote
-        }
-        if (!is.null(footnoteText)) {
-          footnoteText <- paste(footnoteText, gettext(" and from ANOVA:"), anovaTermsText)
-        } else {
-          footnoteText <- paste(gettext("Terms removed from ANOVA:"), anovaTermsText)
-        }
-      }
-      result[["regression"]][["aliasedTerms"]] <- footnoteText
-      resultCoded[["regression"]][["aliasedTerms"]] <- footnoteText
-    }
+    aliasNotes <- list(
+      removedTerms          = .doeFormatTermLabels(removedTerms),
+      partiallyAliasedTerms = .doeFormatTermLabels(partiallyAliasedTerms),
+      sharedLevelFactors    = if (length(partiallyAliasedTerms) > 0) .doeFactorsWithSharedLevels(dataset, multiLevelVars)
+    )
+    result[["regression"]][["aliasNotes"]] <- resultCoded[["regression"]][["aliasNotes"]] <- aliasNotes
 
     names(regressionFit$coefficients) <-  unname(sapply(c(names(regressionFit$coefficients)), .gsubIdentityFunction)) # remove potential identity function around squared terms
     rownames(regressionSummary$coefficients) <- unname(sapply(c(rownames(regressionSummary$coefficients)), .gsubIdentityFunction))
@@ -475,10 +414,13 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["objectSummary"]] <- regressionSummaryCoded
     resultCoded[["regression"]][["saturated"]] <- regressionSummaryCoded$df[2] == 0
 
-    # ANOVA fit and the data it was fitted on (the lack of fit test groups the runs on these variables)
-    anovaFitCoded   <- (options[["squaredTermsCoded"]] && options[["designType"]] == "responseSurfaceDesign") || options[["codeFactors"]]
-    anovaFitData    <- if (anovaFitCoded) regressionFitCoded else anovaRegressionFit
-    anovaFitDataset <- if (anovaFitCoded) datasetCoded else anovaDataset
+    # ANOVA fit and the data it was fitted on (the lack of fit test groups the runs on these variables).
+    # For factorial designs the ANOVA does not depend on the display units: it always uses the predictors in coded units.
+    anovaFitCoded   <- options[["designType"]] == "factorialDesign" || options[["codeFactors"]] ||
+      (options[["squaredTermsCoded"]] && options[["designType"]] == "responseSurfaceDesign")
+    anovaFitData    <- if (anovaFitCoded) regressionFitCoded else regressionFit
+    anovaFitDataset <- if (anovaFitCoded) datasetCoded else dataset
+    anovaFit        <- NULL
 
     if (!result[["regression"]][["saturated"]]) {
       result[["regression"]][["s"]] <- regressionSummary[["sigma"]]
@@ -497,14 +439,17 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
         anovaFit <- anova(anovaFitData)
       } else if (ssType == "type2") {
         anovaFit <- car::Anova(anovaFitData, type = 2)
-      } else if (ssType == "type3") {
+      } else if (ssType == "type3" && !anyNA(coef(anovaFitData))) {
         anovaFit <- car::Anova(anovaFitData, type = 3)
         anovaFit <- anovaFit[-1,] # remove the intercept that is added when using type 3 SS
       }
+      # no type III SS with aliased columns: the test of a term then depends on how its remaining columns are parameterized
 
-      anovaFit[["Mean Sq"]] <- anovaFit[["Sum Sq"]] / anovaFit[["Df"]]
-      anovaFit <- anovaFit[c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")] # rearrange, so it has the same order as the aov function
-      anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, ssType, unlist(covariates), anovaFitDataset)
+      if (!is.null(anovaFit)) {
+        anovaFit[["Mean Sq"]] <- anovaFit[["Sum Sq"]] / anovaFit[["Df"]]
+        anovaFit <- anovaFit[c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")] # rearrange, so it has the same order as the aov function
+        anovaFit <- .addModelHeaderTerms(anovaFit, anovaFitData, ssType, unlist(covariates), anovaFitDataset)
+      }
     } else {
       result[["regression"]][["s"]] <- NA
       result[["regression"]][["rsq"]] <- 1
@@ -527,21 +472,26 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
     }
 
-    result[["anova"]][["object"]] <- anovaFit
-    result[["anova"]][["terms"]] <- gsubInteractionSymbol(rownames(anovaFit))
-    result[["anova"]][["df"]] <- anovaFit$Df
-    result[["anova"]][["adjss"]] <- anovaFit$`Sum Sq`
-    result[["anova"]][["adjms"]] <- anovaFit$`Mean Sq`
-    result[["anova"]][["F"]] <- anovaFit$`F value`
-    result[["anova"]][["p"]] <- anovaFit$`Pr(>F)`
+    if (is.null(anovaFit)) {
+      result[["anova"]][["error"]] <- resultCoded[["anova"]][["error"]] <-
+        gettext("Type III sums of squares are not defined for this model, because some of its coefficients are aliased. Use Type I or Type II sums of squares.")
+    } else {
+      result[["anova"]][["object"]] <- anovaFit
+      result[["anova"]][["terms"]] <- gsubInteractionSymbol(rownames(anovaFit))
+      result[["anova"]][["df"]] <- anovaFit$Df
+      result[["anova"]][["adjss"]] <- anovaFit$`Sum Sq`
+      result[["anova"]][["adjms"]] <- anovaFit$`Mean Sq`
+      result[["anova"]][["F"]] <- anovaFit$`F value`
+      result[["anova"]][["p"]] <- anovaFit$`Pr(>F)`
 
-    resultCoded[["anova"]][["object"]] <- anovaFit
-    resultCoded[["anova"]][["terms"]] <- gsubInteractionSymbol(rownames(anovaFit))
-    resultCoded[["anova"]][["df"]] <- anovaFit$Df
-    resultCoded[["anova"]][["adjss"]] <- anovaFit$`Sum Sq`
-    resultCoded[["anova"]][["adjms"]] <-  anovaFit$`Mean Sq`
-    resultCoded[["anova"]][["F"]] <- anovaFit$`F value`
-    resultCoded[["anova"]][["p"]] <- anovaFit$`Pr(>F)`
+      resultCoded[["anova"]][["object"]] <- anovaFit
+      resultCoded[["anova"]][["terms"]] <- gsubInteractionSymbol(rownames(anovaFit))
+      resultCoded[["anova"]][["df"]] <- anovaFit$Df
+      resultCoded[["anova"]][["adjss"]] <- anovaFit$`Sum Sq`
+      resultCoded[["anova"]][["adjms"]] <-  anovaFit$`Mean Sq`
+      resultCoded[["anova"]][["F"]] <- anovaFit$`F value`
+      resultCoded[["anova"]][["p"]] <- anovaFit$`Pr(>F)`
+    }
 
     ###############################
     ### Regression coefficients ###
@@ -614,19 +564,23 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     if (length(coefEffects) != length(regressionFit$coefficients)) # should not happen, but never show effects of mismatched terms
       coefEffects <- rep(NA_real_, length(regressionFit$coefficients))
 
-    result[["regression"]][["coefficients"]][["effects"]] <- coefEffects
-    result[["regression"]][["coefficients"]][["effectsSe"]] <- .doeEffectStandardErrors(effectsFit, coefEffects)
-    result[["regression"]][["coefficients"]][["effectsDf"]] <- effectsFit[["df.residual"]] # differs from regressionFit when coding changes the rank
-    result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
-    result[["regression"]][["coefficients"]][["effects"]][1] <- NA
-    result[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFit)
+    # the tables only show the estimable coefficients, so drop the values of aliased (NA) coefficients
+    estimable      <- !is.na(coef(regressionFit))
+    estimableCoded <- !is.na(coef(regressionFitCoded))
 
-    resultCoded[["regression"]][["coefficients"]][["effects"]] <- coefEffectsCoded
-    resultCoded[["regression"]][["coefficients"]][["effectsSe"]] <- .doeEffectStandardErrors(regressionFitCoded, coefEffectsCoded)
+    result[["regression"]][["coefficients"]][["effects"]] <- coefEffects[estimable]
+    result[["regression"]][["coefficients"]][["effectsSe"]] <- .doeEffectStandardErrors(effectsFit, coefEffects)[estimable]
+    result[["regression"]][["coefficients"]][["effectsDf"]] <- effectsFit[["df.residual"]] # differs from regressionFit when coding changes the rank
+    result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[estimable]
+    result[["regression"]][["coefficients"]][["effects"]][1] <- NA
+    result[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFit)[estimable]
+
+    resultCoded[["regression"]][["coefficients"]][["effects"]] <- coefEffectsCoded[estimableCoded]
+    resultCoded[["regression"]][["coefficients"]][["effectsSe"]] <- .doeEffectStandardErrors(regressionFitCoded, coefEffectsCoded)[estimableCoded]
     resultCoded[["regression"]][["coefficients"]][["effectsDf"]] <- regressionFitCoded[["df.residual"]]
-    resultCoded[["regression"]][["coefficients"]][["est"]] <- coef(regressionFitCoded)[!is.na(coef(regressionFitCoded))]
+    resultCoded[["regression"]][["coefficients"]][["est"]] <- coef(regressionFitCoded)[estimableCoded]
     resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
-    resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded)
+    resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded)[estimableCoded]
 
     termNamesAliased <- termNames
     termNamesAliasedCoded <- termNamesCoded
@@ -1641,18 +1595,35 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   return(groupTest(reducedFit(c(groupTerms, relatives)), reducedFit(relatives)))
 }
 
-.removeAppendedFactorLevels <- function(predictorNames, terms, interactionSymbol = "✻"){
-  if (!identical(predictorNames, "")) {
-    regexExpression <- paste0("(", paste(predictorNames, collapse = "|"), ")((\\^2)?)([^", interactionSymbol, "]+)(", interactionSymbol, "?)")
-    for (term_i in seq_along(terms)) {
-      if (grepl("I\\(", terms[term_i])) # if wrapped in identify function, don't do anything, as it will be a squared term and have no appended factor level
-        next()
-      replacements <- if (grepl("^2", terms[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
-      terms[term_i] <- gsub(regexExpression, replacements, terms[term_i], perl=TRUE)
-      terms[term_i] <- gsub("\\s", "", terms[term_i])
-    }
-  }
-  return(terms)
+# Model terms with aliased columns (NA coefficients): "full" when all columns of the term are aliased, "partial" when
+# only some are (the term keeps its estimable columns, with fewer df).
+.doeAliasedTerms <- function(fit) {
+  termLabels <- attr(stats::terms(fit), "term.labels")
+  aliased    <- is.na(stats::coef(fit))
+  nColumns   <- vapply(seq_along(termLabels), function(j) sum(fit[["assign"]] == j), numeric(1))
+  nAliased   <- vapply(seq_along(termLabels), function(j) sum(aliased[fit[["assign"]] == j]), numeric(1))
+  list(full    = termLabels[nColumns > 0 & nAliased == nColumns],
+       partial = termLabels[nAliased > 0 & nAliased < nColumns])
+}
+
+.doeFormatTermLabels <- function(termLabels) {
+  if (length(termLabels) == 0)
+    return(character(0))
+  gsubInteractionSymbol(unname(vapply(gsub(" ", "", termLabels, fixed = TRUE), .gsubIdentityFunction, character(1))))
+}
+
+# Discrete factors with a level whose runs are exactly the runs of a level of another of these factors, e.g., center
+# points entered as a level of each factor. The columns of these levels are aliased with each other.
+.doeFactorsWithSharedLevels <- function(dataset, factorVars) {
+  levelRuns <- lapply(stats::setNames(factorVars, factorVars), function(v) {
+    x <- as.character(dataset[[v]])
+    lapply(unique(x), function(level) which(x == level))
+  })
+  shared <- vapply(factorVars, function(v) {
+    otherRuns <- unlist(levelRuns[setdiff(factorVars, v)], recursive = FALSE)
+    any(vapply(levelRuns[[v]], function(runs) any(vapply(otherRuns, identical, logical(1), runs)), logical(1)))
+  }, logical(1))
+  factorVars[shared]
 }
 
 .gsubIdentityFunction <- function(term) {
@@ -1778,10 +1749,19 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       s = result[["s"]], rsq = result[["rsq"]], adjrsq = result[["adjrsq"]], predrsq = result[["predrsq"]]
     )
     tb$addRows(row)
-    if (!is.null(result[["aliasedTerms"]])) {
-      tb$addFootnote(gettextf("The following aliased terms were removed: %s.", paste(result[["aliasedTerms"]], collapse = ", ")))
-    }
+    .doeAddAliasFootnotes(tb, result[["aliasNotes"]])
   }
+}
+
+.doeAddAliasFootnotes <- function(table, aliasNotes) {
+  if (length(aliasNotes[["removedTerms"]]) > 0)
+    table$addFootnote(gettextf("The following aliased terms were removed: %s.", paste(aliasNotes[["removedTerms"]], collapse = ", ")))
+  if (length(aliasNotes[["partiallyAliasedTerms"]]) > 0)
+    table$addFootnote(gettextf("Some contrasts of the following terms are aliased and were not estimated, so these terms have fewer degrees of freedom: %s.",
+                               paste(aliasNotes[["partiallyAliasedTerms"]], collapse = ", ")))
+  if (length(aliasNotes[["sharedLevelFactors"]]) > 0)
+    table$addFootnote(gettextf("Each of these factors has a level that only occurs in the same runs as a level of another of these factors (e.g., center points entered as a factor level): %s. To estimate one effect per factor, enter these factors as continuous predictors.",
+                               paste(aliasNotes[["sharedLevelFactors"]], collapse = ", ")))
 }
 
 .doeAnalysisAnovaTable <- function(jaspResults, dependent, options, ready, coded) {
@@ -1804,6 +1784,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       return()
     }
     result <- if (coded) jaspResults[[dep]][["doeResultCoded"]]$object[["anova"]] else jaspResults[[dep]][["doeResult"]]$object[["anova"]]
+    if (!is.null(result[["error"]])) {
+      tb$setError(result[["error"]])
+      next
+    }
     rows <- data.frame(
       terms = result[["terms"]], adjss = result[["adjss"]], df = result[["df"]],
       adjms = result[["adjms"]], fval = result[["F"]], pval = result[["p"]]

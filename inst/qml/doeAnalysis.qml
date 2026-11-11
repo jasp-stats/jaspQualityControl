@@ -305,7 +305,7 @@ Form
 				name:								"codeFactors"
 				checked:							true
 				label:								qsTr("Display results in coded units")
-				info:								qsTr("Display the results in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. For factorial designs, continuous factors are treated as categorical in the ANOVA table when this option is unchecked.")
+				info:								qsTr("Display the results in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. For factorial designs, the ANOVA table is always calculated in coded units, so it does not change with this option.")
 			}
 
 			CheckBox
