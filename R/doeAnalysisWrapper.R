@@ -23,9 +23,9 @@
 #'
 #' @param blocksFactorial, The column corresponding to the blocks in the design. The difference between a block variable and a discrete factor is that the blocks will not be analysed for interaction effects and are excluded from effect plots.
 #' @param blocksResponseSurface, The column corresponding to the blocks in the design. The difference between a block variable and a discrete factor is that the blocks will not be analysed for interaction effects and are excluded from effect plots.
-#' @param codeFactors, Display the results in coded units. This means that all factor levels are rescaled to lie between -1 and 1. For factorial designs, continuous factors are treated as categorical in the ANOVA table when this option is unchecked.
+#' @param codeFactors, Display the results in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. For factorial designs, continuous factors are treated as categorical in the ANOVA table when this option is unchecked.
 #'    Defaults to \code{TRUE}.
-#' @param codeFactorsManualTable, Enter the low and high level of each factor.
+#' @param codeFactorsManualTable, Enter the low and high level of each factor. Blocks and discrete factors with more than two levels are not rescaled to -1/1, so they have no low and high level ("Not available").
 #' @param codeFactorsMethod, For the ordering of contrasts and to identify the alpha points in a response surface design, the low and high levels of all factors need to be specified. There are two options to handle this.
 #' \itemize{
 #'   \item \code{"automatic"}: Attempts to automatically detect the low and high levels by taking the minimum and maximum for continuous factors, and by ordering discrete factors alphabetically. For response surface designs, this might recognize alpha values as low/high levels. In this case, manual specification is needed.
