@@ -4637,3 +4637,39 @@ for (distribution in c("weibull", "lognormal")) {
     testthat::expect_gt(diff(range(log(dataNearHundred$x))) / diff(xLimits), 0.75)
   })
 }
+
+# Interleaved stages: test results use the label of the flagged subgroup (jasp-issues#4672) ####
+# Stages alternate by row; the chart shows all A subgroups, then all B subgroups. Row 4 (R4) is out of control.
+interleavedStagesDataset <- data.frame(
+  Stage = rep(c("A", "B"), 6),
+  Label = paste0("R", 1:12),
+  M1    = c(10, 8, 10, 40, 10, 9, 10, 8, 10, 9, 10, 8),
+  M2    = c(11, 13, 11, 41, 11, 14, 11, 13, 11, 14, 11, 13)
+)
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("M1", "M2")
+options$stagesWideFormat <- "Stage"
+options$axisLabels <- "Label"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$upperSpecificationLimitValue <- 50
+options$testSet <- "custom"
+options$rule1 <- TRUE
+options$rule2 <- FALSE
+options$rule3 <- FALSE
+options$rule4 <- FALSE
+options$rule5 <- FALSE
+options$rule6 <- FALSE
+options$rule7 <- FALSE
+options$rule8 <- FALSE
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies", interleavedStagesDataset, options)
+
+test_that("WF interleaved stages - x-bar chart test results use the flagged subgroup's label", {
+  table <- results[["results"]][["xBar"]][["collection"]][["xBar_tableXBar"]][["data"]]
+  jaspTools::expect_equal_tables(table, list("B", "Point 8 (R4)"))
+})
