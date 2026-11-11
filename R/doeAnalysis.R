@@ -2123,6 +2123,46 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 }
 
 
+# Terms and values for the Pareto and normal effect plots: t-values, or the effects when the model is saturated
+# (no error df), without the intercept, blocks, covariates and coefficients that are not unique (aliased contrasts)
+.doeEffectPlotData <- function(result, options, blocks, covariates) {
+  coefs     <- result[["coefficients"]]
+  saturated <- result[["saturated"]]
+  plotData  <- data.frame(value  = if (saturated) coefs[["effects"]] else result[["objectSummary"]]$coefficients[, "t value"],
+                          terms  = coefs[["terms"]],
+                          fac    = if (options[["tableAlias"]]) coefs[["termsAliased"]] else coefs[["terms"]],
+                          pValue = coefs[["p"]])
+  plotData <- plotData[c(FALSE, coefs[["unique"]][-1]), , drop = FALSE]
+  if (length(blocks) > 0 && !identical(blocks, ""))
+    plotData <- plotData[!grepl(blocks, plotData$terms), , drop = FALSE]
+  if (length(covariates) > 0 && !identical(covariates, ""))
+    plotData <- plotData[!plotData$terms %in% unlist(covariates), , drop = FALSE]
+  if (saturated) # terms without an effect (squared terms, discrete factors with more than 2 levels)
+    plotData <- plotData[!is.na(plotData$value), , drop = FALSE]
+  return(plotData)
+}
+
+# Lenth's (1989) pseudo standard error (PSE) and margin of error (ME) of the effects of an unreplicated two-level design,
+# with m / 3 degrees of freedom for m effects. NULL when it cannot be computed (no effects, or PSE = 0).
+.doeLenthMarginOfError <- function(effects, alpha = 0.05) {
+  absEffects <- abs(effects)
+  if (length(absEffects) == 0)
+    return(NULL)
+  s0  <- 1.5 * stats::median(absEffects)
+  pse <- 1.5 * stats::median(absEffects[absEffects < 2.5 * s0])
+  if (!is.finite(pse) || pse == 0)
+    return(NULL)
+  df <- length(absEffects) / 3
+  return(list(pse = pse, df = df, me = stats::qt(1 - alpha / 2, df) * pse))
+}
+
+.doeLenthError <- function(plotData) {
+  if (nrow(plotData) == 0)
+    gettext("The model is saturated (no error degrees of freedom) and has no effects of two-level factors to plot.")
+  else
+    gettext("The model is saturated (no error degrees of freedom) and Lenth's pseudo standard error of the effects is zero, so the effects cannot be assessed.")
+}
+
 .doeAnalysisPlotPareto <- function(jaspResults, dependent, options, blocks, covariates, ready) {
   for (dep in dependent) {
     if (!is.null(jaspResults[[dep]][["plotPareto"]]) || !options[["plotPareto"]]) {
@@ -2136,40 +2176,36 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       return()
     }
     result <- if (options[["codeFactors"]]) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]]
-    fac <- if (options[["tableAlias"]]) result[["coefficients"]][["termsAliased"]][-1] else result[["coefficients"]][["terms"]][-1]
-    coefDf <- data.frame(result[["objectSummary"]]$coefficients)
-    tDf <- data.frame("tValue" = coefDf[["t.value"]],
-                      terms = result[["coefficients"]][["terms"]])
-    # leave out coefficients without a unique value (aliased contrasts)
-    uniqueCoefs <- result[["coefficients"]][["unique"]]
-    tDf <- tDf[c(TRUE, uniqueCoefs[-1]), , drop = FALSE] # the intercept row is removed below
-    fac <- fac[uniqueCoefs[-1]]
+    plotData <- .doeEffectPlotData(result, options, blocks, covariates)
 
-    # Do not include intercept, covariates and blocks in pareto plot
-    tDf <- tDf[-1, ] # remove intercept
-    if (length(blocks) > 0 && !identical(blocks, "")) {
-      tDf <- tDf[!grepl(blocks, tDf$terms),]
-      fac <- if (options[["tableAlias"]]) fac[!grepl("BLK", fac)] else fac[!grepl(blocks, fac)]
-    }
-    if (length(covariates) > 0 && !identical(covariates, "")) {
-      tDf <- tDf[!tDf$terms %in% unlist(covariates), ] # remove the covariate(s)
-      fac <- if (options[["tableAlias"]]) fac[!grepl("COV", fac)] else fac[!fac %in% unlist(covariates)]
+    if (result[["saturated"]]) {
+      # no error df for t-values: absolute effects against Lenth's margin of error
+      plot$title <- gettext("Pareto Chart of Effects")
+      lenth <- .doeLenthMarginOfError(plotData$value)
+      if (is.null(lenth)) {
+        plot$setError(.doeLenthError(plotData))
+        next
+      }
+      crit       <- lenth[["me"]]
+      critLabel  <- sprintf("ME = %.2f", crit)
+      valueLabel <- gettext("Effect")
+    } else {
+      crit       <- abs(qt(0.025, result[["objectSummary"]]$df[2]))
+      critLabel  <- sprintf("t = %.2f", crit)
+      valueLabel <- gettext("Standardized Effect")
     }
 
-    t <- abs(tDf[["tValue"]])
-    df <- result[["objectSummary"]]$df[2]
-    crit <- abs(qt(0.025, df))
-    fac_t <- cbind.data.frame(fac, t)
+    t <- abs(plotData[["value"]])
+    fac_t <- cbind.data.frame(fac = plotData[["fac"]], t)
     fac_t <- cbind(fac_t[order(fac_t$t), ], y = seq_len(length(t)))
     xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, t, crit))
-    critLabelDf <- data.frame(x = 0, y = crit, label = sprintf("t = %.2f", crit))
+    critLabelDf <- data.frame(x = 0, y = crit, label = critLabel)
     p <- ggplot2::ggplot(data = fac_t, mapping = ggplot2::aes(y = t, x = y)) +
       ggplot2::geom_bar(stat = "identity") +
       ggplot2::geom_hline(yintercept = crit, linetype = "dashed", color = "red") +
       ggplot2::geom_label(data = critLabelDf, mapping = ggplot2::aes(x = x, y = y, label = label), col = "red", size = 5) +
       ggplot2::scale_x_continuous(name = gettext("Term"), breaks = fac_t$y, labels = fac_t$fac) +
-      ggplot2::scale_y_continuous(name =
-                                    gettext("Standardized Effect"), breaks = xBreaks, limits = range(xBreaks)) +
+      ggplot2::scale_y_continuous(name = valueLabel, breaks = xBreaks, limits = range(xBreaks)) +
       ggplot2::coord_flip() +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()
@@ -2190,50 +2226,41 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       return()
     }
     result <- if (options[["codeFactors"]]) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]]
-    fac <- if (options[["tableAlias"]]) result[["coefficients"]][["termsAliased"]][-1] else result[["coefficients"]][["terms"]][-1]
-    coefDf <- data.frame(result[["objectSummary"]]$coefficients)
-    tDf <- data.frame("tValue" = coefDf[["t.value"]],
-                      "terms" = result[["coefficients"]][["terms"]],
-                      "pValue" = result[["coefficients"]][["p"]])
-    # leave out coefficients without a unique value (aliased contrasts)
-    uniqueCoefs <- result[["coefficients"]][["unique"]]
-    tDf <- tDf[c(TRUE, uniqueCoefs[-1]), , drop = FALSE] # the intercept row is removed below
-    fac <- fac[uniqueCoefs[-1]]
+    tDf <- .doeEffectPlotData(result, options, blocks, covariates)
 
-    # Do not include intercept, covariates and blocks in normal effects plot
-    tDf <- tDf[-1, ] # remove intercept
-    if (length(blocks) > 0 && !identical(blocks, "")) {
-      tDf <- tDf[!grepl(blocks, tDf$terms),]
-      fac <- if (options[["tableAlias"]]) fac[!grepl("BLK", fac)] else fac[!grepl(blocks, fac)]
+    if (result[["saturated"]]) {
+      # no error df for t-values (Daniel plot): effects against N(0, PSE), significant when |effect| > Lenth's ME
+      plot$title <- gettext("Normal Plot of Effects")
+      lenth <- .doeLenthMarginOfError(tDf$value)
+      if (is.null(lenth)) {
+        plot$setError(.doeLenthError(tDf))
+        next
+      }
+      referenceSd <- lenth[["pse"]]
+      tDf$significant <- ifelse(abs(tDf$value) > lenth[["me"]], "S", "N")
+      valueLabel <- gettext("Effect")
+    } else {
+      referenceSd <- 1
+      tDf$significant <- ifelse(tDf$pValue < 0.05, "S", "N")
+      valueLabel <- gettext("Standardized Effect")
     }
-    if (length(covariates) > 0 && !identical(covariates, "")) {
-      tDf <- tDf[!tDf$terms %in% unlist(covariates), ] # remove the covariate(s)
-      fac <- if (options[["tableAlias"]]) fac[!grepl("COV", fac)] else fac[!fac %in% unlist(covariates)]
-    }
-
-    tDf$fac <- fac
 
     # median rank order function
-    x <- tDf$tValue[order(tDf$tValue)]
-    n <- length(x)
-    i <- rank(x)
-    p <- (i - 0.3) / (n + 0.4)
-    tDf$percentile <- p[order(tDf$tValue)]
+    n <- nrow(tDf)
+    tDf$percentile <- (rank(tDf$value) - 0.3) / (n + 0.4)
 
-    # statistical significance
-    tDf$significant <- ifelse(tDf$pValue < 0.05, "S", "N")
     tDf$labelYPos <- stats::pnorm(stats::qnorm(tDf$percentile) + 0.2) # offset the label by a small amount (0.2) so it is displayed above the point
     yLabels <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
     yBreaks <- yLabels/100
-    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(tDf$tValue, -3, 3))
-    xLimits <- range(c(tDf$tValue, xBreaks))
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(tDf$value, -3 * referenceSd, 3 * referenceSd))
+    xLimits <- range(c(tDf$value, xBreaks))
 
     # Create the ggplot with probit transformation
-    p <- ggplot2::ggplot(data = tDf, mapping = ggplot2::aes(x = tValue, y = percentile)) +
-      ggplot2::stat_function(fun = pnorm, linewidth = 1) +  # Reference line using the pnorm function
+    p <- ggplot2::ggplot(data = tDf, mapping = ggplot2::aes(x = value, y = percentile)) +
+      ggplot2::stat_function(fun = stats::pnorm, args = list(sd = referenceSd), linewidth = 1) +  # Reference line
       jaspGraphs::geom_point(mapping = ggplot2::aes(fill = significant), size = 4) +
-      ggplot2::scale_y_continuous(trans = 'probit', labels = yLabels, breaks = yBreaks, name = "Percent", limits = c(0.0001, 0.9999)) +
-      ggplot2::scale_x_continuous(name = "Standardized Effect", breaks = xBreaks, limits = xLimits) +
+      ggplot2::scale_y_continuous(trans = 'probit', labels = yLabels, breaks = yBreaks, name = gettext("Percent"), limits = c(0.0001, 0.9999)) +
+      ggplot2::scale_x_continuous(name = valueLabel, breaks = xBreaks, limits = xLimits) +
       ggplot2::scale_fill_manual(values = c("S" = "darkred", "N" = "grey"), name = NULL, labels = c(gettext("Significant"), gettext("Not Significant")), breaks = c("S", "N")) +
       ggplot2::geom_label(mapping = ggplot2::aes(label = fac, y = labelYPos), size = 4) +
       jaspGraphs::themeJaspRaw() +
