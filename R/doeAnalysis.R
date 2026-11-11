@@ -2187,6 +2187,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       return()
     }
     result <- if (options[["codeFactors"]]) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]]
+    if (result[["saturated"]])
+      plot$title <- gettext("Pareto Chart of Effects")
     plotData <- .doeEffectPlotData(result, options, blocks, covariates)
     if (nrow(plotData) == 0) {
       plot$setError(gettext("There are no effects to plot."))
@@ -2195,14 +2197,13 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
     if (result[["saturated"]]) {
       # no error df for t-values: absolute effects against Lenth's margin of error
-      plot$title <- gettext("Pareto Chart of Effects")
       lenth <- .doeLenthEffects(result, plotData)
       if (is.character(lenth)) {
         plot$setError(lenth)
         next
       }
       crit       <- lenth[["me"]]
-      critLabel  <- sprintf("ME = %.2f", crit)
+      critLabel  <- gettextf("ME = %s", trimws(formatC(crit, digits = 4, format = "fg"))) # effects are in response units, so significant digits
       valueLabel <- gettext("Effect")
     } else {
       crit       <- abs(qt(0.025, result[["objectSummary"]]$df[2]))
@@ -2241,6 +2242,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       return()
     }
     result <- if (options[["codeFactors"]]) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]]
+    if (result[["saturated"]])
+      plot$title <- gettext("Normal Plot of Effects")
     tDf <- .doeEffectPlotData(result, options, blocks, covariates)
     if (nrow(tDf) == 0) {
       plot$setError(gettext("There are no effects to plot."))
@@ -2249,7 +2252,6 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
     if (result[["saturated"]]) {
       # no error df for t-values (Daniel plot): effects against N(0, PSE), significant when |effect| > Lenth's ME
-      plot$title <- gettext("Normal Plot of Effects")
       lenth <- .doeLenthEffects(result, tDf)
       if (is.character(lenth)) {
         plot$setError(lenth)
