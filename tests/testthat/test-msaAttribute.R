@@ -213,3 +213,51 @@ test_that("WF1.7 AAA and Fleiss - Fleiss' kappa table results match", {
                                       0.91, "MH", "", 0.220151828847481, 0.543918918918919, "All",
                                       0.641666666666666, 0.439719816302578))
 })
+
+## Rows in run order ####
+# Agreement between appraisers matches the appraisers' ratings by part, not by row position (INTERNAL-jasp#2812).
+options <- analysisOptions("msaAttribute")
+options$dataFormat <- "wideFormat"
+options$operatorWideFormat <- "Operator"
+options$partWideFormat <- "Part"
+options$measurementsWideFormat <- c("Repeat.1", "Repeat.2", "Repeat.3")
+options$standardWideFormat <- "Reference"
+options$fleissKappa <- TRUE
+dataset <- read.csv("datasets/msaAttributeAgreement/msaAttributeKappa_wide.csv")
+dataset <- dataset[c("Operator", "Part", "Repeat.1", "Repeat.2", "Repeat.3", "Reference")]
+runOrder <- c(17, 44, 3, 29, 8, 36, 21, 12, 40, 1, 33, 25, 6, 45, 19, 10, 38, 27, 14, 2, 31, 42, 23,
+              9, 35, 16, 4, 28, 41, 11, 22, 37, 5, 30, 18, 43, 13, 26, 7, 39, 20, 34, 15, 24, 32)
+results <- runAnalysis("msaAttribute", dataset[runOrder, ], options)
+
+test_that("WF2.1 Rows in run order - All appraisers vs standard table results match", {
+  table <- results[["results"]][["AAAtableGraphs"]][["collection"]][["AAAtableGraphs_AllVsStandard"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(21.267, 73.414, 15, 7, 46.67))
+})
+
+test_that("WF2.2 Rows in run order - Between appraisers table results match", {
+  table <- results[["results"]][["AAAtableGraphs"]][["collection"]][["AAAtableGraphs_Between"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(32.287, 83.664, 15, 9, 60))
+})
+
+test_that("WF2.3 Rows in run order - Fleiss' kappa table results match", {
+  table <- results[["results"]][["fleissKappa"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("BL", "", 0.48608895977317, 0.91, "MH", "", 0.220151828847481,
+                                      0.543918918918919, "EG", "", 0.612918660287081, 0.905462184873949,
+                                      "All", 0.641666666666666, 0.439719816302578))
+})
+
+## Unbalanced design ####
+options <- analysisOptions("msaAttribute")
+options$dataFormat <- "wideFormat"
+options$operatorWideFormat <- "Operator"
+options$partWideFormat <- "Part"
+options$measurementsWideFormat <- c("Repeat.1", "Repeat.2", "Repeat.3")
+options$standardWideFormat <- "Reference"
+results <- runAnalysis("msaAttribute", dataset[-1, ], options)
+
+test_that("WF3.1 Unbalanced design gives an error", {
+  expect_identical(results[["status"]], "validationError")
+})
