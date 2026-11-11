@@ -92,8 +92,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     if (axisLabels != "") {
       xAxisTitle <- options[["axisLabels"]]
       axisLabels <- dataset[[axisLabels]]
-      if (stages != "")
-        axisLabels <- .qcLabelsInStageOrder(axisLabels, dataset[[stages]])
     } else {
       xAxisTitle <- gettext("Sample")
     }
@@ -390,13 +388,15 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         }
         ruleList1 <- .getRuleListIndividualCharts(options, type = "I")
         ruleList2 <- .getRuleListIndividualCharts(options, type = "MR")
+        # the axis labels are chart positions, the same numbers as in the test results tables
         individualChart <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "I",
                                          nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
-                                         xAxisLabels = seq_along(unlist(dataset[measurements])),
+                                         xAxisLabels = seq_along(unlist(dataset[measurements])), labelsInDataOrder = FALSE,
                                          specificationLimits = specificationLimitsControlChart, ruleList = ruleList1)
         mrChart <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "MR",
                                  nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
-                                 xAxisLabels = seq_along(unlist(dataset[measurements])), movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList2)
+                                 xAxisLabels = seq_along(unlist(dataset[measurements])), labelsInDataOrder = FALSE,
+                                 movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList2)
         .qcCapabilityControlChartPlot(jaspResults[["xmr"]], upperChart = individualChart, lowerChart = mrChart, plotNotes = plotNotes)
         jaspResults[["xmr"]][["tableIndividual"]] <- individualChart$table
         jaspResults[["xmr"]][["tableMR"]] <- mrChart$table

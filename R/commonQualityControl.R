@@ -77,7 +77,6 @@
     xAxisTitle <- subgroupVariable
     if (stages != ""){
       dataset[[stages]] <- stagesPerSubgroup
-      axisLabels <- .qcLabelsInStageOrder(axisLabels, dataset[[stages]])
     }
   }
   return(list(dataset = dataset,
@@ -89,6 +88,9 @@
 # .controlChart() plots the stages one after another, in order of first appearance, so the
 # axis and table labels (one per subgroup, in data order) must follow that order as well.
 .qcLabelsInStageOrder <- function(labels, stageValues) {
+  if (identical(labels, "")) # no labels
+    return(labels)
+  stopifnot(length(labels) == length(stageValues)) # one label per subgroup (row)
   labels[order(factor(stageValues, levels = unique(stageValues)))]
 }
 
@@ -696,6 +698,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                           specificationLimits       = NA,
                           xAxisLabels               = "",
                           tableLabels               = "",
+                          labelsInDataOrder         = TRUE, # FALSE: the labels already follow the chart positions
                           xAxisTitle                = gettext("Sample"),
                           movingRangeLength         = 2,
                           clLabelSize               = 4.5,
@@ -711,6 +714,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                           phase2tChartDistributionScale   = 3
 ) {
   plotType <- match.arg(plotType)
+
+  # xAxisLabels and tableLabels come in data order (one per subgroup); the plot and table show the subgroups in stage order
+  if (!identical(stages, "") && labelsInDataOrder) {
+    xAxisLabels <- .qcLabelsInStageOrder(xAxisLabels, dataset[[stages]])
+    tableLabels <- .qcLabelsInStageOrder(tableLabels, dataset[[stages]])
+  }
 
   # This function returns all the needed data for the plot and table: data for the points, the limits, the labels and a list of point violations for the table
   controlChartData <- .controlChart_calculations(dataset, ruleList = ruleList, plotType = plotType, stages = stages, xBarSdType = xBarSdType,
