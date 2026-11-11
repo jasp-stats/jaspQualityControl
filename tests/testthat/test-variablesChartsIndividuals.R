@@ -418,3 +418,18 @@ test_that("MR2 X-mR chart errors for a stage whose moving ranges all contain a m
   expect_identical(plot[["status"]], "error")
   expect_match(plot[["error"]][["errorMessage"]], "Stage 'B' contains 1 non-missing observation.", fixed = TRUE)
 })
+
+options <- .imrOptions(stage = "Stage")
+options$report                     <- TRUE
+options$reportAutocorrelationChart <- FALSE
+results <- runAnalysis("variablesChartsIndividuals", data, options)
+
+test_that("MR3 Report shows the X-mR chart error and keeps the meta data", {
+  report <- results[["results"]][["report"]]
+  expect_identical(results[["status"]], "complete")
+  expect_identical(report[["status"]], "complete")
+  subplots <- Filter(ggplot2::is_ggplot, results[["state"]][["figures"]][[report[["data"]]]][["obj"]]$subplots)
+  labels   <- unlist(lapply(subplots, function(p) lapply(seq_along(p$layers), function(i) as.character(ggplot2::layer_data(p, i)[["label"]]))))
+  expect_true(any(grepl("Stage 'B' contains 1 non-missing", labels, fixed = TRUE)))
+  expect_true(any(grepl("Chart name:", labels, fixed = TRUE)))
+})

@@ -673,6 +673,37 @@ test_that("MR6.2 EWMA limits with subgroups of size 1 and a missing value are fr
   expect_gt(max(unlist(limitsGrouping), na.rm = TRUE) - min(unlist(limitsGrouping), na.rm = TRUE), 0.5)
 })
 
+## Missing subgroups in the cusum and ewma recursions ####
+test_that("MR0.3 EWMA and CUSUM recursions skip a missing subgroup", {
+  data <- data.frame(Measurement = c(1, 3, NA, 2))
+  n    <- c(1, 1, 0, 1)
+  # the statistic is carried over the gap, which gets no point
+  expect_equal(jaspQualityControl:::.ewmaPlotStatistic(data, lambda = 0.5), c(1.5, 2.25, NA, 2.125))
+  expect_equal(jaspQualityControl:::.cusumPoints(data, sigma = 1, n = n, target = 1, shiftSize = 0.5, cuType = "upper"), c(0, 1.5, NA, 2))
+  # the sd of the statistic is unchanged by the gap, and continues as if the gap row were absent
+  expect_equal(jaspQualityControl:::.ewmaPointSigmas(n, sigma = 1, lambda = 0.2)[-3], jaspQualityControl:::.ewmaPointSigmas(n[-3], sigma = 1, lambda = 0.2))
+  expect_equal(jaspQualityControl:::.ewmaPointSigmas(n, sigma = 1, lambda = 0.2)[3], jaspQualityControl:::.ewmaPointSigmas(n, sigma = 1, lambda = 0.2)[2])
+  # a single subgroup gives a single point
+  expect_length(jaspQualityControl:::.cusumPoints(data.frame(a = 1, b = 2), sigma = 1, n = 2, target = 0, shiftSize = 0.5, cuType = "upper"), 1)
+  expect_length(jaspQualityControl:::.ewmaPointSigmas(2, sigma = 1, lambda = 0.2), 1)
+})
+
+# y values of the plotted points of a drawn chart (cusum: upper then lower)
+.twPlotPoints <- function(results, plot) {
+  plotObject  <- results[["state"]][["figures"]][[plot[["data"]]]][["obj"]]
+  pointLayers <- which(vapply(plotObject$layers, function(layer) inherits(layer$geom, "GeomPoint"), logical(1)))
+  ggplot2::layer_data(plotObject, pointLayers[1])[["y"]]
+}
+
+test_that("MR6.3 EWMA and CUSUM charts continue after a missing value with finite limits", {
+  for (results in list(resultsIndividual, resultsGrouping)) {
+    expect_true(all(is.finite(unlist(.twControlLimits(results, .twEwmaPlot(results))))))
+    expect_true(all(is.finite(unlist(.twControlLimits(results, .twCusumPlot(results))))))
+    expect_identical(which(is.na(.twPlotPoints(results, .twEwmaPlot(results)))), 5L)
+    expect_identical(which(is.na(.twPlotPoints(results, .twCusumPlot(results)))), c(5L, 15L))
+  }
+})
+
 ## Stage of missing values only -> error ####
 data <- .twStageData(subgroupSize = 1, lastStageSubgroups = 2)
 data$Measurement[data$Stage == "C"] <- NA
@@ -719,5 +750,20 @@ for (values in list(c(1, 3, 5, 7, 2, 4), c(1, 3, NA, 7, 2, 4))) {
                  .twControlLimits(individual, .twCusumPlot(individual)))
     expect_equal(.twControlLimits(acrossRows, .twEwmaPlot(acrossRows)),
                  .twControlLimits(individual, .twEwmaPlot(individual)))
+    expect_true(all(is.finite(unlist(.twControlLimits(acrossRows, .twEwmaPlot(acrossRows))))))
+    expect_equal(.twPlotPoints(acrossRows, .twCusumPlot(acrossRows)), .twPlotPoints(individual, .twCusumPlot(individual)))
+    expect_equal(.twPlotPoints(acrossRows, .twEwmaPlot(acrossRows)), .twPlotPoints(individual, .twEwmaPlot(individual)))
   })
 }
+
+## Observations without a stage -> note below the charts ####
+data <- .twStageData(subgroupSize = 1, lastStageSubgroups = 3)
+data$Stage[3] <- NA
+results <- runAnalysis("timeWeightedCharts", data, .twStageOptions("individual"))
+
+test_that("MR10 Removed observations are noted below the charts", {
+  expect_match(results[["results"]][["CusumChart"]][["collection"]][["CusumChart_plotNote"]][["text"]],
+               "Removed 1 observation(s) that were not assigned to any stage.", fixed = TRUE)
+  expect_match(results[["results"]][["EWMAPlot"]][["collection"]][["EWMAPlot_plotNote"]][["text"]],
+               "Removed 1 observation(s) that were not assigned to any stage.", fixed = TRUE)
+})
