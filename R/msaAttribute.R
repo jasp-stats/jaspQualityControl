@@ -187,7 +187,7 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
 .corCohenTable <- function(dataset, ready, measurements, parts, operators, options) {
 
-  table <- createJaspTable(title = gettext("Cohen's kappa correlations summary"))
+  table <- createJaspTable(title = gettext("Correlations between appraisers' ratings"))
   table$dependOn(c("cohensKappa"))
   table$addColumnInfo(name = "appraiserVector",  title = gettext("Appraiser"), type = "string")
 
@@ -297,6 +297,9 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
                              "within"          = kappaWithinVector,
                              "vsStandard"      = kappaStandardVector,
                              "between"         = kappaBetweenVector))
+    if (options[["dataFormat"]] == "longFormat" && length(measurements) > 1)
+      table$addFootnote(gettext("Averaged over trials; trial k is the k-th row of an appraiser and part in the data."),
+                        colNames = "vsStandard")
   }
   else{
     table$setData(list(      "appraiser"       = appraiserVector,
