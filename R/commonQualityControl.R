@@ -1471,6 +1471,30 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(returnBol)
 }
 
+# The Weibull, gamma, log-logistic and 3-parameter Weibull MLEs are scale-equivariant, but optim works on the raw
+# scale, so fits failed or drifted for data in very small or large units. Fit on data / unitScale and scale back.
+.qcUnitScale <- function(data) {
+  for (unitScale in c(stats::median(abs(data)), max(abs(data))))
+    if (is.finite(unitScale) && unitScale > 0)
+      return(unitScale)
+  return(1)
+}
+
+# start must be on the rescaled data (data / .qcUnitScale(data)); fix.arg and the returned estimates are on the data scale.
+.qcFitdistUnitFree <- function(data, distr, fix.arg = NULL, start = NULL, ...) {
+  unitScale <- .qcUnitScale(data)
+  unitPower <- c(scale = 1, thres = 1, rate = -1) # how each parameter changes with the unit of the data
+  for (par in intersect(names(fix.arg), names(unitPower)))
+    fix.arg[[par]] <- fix.arg[[par]] / unitScale^unitPower[[par]]
+
+  fit <- fitdistrplus::fitdist(data / unitScale, distr, method = "mle", start = start, fix.arg = fix.arg, ...)
+
+  estimate <- fit$estimate
+  for (par in intersect(names(estimate), names(unitPower)))
+    estimate[[par]] <- estimate[[par]] * unitScale^unitPower[[par]]
+  return(estimate)
+}
+
 .distributionParameters <- function(data,
                                     distribution = c("lognormal",
                                                      "weibull",
@@ -1519,17 +1543,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       beta <- fix.arg[["shape"]] # shape
       theta <- fix.arg[["scale"]] # scale
     } else {
-      fitWeibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle",
-                                              control = list(maxit = 10000),
-                                              fix.arg = fix.arg))
-
-
-
-
-      if (jaspBase::isTryError(fitWeibull))
+      weibullPars <- try(.qcFitdistUnitFree(data, "weibull", control = list(maxit = 10000), fix.arg = fix.arg))
+      if (jaspBase::isTryError(weibullPars))
         stop(estimationErrorMessage, call. = FALSE)
 
-      weibullPars <- fitWeibull$estimate
       if (!is.null(fix.arg)) {
         weibullPars[names(fix.arg)] <- fix.arg
       }
@@ -1598,8 +1615,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fix.arg[["scale"]] # scale
       threshold <- fix.arg[["thres"]] # threshold
     } else {
-      # Set starting values that match other software packages more closely
-      weibull3start <- try(MASS::fitdistr(data, function(x, shape, scale, thres)
+      # Set starting values that match other software packages more closely (on the rescaled data, see .qcFitdistUnitFree)
+      weibull3start <- try(MASS::fitdistr(data / .qcUnitScale(data), function(x, shape, scale, thres)
         dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = 0)))
 
       # If estimation of starting values fails, try with fixed starting values
@@ -1634,13 +1651,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
 
       # Estimate parameters using fitdistrplus, because it can keep values fixed
-      weilbull3Fit <- try(fitdistrplus::fitdist(data, "weibull3Temp", method = "mle",
-                                                start = weibull3startList,
-                                                fix.arg = fix.arg))
-      if (jaspBase::isTryError(weilbull3Fit))
+      weibull3Pars <- try(.qcFitdistUnitFree(data, "weibull3Temp", start = weibull3startList, fix.arg = fix.arg))
+      if (jaspBase::isTryError(weibull3Pars))
         stop(estimationErrorMessage, call. = FALSE)
-
-      weibull3Pars <- weilbull3Fit$estimate
 
       if (!is.null(fix.arg)) {
         weibull3Pars[names(fix.arg)] <- fix.arg
@@ -1658,13 +1671,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       beta <- fix.arg[["shape"]] # shape
       theta <- 1/fix.arg[["rate"]] # scale
     } else {
-      gammaFit <- try(fitdistrplus::fitdist(data, "gamma", method = "mle",
-                                            control = list(maxit = 10000),
-                                            fix.arg = fix.arg))
-      if (jaspBase::isTryError(gammaFit))
+      gammaPars <- try(.qcFitdistUnitFree(data, "gamma", control = list(maxit = 10000), fix.arg = fix.arg))
+      if (jaspBase::isTryError(gammaPars))
         stop(estimationErrorMessage, call. = FALSE)
-
-      gammaPars <- gammaFit$estimate
 
       if (!is.null(fix.arg)) {
         gammaPars[names(fix.arg)] <- fix.arg
@@ -1740,14 +1749,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         loglogStartList <- loglogStartList[!names(loglogStartList) %in% names(fix.arg)]
       }
 
-      loglogFit <- try(fitdistrplus::fitdist(data, "llogisTemp", method = "mle",
-                                             control = list(maxit = 10000),
-                                             start = loglogStartList,
-                                             fix.arg = fix.arg))
-      if (jaspBase::isTryError(loglogFit))
+      loglogPars <- try(.qcFitdistUnitFree(data, "llogisTemp", control = list(maxit = 10000),
+                                           start = loglogStartList, fix.arg = fix.arg))
+      if (jaspBase::isTryError(loglogPars))
         stop(estimationErrorMessage, call. = FALSE)
-
-      loglogPars <- loglogFit$estimate
 
       if (!is.null(fix.arg)) {
         loglogPars[names(fix.arg)] <- fix.arg

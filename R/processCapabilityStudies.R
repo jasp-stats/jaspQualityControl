@@ -3220,10 +3220,14 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       sdx    <- fit$parameters[2]
       test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
     } else if (options[["nullDistribution"]] == "weibull") {
-      fit    <- fitdistrplus::fitdist(values, 'weibull',
-                                      control = list(maxit = 10000))
-      meanx  <- fit$estimate[1]
-      sdx    <- fit$estimate[2]
+      fit    <- try(.distributionParameters(values, distribution = "weibull", fix.arg = NULL))
+      if (jaspBase::isTryError(fit)) {
+        table$setError(.extractErrorMessage(fit))
+        container[["probabilityTable"]] <- table
+        return()
+      }
+      meanx  <- fit[["beta"]]  # shape
+      sdx    <- fit[["theta"]] # scale
       test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
     }
     n      <- length(values)
@@ -3444,7 +3448,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       shape <- as.numeric(fit_Weibull[["beta"]])
       scale <- as.numeric(fit_Weibull[["theta"]])
       lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x/scale)^shape)
-      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage, parms = c("shape", "scale"), mle = c("shape" = shape, "scale" = scale)))
+      # finite-difference Hessian on the rescaled data (see .qcFitdistUnitFree), scale (co)variances mapped back below
+      unitScale <- .qcUnitScale(dataCurrentStage)
+      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage / unitScale, parms = c("shape", "scale"), mle = c("shape" = shape, "scale" = scale / unitScale)))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
@@ -3453,8 +3459,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         covarSS <- NA
       } else {
         varShape <- matrix$varcov[1,1]
-        varScale <- matrix$varcov[2,2]
-        covarSS <- matrix$varcov[1,2]
+        varScale <- matrix$varcov[2,2] * unitScale^2
+        covarSS <- matrix$varcov[1,2] * unitScale
       }
       zp <- log(-1*log(1-pSeq))
       zalpha <- log(-1*log(1-0.975))
@@ -3621,7 +3627,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plot$setError(gettext("At least one of the stages contains no valid measurements."))
     return()
   }
-  plotList <- .qcDistributionPlotObject(options, dataset, measurements, stages)
+  plotList <- try(.qcDistributionPlotObject(options, dataset, measurements, stages))
+  if (jaspBase::isTryError(plotList)) {
+    plot$setError(.extractErrorMessage(plotList))
+    return()
+  }
   # if number of plots is odd, add an empty plot at the end
   if (nStages > 1 && nStages %% 2 != 0)
     plotList[[nStages + 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
