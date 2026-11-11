@@ -1422,6 +1422,14 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(returnBol)
 }
 
+# optim() control for the maximum-likelihood fits in .distributionParameters().
+# A tight reltol is needed: the default (1e-8) leaves errors in the 4th-5th significant digit.
+# Never set abstol: optim() stops once the objective drops below it, and the negative
+# log-likelihood is negative for small-valued data, so the fit would stop at its start values.
+.distributionFitControl <- function() {
+  list(maxit = 10000, reltol = .Machine$double.eps^0.75)
+}
+
 .distributionParameters <- function(data,
                                     distribution = c("lognormal",
                                                      "weibull",
@@ -1450,7 +1458,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fitLnorm$parameters[[2]] # scale / log std. dev.
     } else {
     # If arguments are fixed, we have to use fitdistrplus
-      fitLnorm <- try(fitdistrplus::fitdist(data, "lnorm", method = "mle", fix.arg = fix.arg))
+      fitLnorm <- try(fitdistrplus::fitdist(data, "lnorm", method = "mle",
+                                            control = .distributionFitControl(),
+                                            fix.arg = fix.arg))
 
       if (jaspBase::isTryError(fitLnorm))
         stop(estimationErrorMessage, call. = FALSE)
@@ -1471,11 +1481,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fix.arg[["scale"]] # scale
     } else {
       fitWeibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle",
-                                              control = list(maxit = 10000),
+                                              control = .distributionFitControl(),
                                               fix.arg = fix.arg))
-
-
-
 
       if (jaspBase::isTryError(fitWeibull))
         stop(estimationErrorMessage, call. = FALSE)
@@ -1525,7 +1532,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
       # Estimate parameters using fitdistrplus, because it can keep values fixed
       lnorm3Fit <- try(fitdistrplus::fitdist(data, "lnorm3Temp", method = "mle",
-                                             control = list(maxit = 10000),
+                                             control = .distributionFitControl(),
                                              start = lnorm3startList,
                                              fix.arg = fix.arg))
       if (jaspBase::isTryError(lnorm3Fit))
@@ -1586,6 +1593,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
       # Estimate parameters using fitdistrplus, because it can keep values fixed
       weilbull3Fit <- try(fitdistrplus::fitdist(data, "weibull3Temp", method = "mle",
+                                                control = .distributionFitControl(),
                                                 start = weibull3startList,
                                                 fix.arg = fix.arg))
       if (jaspBase::isTryError(weilbull3Fit))
@@ -1610,7 +1618,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- 1/fix.arg[["rate"]] # scale
     } else {
       gammaFit <- try(fitdistrplus::fitdist(data, "gamma", method = "mle",
-                                            control = list(maxit = 10000),
+                                            control = .distributionFitControl(),
                                             fix.arg = fix.arg))
       if (jaspBase::isTryError(gammaFit))
         stop(estimationErrorMessage, call. = FALSE)
@@ -1648,7 +1656,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     } else {
 
       logFit <- try(fitdistrplus::fitdist(data, "logis", method = "mle",
-                                          control = list(maxit = 10000),
+                                          control = .distributionFitControl(),
                                           fix.arg = fix.arg))
 
       if (jaspBase::isTryError(logFit))
@@ -1692,7 +1700,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
 
       loglogFit <- try(fitdistrplus::fitdist(data, "llogisTemp", method = "mle",
-                                             control = list(maxit = 10000),
+                                             control = .distributionFitControl(),
                                              start = loglogStartList,
                                              fix.arg = fix.arg))
       if (jaspBase::isTryError(loglogFit))

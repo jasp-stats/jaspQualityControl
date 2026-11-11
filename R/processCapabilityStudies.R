@@ -3144,7 +3144,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "mean",  title = gettextf("Shape (%1$s)", "\u03B2"), 			type = "number")
     table$addColumnInfo(name = "sd",    title = gettextf("Scale (%1$s)", "\u03B8"),        type = "number")
   }
-  table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "integer")
+  table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "number")
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "pvalue")
   table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution.", distributionTitle))
   table$addFootnote(gettextf("Red dotted lines in the probability plot below represent a 95%% confidence interval."))
@@ -3172,30 +3172,28 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       sdx     <- sd(values)
       test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
     } else if (options[["nullDistribution"]] == "lognormal") {
-      fit    <- EnvStats::elnorm(values)
-      meanx  <- fit$parameters[1]
-      sdx    <- fit$parameters[2]
+      fit    <- .distributionParameters(values, distribution = "lognormal")
+      meanx  <- fit[["beta"]]  # log mean
+      sdx    <- fit[["theta"]] # log std. dev.
       test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
     } else if (options[["nullDistribution"]] == "weibull") {
-      fit    <- fitdistrplus::fitdist(values, 'weibull',
-                                      control = list(maxit = 10000))
-      meanx  <- fit$estimate[1]
-      sdx    <- fit$estimate[2]
+      fit    <- .distributionParameters(values, distribution = "weibull")
+      meanx  <- fit[["beta"]]  # shape
+      sdx    <- fit[["theta"]] # scale
       test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
     }
     n      <- length(values)
     ad     <- test$statistic
     adStar <- ad*(1 + (0.75/n) + (2.25/(n^2)))
-    if(ad >= 0.6) {
+    # p-value approximation for the adjusted statistic adStar; Jaentschi & Bolboaca (2018)
+    if (adStar >= 0.6) {
       p <- exp(1.2937 - (5.709 * adStar) + 0.0186 * (adStar^2))
-    } else if(adStar < 0.6 && adStar > 0.34) {
+    } else if (adStar >= 0.34) {
       p <- exp(0.9177 - (4.279 * adStar) - 1.38 * (adStar^2))
-    } else if(adStar < 0.34 && adStar > 0.2) {
+    } else if (adStar > 0.2) {
       p <- 1 - exp(-8.318 + (42.796 * adStar) - 59.938 * (adStar^2))
-    } else if(adStar <= 0.2) {
-      p <- 1 - exp(-13.436 + (101.14 * adStar) - 223.73 * (adStar^2))      #Jaentschi & Bolboaca (2018)
     } else {
-      p <- test$p.value
+      p <- 1 - exp(-13.436 + (101.14 * adStar) - 223.73 * (adStar^2))
     }
     tableDfCurrentStage <- data.frame(mean = meanx, sd = sdx, n = n, ad = round(ad, .numDecimals), p = round(p, .numDecimals))
     if (i == 1 && nStages > 1)
