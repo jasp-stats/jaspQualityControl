@@ -6916,3 +6916,35 @@ test_that("60.14 Optimizer falls back to a start point with a unique prediction"
   expect_equal(unname(result[["par"]]), -1)
   expect_equal(result[["value"]], 0)
 })
+
+test_that("60.15 Response optimizer shows an error when no setting has a unique prediction averaged over the blocks", {
+  # hard-to-change factor A, held constant within blocks: a block contrast is aliased with A, so averaged over the
+  # blocks no setting of A has a unique prediction
+  data <- data.frame(Block = factor(rep(1:4, each = 4)), A = rep(c(-1, 1), each = 8), B = rep(c(-1, 1), 8))
+  data$y <- c(10.2, 12.1, 9.8, 12.4, 10.9, 12.6, 10.4, 13.1, 14.8, 18.9, 15.3, 19.2, 14.1, 18.4, 15.0, 19.6)
+  options <- doeTestOptions("y", c("A", "B"), character(0), list("A", "B", c("A", "B")))
+  options$blocksFactorial <- "Block"
+  options$responsesResponseOptimizer <- list(list(responseOptimizerGoal = "maximize", responseOptimizerImportance = 1, responseOptimizerLowerBound = 0,
+                                                  responseOptimizerTarget = 0.5, responseOptimizerUpperBound = 1, responseOptimizerWeight = 1,
+                                                  variable = "y"))
+  options$optimizationIntervals <- TRUE
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", data, options)
+  expect_identical(results[["status"]], "complete")
+  notEstimable <- "The response optimizer cannot be used with this model"
+  expect_match(results[["results"]][["tableRoSolution"]][["error"]][["errorMessage"]], notEstimable)
+  expect_match(results[["results"]][["tableRoPrediction"]][["error"]][["errorMessage"]], notEstimable)
+  expect_match(results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["error"]][["errorMessage"]], notEstimable)
+  expect_length(doeTable(results, "y", "tableAnova")[["data"]], 11) # the analysis itself is unaffected
+})
+
+test_that("60.16 Effect plots without any unique effect show an error", {
+  options <- etchSsOptions("type2", discrete = etchTerms, coded = FALSE)
+  options$plotPareto        <- TRUE
+  options$normalEffectsPlot <- TRUE
+  set.seed(123)
+  results    <- runAnalysis("doeAnalysis", etchDataDiscrete, options)
+  collection <- results[["results"]][["EtchRate"]][["collection"]]
+  expect_match(collection[["EtchRate_plotPareto"]][["error"]][["errorMessage"]], "No effects to plot")
+  expect_match(collection[["EtchRate_normalEffectsPlot"]][["error"]][["errorMessage"]], "No effects to plot")
+})
