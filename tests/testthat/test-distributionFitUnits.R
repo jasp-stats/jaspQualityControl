@@ -40,12 +40,13 @@ test_that("Weibull fit matches the exact maximum likelihood estimate for data in
   set.seed(1)
   x <- rweibull(20, shape = 3, scale = 2) * 0.001
   fit <- fitDistribution(x, distribution = "weibull")
-  expect_equal(c(shape = fit[["beta"]], scale = fit[["theta"]]), weibullProfileMle(x), tolerance = 1e-3)
+  # relative accuracy of each parameter (the scale is ~0.002, the shape ~3)
+  expect_equal(c(shape = fit[["beta"]], scale = fit[["theta"]]) / weibullProfileMle(x), c(shape = 1, scale = 1), tolerance = 1e-3)
 
   set.seed(2)
   x <- rweibull(5, shape = 1.5, scale = 0.002)
   fit <- fitDistribution(x, distribution = "weibull")
-  expect_equal(c(shape = fit[["beta"]], scale = fit[["theta"]]), weibullProfileMle(x), tolerance = 1e-3)
+  expect_equal(c(shape = fit[["beta"]], scale = fit[["theta"]]) / weibullProfileMle(x), c(shape = 1, scale = 1), tolerance = 1e-3)
 })
 
 test_that("Weibull probability plot keeps its confidence bands for data in small units", {
@@ -116,6 +117,6 @@ test_that("Non-normal capability study with Weibull data in small units runs wit
   exact <- unname(weibullProfileMle(dataset[["Diameter"]]))
   summaryTable <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]]
   expect_null(summaryTable[["error"]])
-  expect_equal(c(summaryTable[["data"]][[1]][["beta"]], summaryTable[["data"]][[1]][["theta"]]), exact, tolerance = 1e-3)
-  expect_equal(c(probabilityTable[["data"]][[1]][["mean"]], probabilityTable[["data"]][[1]][["sd"]]), exact, tolerance = 1e-3)
+  expect_equal(c(summaryTable[["data"]][[1]][["beta"]], summaryTable[["data"]][[1]][["theta"]]) / exact, c(1, 1), tolerance = 1e-3)
+  expect_equal(c(probabilityTable[["data"]][[1]][["mean"]], probabilityTable[["data"]][[1]][["sd"]]) / exact, c(1, 1), tolerance = 1e-3)
 })
