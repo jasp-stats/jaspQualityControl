@@ -1030,9 +1030,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     if (i == nStages) { # the last label has more space available and hence can be longer
       labelXPos <- max(subgroups) * 1.06
       labelText <- c(
-        gettextf("CL = %g",  round(lastCenter, decimals)),
-        gettextf("LCL = %g", round(lastLCL, decimals)),
-        gettextf("UCL = %g", round(lastUCL, decimals)))
+        # %s + as.character: %g keeps only 6 significant digits, which drops decimals of values >= 1000 and rounds twice
+        gettextf("CL = %s",  as.character(round(lastCenter, decimals))),
+        gettextf("LCL = %s", as.character(round(lastLCL, decimals))),
+        gettextf("UCL = %s", as.character(round(lastUCL, decimals))))
     } else {
       labelXPos <- max(subgroups) + .5
       labelText <- c(
