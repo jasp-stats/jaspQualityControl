@@ -992,7 +992,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(plotStatistic))
       }
 
-      dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(plotData$subgroup) + length(subgroups)/2,
+      # max(subgroups), not length(subgroups): the upper and lower cusum points share their x positions
+      dfStageLabels <- rbind(dfStageLabels, data.frame(x = (max(plotData$subgroup) + max(subgroups)) / 2,
                                                        y = NA,  # the y value will be filled in later
                                                        label = stage,
                                                        separationLine = max(plotData$subgroup) + .5))
