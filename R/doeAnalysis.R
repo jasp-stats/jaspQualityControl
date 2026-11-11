@@ -755,16 +755,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   roDependent <- roOptionsDf$variable
   models      <- .doeOptimizerModels(jaspResults, roDependent, dataset, blocks, covariates)
 
-  if (isTRUE(roOutcome[["notEstimable"]])) { # isTRUE: states saved before this flag existed lack it
-    tb2 <- createJaspTable(gettext("Response Optimizer Solution"))
-    tb2$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationSolutionTable"))
-    tb2$position <- 2
-    jaspResults[["tableRoSolution"]] <- tb2
-    tb2$setError(.doeOptimizerNotEstimableError())
-    return()
-  }
-
-  optimParam <- roOutcome$parameters
+  optimParam  <- roOutcome$parameters
+  hasSolution <- !is.null(optimParam) # NULL when no setting with a unique prediction was found (aliased contrasts)
   desi <- roOutcome$desirability
   desi <- pmax(0, pmin(1, desi)) # after optim. desi can be bounded to 0 and 1
   if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, ""))
@@ -772,8 +764,9 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   if (length(discretePredictors) >= 1 && !identical(discretePredictors, ""))
     discLevels <- .doeDiscreteSettings(optimParam, discretePredictors)
 
-  predValues <- .doePredictResponses(continuousLevels = contLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
-                                     currentDiscreteLevels = discLevels, models = models, dependent = roDependent)
+  if (hasSolution)
+    predValues <- .doePredictResponses(continuousLevels = contLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
+                                       currentDiscreteLevels = discLevels, models = models, dependent = roDependent)
 
   # Did all the required calculations and saved to state, if tables should not be displayed return now
   if (!options[["optimizationSolutionTable"]])
@@ -825,6 +818,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
   tb2$position <- 2
   jaspResults[["tableRoSolution"]] <- tb2
+  if (!hasSolution) {
+    tb2$setError(.doeOptimizerNotEstimableError())
+    return()
+  }
 
   rows2 <- data.frame(desi = desi)
   for (pred in allPredictors) {
@@ -865,14 +862,6 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   jaspResults[["plotRo"]] <- createJaspContainer(title = gettext("Optimization Plot"))
   jaspResults[["plotRo"]]$dependOn(options = .doeOptimizationPlotDependencies()) # no empty container after a settings error
   jaspResults[["plotRo"]]$position <- 4
-
-  if (isTRUE(roOutcome[["notEstimable"]])) { # isTRUE: states saved before this flag existed lack it
-    jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
-    jaspPlot$dependOn(options = .doeOptimizationPlotDependencies())
-    jaspResults[["plotRo"]][["plot"]] <- jaspPlot
-    jaspPlot$setError(.doeOptimizerNotEstimableError())
-    return()
-  }
 
   # Create Df if custom parameters are entered
   if (options[["optimizationPlotCustomParameters"]]) {
@@ -933,6 +922,13 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     }
   } else { # if default optimal parameters should be used
     currentSettings <- roOutcome$parameters
+    if (is.null(currentSettings)) { # no setting with a unique prediction was found; manual settings can still have one
+      jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
+      jaspPlot$dependOn(options = .doeOptimizationPlotDependencies())
+      jaspResults[["plotRo"]][["plot"]] <- jaspPlot
+      jaspPlot$setError(.doeOptimizerNotEstimableError())
+      return()
+    }
     if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
       continuousLevels <- currentSettings[continuousPredictors]
     } else {
@@ -1108,7 +1104,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   table$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationIntervals", "optimizationIntervalsLevel"))
   table$position <- 3
   jaspResults[["tableRoPrediction"]] <- table
-  if (isTRUE(jaspResults[["roResult"]]$object[["notEstimable"]])) {
+  if (is.null(jaspResults[["roResult"]]$object[["parameters"]])) { # no setting with a unique prediction was found
     table$setError(.doeOptimizerNotEstimableError())
     return()
   }
@@ -1312,15 +1308,16 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     optimalResultDf <- data.frame("outcomeValue" = currrentOptimResult$value * -1)  # after optimization the sign can be switched again
     optimalResultDf[continuousPredictors] <- currrentOptimResult$par
   }
-  # Settings without a unique prediction (aliased contrasts) have NA and are skipped. Averaged over the blocks, there can
-  # be no such setting at all, e.g. when a factor is held constant within blocks (a block contrast aliased with it).
+  # Settings without a unique prediction (aliased contrasts) have NA and are skipped. Averaged over the blocks, not even
+  # the design points need to have one, e.g. when a factor is held constant within blocks (a block contrast aliased with
+  # it); then only settings between the design points can have one, which the search can miss.
   if (all(is.na(optimalResultDf$outcomeValue)))
-    return(list(parameters = NULL, desirability = NA_real_, notEstimable = TRUE))
+    return(list(parameters = NULL, desirability = NA_real_))
   # drop = FALSE keeps a named one-row data frame also with a single predictor
   optimalParameters <- optimalResultDf[which.max(optimalResultDf$outcomeValue), names(optimalResultDf) != "outcomeValue", drop = FALSE]
   maxDesirability <- max(optimalResultDf$outcomeValue, na.rm = TRUE)
 
-  return(list(parameters = optimalParameters, desirability = maxDesirability, notEstimable = FALSE))
+  return(list(parameters = optimalParameters, desirability = maxDesirability))
 }
 
 
@@ -1433,7 +1430,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 }
 
 .doeOptimizerNotEstimableError <- function() {
-  gettext("The response optimizer cannot be used with this model: some contrasts are aliased, so the data cannot estimate the response at any setting (averaged over the blocks, e.g. when a factor is held constant within blocks).")
+  gettext("The response optimizer cannot be used with this model: some contrasts are aliased, and it found no setting at which the data can estimate the response (e.g., when a factor is held constant within blocks, as the predictions are averaged over the blocks).")
 }
 
 .doeNotEstimablePredictionNote <- function() {
@@ -2103,6 +2100,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   gettext("Some contrasts of the model are aliased. Values left empty depend on which aliased contrasts are left out (e.g., on the order of the factor levels), so they are not shown.")
 }
 
+.doeNoUniqueEffectsError <- function() {
+  gettext("No effects to plot: some contrasts of the model are aliased, so no effect has a unique estimate.")
+}
+
 .doeAnalysisStepwiseTable <- function(jaspResults, dependent, options, ready, coded, stepwiseMethod) {
   for (dep in dependent) {
 
@@ -2172,10 +2173,6 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     uniqueCoefs <- result[["coefficients"]][["unique"]]
     tDf <- tDf[c(TRUE, uniqueCoefs[-1]), , drop = FALSE] # the intercept row is removed below
     fac <- fac[uniqueCoefs[-1]]
-    if (!any(uniqueCoefs[-1])) {
-      plot$setError(gettext("No effects to plot: some contrasts of the model are aliased, so no effect has a unique estimate."))
-      next
-    }
 
     # Do not include intercept, covariates and blocks in pareto plot
     tDf <- tDf[-1, ] # remove intercept
@@ -2186,6 +2183,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     if (length(covariates) > 0 && !identical(covariates, "")) {
       tDf <- tDf[!tDf$terms %in% unlist(covariates), ] # remove the covariate(s)
       fac <- if (options[["tableAlias"]]) fac[!grepl("COV", fac)] else fac[!fac %in% unlist(covariates)]
+    }
+    if (nrow(tDf) == 0 && !all(uniqueCoefs)) { # after leaving out blocks and covariates, which can have unique estimates
+      plot$setError(.doeNoUniqueEffectsError())
+      next
     }
 
     t <- abs(tDf[["tValue"]])
@@ -2231,10 +2232,6 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     uniqueCoefs <- result[["coefficients"]][["unique"]]
     tDf <- tDf[c(TRUE, uniqueCoefs[-1]), , drop = FALSE] # the intercept row is removed below
     fac <- fac[uniqueCoefs[-1]]
-    if (!any(uniqueCoefs[-1])) {
-      plot$setError(gettext("No effects to plot: some contrasts of the model are aliased, so no effect has a unique estimate."))
-      next
-    }
 
     # Do not include intercept, covariates and blocks in normal effects plot
     tDf <- tDf[-1, ] # remove intercept
@@ -2245,6 +2242,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     if (length(covariates) > 0 && !identical(covariates, "")) {
       tDf <- tDf[!tDf$terms %in% unlist(covariates), ] # remove the covariate(s)
       fac <- if (options[["tableAlias"]]) fac[!grepl("COV", fac)] else fac[!fac %in% unlist(covariates)]
+    }
+    if (nrow(tDf) == 0 && !all(uniqueCoefs)) { # after leaving out blocks and covariates, which can have unique estimates
+      plot$setError(.doeNoUniqueEffectsError())
+      next
     }
 
     tDf$fac <- fac
