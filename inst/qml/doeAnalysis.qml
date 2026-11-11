@@ -116,6 +116,7 @@ Form
 
 		AssignedVariablesList
 		{
+			id:									blocksFactorial
 			name:								"blocksFactorial"
 			singleVariable:						true
 			label:								qsTr("Blocks")
@@ -178,6 +179,7 @@ Form
 
 		AssignedVariablesList
 		{
+			id:									blocksResponseSurface
 			name:								"blocksResponseSurface"
 			singleVariable:						true
 			label:								qsTr("Blocks")
@@ -221,7 +223,7 @@ Form
 					id					: codeFactorsManualTable
 					name				: "codeFactorsManualTable"
 					label				: qsTr("Factor")
-					info				: qsTr("Enter the low and high level of each factor.")
+					info				: qsTr("Enter the low and high level of each factor. Blocks and discrete factors with more than two levels are not rescaled to -1/1, so they have no low and high level (\"Not available\").")
 					visible				: codeFactorsMethod.value == "manual"
 					optionKey			: "predictors"
 					source				: designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial", "blocksFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface", "blocksResponseSurface"]
@@ -241,8 +243,17 @@ Form
 
 					rowComponent: RowLayout
 					{
+						// Blocks and discrete factors with more than two levels are not rescaled to -1/1 (the latter keep one term
+						// per level), so they have no low/high level; the R code ignores their lowValue/highValue
+						property var	blocks:		designType.currentValue == "factorialDesign" ? blocksFactorial : blocksResponseSurface
+						property bool	hasLowHigh:	rowType === "scale" || (!blocks.columnsNames.includes(rowValue) && rowVariableLevels.levels.length <= 2)
+
+						// Hidden helper to read the levels of this row's variable; isBound: false keeps it out of the options
+						DropDown { id: rowVariableLevels; name: "rowVariableLevels"; isBound: false; visible: false; values: [rowValue] }
+
 						Row
 						{
+							visible:				hasLowHigh
 							TextField
 							{
 								name:			"lowValue"
@@ -252,12 +263,19 @@ Form
 						}
 						Row
 						{
+							visible:				hasLowHigh
 							TextField
 							{
 								name:			"highValue"
 								fieldWidth:		40
 								defaultValue:	1
 							}
+						}
+						Text
+						{
+							visible:				!hasLowHigh
+							text:					qsTr("Not available")
+							color:					jaspTheme.grayDarker
 						}
 					}
 				}

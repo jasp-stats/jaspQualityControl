@@ -163,8 +163,12 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     factorVars <- c(factorVars, blocks)
   }
   dataset <- .readDataSetToEnd(columns.as.numeric = numericVars, columns.as.factor = factorVars)
+  # Number of levels of each factor including levels without runs, i.e., the levels the form counts when it hides the
+  # low/high fields of discrete factors with more than two levels (see .doeMultiLevelDiscretePredictors)
+  allLevelCounts <- vapply(dataset[intersect(factorVars, names(dataset))], nlevels, integer(1))
   # droplevels: levels without runs (filtered or missing) would make lm() drop the sum-to-zero contrasts
   dataset <- droplevels(na.omit(dataset))
+  attr(dataset, "allLevelCounts") <- allLevelCounts
 
   if (length(blocks) > 0 && !identical(blocks, "")) # name of variable should always be "Block"
     names(dataset)[names(dataset) == blocks] <- "Block"
@@ -183,10 +187,13 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
 .scaleDOEvariable <- function(x){2*(x-min(x))/(max(x)-min(x))-1}
 
+# Discrete factors with more than 2 levels, counting levels without runs (e.g., filtered out) as the form does: the form
+# shows no low/high fields for them, so they must not be coded with the (hidden) manual low/high levels. A factor with
+# only 2 levels with runs then enters as a factor with sum-to-zero contrasts, which is the same as -1/1 coding.
 .doeMultiLevelDiscretePredictors <- function(dataset, discretePredictors) {
   discreteVars <- unlist(discretePredictors)
   discreteVars <- discreteVars[discreteVars != ""]
-  discreteVars[vapply(discreteVars, function(var) length(unique(dataset[[var]])) > 2, logical(1))]
+  discreteVars[attr(dataset, "allLevelCounts")[discreteVars] > 2]
 }
 
 .doeAnalysisMakeState <- function(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, stepwiseMethod, ready) {
