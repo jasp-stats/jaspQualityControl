@@ -779,13 +779,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   } else if (!identical(stages, "")) {
     nStages <- length(unique(dataset[[stages]]))
   }
-  # .cusumPoints() gives one upper and one lower point per subgroup (row)
-  nCusumPointsPerSide <- sum(!is.na(dataset[[stages]]))
 
   ### Calculate plot values per stage and combine into single dataframe ###
   plotData <- data.frame(matrix(ncol = 4, nrow = 0))
   clData <- data.frame(matrix(ncol = 5, nrow = 0))
-  tableList <- list()
+  stageViolations <- list()
   colnames(plotData) <- c("plotStatistic", "subgroup", "stage", "dotColor")
   colnames(clData) <- c("subgroup", "stage", "LCL", "UCL", "center")
   if (warningLimits) {
@@ -1010,16 +1008,15 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                        separationLine = NA))
     }
 
+    nelsonLawsResults <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)
     if (length(na.omit(plotStatistic)) > 1) {
       if (plotType == "MR" || plotType == "MMR") {
         dotColor <- c(rep("blue", length(plotStatistic)))
         dotColor[seq(1, k-1)] <- NA
-        redPoints <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)$redPoints
-        dotColor[redPoints] <- "red"
+        dotColor[nelsonLawsResults$redPoints] <- "red"
       } else {
         dotColor <- rep("blue", length(plotStatistic))
-        redPoints <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)$redPoints
-        dotColor[redPoints] <- "red"
+        dotColor[nelsonLawsResults$redPoints] <- "red"
       }
     } else {
       dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue") # TODO: try out if the new function can handle single value, if yes remove this whole logic
@@ -1078,23 +1075,33 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       dfLimitLabel <- rbind(dfLimitLabel, data.frame(x = labelXPos,
                                                      y = c(lastCenter, lastLCL, lastUCL),
                                                      label = labelText))
-    # .nelsonLaws() counts points within the current stage; the table reports positions on the whole chart.
+    # .nelsonLaws() counts points within the current stage; they are mapped to positions on the whole chart below
+    lowerCusum <- rep(FALSE, length(plotStatistic))
+    if (plotType == "cusum")
+      lowerCusum <- seq_along(plotStatistic) > length(plotStatisticUpper)
+    stageViolations[[i]] <- list(points     = nelsonLawsResults$violationList,
+                                 subgroups  = subgroups,
+                                 lowerCusum = lowerCusum,
+                                 stage      = stage)
+  }
+
+  # .controlChart_table() labels the points above half the plotted points as lower cusum points, so a lower point is
+  # its x position plus the number of upper points of all stages
+  nUpperCusumPoints <- nrow(plotData) / 2
+  tableList <- lapply(stageViolations, function(stageResult) {
     # Without enabled rules, .nelsonLaws() returns test1 = list(); empty results stay as they are.
-    stageViolations <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)$violationList
-    tableList[[i]] <- lapply(stageViolations, function(points) {
+    stageTable <- lapply(stageResult$points, function(points) {
       if (length(points) == 0)
         return(points)
-      chartPoints <- subgroups[points]
-      if (plotType == "cusum") # .controlChart_table() expects the lower CUSUM points after the upper points of all stages
-        chartPoints <- chartPoints + (points > length(plotStatisticUpper)) * nCusumPointsPerSide
-      chartPoints
+      stageResult$subgroups[points] + stageResult$lowerCusum[points] * nUpperCusumPoints
     })
-    tableListLengths <- sapply(tableList[[i]], length)
-    if (any(tableListLengths > 0)) {
-      tableList[[i]][["stage"]] <- as.character(stage)
-      tableList[[i]] <- lapply(tableList[[i]], "length<-", max(lengths(tableList[[i]]))) # this fills up all elements of the list with NAs so all elements are the same size
+    if (any(lengths(stageTable) > 0)) {
+      stageTable[["stage"]] <- as.character(stageResult$stage)
+      stageTable <- lapply(stageTable, "length<-", max(lengths(stageTable))) # this fills up all elements of the list with NAs so all elements are the same size
     }
-  }
+    stageTable
+  })
+
   return(list("pointData"      = plotData,
               "clData"         = clData,
               "clLabels"       = dfLimitLabel,
