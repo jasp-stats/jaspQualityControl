@@ -6495,3 +6495,52 @@ test_that("56.6 Discrete factor with 3 levels (response surface, coded, forward 
   expect_equal(unname(dfs[grepl("Membrane", terms)]), 2)
   expect_equal(length(results[["results"]][["Result"]][["collection"]][["Result_tableCoefficientsLegend"]][["data"]]), 2)
 })
+
+### Discrete factors with more than 2 levels, manual low/high ####
+# The form hides the low/high fields of these factors, so their (default) -1/1 entries must be ignored. Levels are
+# counted including levels without runs, as in the form: a factor with 3 levels of which 1 has no runs stays a factor.
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- "Result"
+options$continuousFactorsFactorial <- "Concentration"
+options$fixedFactorsFactorial <- c("Membrane", "Filtration")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "Concentration", lowValue = "22", highValue = "44"),
+  list(predictors = "Membrane",      lowValue = "-1", highValue = "1"),
+  list(predictors = "Filtration",    lowValue = "1",  highValue = "3")
+)
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "Concentration"),
+  list(components = "Membrane"),
+  list(components = "Filtration")
+)
+
+membraneDf <- function(results) {
+  anovaTable <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
+  dfs   <- vapply(anovaTable, function(row) as.numeric(row[["df"]]), numeric(1))
+  terms <- vapply(anovaTable, function(row) row[["terms"]], character(1))
+  unname(dfs[grepl("Membrane", terms)])
+}
+
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/1cont2disc3levelText.csv", options)
+
+test_that("57.1 Discrete factor with 3 levels (manual low/high) ignores its low/high and keeps 2 df", {
+  expect_identical(results[["status"]], "complete")
+  expect_equal(membraneDf(results), 2)
+})
+
+dataNoRunsPVDF <- read.csv("datasets/doeAnalysis/1cont2disc3levelText.csv")
+dataNoRunsPVDF$Result[dataNoRunsPVDF$Membrane == "PVDF"] <- NA
+set.seed(123)
+results <- runAnalysis("doeAnalysis", dataNoRunsPVDF, options)
+
+test_that("57.2 Discrete factor with 3 levels, one without runs (manual low/high) stays a factor with 1 df", {
+  expect_identical(results[["status"]], "complete")
+  expect_equal(membraneDf(results), 1)
+  errorDf <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
+  errorDf <- as.numeric(Filter(function(row) row[["terms"]] == "Error", errorDf)[[1]][["df"]])
+  expect_equal(errorDf, 12)
+})
