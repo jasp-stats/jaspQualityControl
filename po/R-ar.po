@@ -2,15 +2,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.98.2\n"
 "POT-Creation-Date: 2026-10-31 03:41\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2026-11-11 19:10+0000\n"
+"Last-Translator: Fahad Mahfouz Al-Subhi "
+"<fahadalsubhi@users.noreply.hosted.weblate.org>\n"
+"Language-Team: Arabic <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-r/ar/>\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Weblate 2026.11.2.dev0\n"
 
 msgid "One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"
 msgstr ""
@@ -22,7 +25,7 @@ msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
 msgstr ""
 
 msgid "Sample"
-msgstr ""
+msgstr "العينة"
 
 msgid "Time weighted charts report"
 msgstr ""
@@ -295,7 +298,7 @@ msgid "One or more input parameters for continuous predictors are outside of the
 msgstr ""
 
 msgid "Model Summary"
-msgstr ""
+msgstr "ملخص النموذج"
 
 msgid "Adjusted %s"
 msgstr ""
@@ -316,7 +319,7 @@ msgid "Sum of squares"
 msgstr ""
 
 msgid "df"
-msgstr ""
+msgstr "درجات الحرية"
 
 msgid "Mean square"
 msgstr ""
@@ -349,7 +352,7 @@ msgid "Effect"
 msgstr ""
 
 msgid "Coefficient"
-msgstr ""
+msgstr "المعامل"
 
 msgid "Standard error"
 msgstr ""
@@ -361,7 +364,7 @@ msgid "Name"
 msgstr ""
 
 msgid "Level"
-msgstr ""
+msgstr "المستوى"
 
 msgid "Regression equation in %s Units"
 msgstr ""
@@ -448,7 +451,7 @@ msgid "Design Summary"
 msgstr ""
 
 msgid "Variable"
-msgstr ""
+msgstr "المتغير"
 
 msgid "Factors"
 msgstr ""
@@ -475,7 +478,7 @@ msgid "Total blocks"
 msgstr ""
 
 msgid "Value"
-msgstr ""
+msgstr "القيمة"
 
 msgid "Please select a row in the design table."
 msgstr ""
@@ -616,13 +619,13 @@ msgid "Percent"
 msgstr ""
 
 msgid "Lower"
-msgstr ""
+msgstr "الحد الأدنى"
 
 msgid "Confidence interval of 95%%"
 msgstr ""
 
 msgid "Upper"
-msgstr ""
+msgstr "الحد الأعلى"
 
 msgid "Invalid reference and/or results were inserted."
 msgstr ""
@@ -703,7 +706,7 @@ msgid "Regression model"
 msgstr ""
 
 msgid "Predictor"
-msgstr ""
+msgstr "المتنبئ"
 
 msgid "Std. error"
 msgstr ""
@@ -751,7 +754,7 @@ msgid "Reference"
 msgstr ""
 
 msgid "Total"
-msgstr ""
+msgstr "الإجمالي"
 
 msgid "Gauge r&R"
 msgstr ""
@@ -829,13 +832,13 @@ msgid "Mean squares"
 msgstr ""
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
 msgid "Variance components"
 msgstr ""
 
 msgid "Variance"
-msgstr ""
+msgstr "التباين"
 
 msgid "%% Contribution"
 msgstr ""
@@ -961,7 +964,7 @@ msgid "Gauge r&R (nested)"
 msgstr ""
 
 msgid "p"
-msgstr ""
+msgstr "p"
 
 msgid "Variation"
 msgstr ""
@@ -1048,7 +1051,7 @@ msgid "Basic statistics"
 msgstr ""
 
 msgid "Mean"
-msgstr ""
+msgstr "المتوسط"
 
 msgid "Bias"
 msgstr ""
@@ -1099,7 +1102,7 @@ msgid "Histogram requires more than 1 measurement. %1$i valid measurement(s) det
 msgstr ""
 
 msgid "Count"
-msgstr ""
+msgstr "العدد"
 
 msgid "Mean - %is"
 msgstr ""
@@ -1156,7 +1159,7 @@ msgid "Training (%s)"
 msgstr ""
 
 msgid "Test"
-msgstr ""
+msgstr "اختبار"
 
 msgid "Hotelling T² Control Chart Summary"
 msgstr ""
@@ -1240,16 +1243,16 @@ msgid "Parameter Estimates"
 msgstr ""
 
 msgid "Parameter"
-msgstr ""
+msgstr "المعلمة"
 
 msgid "Estimate"
-msgstr ""
+msgstr "التقدير"
 
 msgid "Fitting the model failed with the following error message:\n%s"
 msgstr ""
 
 msgid "Intercept"
-msgstr ""
+msgstr "الثابت"
 
 msgid "The IWLS algorithm did not converge. Interpret the results with caution."
 msgstr ""
@@ -1288,7 +1291,7 @@ msgid "Label"
 msgstr ""
 
 msgid "<b><em>Warning.</em></b>"
-msgstr ""
+msgstr "<b><em>تحذير.</em></b>"
 
 msgid "Probability of detecting %s"
 msgstr ""
@@ -1390,7 +1393,7 @@ msgid "USL"
 msgstr ""
 
 msgid "Sample size"
-msgstr ""
+msgstr "حجم العينة"
 
 msgid "Std. dev. (total)"
 msgstr ""
@@ -1429,7 +1432,7 @@ msgid "At least one of the stages contains no valid measurements."
 msgstr ""
 
 msgid "Density"
-msgstr ""
+msgstr "الكثافة"
 
 msgid "Measurement"
 msgstr ""
@@ -1603,7 +1606,7 @@ msgid "Summary of test against the %1$s distribution"
 msgstr ""
 
 msgid "N"
-msgstr ""
+msgstr "N"
 
 msgid "Mean (%1$s)"
 msgstr ""
