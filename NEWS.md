@@ -19,6 +19,9 @@
 ## Added
 * Process Capability: optional Z.bench (ST) / Z.bench (LT) columns, reporting the sigma level based on the total expected defect probability across both specification limits, alongside the existing Z (ST) / Z (LT) = 3·Cpk / 3·Ppk.
 * Process Capability / control charts: added "Pooled" as a within-subgroup standard deviation estimation method (in addition to R-bar and S-bar).
+* DOE Analysis: optional confidence intervals for the effects and coefficients in the coefficients table ([Issue #4640](https://github.com/jasp-stats/jasp-issues/issues/4640)).
+* DOE Analysis: the ANOVA table splits the Error row into Lack of fit (with F-test) and Pure error when the design has replicated runs, e.g. center points ([Issue #4640](https://github.com/jasp-stats/jasp-issues/issues/4640)).
+* DOE Analysis, response optimizer: optional table with the predicted responses at the optimal solution (and at manually set factor levels), with standard error, confidence interval for the mean response and prediction interval for a single new run ([Issue #4640](https://github.com/jasp-stats/jasp-issues/issues/4640)).
 
 ## Changed
 * DOE Analysis, Factorial Design and Response Surface Design: help moved from markdown files into the QML `info` properties.
@@ -44,6 +47,9 @@
 * Attributes agreement analysis: Fleiss' kappa no longer crashes with newer `irr` (>= 0.85) when a within-appraiser input has a single measurement column; returns NaN as before.
 * DOE Analysis: the Effect column of the coefficients table is now 2 × coefficient (on the −1/+1 scale) for main effects and interactions of every order. Previously 2-way and 3-way interactions were inflated (4× and 6×), effects depended on the factor level labels, and uncoded continuous predictors and manual coding beyond ±1 gave wrong values. Effects are left blank for squared terms and factors with more than two levels, and a footnote explains the definition ([PR #525](https://github.com/jasp-stats/jaspQualityControl/pull/525)).
 * DOE Analysis: no longer crashes when a discrete factor is fully removed from the model due to aliasing ([PR #525](https://github.com/jasp-stats/jaspQualityControl/pull/525)).
+* DOE Analysis, response optimizer: with blocks or covariates in the model, the fitted responses and desirabilities added every block and covariate coefficient in full. Predictions are now averaged over the blocks and covariates are held at their mean, matching the new prediction table ([Issue #4665](https://github.com/jasp-stats/jasp-issues/issues/4665)).
+* DOE Analysis, response optimizer: with two or more discrete factors, the optimization plot, its summary table and the solution table's fitted response gave some factor levels no contribution (e.g. the last level of the first factor), because the factor levels were merged. The optimal settings themselves were not affected ([Issue #4665](https://github.com/jasp-stats/jasp-issues/issues/4665)).
+* DOE Analysis: block and discrete factor levels without runs (e.g. all their rows filtered out or with missing responses) are dropped. Such a level made the model fall back from sum-to-zero to treatment contrasts, which the effects and the response optimizer assume.
 
 ---
 
