@@ -5281,7 +5281,7 @@ if (jaspTools:::getOS() == "windows") { # randomly fails on linux and mac
 test_that("53.2 Response Optimizer Response Surface Change All Options - Optimization Plot Summary table results match", {
   table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(99.999, 2, 12.296, 120.83, -22.004, 0.885700020509264))
+                                 list(100, 2, 18.79, 122.565, -37.422, 0.929732546561872))
 })
 
 test_that("53.3 Response Optimizer Response Surface Change All Options - Response Optimizer Settings table results match", {
@@ -5294,7 +5294,7 @@ test_that("53.3 Response Optimizer Response Surface Change All Options - Respons
 test_that("53.4 Response Optimizer Response Surface Change All Options - Response Optimizer Solution table results match", {
   table <- results[["results"]][["tableRoSolution"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(99.999, 2, 12.296, 120.83, -22.004, 0.885700020509264))
+                                 list(100, 2, 18.79, 122.565, -37.422, 0.929732546561872))
 })
 
 test_that("Stepwise marginality works without explicit data and preserves keep", {
@@ -5550,6 +5550,52 @@ test_that("Response optimizer shows an error for a lower bound above the target"
   expect_match(settings[["error"]][["errorMessage"]], "lower bound")
   expect_null(results[["results"]][["tableRoSolution"]])
   expect_null(results[["results"]][["plotRo"]])
+})
+
+.doeTestOptimizerSolution <- function(lowerBound, target) {
+  options <- analysisOptions("doeAnalysis")
+  options$dependentFactorial <- c("Strength")
+  options$fixedFactorsFactorial <- c("Material")
+  options$continuousFactorsFactorial <- c("InjPress", "InjTemp")
+  options$codeFactors <- FALSE
+  options$codeFactorsMethod <- "automatic"
+  options$highestOrder <- FALSE
+  options$modelTerms <- list(
+    list(components = "Material"),
+    list(components = "InjTemp"),
+    list(components = "InjPress")
+  )
+  options$responsesResponseOptimizer <- list(
+    list(
+      responseOptimizerGoal       = "maximize",
+      responseOptimizerImportance = 1.0,
+      responseOptimizerLowerBound = lowerBound,
+      responseOptimizerTarget     = target,
+      responseOptimizerUpperBound = 1.0,
+      responseOptimizerWeight     = 1.0,
+      variable                    = "Strength"
+    )
+  )
+  options$responseOptimizerManualBounds <- TRUE
+  options$responseOptimizerManualTarget <- TRUE
+  options$optimizationSolutionTable <- TRUE
+  options$optimizationPlot <- FALSE
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+  results[["results"]][["tableRoSolution"]]
+}
+
+test_that("Response optimizer leaves a flat desirability region around the first run", {
+  # the first run predicts 21.5, far below the lower bound; a single start there stalled at desirability 0
+  table <- .doeTestOptimizerSolution(lowerBound = 36.8, target = 37.8)
+  jaspTools::expect_equal_tables(table[["data"]], list(150, 100, "Formula2", 37.798, 0.998364696249993))
+  expect_length(table[["footnotes"]], 0)
+})
+
+test_that("Response optimizer flags a solution with desirability 0", {
+  table <- .doeTestOptimizerSolution(lowerBound = 50, target = 60)
+  jaspTools::expect_equal_tables(table[["data"]], list(75, 85, "Formula1", 21.469, 0))
+  expect_match(table[["footnotes"]][[1]][["text"]], "desirability above 0")
 })
 
 ## Contour plot ####
