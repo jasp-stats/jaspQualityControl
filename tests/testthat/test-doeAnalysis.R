@@ -7091,11 +7091,17 @@ test_that("62.6 Saturated full quadratic response surface model gives a plot err
   expect_identical(errors, rep("The model is saturated (no error degrees of freedom). Lenth's method for assessing its effects applies to two-level factorial terms only, but the model has squared terms or terms of discrete factors with more than two levels.", 2))
 })
 
-test_that("62.7 Saturated non-orthogonal two-level design gives a plot error (correlated effects)", {
-  # three runs of a 2^2 design: the effects of A and B are correlated, (X'X)^-1 is not proportional to the identity
-  errors <- saturatedPlotErrors(data.frame(A = c(-1, 1, -1), B = c(-1, -1, 1), y = c(3, 7, 4)),
-                                saturatedFactorialOptions("y", c("A", "B"), terms = list("A", "B")), "y")
-  expect_identical(errors, rep("The model is saturated (no error degrees of freedom). Lenth's method for assessing its effects needs uncorrelated effects with equal variance, as in an orthogonal two-level design, but the effects of this model are not.", 2))
+test_that("62.7 Saturated non-orthogonal two-level design uses Lenth's method as in Minitab (no orthogonality check)", {
+  # three runs of a 2^2 design (correlated effects): y = 4.5 + 2 A + 0.5 B, so effects A = 4, B = 1;
+  # s0 = 1.5 * 2.5 = 3.75, both effects are below 2.5 * s0, so PSE = 3.75 with 2 / 3 df
+  options <- saturatedFactorialOptions("y", c("A", "B"), terms = list("A", "B"))
+  options$plotPareto <- TRUE
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", data.frame(A = c(-1, 1, -1), B = c(-1, -1, 1), y = c(3, 7, 4)), options)
+  plotName <- results[["results"]][["y"]][["collection"]][["y_plotPareto"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  expect_equal(sort(testPlot[["data"]][["t"]]), c(1, 4))
+  expect_equal(ggplot2::layer_data(testPlot, 2)[["yintercept"]], qt(0.975, 2 / 3) * 3.75)
 })
 
 test_that("62.8 Saturated model whose effects are not available in uncoded units gives a plot error", {
@@ -7121,35 +7127,7 @@ test_that("62.10 Effect plots without effects to plot give an error instead of f
   }
 })
 
-test_that("62.11 Orthogonality check for Lenth's method: uncorrelated effects with equal variance", {
-  orthogonal <- function(fit) jaspQualityControl:::.doeEffectsOrthogonal(fit, c(NA, 2 * stats::coef(fit)[-1]))
-  covUnscaled <- function(fit) solve(crossprod(stats::model.matrix(fit)))[-1, -1] # independent reference
-  set.seed(1)
-  data <- expand.grid(A = c(-1, 1), B = c(-1, 1), C = c(-1, 1))
-  data$y <- rnorm(8)
-
-  fit <- stats::lm(y ~ A * B * C, data = data) # full 2^3: (X'X)^-1 = I / 8
-  expect_equal(unname(covUnscaled(fit)), diag(1 / 8, 7))
-  expect_true(orthogonal(fit))
-
-  fit <- stats::lm(y ~ A * B * C, data = rbind(data, data.frame(A = 0, B = 0, C = 0, y = 0.3))) # with a center point
-  expect_equal(unname(diag(covUnscaled(fit))), rep(1 / 8, 7))
-  expect_true(orthogonal(fit))
-
-  fit <- stats::lm(y ~ A + D + B + A:B, data = transform(data, D = A * B)) # D = AB: lm leaves out A:B (pivoting)
-  expect_true(is.na(stats::coef(fit)[["A:B"]]))
-  expect_true(orthogonal(fit))
-
-  fit <- stats::lm(y ~ A * B, data = transform(data[1:4, ], B = 2 * B)) # uncorrelated, unequal variance (B on -2/2)
-  expect_equal(unname(covUnscaled(fit)), diag(c(1 / 4, 1 / 16, 1 / 16)))
-  expect_false(orthogonal(fit))
-
-  fit <- stats::lm(y ~ A + B, data = data[1:3, ]) # equal variance, correlated
-  expect_equal(unname(covUnscaled(fit)), matrix(c(0.5, 0.25, 0.25, 0.5), 2))
-  expect_false(orthogonal(fit))
-})
-
-test_that("62.12 Lenth's method with one very large effect", {
+test_that("62.11 Lenth's method with one very large effect", {
   # effects 1e9, 1, ..., 6: s0 = 6, the 6 effects below 15 have median 3.5, so PSE = 5.25 (not rounding error)
   data <- expand.grid(A = c(-1, 1), B = c(-1, 1), C = c(-1, 1))
   data$y <- with(data, (1e9 * A + 1 * B + 2 * C + 3 * A * B + 4 * A * C + 5 * B * C + 6 * A * B * C) / 2)
