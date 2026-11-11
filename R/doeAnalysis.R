@@ -437,7 +437,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     anovaFit        <- NULL
 
     # no type III SS with aliased columns: the test of a term then depends on how its remaining columns are parameterized
-    if (options[["sumOfSquaresType"]] == "type3" && anyNA(stats::coef(anovaFitData))) {
+    # (ssType, not the option: a saturated model shows sequential SS whatever type is selected)
+    if (ssType == "type3" && anyNA(stats::coef(anovaFitData))) {
       result[["anova"]][["error"]] <- resultCoded[["anova"]][["error"]] <-
         gettext("Type III sums of squares are unavailable for this model, because some of its coefficients are aliased. Use Type I or Type II sums of squares.")
     } else if (!anovaSaturated) {
