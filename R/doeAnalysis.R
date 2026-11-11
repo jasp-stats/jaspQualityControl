@@ -872,6 +872,7 @@ get_levels <- function(var, num_levels, dataset) {
   continuousPredictors <- unlist(continuousPredictors)
 
   jaspResults[["plotRo"]] <- createJaspContainer(title = gettext("Optimization Plot"))
+  jaspResults[["plotRo"]]$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationPlot")) # no empty container after a settings error
   jaspResults[["plotRo"]]$position <- 4
 
   # Create Df if custom parameters are entered
