@@ -136,3 +136,41 @@ test_that("Non-normal capability study with Weibull data in small units runs wit
   expect_equal(c(summaryTable[["data"]][[1]][["beta"]], summaryTable[["data"]][[1]][["theta"]]) / exact, c(1, 1), tolerance = 1e-3)
   expect_equal(c(probabilityTable[["data"]][[1]][["mean"]], probabilityTable[["data"]][[1]][["sd"]]) / exact, c(1, 1), tolerance = 1e-3)
 })
+
+test_that("3-parameter Weibull and log-logistic fits work for data with a large offset", {
+  # on the rescaled data the 3-parameter Weibull scale and threshold gap are ~1e-3 (optim's Hessian step would fail)
+  set.seed(1)
+  x <- 100 + rweibull(50, shape = 2, scale = 0.1)
+  fit <- fitDistribution(x, distribution = "3ParameterWeibull")
+  # independent reference: maximise the 2-parameter Weibull profile log-likelihood over the threshold
+  profileLoglik <- function(logGap) {
+    p <- weibullProfileMle(x - (min(x) - exp(logGap)))
+    sum(dweibull(x - (min(x) - exp(logGap)), p[["shape"]], p[["scale"]], log = TRUE))
+  }
+  threshold <- min(x) - exp(optimize(profileLoglik, log(sd(x)) + c(-10, 5), maximum = TRUE, tol = 1e-10)$maximum)
+  reference <- weibullProfileMle(x - threshold)
+  expect_equal(c(fit[["beta"]], fit[["theta"]]) / reference, c(shape = 1, scale = 1), tolerance = 1e-3)
+  expect_equal((fit[["threshold"]] - threshold) / sd(x), 0, tolerance = 1e-3)
+
+  set.seed(1)
+  x <- 1000 + rweibull(50, shape = 2, scale = 0.1)
+  fit <- fitDistribution(x, distribution = "loglogistic")
+  # independent reference: log(x) is logistic with location beta and scale theta
+  y <- log(x); m <- median(y); s <- mad(y)
+  p <- optim(c(0, log(0.5)), function(p) -sum(dlogis((y - m) / s, p[1], exp(p[2]), log = TRUE)), control = list(reltol = 1e-14))$par
+  expect_equal(fit[["theta"]] / (s * exp(p[2])), 1, tolerance = 1e-3)
+  expect_equal((fit[["beta"]] - (m + s * p[1])) / (s * exp(p[2])), 0, tolerance = 1e-3)
+})
+
+test_that("3-parameter Weibull fit with a free threshold and shape <= 1 gives an error", {
+  # the likelihood then increases towards threshold = min(x), so there is no maximum likelihood estimate
+  set.seed(4)
+  x <- rweibull(15, shape = 0.6, scale = 1) # without the check, the fit returns shape 0.45 in every unit
+  for (unit in c(1e-3, 1, 1e3))
+    expect_error(fitDistribution(x * unit, distribution = "3ParameterWeibull"), "could not be estimated", info = sprintf("data x %g", unit))
+  # with a fixed threshold it is a 2-parameter Weibull fit of x - threshold, which has an MLE for any shape
+  fit <- fitDistribution(x, distribution = "3ParameterWeibull", fix.arg = list(thres = -0.1))
+  reference <- weibullProfileMle(x + 0.1)
+  expect_equal(c(fit[["beta"]], fit[["theta"]]) / reference, c(shape = 1, scale = 1), tolerance = 1e-3)
+  expect_equal(fit[["threshold"]], -0.1)
+})
