@@ -273,6 +273,9 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     n.mean <- mean(sample)
     UCL <- p.hat + 3 * (sqrt(p.hat*(1 - p.hat))) / (sqrt(n.mean))
     LCL <- p.hat - 3 * (sqrt(p.hat*(1 - p.hat))) / (sqrt(n.mean))
+    # the test table checks the limits drawn in the plot
+    sixsigma$limits[, 1] <- LCL
+    sixsigma$limits[, 2] <- UCL
   }
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
   yLimits <- range(c(0,yBreaks * 1.2))
@@ -783,10 +786,8 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   }
   else {
 
-    if (name == "np" || name == "c" || name == "u" || name == "Laney p'" || name == "Laney u'")
+    if (name %in% c("P", "np", "c", "u", "Laney p'", "Laney u'"))
       Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "c")
-    else if (name == "P")
-      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "p")
     else
       Test <- NelsonLaws(data = sixsigma, xLabels = xLabels)
 
