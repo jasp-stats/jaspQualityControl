@@ -11,7 +11,7 @@ Form
 				+ qsTr("The analysis of variance (ANOVA) table splits the variation in the response into the parts explained by the terms of the model and the part the model does not explain (Error).") + "\n\n"
 				+ "### " + qsTr("Columns") + "\n"
 				+ "- **" + qsTr("Sum of squares") + "**: " + qsTr("Variation in the response attributed to the source.") + "\n"
-				+ "- **df**: " + qsTr("Degrees of freedom. For a term, the number of model coefficients it contains.") + "\n"
+				+ "- **df**: " + qsTr("Degrees of freedom. For a term, the number of model coefficients it contains (fewer when some of its contrasts are aliased).") + "\n"
 				+ "- **" + qsTr("Mean square") + "**: " + qsTr("Sum of squares divided by df.") + "\n"
 				+ "- **F**: " + qsTr("Mean square of the source divided by the mean square of Error.") + "\n"
 				+ "- **p**: " + qsTr("Probability of an F-value at least this large if all coefficients of the source are zero.") + "\n\n"
@@ -28,6 +28,7 @@ Form
 				+ "## " + qsTr("References") + "\n"
 				+ "- Fox, J., & Weisberg, S. (2019). *An R companion to applied regression* (3rd ed.). Sage." + "\n"
 				+ "- Langsrud, Ø. (2003). ANOVA for unbalanced data: Use Type II instead of Type III sums of squares. *Statistics and Computing, 13*(2), 163-167." + "\n"
+				+ "- Lenth, R. V. (1989). Quick and easy analysis of unreplicated factorials. *Technometrics, 31*(4), 469-473." + "\n"
 				+ "- Montgomery, D. C. (2017). *Design and analysis of experiments* (9th ed.). Wiley." + "\n"
 				+ "\n---\n"
 				+ "## " + qsTr("R Packages") + "\n"
@@ -305,7 +306,7 @@ Form
 				name:								"codeFactors"
 				checked:							true
 				label:								qsTr("Display results in coded units")
-				info:								qsTr("Display the results in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. For factorial designs, continuous factors are treated as categorical in the ANOVA table when this option is unchecked.")
+				info:								qsTr("Display the results in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. For factorial designs, the ANOVA table is calculated in coded units, so it does not change with this option, unless coding changes the model (an interaction or squared term without its main effects).")
 			}
 
 			CheckBox
@@ -480,14 +481,14 @@ Form
 			{
 				name:									"plotPareto"
 				label:									qsTr("Pareto plot of effects")
-				info:									qsTr("Show a Pareto plot of the standardized effects.")
+				info:									qsTr("Show a Pareto plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the absolute effects with the margin of error based on Lenth's (1989) pseudo standard error; other saturated models give an error.")
 			}
 
 			CheckBox
 			{
 				name:									"normalEffectsPlot"
 				label:									qsTr("Normal plot of effects")
-				info:									qsTr("Show a normal probability plot of the standardized effects.")
+				info:									qsTr("Show a normal probability plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the effects with a reference line based on Lenth's (1989) pseudo standard error, and effects larger than its margin of error are marked significant; other saturated models give an error.")
 			}
 		}
 
@@ -840,7 +841,7 @@ Form
 			info:							qsTr("How the sum of squares of each term in the ANOVA table is calculated. The types differ in which other terms a term is adjusted for. In balanced designs with orthogonal (coded) terms, such as complete two-level factorial designs, all types give the same result. In unbalanced designs, e.g. with missing runs, covariates or squared terms, they can differ. The Model, Error and Total rows are the same for all types. See the description of the ANOVA table below.") + "\n"
 											+ "- **" + qsTr("Type I") + "**: " + qsTr("Sequential sums of squares: each term is adjusted only for the terms entered before it, so the results depend on the order of the terms. The term rows add up to the Model row.") + "\n"
 											+ "- **" + qsTr("Type II") + "**: " + qsTr("Each term is adjusted for all other terms, except for higher-order terms that contain it. For example, A is adjusted for B, but not for A✻B.") + "\n"
-											+ "- **" + qsTr("Type III") + "**: " + qsTr("Each term is adjusted for all other terms in the model, i.e. it measures what the term adds when it is entered last. Results for lower-order terms depend on how the factors are coded.")
+											+ "- **" + qsTr("Type III") + "**: " + qsTr("Each term is adjusted for all other terms in the model, i.e. it measures what the term adds when it is entered last. Results for lower-order terms depend on how the factors are coded. Not available when some coefficients are aliased.")
 			id: 							sumOfSquaresType
 			indexDefaultValue:				2
 			values: [

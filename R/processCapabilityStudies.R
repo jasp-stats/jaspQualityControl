@@ -454,6 +454,39 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   tryCatch(.movingRangeSigma(dataset, k)[["sigma"]], qcDataError = function(error) NA_real_)
 }
 
+# Degrees of freedom of the within-subgroup std. dev. for the Cp and Cpk confidence intervals, by estimation method.
+# Subgroups with fewer than 2 observations do not contribute.
+#   pooled:       sum(n_i - 1)
+#   R-bar:        0.9 * sum(n_i - 1)        (= 0.9 * m * (nBar - 1) with m subgroups of mean size nBar)
+#   S-bar:        f(nBar) * sum(n_i - 1)
+#   moving range: number of complete moving ranges (= N - w + 1 without missing values)
+# Returns NA if there are no degrees of freedom.
+.qcCapabilityWithinSdDf <- function(dataset, sdType = c("pooled", "r", "s", "movingRange"), movingRangeLength = 2) {
+  sdType <- match.arg(sdType)
+  if (sdType == "movingRange") {
+    x          <- unlist(dataset, use.names = FALSE)
+    windowEnds <- if (length(x) >= movingRangeLength) seq.int(movingRangeLength, length(x)) else integer(0)
+    df         <- sum(vapply(windowEnds, function(end) !anyNA(x[(end - movingRangeLength + 1):end]), logical(1)))
+  } else {
+    subgroupSizes <- rowSums(!is.na(as.matrix(dataset)))
+    subgroupSizes <- subgroupSizes[subgroupSizes >= 2]
+    df <- sum(subgroupSizes - 1)
+    if (sdType == "r")
+      df <- 0.9 * df
+    else if (sdType == "s" && df > 0)
+      df <- .qcSBarDfFactor(mean(subgroupSizes)) * df
+  }
+  if (df > 0) df else NA_real_
+}
+
+# Factor f(n) for the degrees of freedom of the S-bar estimate; a non-integer mean subgroup size uses the factor of the
+# next smaller integer size (the smaller, more conservative factor).
+.qcSBarDfFactor <- function(subgroupSize) {
+  sizes   <- c(2,    3,    4,    5,    6,    8,    10,   18,   65)
+  factors <- c(0.88, 0.92, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1)
+  factors[findInterval(floor(subgroupSize), sizes)]
+}
+
 # Functions for capability analysis section ####
 
 ## Containers ####
@@ -499,7 +532,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   ready <- (length(measurements) > 0)
 
-  if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis" && ready && (any(na.omit(unlist(dataset[measurements])) < 0))) {
+  # the logistic distribution is defined for negative values
+  if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis" && ready &&
+      options[["nonNormalDistribution"]] != "logistic" && any(na.omit(unlist(dataset[measurements])) < 0)) {
     p <- createJaspPlot(title = gettext("Process capability study"), width = 400, height = 400)
     p$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
     container[["p"]] <- p
@@ -1700,6 +1735,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
     table$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."))
 
+  if (options[["processCapabilityTableCi"]] && options[["historicalStdDev"]])
+    table$addFootnote(gettext("Confidence intervals for Cp and Cpk are not computed when a historical standard deviation is used."))
+
   if (nStages > 1)
     tableColNames <- c("stage", tableColNames)
   tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
@@ -1709,6 +1747,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
 
     if (length(measurements) < 2) {
+      sdType <- "movingRange"
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
       sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .qcCapabilityMovingRangeSd(dataCurrentStage[measurements], k)
     } else {
@@ -1722,7 +1761,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     usl <- options[["upperSpecificationLimitValue"]]
     lsl <- options[["lowerSpecificationLimitValue"]]
     n <- length(allData)
-    k <- length(measurements)
     processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
     tolMultiplier <- 6
     cp <- if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]) NA else (usl - lsl) / (tolMultiplier * sdw)
@@ -1738,15 +1776,17 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
     if (options[["processCapabilityTableCi"]]) {
       ciAlpha <- 1 - ciLevel
+      # a historical std. dev. is not estimated from the data, so it has no degrees of freedom and no interval is computed
+      dfWithin <- if (options[["historicalStdDev"]]) NA_real_ else .qcCapabilityWithinSdDf(dataCurrentStage[measurements], sdType, options[["controlChartSdEstimationMethodMeanMovingRangeLength"]])
       if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
         #CI for Cp
-        dfCp <- 0.9 * k * ((n/k) - 1)
+        dfCp <- dfWithin
         ciLbCp <- cp * sqrt( qchisq(p = ciAlpha/2, df = dfCp) /dfCp)
         ciUbCp <- cp * sqrt( qchisq(p = 1 - (ciAlpha/2), df = dfCp) /dfCp)
       }
       if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
         #CI for Cpk
-        dfCpk <- 0.9 * k * ((n/k) - 1)
+        dfCpk <- dfWithin
         normCIrange <- qnorm(1 - (ciAlpha / 2))
         intervalCpk <- sqrt(1 / (((tolMultiplier / 2)^2) * n)  +  ((cpk^2)/ (2 * dfCpk)))
         ciLbCpk <- cpk - (normCIrange * intervalCpk)
@@ -1812,6 +1852,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   nStars <- if (nStages > 1) length(tableList[["stage"]]) else 1
   for (name in tableListAllNANames)
     tableList[[name]] <- rep("*", nStars) # This looks better in the table and makes clearer that there is not an error
+  if (options[["historicalStdDev"]]) # intervals not computed (see footnote), also in the stage rows next to the "Change" rows
+    for (name in intersect(c("cplci", "cpuci", "cpklci", "cpkuci"), names(tableList)))
+      tableList[[name]][is.na(tableList[[name]])] <- "*"
   table$setData(tableList)
 
   if (returnDataframe) {
@@ -2394,14 +2437,16 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     }
   }
 
+  # specification limits as entered: the capability indices and ppm below use these, the summary table shows them rounded
+  lsl <- options[["lowerSpecificationLimitValue"]]
+  usl <- options[["upperSpecificationLimitValue"]]
+  target <- options[["targetValue"]]
+
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
     n <- length(allData)
-    lsl <- round(options[["lowerSpecificationLimitValue"]], .numDecimals)
-    usl <- round(options[["upperSpecificationLimitValue"]], .numDecimals)
-    target <- round(options[["targetValue"]], .numDecimals)
     sd <- sd(allData)
     processMean <- mean(allData, na.rm = TRUE)
     beta <- distParameters[[i]]$beta
@@ -2410,9 +2455,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     tableDfCurrentStage <- data.frame("n" = n,
                                       "mean" = processMean,
                                       "sd" = sd,
-                                      "lsl" = lsl,
-                                      "usl" = usl,
-                                      "target" = target,
+                                      "lsl" = round(lsl, .numDecimals),
+                                      "usl" = round(usl, .numDecimals),
+                                      "target" = round(target, .numDecimals),
                                       "beta" = beta,
                                       "theta" = theta)
 
@@ -3498,7 +3543,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     if (hasConfidenceBands) {
       bandData <- data.frame(zp = zp, percentileLower = percentileLower, percentileUpper = percentileUpper)
     }
-    yLimits <- range(yBreaks)
+    # The outer points of a large sample lie beyond the 0.1% and 99.9% ticks; widen the axis so they are not dropped
+    yLimits <- range(yBreaks, y)
     label_x <- round(label_x, .numDecimals)
     p <- ggplot2::ggplot() +
       ggplot2::geom_line(data = lineData, ggplot2::aes(y = zp, x = percentileEstimate), na.rm = TRUE) +
@@ -3554,6 +3600,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   n <- length(x)
   i <- rank(x)
   p <- (i) / (n)
+  # A unique largest observation gets p = 1, which has no finite plotting position. Place it at 90% of the distance
+  # between the prior p (0 if n = 1) and 1, i.e. (n - 0.1) / n without ties. A tied maximum has an average rank below
+  # n, so p < 1 and nothing changes.
+  isLargest    <- p == 1
+  pPrior       <- max(0, p[!isLargest])
+  p[isLargest] <- pPrior + 0.9 * (1 - pPrior)
   return(p)
 }
 
@@ -3729,7 +3781,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         densDf <- .qcDensityCurveData(dlogis, list(location = location, scale = scale), xGrid, "logisticDist")
         legendLabel <- gettext("Logistic dist.")
       } else if(options[['nullDistribution']]  == "loglogistic") {
-        fitLoglogis <- .distributionParameters(dataCurrentStage, distribution = "logistic", fix.arg = NULL)
+        fitLoglogis <- .distributionParameters(dataCurrentStage, distribution = "loglogistic", fix.arg = NULL)
         shape <- 1/fitLoglogis[["theta"]]
         scale <- exp(fitLoglogis[["beta"]])
         densDf <- .qcDensityCurveData(flexsurv::dllogis, list(shape = shape, scale = scale), xGrid, "loglogisticDist")

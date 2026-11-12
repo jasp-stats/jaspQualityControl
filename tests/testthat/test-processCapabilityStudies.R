@@ -51,7 +51,7 @@ test_that("LF1.3 (Normal) Basic tests of Non-conformance statistics table with s
 test_that("LF1.4 (Normal) Basic tests of Process capability (within) table with subgroup variable and no stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.135, 0.93, 0.801, 1.06, 1.339, 0.991, 0.93, 1.276, 2.791))
+                                 list(1.135, 0.93, 0.792, 1.069, 1.339, 0.978, 0.93, 1.288, 2.791))
 })
 
 test_that("LF1.5 (Normal) Basic tests of Process summary table with subgroup variable and no stages", {
@@ -132,8 +132,8 @@ test_that("LF2.3 (Normal) Basic tests of Non-conformance statistics table with s
 test_that("LF2.4 (Normal) Basic tests of Process capability (within) table with subgroup variable and stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.069, 0.876, 0.675, 1.078, 1.262, 0.845, 0.876, 1.287, "1 (BL)",
-                                      2.629, 1.183, 0.97, 0.795, 1.145, 1.395, 0.985, 0.97, 1.375, 2, 2.91,
+                                 list(1.069, 0.876, 0.668, 1.085, 1.262, 0.835, 0.876, 1.296, "1 (BL)",
+                                      2.629, 1.183, 0.97, 0.784, 1.156, 1.395, 0.971, 0.97, 1.388, 2, 2.91,
                                       0.113, 0.094, "-", "-", 0.133, "-", 0.094, "-", "Change (2 vs. BL)",
                                       0.281))
 })
@@ -218,7 +218,7 @@ test_that("LF3.3 (Normal) Basic tests of Non-conformance statistics table with m
 test_that("LF3.4 (Normal) Basic tests of Process capability (within) table with manual subgroups and no stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.135, 0.93, 0.801, 1.06, 1.339, 0.991, 0.93, 1.276))
+                                 list(1.135, 0.93, 0.792, 1.069, 1.339, 0.978, 0.93, 1.288))
 })
 
 test_that("LF3.5 (Normal) Basic tests of Process summary table with manual subgroups and no stages", {
@@ -298,8 +298,8 @@ test_that("LF4.3 (Normal) Basic tests of Non-conformance statistics table with m
 test_that("LF4.4 (Normal) Basic tests of Process capability (within) table with manual subgroups and stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.069, 0.876, 0.675, 1.078, 1.262, 0.845, 0.876, 1.287, "1 (BL)",
-                                      1.183, 0.97, 0.795, 1.145, 1.395, 0.985, 0.97, 1.375, 2, 0.113, 0.094,
+                                 list(1.069, 0.876, 0.668, 1.085, 1.262, 0.835, 0.876, 1.296, "1 (BL)",
+                                      1.183, 0.97, 0.784, 1.156, 1.395, 0.971, 0.97, 1.388, 2, 0.113, 0.094,
                                       "-", "-", 0.133, "-", 0.094, "-", "Change (2 vs. BL)"))
 })
 
@@ -688,8 +688,8 @@ test_that("LF9.3 (Normal) Missing value test of Non-conformance statistics table
 test_that("LF9.4 (Normal) Missing value test of Process capability (within) table with single missing value in measurement", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.079, 0.902, 0.693, 1.111, 1.256, 0.85, 0.902, 1.301, "1 (BL)", 1.183,
-                                      0.97, 0.795, 1.145, 1.395, 0.985, 0.97, 1.375, 2, 0.103, 0.068, "-",
+                                 list(1.079, 0.902, 0.685, 1.119, 1.256, 0.839, 0.902, 1.312, "1 (BL)", 1.183,
+                                      0.97, 0.784, 1.156, 1.395, 0.971, 0.97, 1.388, 2, 0.103, 0.068, "-",
                                       "-", 0.139, "-", 0.068, "-", "Change (2 vs. BL)"))
 })
 
@@ -771,9 +771,9 @@ test_that("LF10.2 (Normal) Missing value test of Non-conformance statistics tabl
 test_that("LF10.3 (Normal) Missing value test of Process capability (within) with all but one missing value in measurement", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("<unicode>", "<unicode>", "NaN", "NaN", "<unicode>", "NaN", "<unicode>",
-                                      "NaN", "1 (BL)", "<unicode>", "<unicode>", "NaN", "NaN", "NaN",
-                                      "NaN", "NaN", "NaN", 2, "NaN", "NaN", "-", "-", "NaN", "-",
+                                 list("<unicode>", "<unicode>", "", "", "<unicode>", "", "<unicode>",
+                                      "", "1 (BL)", "<unicode>", "<unicode>", "", "", "NaN",
+                                      "", "NaN", "", 2, "NaN", "NaN", "-", "-", "NaN", "-",
                                       "NaN", "-", "Change (2 vs. BL)"))
 })
 
@@ -867,10 +867,10 @@ test_that("LF12.3 (Normal) Missing value test of Non-conformance statistics tabl
 test_that("LF12.4 (Normal) Missing value test of Process capability (within) table with missing values in stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.806, 0.638, 0.402, 0.874, 0.973, 0.547, 0.638, 1.052, "1 (BL)",
-                                      1.095, 0.901, 0.659, 1.144, 1.288, 0.823, 0.901, 1.356, 2, 0.289,
+                                 list(0.806, 0.638, 0.407, 0.868, 0.973, 0.555, 0.638, 1.045, "1 (BL)",
+                                      1.095, 0.901, 0.654, 1.148, 1.288, 0.817, 0.901, 1.362, 2, 0.289,
                                       0.263, "-", "-", 0.315, "-", 0.263, "-", "Change (2 vs. BL)", 1.151,
-                                      0.963, 0.729, 1.198, 1.338, 0.89, 0.963, 1.403, 3, 0.345, 0.326, "-",
+                                      0.963, 0.722, 1.205, 1.338, 0.881, 0.963, 1.411, 3, 0.345, 0.326, "-",
                                       "-", 0.365, "-", 0.326, "-", "Change (3 vs. BL)"))
 })
 
@@ -960,8 +960,8 @@ test_that("LF13.3 (Normal) Missing value test of Non-conformance statistics tabl
 test_that("LF13.4 (Normal) Missing value test of Process capability (within) table with missing values in subgroups variable", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.057, 0.848, 0.633, 1.063, 1.267, 0.814, 0.848, 1.292, "1 (BL)", 1.1,
-                                      0.893, 0.714, 1.071, 1.307, 0.899, 0.893, 1.295, 2, 0.042, 0.045, "-",
+                                 list(1.057, 0.848, 0.623, 1.072, 1.267, 0.8, 0.848, 1.305, "1 (BL)", 1.1,
+                                      0.893, 0.701, 1.084, 1.307, 0.881, 0.893, 1.311, 2, 0.042, 0.045, "-",
                                       "-", 0.04, "-", 0.045, "-", "Change (2 vs. BL)"))
 })
 
@@ -1045,7 +1045,7 @@ test_that("LF14.3 (Normal) Option test of Non-conformance statistics table with 
 test_that("LF14.4 (Normal) Option test of Process capability (within) table with changed manual subgroup size", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.071, 0.878, 0.754, 1.002, 1.263, 0.933, 0.878, 1.205))
+                                 list(1.071, 0.878, 0.749, 1.007, 1.263, 0.927, 0.878, 1.211))
 })
 
 test_that("LF14.5 (Normal) Option test of Process summary table with changed manual subgroup size", {
@@ -1152,7 +1152,7 @@ test_that("LF16.3 (Normal) Option test of Non-conformance statistics table with 
 test_that("LF16.4 (Normal) Option test of Process capability (within) table with s-bar calculation method", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.082, 0.887, 0.763, 1.011, 1.276, 0.945, 0.887, 1.216))
+                                 list(1.082, 0.887, 0.757, 1.017, 1.276, 0.936, 0.887, 1.224))
 })
 
 test_that("LF16.5 (Normal) Option test of Process summary table with s-bar calculation method", {
@@ -1230,7 +1230,7 @@ test_that("LF17.3 (Normal) Option test of Non-conformance statistics table with 
 test_that("LF17.4 (Normal) Option test of Process capability (within) table with x-mR calculation method", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.073, 0.88, 0.759, 1.002, 1.266, 0.94, 0.88, 1.204))
+                                 list(1.073, 0.88, 0.763, 0.997, 1.266, 0.947, 0.88, 1.197))
 })
 
 test_that("LF17.5 (Normal) Option test of Process summary table with x-mR calculation method", {
@@ -1402,7 +1402,7 @@ test_that("LF19.3 (Normal) Option test of Non-conformance statistics table with 
 test_that("LF19.4 (Normal) Option test of Process capability (within) table with s-bar calculation method without unbiasing constant", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.151, 0.944, 0.813, 1.074, 1.358, 1.005, 0.944, 1.294))
+                                 list(1.151, 0.944, 0.806, 1.081, 1.358, 0.996, 0.944, 1.303))
 })
 
 test_that("LF19.5 (Normal) Option test of Process summary table with s-bar calculation method without unbiasing constant", {
@@ -1489,10 +1489,10 @@ test_that("LF20.3 (Normal) Edge case test of Non-conformance statistics table wi
 test_that("LF20.4 (Normal) Edge case test of Process capability (within) table with multiple stages assigned per subgroup", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.813, 0.626, 0.393, 0.859, 0.999, 0.552, 0.626, 1.061, "1 (BL)",
-                                      1.416, 1.218, 0.93, 1.506, 1.613, 1.095, 1.218, 1.726, 2, 0.603, 0.593,
+                                 list(0.813, 0.626, 0.398, 0.853, 0.999, 0.56, 0.626, 1.054, "1 (BL)",
+                                      1.416, 1.218, 0.921, 1.515, 1.613, 1.084, 1.218, 1.736, 2, 0.603, 0.593,
                                       "-", "-", 0.614, "-", 0.593, "-", "Change (2 vs. BL)", 1.16, 0.94,
-                                      0.741, 1.14, 1.379, 0.932, 0.94, 1.38, 3, 0.347, 0.315, "-", "-", 0.38,
+                                      0.731, 1.149, 1.379, 0.92, 0.94, 1.392, 3, 0.347, 0.315, "-", "-", 0.38,
                                       "-", 0.315, "-", "Change (3 vs. BL)"))
 })
 
@@ -1731,7 +1731,7 @@ test_that("LF25.3 Normal distribution with one historical param. - Non-conforman
 test_that("LF25.4 Normal distribution with one historical param. - Process capability (within) table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.082, 1.082, 0.935, 1.228, 1.082, 0.945, 1.082, 1.216))
+                                 list(1.082, 1.082, 0.927, 1.236, 1.082, 0.936, 1.082, 1.224))
 })
 
 test_that("LF25.5 Normal distribution with one historical param. - Process summary table results match", {
@@ -1787,7 +1787,7 @@ test_that("LF26.3 Normal distribution with all historical param. - Non-conforman
 test_that("LF26.4 Normal distribution with all historical param. - Process capability (within) table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.667, 0.667, 0.566, 0.767, 0.667, 0.582, 0.667, 0.75))
+                                 list(0.667, 0.667, "*", "*", 0.667, "*", 0.667, "*"))
 })
 
 test_that("LF26.5 Normal distribution with all historical param. - Process summary table results match", {
@@ -1843,7 +1843,7 @@ test_that("LF27.3 Normal distribution with mismatching historical dist. - Non-co
 test_that("LF27.4 Normal distribution with mismatching historical dist. - Process capability (within) table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.133, -0.622, -0.718, -0.527, 0.889, 0.116, -0.622, 0.15))
+                                 list(0.133, -0.622, "*", "*", 0.889, "*", -0.622, "*"))
 })
 
 test_that("LF27.5 Normal distribution with mismatching historical dist. - Process summary table results match", {
@@ -3320,7 +3320,7 @@ test_that("WF1.3 (Normal) Basic tests of Non-conformance statistics table withou
 test_that("WF1.4 (Normal) Basic tests of Process capability (within) table without stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.135, 0.93, 0.801, 1.06, 1.339, 0.991, 0.93, 1.276))
+                                 list(1.135, 0.93, 0.792, 1.069, 1.339, 0.978, 0.93, 1.288))
 })
 
 test_that("WF1.5 (Normal) Basic tests of Process summary table without stages", {
@@ -3400,8 +3400,8 @@ test_that("WF2.3 (Normal) Basic tests of Non-conformance statistics table with s
 test_that("WF2.4 (Normal) Basic tests of Process capability (within) table with stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.077, 0.877, 0.699, 1.055, 1.277, 0.878, 0.877, 1.27, "1 (BL)",
-                                      1.199, 0.99, 0.793, 1.187, 1.408, 0.977, 0.99, 1.414, 2, 0.122,
+                                 list(1.077, 0.877, 0.69, 1.064, 1.277, 0.866, 0.877, 1.282, "1 (BL)",
+                                      1.199, 0.99, 0.783, 1.197, 1.408, 0.964, 0.99, 1.427, 2, 0.122,
                                       0.113, "-", "-", 0.131, "-", 0.113, "-", "Change (2 vs. BL)"))
 })
 
@@ -3773,7 +3773,7 @@ test_that("WF7.3 (Normal) Missing value test of Non-conformance statistics table
 test_that("WF7.4 (Normal) Missing value test of Process capability (within) table with single missing value in measurement", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.14, 0.942, 0.811, 1.073, 1.338, 0.994, 0.942, 1.282))
+                                 list(1.14, 0.942, 0.801, 1.083, 1.338, 0.981, 0.942, 1.295))
 })
 
 test_that("WF7.5 (Normal) Missing value test of Process summary table with single missing value in measurement", {
@@ -3889,9 +3889,9 @@ test_that("WF10.4 (Normal) Missing value test of Process capability (within) tab
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(1.011, 0.734, 0.504, 0.963, 1.289, 0.73, 0.734, 1.281, "1 (BL)", 1,
-                                      0.807, 0.524, 1.09, 1.194, 0.68, 0.807, 1.307, 2, -0.011, 0.073, "-",
-                                      "-", -0.095, "-", 0.073, "-", "Change (2 vs. BL)", 1.489, 1.298, 0.869,
-                                      1.726, 1.68, 1.011, 1.298, 1.944, 3, 0.477, 0.564, "-", "-", 0.391,
+                                      0.807, 0.531, 1.083, 1.194, 0.69, 0.807, 1.297, 2, -0.011, 0.073, "-",
+                                      "-", -0.095, "-", 0.073, "-", "Change (2 vs. BL)", 1.489, 1.298, 0.881,
+                                      1.714, 1.68, 1.026, 1.298, 1.93, 3, 0.477, 0.564, "-", "-", 0.391,
                                       "-", 0.564, "-", "Change (3 vs. BL)"))
 })
 
@@ -4008,7 +4008,7 @@ test_that("WF12.3 (Normal) Option test of Non-conformance statistics table with 
 test_that("WF12.4 (Normal) Option test of Process capability (within) table with s-bar calculation method", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.082, 0.887, 0.763, 1.011, 1.276, 0.945, 0.887, 1.216))
+                                 list(1.082, 0.887, 0.757, 1.017, 1.276, 0.936, 0.887, 1.224))
 })
 
 test_that("WF12.5 (Normal) Option test of Process summary table with s-bar calculation method", {
@@ -4191,7 +4191,7 @@ test_that("WF15.3 (Normal) Option test of Non-conformance statistics table with 
 test_that("WF15.4 (Normal) Option test of Process capability (within) table with s-bar method and no unbiasing constant", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.151, 0.944, 0.813, 1.074, 1.358, 1.005, 0.944, 1.294))
+                                 list(1.151, 0.944, 0.806, 1.081, 1.358, 0.996, 0.944, 1.303))
 })
 
 test_that("WF15.5 (Normal) Option test of Process summary table with s-bar method and no unbiasing constant", {
