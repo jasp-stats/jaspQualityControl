@@ -29,8 +29,8 @@ Form
 		+ "- " + qsTr("Test 6: Bimodal distribution - eight consecutive points beyond the one sigma limits, regardless of which side of the central line (bimodal distribution).") + "\n\n"
 		+ qsTr("Only tests 1, 2, 3 and 8 are applied to the moving range chart.") + "\n"
 		+ "\n---\n## " + qsTr("References") + "\n"
-		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.") + "\n"
-		+ "- " + qsTr("Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual (2nd ed.). AIAG.") + "\n"
+		+ "- Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.\n"
+		+ "- Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual (2nd ed.). AIAG.\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- ggplot2\n- qcc\n- jaspGraphs\n- ggrepel\n- stats\n"
 

@@ -24,7 +24,7 @@ Form
 	info:										qsTr("The Test-retest (range method) study approximates an overall picture of the measurement system's variability. It does not separate the variability into its repeatability and reproducibility components.")
 
 	infoBottom: 								"## " + qsTr("References") + "\n"
-		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
+		+ "- Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- jaspGraphs\n- tidyr\n- ggplot2\n"
 

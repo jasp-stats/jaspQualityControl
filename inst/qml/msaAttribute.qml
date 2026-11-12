@@ -24,7 +24,7 @@ Form
 	info:										qsTr("Attribute Agreement Analysis assesses the agreement between the operators' ratings and a known standard's ratings. One of the aims is thus to determine the accuracy of the investigated operators.")
 
 	infoBottom: 								"## " + qsTr("References") + "\n"
-		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
+		+ "- Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- jaspGraphs\n- ggplot2\n- tidyr\n- psych\n- irr\n"
 

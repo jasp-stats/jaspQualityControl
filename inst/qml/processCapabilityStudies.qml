@@ -34,9 +34,9 @@ Form
 		+ "- **" + qsTr("Yeo-Johnson (auto)") + "**: " + qsTr("the data is transformed using the Yeo-Johnson transform, but with the $\\lambda$ parameter automatically estimated using the profile likelihood of a normal distribution. This procedure allows only process performance results (no process capability).") + "\n"
 		+ "- **" + qsTr("Johnson") + "**: " + qsTr("the data is transformed using the Johnson transform. It can be used for unbounded data (but some forms of the transform impose restrictions on the specification limits). The transform is fully automatic, as described in Chou, Polansky, & Mason (1998) [3]. This procedure allows only process performance results (no process capability).") + "\n"
 		+ "\n---\n## " + qsTr("References") + "\n"
-		+ "1. " + qsTr("Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual (2nd ed.). AIAG.") + "\n"
-		+ "2. " + qsTr("Yeo, I. K., & Johnson, R. A. (2000). A new family of power transformations to improve normality or symmetry. Biometrika, 87(4), 954-959.") + "\n"
-		+ "3. " + qsTr("Chou, Y. M., Polansky, A. M., & Mason, R. L. (1998). Transforming non-normal data to normality in statistical process control. Journal of Quality Technology, 30(2), 133-141.") + "\n"
+		+ "1. Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual (2nd ed.). AIAG.\n"
+		+ "2. Yeo, I. K., & Johnson, R. A. (2000). A new family of power transformations to improve normality or symmetry. Biometrika, 87(4), 954-959.\n"
+		+ "3. Chou, Y. M., Polansky, A. M., & Mason, R. L. (1998). Transforming non-normal data to normality in statistical process control. Journal of Quality Technology, 30(2), 133-141.\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- ggplot2\n- qcc\n- jaspGraphs\n- ggrepel\n- FAdist\n- goftest\n- fitdistrplus\n- tidyr\n- tibble\n- EnvStats\n- weibullness\n"
 

@@ -21,7 +21,7 @@ Form
 		+ "- " + qsTr("Test 8: Oscillation - N points in a row alternating increase and decrease (oscillation).") + "\n"
 		+ "- " + qsTr("Test 9: Benneyan test - N points in a row equal to 0 (Benneyan test).") + "\n"
 		+ "\n---\n## " + qsTr("References") + "\n"
-		+ "- " + qsTr("Montgomery, D. C. (2009). Introduction to statistical quality control. John Wiley & Sons.") + "\n"
+		+ "- Montgomery, D. C. (2009). Introduction to statistical quality control. John Wiley & Sons.\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- ggplot2\n- qcc\n- jaspGraphs\n- ggrepel\n"
 

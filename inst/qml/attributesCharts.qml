@@ -29,9 +29,9 @@ Form
 		+ qsTr("The lack of control in both average and variation charts is generally found in the initial stages of setting up control charts, sometimes called Phase 1 control charts. Using all six signals is only applicable for the average chart during Phase 1, when the control chart is used as an analysis tool. The first three signals are always used, for variables as well as attributes control charts.") + "\n\n"
 		+ qsTr("In case the data of the individual and moving range chart (X-mR chart) violate the assumptions (normality and independently distributed), only signal 1 is applied. Autocorrelation is an indication of that.") + "\n"
 		+ "\n---\n## " + qsTr("References") + "\n"
-		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.") + "\n"
-		+ "- " + qsTr("Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual (2nd ed.). AIAG.") + "\n"
-		+ "- " + qsTr("International Organization for Standardization (2023). Control charts – Part 2: Shewhart control charts. ISO 7870-2:2023.") + "\n"
+		+ "- Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.\n"
+		+ "- Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual (2nd ed.). AIAG.\n"
+		+ "- International Organization for Standardization (2023). Control charts – Part 2: Shewhart control charts. ISO 7870-2:2023.\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- ggplot2\n- qcc\n- jaspGraphs\n- ggrepel\n"
 

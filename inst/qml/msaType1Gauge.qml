@@ -24,7 +24,7 @@ Form
 	info:										qsTr("A Type 1 Instrument Capability Study (Type 1 Gauge) is performed before a Gauge r&R study to assess the capability of a measurement instrument using bias and repeatability. A single part with a known reference value is measured repeatedly by one operator.")
 
 	infoBottom: 								"## " + qsTr("References") + "\n"
-		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
+		+ "- Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- jaspGraphs\n- jaspDescriptives\n- tidyr\n- ggplot2\n- ggrepel\n"
 

@@ -35,7 +35,7 @@ Form
 		+ "- " + qsTr("between 1% and 9%: the measurement system is acceptable depending on the application, the cost of the measuring device, cost of repair, or other factors;") + "\n"
 		+ "- " + qsTr("greater than 9%: the measurement system is unacceptable and should be improved.") + "\n"
 		+ "\n---\n## " + qsTr("References") + "\n"
-		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
+		+ "- Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- jaspGraphs\n- ggplot2\n- tidyr\n- qcc\n- cowplot\n"
 

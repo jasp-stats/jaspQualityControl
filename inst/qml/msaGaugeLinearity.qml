@@ -23,7 +23,7 @@ Form
 	info:										qsTr("A Type 4 Linearity Study (Gauge Linearity and Bias) investigates the linearity (accuracy across the expected range of measurements) and bias (agreement between measurements and reference values) of a measurement system.")
 
 	infoBottom: 								"## " + qsTr("References") + "\n"
-		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
+		+ "- Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- jaspGraphs\n- ggplot2\n- ggpubr\n"
 

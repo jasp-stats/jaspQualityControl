@@ -16,7 +16,7 @@ Form
 		+ "- " + qsTr("Test 2: Shift - seven consecutive points above or below the central line (mean shift).") + "\n"
 		+ "- " + qsTr("Test 3: Trend - a run up or down of seven consecutive points (trend).") + "\n"
 		+ "\n---\n## " + qsTr("References") + "\n"
-		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
+		+ "- Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.\n"
 		+ "\n---\n## " + qsTr("R Packages") + "\n"
 		+ "- ggplot2\n- qcc\n- jaspGraphs\n- ggrepel\n- tidyr\n- tibble\n"
 
