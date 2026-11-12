@@ -4543,6 +4543,34 @@ test_that("Box-Cox (auto) with negative estimated lambda keeps specification lim
   expect_equal(tables[c("within", "overall", "performance")], tablesAdjusted[c("within", "overall", "performance")])
 })
 
+test_that("Box-Cox with negative lambda, shift and only an upper specification limit", {
+  dataset <- data.frame(x = c(1.5, 2, 2.5, 3))
+  options <- .boxCoxNegativeLambdaOptions(dataset, "boxCox", continuityAdjustment = FALSE)
+  options$dataTransformationShift <- 1
+  options$lowerSpecificationLimit <- FALSE
+  options$upperSpecificationLimitValue <- 3.5
+  options$target <- FALSE
+  results <- runAnalysis("processCapabilityStudies", dataset, options)
+  tables  <- .boxCoxNegativeLambdaTables(results)
+
+  # USL = -(3.5 + 1)^-1; PpU = (USL - mean) / (3 * sd) with mean = -mean(1 / (x + 1))
+  jaspTools::expect_equal_tables(tables[["summary"]],
+                                 list(-0.317261904761905, 4, 0.0648672986944061, 0.0443262411347518, -0.222))
+  jaspTools::expect_equal_tables(tables[["overall"]], list(0.488, 0.061, 0.916, 0.488))
+  jaspTools::expect_equal_tables(tables[["within"]], list(0.715, 0.139, 1.29, 0.715))
+  jaspTools::expect_equal_tables(tables[["performance"]],
+                                 list("*", "*", "*", "ppm &lt; LSL", 71441.345, 16012.628, 0, "ppm &gt; USL",
+                                      71441.345, 16012.628, 0, "ppm total"))
+
+  formula <- results[["results"]][["dataTransformationContainer"]][["collection"]][["dataTransformationContainer_formula"]][["text"]]
+  expect_true(grepl("y = -(x+\\text{shift})^\\lambda", formula, fixed = TRUE))
+
+  optionsAdjusted <- options
+  optionsAdjusted$dataTransformationContinuityAdjustment <- TRUE
+  tablesAdjusted  <- .boxCoxNegativeLambdaTables(runAnalysis("processCapabilityStudies", dataset, optionsAdjusted))
+  expect_equal(tables[c("within", "overall", "performance")], tablesAdjusted[c("within", "overall", "performance")])
+})
+
 test_that("Thin x-axis labels snapshot matches", {
   values <- 38 + qnorm(ppoints(100), sd = 0.004)
   values[length(values)] <- 38.012
