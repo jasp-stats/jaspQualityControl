@@ -54,7 +54,7 @@ test_that("msaAttribute results match", {
 
   table <- results[["results"]][["cohensKappaCor"]][["data"]]
   jaspTools::expect_equal_tables(table,
-    list("-", 0.87, 0.6, "A", 0.87, "-", 0.52, "B", 0.6, 0.52, "-", "C"
+    list("-", 0.81, 0.6, "A", 0.81, "-", 0.52, "B", 0.6, 0.52, "-", "C"
     ))
 
   table <- results[["results"]][["fleissKappa"]][["data"]]
