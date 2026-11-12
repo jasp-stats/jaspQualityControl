@@ -2495,8 +2495,8 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("LF40.1 Gamma distribution basic test - Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(30405.83, 40000, "ppm &lt; LSL", 11716.86, 10000, "ppm &gt; USL",
-                                      42122.5, 50000, "Total ppm"))
+                                 list(30404.434, 40000, "ppm &lt; LSL", 11716.845, 10000, "ppm &gt; USL",
+                                      42121.279, 50000, "Total ppm"))
 })
 
 test_that("LF40.2 Gamma distribution basic test - Capability of the process plot matches", {

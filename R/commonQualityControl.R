@@ -1525,6 +1525,47 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(estimate)
 }
 
+# Gamma maximum likelihood estimates (shape, rate) from the likelihood equations, which reduce to one equation in the
+# shape. A general optimiser stops early for data with little variation (e.g. 10 +- 0.02): the shape is then large
+# (~1 / CV^2) and the likelihood is a long narrow ridge along shape / rate = mean, so the shape came out far too small
+# and the tails far too wide. fix.arg can hold a known shape or rate, as for fitdistrplus::fitdist.
+.qcGammaMle <- function(data, fix.arg = NULL) {
+  if (length(data) == 0 || !all(is.finite(data)) || any(data <= 0))
+    stop("The gamma distribution needs positive, finite data.", call. = FALSE)
+
+  dataMean <- mean(data)
+  if (!is.null(fix.arg[["shape"]]))         # rate given the shape
+    return(c(shape = fix.arg[["shape"]], rate = fix.arg[["shape"]] / dataMean))
+
+  if (!is.null(fix.arg[["rate"]])) {        # shape given the rate: digamma(shape) = mean(log(rate * data))
+    target <- mean(log(fix.arg[["rate"]] * data))
+    logShape <- stats::uniroot(function(t) digamma(exp(t)) - target, interval = c(-1, 1), extendInt = "upX",
+                               tol = 1e-12, maxiter = 1000)$root
+    return(c(shape = exp(logShape), rate = fix.arg[["rate"]]))
+  }
+
+  # log(shape) - digamma(shape) = log(mean(data)) - mean(log(data)), computed from the relative deviations so that
+  # it keeps its precision when the data vary little (it is about CV^2 / 2).
+  deviation <- (data - dataMean) / dataMean
+  logRatio  <- -mean(log1p(deviation) - deviation) - mean(deviation)
+  if (!(logRatio > 0))
+    stop("The data do not vary, so the gamma shape cannot be estimated.", call. = FALSE)
+
+  # log(shape) - digamma(shape) decreases from Inf to 0; for a large shape its asymptotic series avoids the
+  # cancellation of two nearly equal numbers.
+  logMinusDigamma <- function(shape) {
+    if (shape < 1e3)
+      return(log(shape) - digamma(shape))
+    return(1 / (2 * shape) + 1 / (12 * shape^2) - 1 / (120 * shape^4) + 1 / (252 * shape^6))
+  }
+  # start near Minka's (2002) approximation of the solution
+  start    <- (3 - logRatio + sqrt((logRatio - 3)^2 + 24 * logRatio)) / (12 * logRatio)
+  logShape <- stats::uniroot(function(t) logMinusDigamma(exp(t)) - logRatio, interval = log(start) + c(-1, 1),
+                             extendInt = "downX", tol = 1e-12, maxiter = 1000)$root
+  shape    <- exp(logShape)
+  return(c(shape = shape, rate = shape / dataMean))
+}
+
 .distributionParameters <- function(data,
                                     distribution = c("lognormal",
                                                      "weibull",
@@ -1707,7 +1748,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       beta <- fix.arg[["shape"]] # shape
       theta <- 1/fix.arg[["rate"]] # scale
     } else {
-      gammaPars <- try(.qcFitdistUnitFree(data, "gamma", control = list(maxit = 10000), fix.arg = fix.arg))
+      gammaPars <- try(.qcGammaMle(data, fix.arg = fix.arg))
       if (jaspBase::isTryError(gammaPars))
         stop(estimationErrorMessage, call. = FALSE)
 
