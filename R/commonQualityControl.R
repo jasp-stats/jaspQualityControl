@@ -239,7 +239,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                                     whichRules = c(1:3,5,7:8))
   } else {
     # Tests 2 and 3 need only the centre line. Test 1 uses each subgroup's own limits, which vary with unequal
-    # subgroup sizes, and these limits need not contain the centre line (p chart with average-size limits).
+    # subgroup sizes.
     warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, cl = data$center[1], parRules = pars, whichRules = 1:3)
     warnings[["Rule1"]] <- as.numeric((data$statistics > data$limits[, 2] | data$statistics < data$limits[, 1]) %in% TRUE)
   }

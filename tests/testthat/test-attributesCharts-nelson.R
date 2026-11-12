@@ -77,14 +77,3 @@ test_that("p chart reports shifts and trends with unequal subgroup sizes", {
   # 7 increases in a row (8 points)
   expect_equal(.nelsonColumn(results, "test3"), c(14, 15))
 })
-
-test_that("p chart test 1 uses the plotted average-size limits when sizes are within 25%", {
-  # sizes 80 and 100: the plot draws constant limits for the average size; subgroup 3 (12/80) is beyond
-  # them, but within its own exact limits
-  sizes  <- rep(c(80, 100), 6)
-  counts <- c(6, 6, 12, 5, 5, 8, 9, 5, 3, 3, 4, 6)
-  results <- .nelsonRun(counts, sizes, "pChart")
-  expect_identical(results$status, "complete")
-  expect_equal(.nelsonColumn(results, "test1"), 3)
-  expect_equal(.redPoints(results, "pChart"), 3L)
-})

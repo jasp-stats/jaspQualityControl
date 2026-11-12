@@ -273,9 +273,6 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     n.mean <- mean(sample)
     UCL <- p.hat + 3 * (sqrt(p.hat*(1 - p.hat))) / (sqrt(n.mean))
     LCL <- p.hat - 3 * (sqrt(p.hat*(1 - p.hat))) / (sqrt(n.mean))
-    # the test table checks the limits drawn in the plot
-    sixsigma$limits[, 1] <- LCL
-    sixsigma$limits[, 2] <- UCL
   }
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
   yLimits <- range(c(0,yBreaks * 1.2))
