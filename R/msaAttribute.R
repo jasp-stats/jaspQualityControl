@@ -691,7 +691,7 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
   if (!ready & options[["kendallsTau"]])
     return(table)
 
-  if (!is.numeric(dataset[[measurements[1]]])) {
+  if (!all(vapply(dataset[measurements], is.numeric, logical(1)))) {
     table$setError(gettext("Kendall's tau is only available for numeric measurements."))
   }  else if (length(unique(unlist(dataset[measurements]))) <= 2) {
     table$setError(gettext("Kendall's tau is only available for non-binary measurements."))
@@ -702,35 +702,35 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
       table$addColumnInfo(name = operator, title = gettext(operator), type = "number")
     }
 
-    table$addColumnInfo(name = standards, title = gettext(standards), type = "number")
+    if (standards != "")
+      table$addColumnInfo(name = standards, title = gettext(standards), type = "number")
+
+    # Ratings and reference matched by part ID: row p of every matrix holds part p.
+    partKey   <- .msaAttributeKey(dataset[[parts]])
+    partIds   <- sort(unique(partKey))
+    ratings   <- lapply(operatorVector, function(operator) {
+      rows <- which(dataset[[operators]] == operator)
+      as.matrix(dataset[rows[match(partIds, partKey[rows])], measurements, drop = FALSE])
+    })
+    if (standards != "")
+      reference <- as.numeric(.msaAttributeAsNumberIfPossible(dataset[[standards]]))[match(partIds, partKey)]
 
     standCorrVector <- vector(mode = "numeric")
     tableColumns <- list()
     for (i in 1:length(operatorVector)) {
       corrVector <- vector(mode = "numeric")
-      operator1 <- subset(dataset, dataset[operators] == operatorVector[i])
       for (j in 1:length(operatorVector)) {
         if (j == i) {
           corrVector <- c(corrVector, 1)
         }else{
-          operator2 <- subset(dataset, dataset[operators] == operatorVector[j])
-
-          if (length(measurements) > 1) {
-            x  <- operator1[measurements]; y  <- operator2[measurements]
-          } else {
-            x  <- operator1[[measurements]]; y  <- operator2[[measurements]]
-          }
-
-          kt <- psych::corr.test(method = "kendall", x = x, y = y)
-          corrVector <- c(corrVector, kt$r)
+          corrVector <- c(corrVector, .kendallTauBetweenAppraisers(ratings[[i]], ratings[[j]]))
         }
       }
       tableColumns[[operatorVector[i]]] <- corrVector
 
       if (standards != ""){
-
-        kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = as.numeric(.msaAttributeAsNumberIfPossible(operator1[[standards]])))
-        standCorrVector <- c(standCorrVector, kt$r)
+        # Minitab: tau-b of each trial with the standard, averaged over trials.
+        standCorrVector <- c(standCorrVector, mean(apply(ratings[[i]], 2, stats::cor, y = reference, method = "kendall")))
       }
     }
 
@@ -738,9 +738,42 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
     if (standards != "")
       tableColumns[[standards]] <- standCorrVector
     table$setData(tableColumns)
+
+    if (length(measurements) > 1) {
+      if (length(operatorVector) > 1)
+        table$addFootnote(gettext("Between appraisers: Kendall's tau-b over all combinations of the two appraisers' ratings of each part."))
+      if (standards != "")
+        table$addFootnote(gettext("Appraiser vs standard: Kendall's tau-b of each trial with the standard, averaged over trials."))
+    }
   }
 
   return(table)
+}
+
+# Kendall's tau-b between two appraisers' ratings (parts x trials, rows matched by part). Every rating of a
+# part by one appraiser is paired with every rating of that part by the other, so the value does not depend
+# on trial labels or order; with one trial each it is the ordinary tau-b. Computed without expanding the
+# pairs: pairs within a part add nothing to C - D, pairs of parts p, q add signSums(x)[p, q] * signSums(y)[p, q].
+.kendallTauBetweenAppraisers <- function(x, y) {
+  signSums <- function(m) {
+    s <- matrix(0, nrow(m), nrow(m))
+    for (i in seq_len(ncol(m))) for (k in seq_len(ncol(m)))
+      s <- s + outer(m[, i], m[, k], ">") - outer(m[, i], m[, k], "<")
+    return(s)
+  }
+  # pairs tied on one appraiser's ratings (exact equality); each rating occurs once per rating of the other appraiser
+  tiedPairs <- function(m, copies) {
+    counts <- as.numeric(tabulate(match(m, m))) * copies
+    return(sum(counts * (counts - 1) / 2))
+  }
+  sx <- signSums(x)
+  sy <- signSums(y)
+  concordance <- sum((sx * sy)[upper.tri(sx)])
+  pairs       <- choose(nrow(x) * ncol(x) * ncol(y), 2)
+  denominator <- sqrt((pairs - tiedPairs(x, ncol(y))) * (pairs - tiedPairs(y, ncol(x))))
+  if (denominator == 0)
+    return(NA_real_)
+  return(concordance / denominator)
 }
 
 .msaCheckErrors <- function(dataset, options) {
