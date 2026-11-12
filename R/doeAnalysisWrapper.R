@@ -23,7 +23,7 @@
 #'
 #' @param blocksFactorial, The column corresponding to the blocks in the design. The difference between a block variable and a discrete factor is that the blocks will not be analysed for interaction effects and are excluded from effect plots.
 #' @param blocksResponseSurface, The column corresponding to the blocks in the design. The difference between a block variable and a discrete factor is that the blocks will not be analysed for interaction effects and are excluded from effect plots.
-#' @param codeFactors, Display the results in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. For factorial designs, continuous factors are treated as categorical in the ANOVA table when this option is unchecked.
+#' @param codeFactors, Display the results in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. For factorial designs, the ANOVA table is calculated in coded units, so it does not change with this option, unless coding changes the model (an interaction or squared term without its main effects).
 #'    Defaults to \code{TRUE}.
 #' @param codeFactorsManualTable, Enter the low and high level of each factor. Blocks and discrete factors with more than two levels are not rescaled to -1/1, so they have no low and high level ("Not available").
 #' @param codeFactorsMethod, For the ordering of contrasts and to identify the alpha points in a response surface design, the low and high levels of all factors need to be specified. There are two options to handle this.
@@ -52,7 +52,7 @@
 #' @param histogramBinWidthType, Select the method used to calculate the bin widths of the residual histogram, or specify a manual number of bins.
 #' @param histogramManualNumberOfBins, Number of bins when the bin width type is set to manual.
 #' @param modelTerms, Allows manually defining the main effects and interactions in the model.
-#' @param normalEffectsPlot, Show a normal probability plot of the standardized effects.
+#' @param normalEffectsPlot, Show a normal probability plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the effects with a reference line based on Lenth's (1989) pseudo standard error, and effects larger than its margin of error are marked significant; other saturated models give an error.
 #'    Defaults to \code{FALSE}.
 #' @param optimizationIntervals, Predicted response at the optimal (or manually set) factor levels, with the confidence interval for the mean response and the prediction interval for a single new run. Blocks are averaged out; covariates are held at their mean.
 #'    Defaults to \code{FALSE}.
@@ -71,7 +71,7 @@
 #'    Defaults to \code{FALSE}.
 #' @param plotNorm, Show a normal probability plot of the residuals.
 #'    Defaults to \code{FALSE}.
-#' @param plotPareto, Show a Pareto plot of the standardized effects.
+#' @param plotPareto, Show a Pareto plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the absolute effects with the margin of error based on Lenth's (1989) pseudo standard error; other saturated models give an error.
 #'    Defaults to \code{FALSE}.
 #' @param plotRunOrder, Show a plot of the residuals per run order value.
 #'    Defaults to \code{FALSE}.
@@ -107,7 +107,7 @@
 #' @param sumOfSquaresType, How the sum of squares of each term in the ANOVA table is calculated. The types differ in which other terms a term is adjusted for. In balanced designs with orthogonal (coded) terms, such as complete two-level factorial designs, all types give the same result. In unbalanced designs, e.g. with missing runs, covariates or squared terms, they can differ. The Model, Error and Total rows are the same for all types. See the description of the ANOVA table below.
 #' - **Type I**: Sequential sums of squares: each term is adjusted only for the terms entered before it, so the results depend on the order of the terms. The term rows add up to the Model row.
 #' - **Type II**: Each term is adjusted for all other terms, except for higher-order terms that contain it. For example, A is adjusted for B, but not for A✻B.
-#' - **Type III**: Each term is adjusted for all other terms in the model, i.e. it measures what the term adds when it is entered last. Results for lower-order terms depend on how the factors are coded.
+#' - **Type III**: Each term is adjusted for all other terms in the model, i.e. it measures what the term adds when it is entered last. Results for lower-order terms depend on how the factors are coded. Not available when some coefficients are aliased.
 #' @param surfacePlotHorizontalRotation, Rotation of the surface plot in the horizontal plane, in degrees.
 #' @param surfacePlotVerticalRotation, Rotation of the surface plot in the vertical plane, in degrees.
 #' @param tableAlias, Assign alias names to the factors. Useful when factors have long names.

@@ -422,8 +422,7 @@ probabilityOfDetectionInternal <- function(jaspResults, dataset, options) {
 
         inverseLinkFunction <- stats::family(model)[["linkinv"]]
         predictions <- predict(model, setNames(data.frame(x), xvar), se.fit = TRUE, type = "link")
-        h <- (1 - CIvalue) / 2
-        offset <- qnorm(CIvalue) * predictions[["se.fit"]]
+        offset <- qnorm(1 - (1 - CIvalue) / 2) * predictions[["se.fit"]]
 
         lower <- inverseLinkFunction(predictions[["fit"]] - offset)
         upper <- inverseLinkFunction(predictions[["fit"]] + offset)

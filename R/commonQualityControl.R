@@ -545,7 +545,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       sdWithin <- mean(rowSd, na.rm = TRUE)
     } else if (unbiasingConstantUsed) {
       n <- apply(df, 1, function(x) return(sum(!is.na(x))))
-      c4s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[3]))
+      c4s <- sapply(n, function(x) return(.c4Constants(x)[["c4"]]))
       hs <- c4s^2/(1-c4s^2)
       sdWithin <- sum((hs*rowSd)/c4s)/sum(hs)
     }
@@ -558,7 +558,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       sdWithin <- 0
     } else {
       Sp <- sqrt(sum((n - 1) * rowSd^2) / nu)
-      sdWithin <- if (unbiasingConstantUsed) Sp / KnownControlStats.RS(nu + 1, 0)$constants[3] else Sp
+      sdWithin <- if (unbiasingConstantUsed) Sp / .c4Constants(nu + 1)[["c4"]] else Sp
     }
   }
   return(sdWithin)
@@ -604,6 +604,49 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   stop(errorCondition(message, class = "qcDataError", call = NULL))
 }
 
+.normalRangeConstantsCache <- new.env(parent = emptyenv())
+
+# Mean (d2) and standard deviation (d3) of the range W of N standard normal observations (Tippett, 1925):
+# E[W]   = 2 E[max] = 2 int_0^Inf P(max > y) - P(max < -y) dy
+# E[W^2] = 2 int int_{x < y} P(min <= x, max > y) dx dy
+# Probabilities are evaluated on the log scale without cancellation, so tails stay accurate for large N
+# (checked for N = 51 to 1e9). Results are memoised per N.
+.normalRangeConstants <- function(N) {
+  key <- as.character(N)
+  if (!is.null(.normalRangeConstantsCache[[key]]))
+    return(.normalRangeConstantsCache[[key]])
+
+  pMaxAbove <- function(y) -expm1(N * stats::pnorm(y, log.p = TRUE))  # 1 - Phi(y)^N
+  # P(min <= x, max > y) = P(max > y) - P(min > x, max > y), with P(min > x, max > y) = Q(x)^N (1 - (1 - Q(y) / Q(x))^N)
+  pMinBelowMaxAbove <- function(x, y) {
+    logQx <- stats::pnorm(x, lower.tail = FALSE, log.p = TRUE)
+    ratio <- exp(stats::pnorm(y, lower.tail = FALSE, log.p = TRUE) - logQx)
+    pmax(pMaxAbove(y) - exp(N * logQx) * -expm1(N * log1p(-ratio)), 0)
+  }
+  d2       <- 2 * stats::integrate(function(y) pMaxAbove(y) - exp(N * stats::pnorm(-y, log.p = TRUE)), 0, Inf, rel.tol = 1e-10)$value
+  innerEW2 <- function(y) vapply(y, function(yi) {
+    stats::integrate(function(x) pMinBelowMaxAbove(x, yi), -Inf, yi, rel.tol = 1e-10)$value
+  }, numeric(1))
+  ew2       <- 2 * stats::integrate(innerEW2, -Inf, Inf, rel.tol = 1e-10)$value
+  constants <- c(d2 = d2, d3 = sqrt(ew2 - d2^2))
+
+  .normalRangeConstantsCache[[key]] <- constants
+  return(constants)
+}
+
+# c4 (mean of the sample std. dev. of N standard normal observations) and c5 = sqrt(1 - c4^2); separate from the range
+# constants so that S-bar, pooled and S chart calculations do not depend on them
+.c4Constants <- function(N) {
+  if (N > 1) {
+    c4 <- sqrt(2/(N-1)) * exp(lgamma(N/2) - lgamma((N-1)/2))
+    c5 <- sqrt(1 - c4^2)
+  } else {
+    c4 <- 0
+    c5 <- 0
+  }
+  return(list(c4 = c4, c5 = c5)) # list, as c() would mangle the names when N is named (e.g. from rowSums)
+}
+
 KnownControlStats.RS <- function(N, sigma = 3) {
 
   # d2 and d3 are unbiasing constants as reported in D. J. Wheeler and D. S. Chambers. (1992). Understanding Statistical Process Control, Second Edition, SPC Press, Inc.
@@ -624,20 +667,18 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     d3 <- 0.80818 - 0.0051871 * N + 0.00005098 * N^2 - 0.00000019 * N^3
     d2 <- Data.d2[N == Data.d2$n,2]
   } else if (N > 50) {
-    d3 <- 0.80818 - 0.0051871 * N + 0.00005098 * N^2 - 0.00000019 * N^3
-    d2 <- 2.88606 + 0.051313 * N - 0.00049243 * N^2 + 0.00000188 * N^3
+    # beyond the tables, exact values by numerical integration (polynomial approximations fail for large N)
+    exact <- .normalRangeConstants(N)
+    d2 <- stats::setNames(exact[["d2"]], names(N)) # keep names of N, as the previous polynomials did
+    d3 <- stats::setNames(exact[["d3"]], names(N))
   } else {
     d2 <- Data.d2[N == Data.d2$n,2]
     d3 <- Data.d3[N == Data.d3$n,2]
   }
 
-  if (N > 1) {
-    c4 <- sqrt(2/(N-1)) * exp(lgamma(N/2) - lgamma((N-1)/2))
-    c5 <- sqrt(1 - c4^2)
-  } else {
-    c4 <- 0
-    c5 <- 0
-  }
+  c4c5 <- .c4Constants(N)
+  c4   <- c4c5[["c4"]]
+  c5   <- c4c5[["c5"]]
 
   UCL <- d2 * sigma + 3 * d3 * sigma
   CL <- d2 * sigma
@@ -662,8 +703,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       LCL <- max(0, LCL) # LCL in R-chart must be >= 0
     } else  if (type == "s") {
       if (n[i] > 1) {
-        c4 <- KnownControlStats.RS(n[i], 0)$constants[3]
-        c5 <- KnownControlStats.RS(n[i], 0)$constants[4]
+        c4 <- .c4Constants(n[i])[["c4"]]
+        c5 <- .c4Constants(n[i])[["c5"]]
         if (unbiasingConstantUsed) {
           UCL <- c4 * sigma + k * sigma * c5
           LCL <- c4 * sigma - k * sigma * c5
@@ -904,7 +945,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else rowSums(!is.na(dataCurrentStage)) # returns the number of non NA values per row
       limits <- .controlLimits(sigma = sigma, n = n, type = "s", unbiasingConstantUsed = unbiasingConstantUsed, k = nSigmasControlLimits)
       if (unbiasingConstantUsed) {
-        c4s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[3]))
+        c4s <- sapply(n, function(x) return(.c4Constants(x)[["c4"]]))
         center <- sigma * c4s
       } else {
         center <- sigma
@@ -1410,39 +1451,23 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   n <- sum(!is.na(intervals))
   p <- if (identical(phase2Proportion, "")) ((n - 1) / n) / (intervalsMean + 1) else phase2Proportion
 
-  # calculate CL
-  p2a <- pgeom(qgeom(0.5, prob = p) - 1, prob = p, lower.tail = T)      # p2a is the CDF at G2a
-  p2b <- pgeom(qgeom(0.5, prob = p), prob = p, lower.tail = T)  # p2b is the CDF at G2b
-  # Find G2a and G2b
-  G2a <- qgeom(p2a, prob = p) + 1  # Add 1 to get trials count
-  G2b <- G2a + 1                   # Since G2b = G2a + 1
-  # Perform linear interpolation to find G2
-  G2 <- G2a + (0.5 - p2a) / (p2b - p2a)
-  # Calculate CL = G2 - 1
-  CL <- G2 - 1
-
-  # calculate LCL
-  p1a <- pgeom(qgeom(0.99865, prob = p, lower.tail = F) - 1, prob = p, lower.tail = T)
-  p1b <- pgeom(qgeom(0.99865, prob = p, lower.tail = F), prob = p, lower.tail = T)
-  # Find G2a and G2b
-  G1a <- qgeom(p1a, prob = p) + 1
-  G1b <- G1a + 1
-  # Perform linear interpolation to find G1
-  G1 <- G1a + (0.00135  - p1a) / (p1b - p1a)
-  LCL <- G1 - 1
-  LCL <- max(0, LCL)
-
-  # calculate UCL
-  p3a <- pgeom(qgeom(0.00135, prob = p, lower.tail = F) - 1, prob = p, lower.tail = T)      # p2a is the CDF at G2a
-  p3b <- pgeom(qgeom(0.00135, prob = p, lower.tail = F), prob = p, lower.tail = T)  # p2b is the CDF at G2b
-  # Find G2a and G2b
-  G3a <- qgeom(p3a, prob = p) + 1  # Add 1 to get trials count
-  G3b <- G3a + 1                   # Since G2b = G2a + 1
-  # Perform linear interpolation to find G2
-  G3 <- G3a + (0.99865  - p3a) / (p3b - p3a)
-  UCL <- G3 - 1
+  CL  <- .gChartProbabilityLimit(0.5,     p)
+  LCL <- .gChartProbabilityLimit(0.00135, p)
+  UCL <- .gChartProbabilityLimit(0.99865, p)
 
   return(list(p = p, CL = CL, UCL = UCL, LCL = LCL))
+}
+
+# Interpolated quantile of the number of trials until an event, G ~ geometric with CDF F(g) = 1 - (1 - p)^g:
+# Ga, Gb = Ga + 1 with F(Ga) < alpha <= F(Gb), G = Ga + (alpha - F(Ga)) / (F(Gb) - F(Ga)).
+# The chart plots the number between events, so the limit is G - 1 (floored at 0, the smallest possible gap).
+# With the survival function S(g) = 1 - F(g), F(Gb) - F(Ga) = p * S(Ga), so G = Ga + (1 - (1 - alpha) / S(Ga)) / p,
+# evaluated on the log scale to stay accurate for very small p.
+.gChartProbabilityLimit <- function(alpha, p) {
+  Ga    <- qgeom(alpha, prob = p)  # F(g) = pgeom(g - 1), so qgeom() returns Ga directly
+  logSa <- pgeom(Ga - 1, prob = p, lower.tail = FALSE, log.p = TRUE)
+  G     <- Ga - expm1(log1p(-alpha) - logSa) / p
+  return(max(0, G - 1))
 }
 
 .allParametersFixed <- function(distribution, fix.arg) {
@@ -1467,6 +1492,37 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
   returnBol <- all(pars %in% names(fix.arg))
   return(returnBol)
+}
+
+# The Weibull, gamma, log-logistic and 3-parameter Weibull MLEs are scale-equivariant, but optim works on the raw
+# scale, so fits failed or drifted for data in very small or large units. Fit on data / unitScale and scale back.
+.qcUnitScale <- function(data) {
+  for (unitScale in c(stats::median(abs(data)), max(abs(data))))
+    if (is.finite(unitScale) && unitScale > 0)
+      return(unitScale)
+  return(1)
+}
+
+# optim as fitdistrplus calls it by default, but without the Hessian: only the estimates are used, and its fixed
+# finite-difference step (1e-3) makes the whole fit fail ("non-finite finite-difference value") when it crosses a
+# parameter bound, e.g. a 3-parameter Weibull scale or threshold gap of ~1e-3 for data with a large offset (100 +- 0.1).
+.qcOptimWithoutHessian <- function(fn, par, ...) {
+  return(stats::optim(par = par, fn = fn, method = if (length(par) > 1) "Nelder-Mead" else "BFGS", ...))
+}
+
+# start must be on the rescaled data (data / unitScale); fix.arg and the returned estimates are on the data scale.
+.qcFitdistUnitFree <- function(data, distr, fix.arg = NULL, start = NULL, unitScale = .qcUnitScale(data), ...) {
+  unitPower <- c(scale = 1, thres = 1, rate = -1) # how each parameter changes with the unit of the data
+  for (par in intersect(names(fix.arg), names(unitPower)))
+    fix.arg[[par]] <- fix.arg[[par]] / unitScale^unitPower[[par]]
+
+  fit <- fitdistrplus::fitdist(data / unitScale, distr, method = "mle", start = start, fix.arg = fix.arg,
+                               custom.optim = .qcOptimWithoutHessian, ...)
+
+  estimate <- fit$estimate
+  for (par in intersect(names(estimate), names(unitPower)))
+    estimate[[par]] <- estimate[[par]] * unitScale^unitPower[[par]]
+  return(estimate)
 }
 
 .distributionParameters <- function(data,
@@ -1517,17 +1573,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       beta <- fix.arg[["shape"]] # shape
       theta <- fix.arg[["scale"]] # scale
     } else {
-      fitWeibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle",
-                                              control = list(maxit = 10000),
-                                              fix.arg = fix.arg))
-
-
-
-
-      if (jaspBase::isTryError(fitWeibull))
+      weibullPars <- try(.qcFitdistUnitFree(data, "weibull", control = list(maxit = 10000), fix.arg = fix.arg))
+      if (jaspBase::isTryError(weibullPars))
         stop(estimationErrorMessage, call. = FALSE)
 
-      weibullPars <- fitWeibull$estimate
       if (!is.null(fix.arg)) {
         weibullPars[names(fix.arg)] <- fix.arg
       }
@@ -1596,8 +1645,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fix.arg[["scale"]] # scale
       threshold <- fix.arg[["thres"]] # threshold
     } else {
-      # Set starting values that match other software packages more closely
-      weibull3start <- try(MASS::fitdistr(data, function(x, shape, scale, thres)
+      # Set starting values that match other software packages more closely (on the rescaled data, see .qcFitdistUnitFree)
+      unitScale <- .qcUnitScale(data)
+      weibull3start <- try(MASS::fitdistr(data / unitScale, function(x, shape, scale, thres)
         dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = 0)))
 
       # If estimation of starting values fails, try with fixed starting values
@@ -1632,17 +1682,18 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
 
       # Estimate parameters using fitdistrplus, because it can keep values fixed
-      weilbull3Fit <- try(fitdistrplus::fitdist(data, "weibull3Temp", method = "mle",
-                                                start = weibull3startList,
-                                                fix.arg = fix.arg))
-      if (jaspBase::isTryError(weilbull3Fit))
+      weibull3Pars <- try(.qcFitdistUnitFree(data, "weibull3Temp", control = list(maxit = 10000), start = weibull3startList,
+                                             fix.arg = fix.arg, unitScale = unitScale))
+      if (jaspBase::isTryError(weibull3Pars))
         stop(estimationErrorMessage, call. = FALSE)
-
-      weibull3Pars <- weilbull3Fit$estimate
 
       if (!is.null(fix.arg)) {
         weibull3Pars[names(fix.arg)] <- fix.arg
       }
+      # With a free threshold and shape <= 1 the likelihood increases (for shape < 1 without bound) as the threshold
+      # approaches the smallest observation, so there is no MLE and the estimate is wherever the optimizer stopped.
+      if (!"thres" %in% names(fix.arg) && (weibull3Pars[["shape"]] <= 1 || weibull3Pars[["thres"]] >= min(data)))
+        stop(estimationErrorMessage, call. = FALSE)
 
       beta  <- weibull3Pars[["shape"]] # shape
       theta <- weibull3Pars[["scale"]] # scale
@@ -1656,13 +1707,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       beta <- fix.arg[["shape"]] # shape
       theta <- 1/fix.arg[["rate"]] # scale
     } else {
-      gammaFit <- try(fitdistrplus::fitdist(data, "gamma", method = "mle",
-                                            control = list(maxit = 10000),
-                                            fix.arg = fix.arg))
-      if (jaspBase::isTryError(gammaFit))
+      gammaPars <- try(.qcFitdistUnitFree(data, "gamma", control = list(maxit = 10000), fix.arg = fix.arg))
+      if (jaspBase::isTryError(gammaPars))
         stop(estimationErrorMessage, call. = FALSE)
-
-      gammaPars <- gammaFit$estimate
 
       if (!is.null(fix.arg)) {
         gammaPars[names(fix.arg)] <- fix.arg
@@ -1738,14 +1785,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         loglogStartList <- loglogStartList[!names(loglogStartList) %in% names(fix.arg)]
       }
 
-      loglogFit <- try(fitdistrplus::fitdist(data, "llogisTemp", method = "mle",
-                                             control = list(maxit = 10000),
-                                             start = loglogStartList,
-                                             fix.arg = fix.arg))
-      if (jaspBase::isTryError(loglogFit))
+      loglogPars <- try(.qcFitdistUnitFree(data, "llogisTemp", control = list(maxit = 10000),
+                                           start = loglogStartList, fix.arg = fix.arg))
+      if (jaspBase::isTryError(loglogPars))
         stop(estimationErrorMessage, call. = FALSE)
-
-      loglogPars <- loglogFit$estimate
 
       if (!is.null(fix.arg)) {
         loglogPars[names(fix.arg)] <- fix.arg

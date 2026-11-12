@@ -48,11 +48,16 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
 
   # check for balanced design
   if (ready) {
-    replicatesTable <- table(dataset[[parts]])
-    if (!all(replicatesTable == replicatesTable[1])) {
+    design <- .gaugeNestedDesign(dataset, operators, parts)
+    balanceError <- NULL
+    if (!all(design[["replicatesPerCell"]] == design[["replicatesPerCell"]][1]))
+      balanceError <- gettext("Unbalanced design. Some parts have more repeated measurements than others.")
+    else if (!all(design[["partsPerOperator"]] == design[["partsPerOperator"]][1]))
+      balanceError <- gettext("Unbalanced design. Some operators measured more parts than others.")
+    if (!is.null(balanceError)) {
       plot <- createJaspPlot(title = gettext("Gauge r&R - nested"), width = 700, height = 400)
       jaspResults[["gaugeRRNonRep"]] <- plot
-      plot$setError(gettext("Unbalanced design. Some parts have more repeated measurements than others."))
+      plot$setError(balanceError)
       return()
     }
   }
@@ -514,16 +519,24 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
   return(anovaTable)
 }
 
+# Replicates per operator x part cell and distinct parts per operator. Parts are nested in operators,
+# so a part label reused by different operators denotes different parts.
+.gaugeNestedDesign <- function(dataset, operators, parts) {
+  cellCounts <- table(dataset[[operators]], dataset[[parts]])
+  partsPerOperator <- rowSums(cellCounts > 0)
+  return(list("replicatesPerCell" = unname(cellCounts[cellCounts > 0]),
+              "partsPerOperator"  = unname(partsPerOperator[partsPerOperator > 0])))
+}
+
 .gaugeNestedVarComponents <- function(dataset, operators, parts, measurements, ms) {
-  nOperators <- length(unique(dataset[[operators]]))
-  replicatesTable <- table(dataset[[parts]])
-  nReplicates <- unname(replicatesTable)[1] # assuming constant repetitions across parts
-  nParts  <- length(unique(dataset[[parts]]))
+  design <- .gaugeNestedDesign(dataset, operators, parts)
+  nReplicates <- design[["replicatesPerCell"]][1]       # balanced design checked before
+  nPartsPerOperator <- design[["partsPerOperator"]][1]  # balanced design checked before
   msOperator <- ms[1]
   msOperatorPart <- ms[2]
   msRepeat <- ms[3]
   varRepeat <- msRepeat
-  varReprod <- (msOperator - msOperatorPart) / (nParts * nReplicates)
+  varReprod <- (msOperator - msOperatorPart) / (nPartsPerOperator * nReplicates)
   if (varReprod < 0)
     varReprod <- 0
   varPart <- (msOperatorPart - msRepeat) / nReplicates

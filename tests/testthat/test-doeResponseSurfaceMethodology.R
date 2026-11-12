@@ -724,3 +724,17 @@ test_that("10.2 Six Cont. Pred. One Disc. Pred. Box-Behnken Design Summary table
   jaspTools::expect_equal_tables(table,
                                  list(1, 54, 1, 6, 6, 1, "Value", 1, 108))
 })
+
+# Axial distance helper ####
+test_that("Orthogonal axial distance uses the fractional core size and all k axial pairs", {
+  # expected values equal rsm::ccd(..., alpha = "orthogonal"); half fractions use generator x5 ~ x1*x2*x3*x4
+  computeAlpha <- jaspQualityControl:::.doeRsmComputeAlpha
+  # full factorial cores (unchanged)
+  expect_equal(computeAlpha(k = 3, designtype = 0, centerPointsInCube = 4, centerPointsInStar = 2, alphaType = "orthogonal"), 1.632993, tolerance = 1e-6)
+  expect_equal(computeAlpha(k = 5, designtype = 0, centerPointsInCube = 8, centerPointsInStar = 4, alphaType = "orthogonal"), 2.366432, tolerance = 1e-6)
+  # half fraction 2^(5-1) core
+  expect_equal(computeAlpha(k = 5, designtype = 1, centerPointsInCube = 8, centerPointsInStar = 4, alphaType = "orthogonal"), 2.160247, tolerance = 1e-6)
+  expect_equal(computeAlpha(k = 5, designtype = 1, centerPointsInCube = 6, centerPointsInStar = 1, alphaType = "orthogonal"), 2)
+  # rotatable: 2^((k - p) / 4)
+  expect_equal(computeAlpha(k = 5, designtype = 1, centerPointsInCube = 8, centerPointsInStar = 4, alphaType = "rotatable"), 2)
+})

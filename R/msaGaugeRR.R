@@ -426,25 +426,23 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
       msInteraction <- ssInteraction / dfInteraction
     }
 
-    if(singleOperator){
-      fPart <- msPart / msRepWithInteraction
-    }else{
-      fPart <- msPart / msInteraction
-      fOperator <- msOperator / msInteraction
+    # Error term for Part and Operator: repeatability for the one-way (Type 3) and the fixed-effects model,
+    # Part x Operator interaction for the random-effects model. The interaction is always tested against repeatability.
+    if (singleOperator || options[["anovaModelType"]] == "fixedEffect") {
+      msError <- msRepWithInteraction
+      dfError <- dfRepWithInteraction
+    } else {
+      msError <- msInteraction
+      dfError <- dfInteraction
+    }
+
+    fPart <- msPart / msError
+    pPart <- pf(fPart, dfPart, dfError, lower.tail = FALSE)
+    if (!singleOperator) {
+      fOperator    <- msOperator / msError
+      pOperator    <- pf(fOperator, dfOperators, dfError, lower.tail = FALSE)
       fInteraction <- msInteraction / msRepWithInteraction
-    }
-
-    if (options[["anovaModelType"]] == "fixedEffect"){
-      fPart <- msPart / msRepWithInteraction
-      fOperator <- msOperator / msRepWithInteraction
-    }
-
-    if(singleOperator){
-      pPart <- pf(fPart, dfPart, dfRepWithInteraction, lower.tail = F)
-    }else{
-      pPart <- pf(fPart, dfPart, dfInteraction, lower.tail = F)
-      pOperator <- pf(fOperator, dfOperators, dfInteraction, lower.tail = F)
-      pInteraction <- pf(fInteraction, dfInteraction, dfRepWithInteraction, lower.tail = F)
+      pInteraction <- pf(fInteraction, dfInteraction, dfRepWithInteraction, lower.tail = FALSE)
     }
 
     if(singleOperator){
