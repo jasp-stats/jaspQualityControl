@@ -671,8 +671,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   } else if (N > 50) {
     # beyond the tables, exact values by numerical integration (polynomial approximations fail for large N)
     exact <- .normalRangeConstants(N)
-    d2 <- exact[["d2"]]
-    d3 <- exact[["d3"]]
+    d2 <- stats::setNames(exact[["d2"]], names(N)) # keep names of N, as the previous polynomials did
+    d3 <- stats::setNames(exact[["d3"]], names(N))
   } else {
     d2 <- Data.d2[N == Data.d2$n,2]
     d3 <- Data.d3[N == Data.d3$n,2]
