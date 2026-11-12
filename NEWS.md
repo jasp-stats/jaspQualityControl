@@ -75,6 +75,7 @@
 * Control charts: the CL, LCL and UCL labels of values of 1000 or more keep all their decimals (e.g. 1908.333 instead of 1908.33); the shortened labels could also be rounded wrong (2092.49 instead of 2092.495).
 * Process Capability, stages: the Cpm confidence interval is no longer blanked for the stages after the baseline, and the change row no longer shows the difference of the interval bounds as an interval.
 * Process Capability, stages: the change (vs. baseline) rows are computed from the unrounded values, so they are the rounded difference; the difference of the rounded values could be off in the last decimal.
+* Process Capability, non-normal: Pp, PpL, PpU, Ppk and the observed and expected ppm use the specification limits as entered; they used the limits rounded to the displayed decimals (e.g. 0.0144 as 0.014), which changed the results for limits with more decimals, such as measurements in small units.
 
 ---
 
