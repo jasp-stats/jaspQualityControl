@@ -2586,7 +2586,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- plnorm(q = usl,  meanlog = beta, sdlog = theta)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, plnorm(q = usl, meanlog = beta, sdlog = theta, lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <- qlnorm(p = uPercentile, meanlog = beta, sdlog = theta)
@@ -2619,7 +2619,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- pweibull(q = usl, shape = beta, scale = theta)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, pweibull(q = usl, shape = beta, scale = theta, lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <- qweibull(p = uPercentile, shape = beta, scale = theta)
@@ -2651,7 +2651,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
         if(options[['nonNormalMethod' ]] == "nonConformance"){
           p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, plnorm(q = usl - threshold, meanlog = beta, sdlog = theta, lower.tail = FALSE)) # plnorm3() takes 1 - F for the upper tail, so use plnorm() on the shifted value
           ppu <- zUSL/3
         } else {
           x99 <- FAdist::qlnorm3(p = uPercentile, shape = theta, scale = beta, thres = threshold)
@@ -2683,7 +2683,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold, lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <- FAdist::qweibull3(p = uPercentile, shape = beta, scale = theta, thres = threshold)
@@ -2714,7 +2714,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- pgamma(q = usl, shape = beta, scale = theta, lower.tail = TRUE)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, pgamma(q = usl, shape = beta, scale = theta, lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <-   qgamma(p = uPercentile, shape = beta, scale = theta)
@@ -2746,7 +2746,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <-  pexp(q = usl, rate = 1/theta, lower.tail = TRUE)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, pexp(q = usl, rate = 1/theta, lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <-  qexp(p = uPercentile, rate = 1/theta)
@@ -2777,7 +2777,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <-  plogis(q = usl, location = beta, scale = theta, lower.tail = TRUE)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, plogis(q = usl, location = beta, scale = theta, lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <- qlogis(p = uPercentile, location = beta, scale = theta)
@@ -2808,7 +2808,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- flexsurv::pllogis(q = usl, shape = 1/theta, scale = exp(beta), lower.tail = TRUE)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, flexsurv::pllogis(q = usl, shape = 1/theta, scale = exp(beta), lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <- flexsurv::qllogis(p = uPercentile, shape = 1/theta, scale = exp(beta))
@@ -2943,7 +2943,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - plnorm(q = usl, meanlog = beta, sdlog = theta))
+        eoUSL <- 1e6 * plnorm(q = usl, meanlog = beta, sdlog = theta, lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -2958,7 +2958,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - pweibull(q = usl, shape = beta, scale = theta))
+        eoUSL <- 1e6 * pweibull(q = usl, shape = beta, scale = theta, lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -2973,7 +2973,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold)) # in this function, shape is theta and scale is beta, which is reverse to convention
+        eoUSL <- 1e6 * plnorm(q = usl - threshold, meanlog = beta, sdlog = theta, lower.tail = FALSE) # plnorm3() takes 1 - F for the upper tail, so use plnorm() on the shifted value
       } else {
         eoUSL <- NA
       }
@@ -2988,7 +2988,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold))
+        eoUSL <- 1e6 * FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold, lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -3004,7 +3004,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - pgamma(q = usl, shape = beta, scale = theta, lower.tail = TRUE))
+        eoUSL <- 1e6 * pgamma(q = usl, shape = beta, scale = theta, lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -3020,7 +3020,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - pexp(q = usl, rate = 1/theta, lower.tail = TRUE))
+        eoUSL <- 1e6 * pexp(q = usl, rate = 1/theta, lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -3035,7 +3035,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - plogis(q = usl, location = beta, scale = theta, lower.tail = TRUE))
+        eoUSL <- 1e6 * plogis(q = usl, location = beta, scale = theta, lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -3050,7 +3050,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - flexsurv::pllogis(q = usl, shape = 1/theta, scale = exp(beta), lower.tail = TRUE))
+        eoUSL <- 1e6 * flexsurv::pllogis(q = usl, shape = 1/theta, scale = exp(beta), lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -3811,6 +3811,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plotList[[i]] <- p
   }
   return(plotList)
+}
+
+# Standard normal quantile z with pnorm(z) = pBelow = 1 - pAbove, taken from the smaller tail: the other tail
+# probability can round to 1 (e.g. P(X <= USL) of a highly capable process), which would give an infinite z
+.pcNormalQuantileFromTails <- function(pBelow, pAbove) {
+  if (isTRUE(pAbove < pBelow)) qnorm(pAbove, lower.tail = FALSE) else qnorm(pBelow)
 }
 
 .pcTableFormatNumbers <- function(number) {

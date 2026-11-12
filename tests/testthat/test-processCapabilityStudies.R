@@ -4759,6 +4759,74 @@ for (distribution in c("weibull", "lognormal")) {
   })
 }
 
+# Non-normal capability: PpU and Pp stay finite when USL lies far in a tail of the fitted distribution ####
+# Each USL lies about 10 SDs (normal equivalent) from the fitted distribution's centre, where one of P(X <= USL) and P(X > USL)
+# rounds to 1: above the process for the capable cases, below it for the last case.
+# Reference: Z_USL with pnorm(Z_USL) = P(X <= USL) from the smaller tail, Z_LSL = qnorm(P(X < LSL)), PpU = Z_USL/3, PpL = -Z_LSL/3,
+# Pp = (Z_USL - Z_LSL)/6, evaluated at the fitted parameters reported in the summary table.
+farTailCases <- list(
+  list(distribution = "lognormal",           x = qlnorm(ppoints(100), meanlog = 2, sdlog = 0.2),          lsl = 3,    usl = 60),
+  list(distribution = "weibull",             x = qweibull(ppoints(100), shape = 5, scale = 8),            lsl = 3,    usl = 18),
+  list(distribution = "3ParameterLognormal", x = 5 + qlnorm(ppoints(100), meanlog = 1, sdlog = 0.3),      lsl = 6,    usl = 70),
+  list(distribution = "3ParameterWeibull",   x = 5 + qweibull(ppoints(100), shape = 2, scale = 3),        lsl = 5.5,  usl = 27),
+  list(distribution = "gamma",               x = qgamma(ppoints(100), shape = 25, scale = 0.3),           lsl = 3,    usl = 30),
+  list(distribution = "exponential",         x = qexp(ppoints(100), rate = 1/2),                          lsl = 0.01, usl = 110),
+  list(distribution = "logistic",            x = qlogis(ppoints(100), location = 7.5, scale = 0.5),       lsl = 3,    usl = 35),
+  list(distribution = "loglogistic",         x = flexsurv::qllogis(ppoints(100), shape = 8, scale = 7.4), lsl = 3,    usl = 7000),
+  list(distribution = "lognormal",           x = qlnorm(ppoints(100), meanlog = 2, sdlog = 0.2),          lsl = 0.5,  usl = 1)
+)
+farTailCdf <- function(distribution, q, beta, theta, threshold, lower.tail) {
+  switch(distribution,
+         lognormal             = plnorm(q, meanlog = beta, sdlog = theta, lower.tail = lower.tail),
+         weibull               = pweibull(q, shape = beta, scale = theta, lower.tail = lower.tail),
+         "3ParameterLognormal" = plnorm(q - threshold, meanlog = beta, sdlog = theta, lower.tail = lower.tail),
+         "3ParameterWeibull"   = pweibull(q - threshold, shape = beta, scale = theta, lower.tail = lower.tail),
+         gamma                 = pgamma(q, shape = beta, scale = theta, lower.tail = lower.tail),
+         exponential           = pexp(q, rate = 1/theta, lower.tail = lower.tail),
+         logistic              = plogis(q, location = beta, scale = theta, lower.tail = lower.tail),
+         loglogistic           = flexsurv::pllogis(q, shape = 1/theta, scale = exp(beta), lower.tail = lower.tail))
+}
+# table values are rounded to .numDecimals (at least 2) before they are returned
+expectRoundedValue <- function(actual, reference) expect_lt(abs(actual - reference), 0.006)
+for (farTailCase in farTailCases) {
+  distribution <- farTailCase$distribution
+  options <- analysisOptions("processCapabilityStudies")
+  options$testSet <- "jaspDefault"
+  options$measurementLongFormat <- "x"
+  options$subgroupSizeType <- "manual"
+  options$manualSubgroupSizeValue <- 5
+  options$probabilityPlotRankMethod <- "bernard"
+  options$controlChartType <- "xBarR"
+  options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+  options$nonNormalDistribution <- distribution
+  options$nullDistribution <- if (distribution %in% c("lognormal", "weibull", "3ParameterLognormal", "3ParameterWeibull")) distribution else "normal"
+  options$nonNormalMethod <- "nonConformance"
+  options$lowerSpecificationLimit <- TRUE
+  options$upperSpecificationLimit <- TRUE
+  options$lowerSpecificationLimitValue <- farTailCase$lsl
+  options$upperSpecificationLimitValue <- farTailCase$usl
+  set.seed(1)
+  results <- runAnalysis("processCapabilityStudies", data.frame(x = farTailCase$x), options)
+
+  test_that(sprintf("(%s, USL = %s) PpU and Pp are finite when USL lies far in a tail", distribution, farTailCase$usl), {
+    nonNormalContainer <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]]
+    fit         <- nonNormalContainer[["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]][[1]]
+    performance <- nonNormalContainer[["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]][[1]]
+    pBelowUsl <- farTailCdf(distribution, farTailCase$usl, fit[["beta"]], fit[["theta"]], fit[["threshold"]], lower.tail = TRUE)
+    pAboveUsl <- farTailCdf(distribution, farTailCase$usl, fit[["beta"]], fit[["theta"]], fit[["threshold"]], lower.tail = FALSE)
+    pBelowLsl <- farTailCdf(distribution, farTailCase$lsl, fit[["beta"]], fit[["theta"]], fit[["threshold"]], lower.tail = TRUE)
+    zUsl <- if (pAboveUsl < pBelowUsl) qnorm(pAboveUsl, lower.tail = FALSE) else qnorm(pBelowUsl)
+    zLsl <- qnorm(pBelowLsl)
+    expect_gt(abs(zUsl), 8.5)
+    expect_true(is.finite(performance[["ppu"]]))
+    expect_true(is.finite(performance[["pp"]]))
+    expectRoundedValue(performance[["ppu"]], zUsl / 3)
+    expectRoundedValue(performance[["ppl"]], -zLsl / 3)
+    expectRoundedValue(performance[["pp"]],  (zUsl - zLsl) / 6)
+    expectRoundedValue(performance[["ppk"]], min(zUsl, -zLsl) / 3)
+  })
+}
+
 # Interleaved stages: test results use the label of the flagged subgroup (jasp-issues#4672) ####
 # Stages alternate by row; the chart shows all A subgroups, then all B subgroups. Row 4 (R4) is out of control.
 interleavedStagesDataset <- data.frame(
