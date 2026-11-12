@@ -7317,3 +7317,35 @@ test_that("62.15 Saturated model without unique effects: the effect plots are ti
     expect_match(collection[["y_plotPareto"]][["error"]][["errorMessage"]], "No effects to plot")
   }
 })
+
+test_that("62.16 Effect plots label the terms with decoded names when alias names are off", {
+  # JASP decodes plot text only after the layout is made, so encoded names would take up the room of their encoded length
+  options <- saturatedFactorialOptions("Rate", c("A", "B", "C", "D"),
+                                       terms = unlist(lapply(1:4, function(k) combn(c("A", "B", "C", "D"), k, simplify = FALSE)), recursive = FALSE))
+  options$tableAlias        <- FALSE
+  options$plotPareto        <- TRUE
+  options$normalEffectsPlot <- TRUE
+  set.seed(123)
+  results    <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_filtrationRate.csv", options)
+  collection <- results[["results"]][["Rate"]][["collection"]]
+  for (plotName in c("Rate_plotPareto", "Rate_normalEffectsPlot")) {
+    labels <- results[["state"]][["figures"]][[collection[[plotName]][["data"]]]][["obj"]][["data"]][["fac"]]
+    expect_true(all(c("A", "A✻C", "A✻B✻C✻D") %in% labels))
+    expect_false(any(grepl("JASPColumn", labels)))
+  }
+})
+
+test_that("62.17 Normal plot of effects draws its reference line only within the percent limits", {
+  # pnorm() is exactly 1 far in the right tail, which the probit scale drew as a line along the top of the panel:
+  # saturated (effects up to 21.6, PSE = 2.625) and with t-values (order 2, t up to 8.55)
+  filtrationTerms <- unlist(lapply(1:4, function(k) combn(c("A", "B", "C", "D"), k, simplify = FALSE)), recursive = FALSE)
+  for (order in c(4, 2)) {
+    options <- saturatedFactorialOptions("Rate", c("A", "B", "C", "D"), terms = filtrationTerms[lengths(filtrationTerms) <= order])
+    options$normalEffectsPlot <- TRUE
+    set.seed(123)
+    results  <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_filtrationRate.csv", options)
+    plotName <- results[["results"]][["Rate"]][["collection"]][["Rate_normalEffectsPlot"]][["data"]]
+    line     <- ggplot2::layer_data(results[["state"]][["figures"]][[plotName]][["obj"]], 1)
+    expect_equal(line[["y"]], stats::qnorm(c(0.0001, 0.9999))) # probit scale: the line ends at the percent limits
+  }
+})
