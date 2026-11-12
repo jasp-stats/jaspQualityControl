@@ -781,10 +781,8 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   }
   else {
 
-    if (name == "np" || name == "c" || name == "u" || name == "Laney p'" || name == "Laney u'")
+    if (name %in% c("P", "np", "c", "u", "Laney p'", "Laney u'"))
       Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "c")
-    else if (name == "P")
-      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "p")
     else
       Test <- NelsonLaws(data = sixsigma, xLabels = xLabels)
 

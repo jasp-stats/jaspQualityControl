@@ -231,19 +231,17 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   pars$Rule4$convention = "minitab"
 
   #Evaluate all rules
-  if (chart == "p") {
-    n = length(data$statistics)
-    warnings <- data.frame(x = rep(1,n), Rule1 = rep(1,n), Rule2 = rep(1,n), Rule3 = rep(1,n))
-    for( i in 1:length(data$statistics)) {
-      warningsRaw <- Rspc::EvaluateRules(x = c(data$statistics[i],0), type = "c", lcl = data$limits[i,1], ucl = data$limits[i,2], cl = data$center, parRules = pars,
-                                         whichRules = c(1:3,5,7:8))[1,]
-      warnings[i,] <- warningsRaw
-    }
-  } else {
+  if (allsix) {
+    # the zone tests need the (constant) limits
     lcl <- ifelse(is.nan(data$limits[1,1]) || is.na(data$limits[1,1]), NA, data$limits[1,1])
     ucl <- ifelse(is.nan(data$limits[1,2])  || is.na(data$limits[1,2]), NA, data$limits[1,2])
     warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = lcl, ucl = ucl, cl = data$center[1], parRules = pars,
                                     whichRules = c(1:3,5,7:8))
+  } else {
+    # Tests 2 and 3 need only the centre line. Test 1 uses each subgroup's own limits, which vary with unequal
+    # subgroup sizes.
+    warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, cl = data$center[1], parRules = pars, whichRules = 1:3)
+    warnings[["Rule1"]] <- as.numeric((data$statistics > data$limits[, 2] | data$statistics < data$limits[, 1]) %in% TRUE)
   }
 
   if (allsix) {
