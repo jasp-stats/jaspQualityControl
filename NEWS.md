@@ -28,6 +28,7 @@
 * DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
 ## Fixed
+* Probability of detection: the confidence band of the detection plot used the one-sided critical value, so a band labelled 95% was a 90% interval. It is now a two-sided interval at the chosen level (computed on the link scale and back-transformed) and therefore wider; the fitted curve and all tables are unchanged.
 * Process Capability: with stages, the probability plot (also in the report) now fits the line and confidence bands to each stage's data; previously every stage showed the fit of the last stage.
 * Process Capability: the 95% confidence bands of the Weibull probability plot (also in the report) now use the standard normal critical value (1.96); previously they used 1.31 and covered only about 80%.
 * Process Capability: the confidence bands of the probability plot no longer disappear for data that vary on the order of 0.001 (e.g. measurements in small units); the numerical derivatives now use steps relative to small fitted parameters.
