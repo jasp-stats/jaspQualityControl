@@ -1480,14 +1480,21 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(1)
 }
 
-# start must be on the rescaled data (data / .qcUnitScale(data)); fix.arg and the returned estimates are on the data scale.
-.qcFitdistUnitFree <- function(data, distr, fix.arg = NULL, start = NULL, ...) {
-  unitScale <- .qcUnitScale(data)
+# optim as fitdistrplus calls it by default, but without the Hessian: only the estimates are used, and its fixed
+# finite-difference step (1e-3) makes the whole fit fail ("non-finite finite-difference value") when it crosses a
+# parameter bound, e.g. a 3-parameter Weibull scale or threshold gap of ~1e-3 for data with a large offset (100 +- 0.1).
+.qcOptimWithoutHessian <- function(fn, par, ...) {
+  return(stats::optim(par = par, fn = fn, method = if (length(par) > 1) "Nelder-Mead" else "BFGS", ...))
+}
+
+# start must be on the rescaled data (data / unitScale); fix.arg and the returned estimates are on the data scale.
+.qcFitdistUnitFree <- function(data, distr, fix.arg = NULL, start = NULL, unitScale = .qcUnitScale(data), ...) {
   unitPower <- c(scale = 1, thres = 1, rate = -1) # how each parameter changes with the unit of the data
   for (par in intersect(names(fix.arg), names(unitPower)))
     fix.arg[[par]] <- fix.arg[[par]] / unitScale^unitPower[[par]]
 
-  fit <- fitdistrplus::fitdist(data / unitScale, distr, method = "mle", start = start, fix.arg = fix.arg, ...)
+  fit <- fitdistrplus::fitdist(data / unitScale, distr, method = "mle", start = start, fix.arg = fix.arg,
+                               custom.optim = .qcOptimWithoutHessian, ...)
 
   estimate <- fit$estimate
   for (par in intersect(names(estimate), names(unitPower)))
@@ -1616,7 +1623,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       threshold <- fix.arg[["thres"]] # threshold
     } else {
       # Set starting values that match other software packages more closely (on the rescaled data, see .qcFitdistUnitFree)
-      weibull3start <- try(MASS::fitdistr(data / .qcUnitScale(data), function(x, shape, scale, thres)
+      unitScale <- .qcUnitScale(data)
+      weibull3start <- try(MASS::fitdistr(data / unitScale, function(x, shape, scale, thres)
         dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = 0)))
 
       # If estimation of starting values fails, try with fixed starting values
@@ -1651,13 +1659,18 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
 
       # Estimate parameters using fitdistrplus, because it can keep values fixed
-      weibull3Pars <- try(.qcFitdistUnitFree(data, "weibull3Temp", start = weibull3startList, fix.arg = fix.arg))
+      weibull3Pars <- try(.qcFitdistUnitFree(data, "weibull3Temp", control = list(maxit = 10000), start = weibull3startList,
+                                             fix.arg = fix.arg, unitScale = unitScale))
       if (jaspBase::isTryError(weibull3Pars))
         stop(estimationErrorMessage, call. = FALSE)
 
       if (!is.null(fix.arg)) {
         weibull3Pars[names(fix.arg)] <- fix.arg
       }
+      # With a free threshold and shape <= 1 the likelihood increases (for shape < 1 without bound) as the threshold
+      # approaches the smallest observation, so there is no MLE and the estimate is wherever the optimizer stopped.
+      if (!"thres" %in% names(fix.arg) && (weibull3Pars[["shape"]] <= 1 || weibull3Pars[["thres"]] >= min(data)))
+        stop(estimationErrorMessage, call. = FALSE)
 
       beta  <- weibull3Pars[["shape"]] # shape
       theta <- weibull3Pars[["scale"]] # scale
