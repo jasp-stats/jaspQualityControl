@@ -165,9 +165,8 @@ After `runAnalysis()`, check:
 /
 ├── R/                           # Backend R analysis functions
 ├── inst/
-│   ├── qml/                     # QML interface definitions
+│   ├── qml/                     # QML interface definitions (help via info/infoBottom)
 │   ├── Descriptions/            # Analysis descriptions (Description.qml)
-│   ├── help/                    # Markdown help files
 │   └── Upgrades.qml             # Version upgrade mappings
 ├── examples/                    # Example .jasp files for testing
 ├── tests/testthat/              # Unit tests using jaspTools
@@ -186,6 +185,12 @@ After `runAnalysis()`, check:
 - For released analyses, update `inst/Upgrades.qml` when renaming QML options to maintain backward compatibility. For unreleased analyses, keep only the current QML/R names.
 
 ## Development Rules
+
+### Review Subagent (REQUIRED)
+- After ANY code/QML/test alteration, spawn a subagent to review the work before reporting done or committing
+- Pass subagent: changed files/`git diff`, intent, relevant `.claude/rules/` files. Reviewer is read-only, reports findings
+- Review checks: correctness, QML/R option contract, dependencies (`$dependOn`), tests/snapshots, i18n, rule compliance
+- Fix valid findings, then re-review if changes were non-trivial. Report unresolved findings to user
 
 ### Dependencies
 - Avoid new dependencies -- re-implement simple functions instead of importing a whole package

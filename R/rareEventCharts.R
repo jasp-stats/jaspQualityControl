@@ -219,6 +219,7 @@ rareEventChartsInternal <- function(jaspResults, dataset, options) {
                     options,
                     ready) {
   plot <-  createJaspPlot(title = gettext("G chart"), width = 1200, height = 500)
+  plot$info <- gettext("A graphical representation showing the number of time units or opportunities between rare events, highlighting any deviations from expected intervals that might indicate a process shift.")
   plot$dependOn(c("variable", "stage", "dataType", "dataTypeDatesStructure", "dataTypeDatesFormatDate",
                   "dataTypeDatesFormatTime", "dataTypeIntervalType", "dataTypeIntervalTimeFormat",
                   "gChart", "gChartProportionSource", "gChartHistoricalProportion", "report",
@@ -246,6 +247,7 @@ rareEventChartsInternal <- function(jaspResults, dataset, options) {
                     options,
                     ready) {
   plot <-  createJaspPlot(title = gettext("T chart"), width = 1200, height = 500)
+  plot$info <- gettext("A graphical representation showing the time intervals between rare events, allowing for easy identification of shifts in the process that could signify increased risk or process degradation.")
   plot$dependOn(c("variable", "stage", "dataType", "dataTypeDatesStructure", "dataTypeDatesFormatDate",
                   "dataTypeDatesFormatTime", "dataTypeIntervalType", "dataTypeIntervalTimeFormat", "tChart",
                   "tChartDistribution", "tChartDistributionParameterSource", "tChartHistoricalParametersWeibullShape",

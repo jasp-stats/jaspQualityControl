@@ -21,12 +21,15 @@ Form
 {
     columns:                                    1
 
+    info:										qsTr("Create a screening design worksheet to identify the most influential factors from a large set with relatively few runs. Plackett-Burman designs screen two-level factors; definitive screening designs use three levels and can also detect curvature.")
+
     DropDown
     {
         id:                                     screeningType
         name:                                   "screeningType"
         label:                                  qsTr("Type of Screening Design")
         indexDefaultValue:                      0
+        info:									qsTr("Type of screening design: Plackett-Burman (two-level) or definitive screening (three-level).")
         values:
         [
             { value: "PBdes", 	label: qsTr("Plackett-Burman")      },
@@ -49,6 +52,7 @@ Form
             defaultValue:						screeningType.currentIndex == 1 ? 4 : 0
             min:								screeningType.currentIndex == 1 ? 4 : 0
             max:								12
+            info:								qsTr("Number of three-level factors in the definitive screening design.")
         }
 
         IntegerField
@@ -67,6 +71,7 @@ Form
             defaultValue:						screeningType.currentIndex == 0 ? 5 : 0
             min:								screeningType.currentIndex == 0 ? 4 : 0
             max:								screeningType.currentIndex == 0 ? 256 : 4
+            info:								qsTr("Number of two-level factors in the design.")
         }
 
         IntegerField
@@ -83,6 +88,7 @@ Form
             label:                              qsTr("Number of runs")
             visible:                            screeningType.currentIndex == 0
             indexDefaultValue:                  0
+            info:								qsTr("Number of runs in the Plackett-Burman design.")
             values:
             [
                 { value: (Math.floor(numberOfFactorsForTableScreen2.value/4)+3)*4, label: Number((Math.floor(numberOfFactorsForTableScreen2.value/4)+3)*4)},
@@ -98,6 +104,7 @@ Form
     {
         title:                                  qsTr("Design Display")
         name:                                   "dataCodingScreen"
+        info:								qsTr("Whether the factor levels are displayed in coded or uncoded (given) units.")
 
         RadioButton
         {
@@ -119,6 +126,7 @@ Form
     {
         name:                                   "runOrderScreen"
         title:                                  qsTr("Run Order")
+        info:								qsTr("Whether the runs are sorted in standard order or randomised.")
 
         RadioButton
         {
@@ -319,6 +327,7 @@ Form
             defaultValue:                       0
             min:                            	0
             max:                            	256
+            info:								qsTr("Number of centre points to add to the design.")
         }
 
         IntegerField
@@ -330,6 +339,7 @@ Form
             defaultValue:                       1
             min:                                1
             max:                                10
+            info:								qsTr("Number of replicates of the corner points.")
 
         }
 
@@ -338,6 +348,7 @@ Form
             visible:                            screeningType.currentIndex == 0 & screeningCornerReplicates.value > 1
             name:                               "screeningRepeats"
             label:                              "Repeats only"
+            info:								qsTr("Treat the replicates as repeats rather than full replications.")
         }
     }
 
@@ -345,6 +356,7 @@ Form
     {
         name:                                   "displayScreeningDesign"
         label:                                  "Display selected design"
+        info:									qsTr("Display the generated design in the output.")
     }
 
 	Group
@@ -356,6 +368,7 @@ Form
             label:                              qsTr("Save as:")
             filter:                             "*.csv"
             save:                               true
+            info:								qsTr("Name and path of the .csv file to save the design to.")
         }
 
         Button

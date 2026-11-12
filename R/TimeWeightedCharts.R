@@ -189,6 +189,7 @@ timeWeightedChartsInternal <- function(jaspResults, dataset, options) {
 .Cusumchart <- function(dataset, measurements, stages, axisLabels, options, ready, ruleList) {
 
   plot <- createJaspPlot(title = gettext("Cumulative sum chart"), width = 1200, height = 500)
+  plot$info <- gettext("CUSUM statistics are cumulative deviations from the target, or nominal. The graphical display of the tabular CUSUM (sometimes called a CUSUM status chart) is constructed by plotting the upper and lower CUSUM statistics (C+ and C\u2212) versus the sample number.")
   plot$dependOn(c("dataFormat", "measurementLongFormat", "subgroup", "stagesLongFormat", "measurementsWideFormat",
                   "axisLabels", "stagesWideFormat", "subgroupSizeType", "manualSubgroupSizeValue",
                   "groupingVariableMethod", "cumulativeSumChart", "cumulativeSumChartNumberSd",
@@ -217,6 +218,7 @@ timeWeightedChartsInternal <- function(jaspResults, dataset, options) {
 .EWMA <- function(dataset, measurements, stages, axisLabels, options, ready, ruleList) {
 
   plot <-  createJaspPlot(title = gettext("Exponentially weighted moving average chart"), width = 1200, height = 500)
+  plot$info <- gettext("Plots the exponentially weighted moving average of the process mean over time.")
   plot$dependOn(c("dataFormat", "measurementLongFormat", "subgroup", "stagesLongFormat", "measurementsWideFormat",
                   "axisLabels", "stagesWideFormat", "subgroupSizeType", "manualSubgroupSizeValue",
                   "groupingVariableMethod", "exponentiallyWeightedMovingAverageChart",

@@ -79,6 +79,7 @@ msaType1GaugeInternal <- function(jaspResults, dataset, options, ...) {
   studyVarMultiplier <- as.numeric(options[["studyVarianceMultiplier"]])
 
   table1 <- createJaspTable(title = gettext("Basic statistics"))
+  table1$info <- gettext("The reference value, mean, bias, standard deviation, study variation (measurement standard deviation times the study variance multiplier), tolerance, and the bias as a percentage of the tolerance.")
   table1$dependOn(c("referenceValue", "biasTable", "toleranceRange"))
 
   table1$addColumnInfo(name = "referenceValue",  title = gettext("Reference value"), type = "number")
@@ -94,6 +95,7 @@ msaType1GaugeInternal <- function(jaspResults, dataset, options, ...) {
   table1$addFootnote(gettextf("The instrument variation is calculated as %i * <i>s</i>.", studyVarMultiplier))
 
   table2 <- createJaspTable(title = gettext("Capability"))
+  table2$info <- gettext("Cg, CgK, and the percentage of variation due to repeatability and due to repeatability plus bias.")
   table2$dependOn(c("referenceValue", "biastable", "toleranceRange"))
 
 
@@ -151,6 +153,7 @@ msaType1GaugeInternal <- function(jaspResults, dataset, options, ...) {
   data <- dataset
 
   table <- createJaspTable(title = gettext("t-test of observed bias against 0"))
+  table$info <- gettext("The degrees of freedom, bias, confidence interval limits, t-statistic, and p-value for the test of the observed bias against zero.")
 
   table$dependOn(c("referenceValue", "tTest", "toleranceRange"))
   ciLevel <- options[["tTestCiLevel"]]
@@ -189,6 +192,7 @@ msaType1GaugeInternal <- function(jaspResults, dataset, options, ...) {
   if (ready) {
 
     plot <- createJaspPlot(title = gettext("Bias histogram"), width = 700, height = 400)
+    plot$info <- gettext("A histogram of the measurements.")
 
     if (nrow(dataset[measurements]) < 2) {
       plot$setError(gettextf("Histogram requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s.", nrow(dataset[measurements]), measurements))
@@ -272,6 +276,7 @@ msaType1GaugeInternal <- function(jaspResults, dataset, options, ...) {
   if (ready) {
 
     plot <- createJaspPlot(title = gettextf("Run chart of %s", measurements), width = 700, height = 400)
+    plot$info <- gettext("Plots the measurement values across the observations.")
 
     dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 

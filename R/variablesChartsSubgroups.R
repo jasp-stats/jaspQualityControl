@@ -138,6 +138,7 @@ variablesChartsSubgroupsInternal <- function(jaspResults, dataset, options) {
                                                 "groupingVariableMethod", .getDependenciesControlChartRules()))
       secondPlotType <- ifelse(options[["chartType"]] == "xBarAndR", "R", "s")
       jaspResults[["controlCharts"]][["plot"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s control chart", secondPlotType), width = 1200, height = 500)
+      jaspResults[["controlCharts"]][["plot"]]$info <- if (secondPlotType == "R") gettext("Plots the process mean (X-bar) and process range (R) over time.") else gettext("Plots the process mean (X-bar) and process standard deviation (s) over time.")
       if (length(measurements) > 50 && secondPlotType == "R") { # if the subgroup size is above 50, the R package cannot calculate R charts.
         jaspResults[["controlCharts"]][["plot"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
         return()

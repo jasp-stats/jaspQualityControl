@@ -502,6 +502,7 @@ Form
 				name: 					"contourSurfacePlotType"
 				id: 					contourSurfacePlotType
 				title:                 	qsTr("Plot type")
+				info:					qsTr("Whether to show a 2D contour plot or a 3D surface plot.")
 
 				RadioButton
 				{
