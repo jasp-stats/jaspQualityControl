@@ -3491,7 +3491,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     if (hasConfidenceBands) {
       bandData <- data.frame(zp = zp, percentileLower = percentileLower, percentileUpper = percentileUpper)
     }
-    yLimits <- range(yBreaks)
+    # The outer points of a large sample lie beyond the 0.1% and 99.9% ticks; widen the axis so they are not dropped
+    yLimits <- range(yBreaks, y)
     label_x <- round(label_x, .numDecimals)
     p <- ggplot2::ggplot() +
       ggplot2::geom_line(data = lineData, ggplot2::aes(y = zp, x = percentileEstimate), na.rm = TRUE) +
@@ -3547,6 +3548,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   n <- length(x)
   i <- rank(x)
   p <- (i) / (n)
+  # A unique largest observation gets p = 1, which has no finite plotting position. Place it at 90% of the distance
+  # between the prior p (0 if n = 1) and 1, i.e. (n - 0.1) / n without ties. A tied maximum has an average rank below
+  # n, so p < 1 and nothing changes.
+  isLargest    <- p == 1
+  pPrior       <- max(0, p[!isLargest])
+  p[isLargest] <- pPrior + 0.9 * (1 - pPrior)
   return(p)
 }
 
