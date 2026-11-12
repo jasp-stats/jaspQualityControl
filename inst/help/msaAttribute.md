@@ -21,7 +21,7 @@ Data can be in the form of all observations in one column ("Single column") or a
 - Positive reference: the positive reference used for the rating classifications (for example, "Yes", "fit", "Good").
 
 #### Tau Studies (Ordinal Data)
-- Kendall's tau: compute the correlations between the operators and their ratings.
+- Kendall's tau: compute Kendall's tau-b between the operators and, if a standard is given, between each operator and the standard. Requires numeric ratings with more than two distinct values.
 
 ## Output 
 -------
@@ -31,6 +31,9 @@ Data can be in the form of all observations in one column ("Single column") or a
 - Each Appraiser vs Standard: matching between the known standard and inspected items per operator, with a 95% confidence interval.    
 - Between Appraisers: matching between the different operators, with a 95% confidence interval.  
 - All Appraisers vs Standard: matching between all operators and known standard, with a 95% confidence interval.  
+- Kendall's tau: Kendall's tau-b between each pair of operators and, if a standard is given, between each operator and the standard. With more than one trial:
+  - Operator vs standard: tau-b of each trial with the standard, averaged over trials (as in Minitab). In the "Single column" format, an operator's k-th rating of a part (in data order) is trial k.
+  - Between two operators: tau-b over all combinations of the two operators' ratings of the same part, so it does not depend on the order of the trials.
 
 ### Plots
 - Within Appraisers: plotting the matching's percentage within appraiser and its confidence intervals. 
