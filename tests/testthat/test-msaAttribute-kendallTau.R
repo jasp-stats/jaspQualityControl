@@ -197,3 +197,25 @@ test_that("KT12 A trial column that is not numeric gives a table error", {
   expect_identical(results[["results"]][["KendallTau"]][["error"]][["errorMessage"]],
                    "Kendall's tau is only available for numeric measurements.")
 })
+
+test_that("KT13 One appraiser with several trials: no footnote about between appraisers", {
+  results <- runAnalysis("msaAttribute", wide[wide$Operator == "P", ], .kendallOptions("wideFormat", c("T1", "T2", "T3"), "Ref"))
+  expect_identical(results[["status"]], "complete")
+  table <- kendallTable(results)
+  expect_identical(table[["Operator"]], "P")
+  expect_equal(table[["Ref"]], unname(expectedVsStandard[["P"]]))
+  footnotes <- vapply(results[["results"]][["KendallTau"]][["footnotes"]], `[[`, character(1), "text")
+  expect_identical(footnotes, "Appraiser vs standard: Kendall's tau-b of each trial with the standard, averaged over trials.")
+})
+
+test_that("KT14 Long format, three trials, without standard: one row per appraiser, no standard column", {
+  results <- runAnalysis("msaAttribute", long, .kendallOptions("longFormat", "Rating", ""))
+  expect_identical(results[["status"]], "complete")
+  fields <- vapply(results[["results"]][["KendallTau"]][["schema"]][["fields"]], `[[`, character(1), "name")
+  expect_identical(fields, c("Operator", "P", "Q", "R"))
+  table <- kendallTable(results)
+  expect_identical(table[["Operator"]], c("P", "Q", "R"))
+  expect_equal(unname(as.matrix(table[c("P", "Q", "R")])), unname(expectedBetween))
+  footnotes <- vapply(results[["results"]][["KendallTau"]][["footnotes"]], `[[`, character(1), "text")
+  expect_identical(footnotes, "Between appraisers: Kendall's tau-b over all combinations of the two appraisers' ratings of each part.")
+})
