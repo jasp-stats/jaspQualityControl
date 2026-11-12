@@ -32,7 +32,7 @@ Data can be in the form of all observations in one column ("Single column") or a
 - Between Appraisers: matching between the different operators, with a 95% confidence interval.  
 - All Appraisers vs Standard: matching between all operators and known standard, with a 95% confidence interval.  
 - Kendall's tau: Kendall's tau-b between each pair of operators and, if a standard is given, between each operator and the standard. With more than one trial:
-  - Operator vs standard: tau-b of each trial with the standard, averaged over trials (as in Minitab). In the "Single column" format, an operator's k-th rating of a part (in data order) is trial k.
+  - Operator vs standard: tau-b of each trial with the standard, averaged over trials. In the "Single column" format, an operator's k-th rating of a part (in data order) is trial k.
   - Between two operators: tau-b over all combinations of the two operators' ratings of the same part, so it does not depend on the order of the trials.
 
 ### Plots
