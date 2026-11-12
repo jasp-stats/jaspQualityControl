@@ -3847,8 +3847,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   dataset[["value"]] <- switch(
     options[["dataTransformation"]],
-    boxCox = jaspBase::BoxCox(x, lambda=lambda, shift=shift, continuityAdjustment=ca),
-    boxCoxAuto = jaspBase::BoxCoxAuto(x, predictor=as.factor(group), shift=shift, method=method, continuityAdjustment=ca),
+    boxCox = .qcBoxCoxKeepOrder(jaspBase::BoxCox(x, lambda=lambda, shift=shift, continuityAdjustment=ca), lambda=lambda, continuityAdjustment=ca),
+    boxCoxAuto = {
+      y <- jaspBase::BoxCoxAuto(x, predictor=as.factor(group), shift=shift, method=method, continuityAdjustment=ca)
+      .qcBoxCoxKeepOrder(y, lambda=attr(y, "lambda"), continuityAdjustment=ca)
+    },
     yeoJohnson = jaspBase::YeoJohnson(x, lambda=lambda),
     yeoJohnsonAuto = jaspBase::YeoJohnsonAuto(x),
     johnson = jaspBase::Johnson(x)
@@ -3889,10 +3892,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     if (any(specs + shift <= 0))
       stop(gettextf("Some specification limits or target value are outside of the support of the Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f).", -shift))
 
-    specs <- BoxCox(specs, lambda=lambda, shift=shift, continuityAdjustment=options[["dataTransformationContinuityAdjustment"]])
+    ca <- options[["dataTransformationContinuityAdjustment"]]
+    specs <- .qcBoxCoxKeepOrder(jaspBase::BoxCox(specs, lambda=lambda, shift=shift, continuityAdjustment=ca), lambda=lambda, continuityAdjustment=ca)
   } else if(options[["dataTransformation"]] %in% c("yeoJohnson", "yeoJohnsonAuto")) {
     lambda <- if(options[["dataTransformation"]] == "yeoJohnson") options[["dataTransformationLambda"]] else parameters[["lambda"]]
-    specs <- YeoJohnson(specs, lambda=lambda)
+    specs <- jaspBase::YeoJohnson(specs, lambda=lambda)
   } else if (options[["dataTransformation"]] == "johnson") {
     args <- parameters[["params"]]
     args[["x"]] <- specs
@@ -3927,6 +3931,14 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   return(as.list(specs))
 }
 
+.qcBoxCoxKeepOrder <- function(y, lambda, continuityAdjustment) {
+  # without the continuity adjustment, y = x^lambda is decreasing for lambda < 0, which would swap the roles of
+  # the lower and upper specification limits; negating keeps the order (as (x^lambda - 1) / lambda does)
+  if (lambda < 0 && !continuityAdjustment)
+    y <- -y
+  return(y)
+}
+
 .qcFillTransformOutput <- function(container, options, parameters) {
   container[["formula"]] <- .qcTransformFormula(options, parameters)
   container[["table"]] <- .qcTransformTable(options, parameters)
@@ -3941,6 +3953,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     if (shift == 0) {
       if (lambda == 0) {
         formula <- r"(y = \ln(x))"
+      } else if (!options[["dataTransformationContinuityAdjustment"]] && lambda < 0) {
+        formula <- r"(y = -x^\lambda)"
       } else if (!options[["dataTransformationContinuityAdjustment"]]) {
         formula <- r"(y = x^\lambda)"
       } else {
@@ -3949,6 +3963,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     } else {
       if (lambda == 0) {
         formula <- r"(y = \ln(x + \text{shift}))"
+      } else if (!options[["dataTransformationContinuityAdjustment"]] && lambda < 0) {
+        formula <- r"(y = -(x+\text{shift})^\lambda)"
       } else if (!options[["dataTransformationContinuityAdjustment"]]) {
         formula <- r"(y = (x+\text{shift})^\lambda)"
       } else {
