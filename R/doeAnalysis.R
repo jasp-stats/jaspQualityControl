@@ -1004,8 +1004,6 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
                                                            roOptionsDf = roOptionsDf)
         if (outcomeType == "compDesi"| outcomeType == "individualDesirability")
           plottingWindowDf$y <- pmax(0, pmin(1, plottingWindowDf$y))
-        yLimits <- .doeOptimizationPlotLimits(plottingWindowDf$y, outcomeType)
-        yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plottingWindowDf$y[!is.na(plottingWindowDf$y)], yLimits))
         xBreaks <- jaspGraphs::getPrettyAxisBreaks(plottingWindowDf$x)
         # Coordinates for the indication of the current parameter settings
         redPointCoordX <- currentPredValue
@@ -1024,6 +1022,11 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
                                                        roOptionsDf = roOptionsDf)
         if (outcomeType == "compDesi"| outcomeType == "individualDesirability")
           redPointCoordY <- pmax(0, pmin(1, redPointCoordY))
+        # with aliased contrasts, the current setting can be the only one with a unique prediction, between the grid points
+        # of the curve (e.g., the mean of a factor confounded with the blocks); then the axis must still show it
+        yValues <- if (all(is.na(plottingWindowDf$y))) redPointCoordY else plottingWindowDf$y
+        yLimits <- .doeOptimizationPlotLimits(yValues, outcomeType)
+        yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(yValues[!is.na(yValues)], yLimits))
         plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y)) +
           ggplot2::geom_line(color = "blue", linewidth = 1) +
           ggplot2::annotate("point", x = redPointCoordX, y = redPointCoordY, color = "red", size = 3) +
