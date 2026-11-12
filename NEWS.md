@@ -75,6 +75,7 @@
 * Control charts: the CL, LCL and UCL labels of values of 1000 or more keep all their decimals (e.g. 1908.333 instead of 1908.33); the shortened labels could also be rounded wrong (2092.49 instead of 2092.495).
 * Process Capability, stages: the Cpm confidence interval is no longer blanked for the stages after the baseline, and the change row no longer shows the difference of the interval bounds as an interval.
 * Process Capability, stages: the change (vs. baseline) rows are computed from the unrounded values, so they are the rounded difference; the difference of the rounded values could be off in the last decimal.
+* Process Capability: for data with a small spread (std. dev. or log std. dev. below ~0.002, e.g. 10.000 ± 0.001), the logistic fit and the log-normal fit with a historical parameter no longer fail. The 95% confidence bands of the normal and log-normal probability plots no longer depend on the spread of the data: they were off by up to ~3% for some spreads (e.g. std. dev. 0.02) and missing or wrong for very large ones (e.g. std. dev. 100000). Other logistic estimates can change in the 4th–5th significant digit.
 
 ---
 
