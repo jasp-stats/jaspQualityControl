@@ -3232,18 +3232,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     }
     n      <- length(values)
     ad     <- test$statistic
-    adStar <- ad*(1 + (0.75/n) + (2.25/(n^2)))
-    if(ad >= 0.6) {
-      p <- exp(1.2937 - (5.709 * adStar) + 0.0186 * (adStar^2))
-    } else if(adStar < 0.6 && adStar > 0.34) {
-      p <- exp(0.9177 - (4.279 * adStar) - 1.38 * (adStar^2))
-    } else if(adStar < 0.34 && adStar > 0.2) {
-      p <- 1 - exp(-8.318 + (42.796 * adStar) - 59.938 * (adStar^2))
-    } else if(adStar <= 0.2) {
-      p <- 1 - exp(-13.436 + (101.14 * adStar) - 223.73 * (adStar^2))      #Jaentschi & Bolboaca (2018)
-    } else {
-      p <- test$p.value
-    }
+    p      <- .qcAndersonDarlingPValueNormal(ad, n)
     tableDfCurrentStage <- data.frame(mean = meanx, sd = sdx, n = n, ad = round(ad, .numDecimals), p = round(p, .numDecimals))
     if (i == 1 && nStages > 1)
       baseLineDf <- tableDfCurrentStage
@@ -3263,6 +3252,24 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   tableList <- as.list(tableDf)
   table$setData(tableList)
   container[["probabilityTable"]] <- table
+}
+
+# Anderson-Darling p-value for a normal fit with estimated mean and sd (D'Agostino & Stephens, 1986, Table 4.9),
+# based on the modified statistic adStar; every branch tests adStar. As in nortest::ad.test, the p-value is capped at
+# its value for adStar = 10, because the quadratic in the exponent rises again for very large adStar (p > 1 from ~300).
+.qcAndersonDarlingPValueNormal <- function(ad, n) {
+  adStar <- ad * (1 + (0.75/n) + (2.25/(n^2)))
+  if (adStar >= 10) {
+    3.7e-24
+  } else if (adStar >= 0.6) {
+    exp(1.2937 - (5.709 * adStar) + 0.0186 * (adStar^2))
+  } else if (adStar > 0.34) {
+    exp(0.9177 - (4.279 * adStar) - 1.38 * (adStar^2))
+  } else if (adStar > 0.2) {
+    1 - exp(-8.318 + (42.796 * adStar) - 59.938 * (adStar^2))
+  } else {
+    1 - exp(-13.436 + (101.14 * adStar) - 223.73 * (adStar^2))      #Jaentschi & Bolboaca (2018)
+  }
 }
 
 .qcProbabilityPlot <- function(dataset, options, measurements = NULL, stages) {
@@ -3302,7 +3309,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   return(plot)
 }
 
-.qcObservedVarcov <- function(logdensity, X, parms, mle) {
+# stepScale: typical size of each parameter. The finite-difference steps of the Hessian are 0.001, or 1% of stepScale
+# for parameters of size 0.01 or less: a fixed step of 0.001 crosses sigma = 0 when the data vary on the order of 0.001
+.qcObservedVarcov <- function(logdensity, X, parms, mle, stepScale) {
   mle <- unlist(mle)
 
   if (!all(parms %in% names(mle))) {
@@ -3322,7 +3331,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     -sum(ll)
   }
 
-  hessian <- stats::optimHess(par = mle, fn = negLogLik)
+  hessian <- stats::optimHess(par = mle, fn = negLogLik, control = list(ndeps = ifelse(stepScale > 0.01, 0.001, 0.01 * stepScale)))
 
   if (anyNA(hessian) || any(!is.finite(hessian)))
     stop(gettext("Could not compute variance-covariance matrix: Hessian contains invalid values."), call. = FALSE)
@@ -3380,7 +3389,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     if (options[["nullDistribution"]] == "normal") {
       lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (x - mu) ^ 2)
       matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage, parms = c("mu", "sigma"),
-                                     mle = c(mean(dataCurrentStage), sd(dataCurrentStage))))
+                                     mle = c(mean(dataCurrentStage), sd(dataCurrentStage)),
+                                     stepScale = rep(sd(dataCurrentStage), 2)))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
@@ -3411,7 +3421,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       meanlog <- as.numeric(fit$parameters[1])
       sdlog <- as.numeric(fit$parameters[2])
       lpdf <- quote(log(1/(sqrt(2*pi)*x*sdlog) * exp(-(log(x)- meanlog)^2/(2*sdlog^2))))
-      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage, parms = c("meanlog", "sdlog"), mle = fit$parameters))
+      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage, parms = c("meanlog", "sdlog"), mle = fit$parameters,
+                                     stepScale = rep(sdlog, 2)))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
@@ -3448,9 +3459,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       shape <- as.numeric(fit_Weibull[["beta"]])
       scale <- as.numeric(fit_Weibull[["theta"]])
       lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x/scale)^shape)
-      # finite-difference Hessian on the rescaled data (see .qcFitdistUnitFree), scale (co)variances mapped back below
-      unitScale <- .qcUnitScale(dataCurrentStage)
-      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage / unitScale, parms = c("shape", "scale"), mle = c("shape" = shape, "scale" = scale / unitScale)))
+      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage, parms = c("shape", "scale"), mle = c("shape" = shape, "scale" = scale),
+                                     stepScale = c(shape, scale)))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
@@ -3459,11 +3469,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         covarSS <- NA
       } else {
         varShape <- matrix$varcov[1,1]
-        varScale <- matrix$varcov[2,2] * unitScale^2
-        covarSS <- matrix$varcov[1,2] * unitScale
+        varScale <- matrix$varcov[2,2]
+        covarSS <- matrix$varcov[1,2]
       }
       zp <- log(-1*log(1-pSeq))
-      zalpha <- log(-1*log(1-0.975))
+      zalpha <- qnorm(0.975) # normal critical value for log percentile (delta method), not the Weibull axis transform
       percentileEstimate <- scale * (- log(1 - pSeq))^(1/shape)
       if (hasConfidenceBands) {
         varPercentile <- (percentileEstimate^2 / scale^2) * varScale + (percentileEstimate^2/shape^4)*zp^2*varShape - 2*((zp*percentileEstimate^2) / (scale * shape^2))*covarSS
@@ -3481,10 +3491,14 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       xLimits <- logAxis$limits
     }
     data1 <- data.frame(x = dataCurrentStage, y = y)
+    lineData <- data.frame(zp = zp, percentileEstimate = percentileEstimate)
+    if (hasConfidenceBands) {
+      bandData <- data.frame(zp = zp, percentileLower = percentileLower, percentileUpper = percentileUpper)
+    }
     yLimits <- range(yBreaks)
     label_x <- round(label_x, .numDecimals)
     p <- ggplot2::ggplot() +
-      ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate), na.rm = TRUE) +
+      ggplot2::geom_line(data = lineData, ggplot2::aes(y = zp, x = percentileEstimate), na.rm = TRUE) +
       jaspGraphs::geom_point(data = data1, ggplot2::aes(x = x, y = y), na.rm = TRUE)
 
     if (options[["probabilityPlotGridLines"]])
@@ -3493,8 +3507,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       p <- p + ggplot2::ggtitle(stage) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
     # Add confidence bands only if variance-covariance computation succeeded
     if (hasConfidenceBands) {
-      p <- p + ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower), col = "darkred", linetype = "dashed", na.rm = TRUE) +
-        ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper), col = "darkred", linetype = "dashed", na.rm = TRUE)
+      p <- p + ggplot2::geom_line(data = bandData, ggplot2::aes(y = zp, x = percentileLower), col = "darkred",
+                                  linetype = "dashed", na.rm = TRUE) +
+        ggplot2::geom_line(data = bandData, ggplot2::aes(y = zp, x = percentileUpper), col = "darkred",
+                           linetype = "dashed", na.rm = TRUE)
     }
     p <- p +
       ggplot2::scale_x_continuous(gettext("Measurement"), breaks = xBreaks, limits = xLimits, labels = label_x) +
