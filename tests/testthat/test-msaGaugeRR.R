@@ -63,6 +63,23 @@ test_that("LF1.4 Default settings - Two-way ANOVA table with interaction results
                                       892.722222222222, "Total"))
 })
 
+test_that("LF1.4b Random effect ANOVA - Part and Operator are tested against the interaction mean square", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
+  dataset <- read.csv(testthat::test_path("datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv"))
+  dataset$Parts <- factor(dataset$Parts)
+  dataset$Operators <- factor(dataset$Operators)
+  reference <- anova(lm(Dm ~ Parts * Operators, data = dataset))
+  for (i in 1:2) {
+    fRandom <- reference[["Mean Sq"]][i] / reference[["Mean Sq"]][3]
+    pRandom <- pf(fRandom, reference[["Df"]][i], reference[["Df"]][3], lower.tail = FALSE)
+    expect_equal(table[[i]][["F value"]], fRandom, tolerance = 1e-8)
+    expect_equal(log(table[[i]][["Pr(>F)"]]), log(pRandom), tolerance = 1e-8)
+  }
+  # the interaction is tested against repeatability, as in the fixed-effects model
+  expect_equal(table[[3]][["F value"]], reference[["F value"]][3], tolerance = 1e-8)
+  expect_equal(table[[3]][["Pr(>F)"]], reference[["Pr(>F)"]][3], tolerance = 1e-8)
+})
+
 test_that("LF1.5 Default settings - Two-way ANOVA table without interaction results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable2"]][["data"]]
   jaspTools::expect_equal_tables(table,
@@ -293,12 +310,25 @@ results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCross
 test_that("LF3.1 Fixed effect ANOVA - Two-way ANOVA table with interaction results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(9, 765.700483091787, 97.8395061728395, 2.22178519889191e-21, 880.555555555556,
-                                      "Parts", 2, 6.54347826086958, 0.836111111111114, 0.0073155788200197,
+                                 list(9, 765.700483091787, 97.8395061728395, 1.92009425335834e-58, 880.555555555556,
+                                      "Parts", 2, 6.54347826086958, 0.836111111111114, 0.00268745492511035,
                                       1.67222222222223, "Operators", 18, 1.22946859903382, 0.157098765432099,
                                       0.268355463232599, 2.82777777777778, "Parts  *  Operators",
                                       60, 0.127777777777778, 7.66666666666667, "Repeatability", 89,
                                       892.722222222222, "Total"))
+})
+
+test_that("LF3.1b Fixed effect ANOVA - F and p-values match two-way fixed-effects ANOVA (error term = repeatability)", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
+  dataset <- read.csv(testthat::test_path("datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv"))
+  dataset$Parts <- factor(dataset$Parts)
+  dataset$Operators <- factor(dataset$Operators)
+  reference <- anova(lm(Dm ~ Parts * Operators, data = dataset))
+  for (i in 1:3) {
+    expect_equal(table[[i]][["F value"]], reference[["F value"]][i], tolerance = 1e-8)
+    # compare on log scale so that tiny p-values (e.g., Parts) are checked with relative precision
+    expect_equal(log(table[[i]][["Pr(>F)"]]), log(reference[["Pr(>F)"]][i]), tolerance = 1e-8)
+  }
 })
 
 test_that("LF3.2 Fixed effect ANOVA - Two-way ANOVA table without interaction results match", {
@@ -308,6 +338,40 @@ test_that("LF3.2 Fixed effect ANOVA - Two-way ANOVA table without interaction re
                                       "Parts", 2, 6.21439915299104, 0.836111111111114, 0.00313130866789578,
                                       1.67222222222223, "Operators", 78, 0.134544159544159, 10.4944444444444,
                                       "Repeatability", 89, 892.722222222222, "Total"))
+})
+
+test_that("LF3.3 Fixed vs random effects - model type changes only the Part and Operator F and p-values", {
+  # alpha 0.05 removes the interaction (p = 0.268), alpha 0.5 keeps it
+  for (alpha in c(0.05, 0.5)) {
+    optionsFixed <- options
+    optionsFixed$anovaAlphaForInteractionRemoval <- alpha
+    optionsRandom <- optionsFixed
+    optionsRandom$anovaModelType <- "randomEffect"
+    set.seed(1)
+    fixed  <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", optionsFixed, view = FALSE)
+    set.seed(1)
+    random <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", optionsRandom, view = FALSE)
+    fixed  <- fixed[["results"]][["gaugeANOVA"]][["collection"]]
+    random <- random[["results"]][["gaugeANOVA"]][["collection"]]
+
+    # same tables, so the same interaction removal decision; check that both paths are covered
+    expect_identical(names(fixed), names(random))
+    expect_identical("gaugeANOVA_anovaTable2" %in% names(fixed), alpha == 0.05)
+
+    tableNames <- names(fixed)[vapply(fixed, function(x) !is.null(x[["schema"]]), logical(1))]
+    for (name in tableNames) {
+      fixedData  <- fixed[[name]][["data"]]
+      randomData <- random[[name]][["data"]]
+      if (name == "gaugeANOVA_anovaTable1") {
+        for (i in 1:2) { # Part and Operator rows
+          fixedData[[i]][c("F value", "Pr(>F)")]  <- NULL
+          randomData[[i]][c("F value", "Pr(>F)")] <- NULL
+        }
+      }
+      expect_equal(fixedData, randomData, label = name)
+      expect_equal(fixed[[name]][["footnotes"]], random[[name]][["footnotes"]], label = name)
+    }
+  }
 })
 
 ## Type 3 study ####
@@ -363,6 +427,17 @@ test_that("LF4.4 Type 3 study - One-way ANOVA table results match", {
                                  list(9, 643.328259766616, 97.8395061728395, 9.59874187907134e-71, 880.555555555556,
                                       "Parts", 80, 0.152083333333333, 12.1666666666667, "Repeatability",
                                       89, 892.722222222222, "Total"))
+})
+
+test_that("LF4.4b Type 3 study - fixed effects model type gives the same one-way ANOVA and variance components", {
+  optionsFixed <- options
+  optionsFixed$anovaModelType <- "fixedEffect"
+  set.seed(1)
+  resultsFixed <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", optionsFixed, view = FALSE)
+  expect_equal(resultsFixed[["status"]], results[["status"]])
+  for (name in c("gaugeANOVA_anovaTable1", "gaugeANOVA_RRtable1", "gaugeANOVA_RRtable2"))
+    expect_equal(resultsFixed[["results"]][["gaugeANOVA"]][["collection"]][[name]][["data"]],
+                 results[["results"]][["gaugeANOVA"]][["collection"]][[name]][["data"]])
 })
 
 test_that("LF4.5 Type 3 study - Part by operator interaction plot matches", {
@@ -854,8 +929,8 @@ results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCross
 test_that("WF3.1 Fixed effct ANOVA - Two-way ANOVA table with interaction results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(9, 28.837403998517, 27.0546720241459, 6.66730220666189e-09, 243.492048217313,
-                                      "Part", 2, 0.925856544711989, 0.868619975635811, 0.41425774549038,
+                                 list(9, 28.837403998517, 27.0546720241459, 1.31131411297697e-18, 243.492048217313,
+                                      "Part", 2, 0.925856544711989, 0.868619975635811, 0.401777425532419,
                                       1.73723995127162, "Operator", 18, 0.581263589632298, 0.545329800764601,
                                       0.89932032121579, 9.81593641376281, "Part  *  Operator", 60,
                                       0.938179873109842, 56.2907923865905, "Repeatability", 89, 311.336016968938,
