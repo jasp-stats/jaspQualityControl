@@ -2437,14 +2437,16 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     }
   }
 
+  # specification limits as entered: the capability indices and ppm below use these, the summary table shows them rounded
+  lsl <- options[["lowerSpecificationLimitValue"]]
+  usl <- options[["upperSpecificationLimitValue"]]
+  target <- options[["targetValue"]]
+
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
     n <- length(allData)
-    lsl <- round(options[["lowerSpecificationLimitValue"]], .numDecimals)
-    usl <- round(options[["upperSpecificationLimitValue"]], .numDecimals)
-    target <- round(options[["targetValue"]], .numDecimals)
     sd <- sd(allData)
     processMean <- mean(allData, na.rm = TRUE)
     beta <- distParameters[[i]]$beta
@@ -2453,9 +2455,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     tableDfCurrentStage <- data.frame("n" = n,
                                       "mean" = processMean,
                                       "sd" = sd,
-                                      "lsl" = lsl,
-                                      "usl" = usl,
-                                      "target" = target,
+                                      "lsl" = round(lsl, .numDecimals),
+                                      "usl" = round(usl, .numDecimals),
+                                      "target" = round(target, .numDecimals),
                                       "beta" = beta,
                                       "theta" = theta)
 
