@@ -28,7 +28,13 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Edit|Write"
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/block-test-edits.js"
+          }
+        ]
       }
     ]
   },
