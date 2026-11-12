@@ -387,7 +387,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       regressionFit <- lm(formula, data = dataset)
     }
 
-    regressionFitCoded     <- lm(formula, data = datasetCoded)
+    regressionFitCoded     <- stats::lm(formula, data = datasetCoded)
     regressionSummary      <- summary(regressionFit)
     regressionSummaryCoded <- summary(regressionFitCoded)
     regressionFit[["nullSpace"]]      <- list(value = .doeNullSpace(regressionFit)) # see .doeFitNullSpace
