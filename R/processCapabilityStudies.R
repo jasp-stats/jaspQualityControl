@@ -499,7 +499,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   ready <- (length(measurements) > 0)
 
-  if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis" && ready && (any(na.omit(unlist(dataset[measurements])) < 0))) {
+  # the logistic distribution is defined for negative values
+  if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis" && ready &&
+      options[["nonNormalDistribution"]] != "logistic" && any(na.omit(unlist(dataset[measurements])) < 0)) {
     p <- createJaspPlot(title = gettext("Process capability study"), width = 400, height = 400)
     p$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
     container[["p"]] <- p
