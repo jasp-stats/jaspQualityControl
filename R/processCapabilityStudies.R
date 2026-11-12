@@ -3459,8 +3459,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       shape <- as.numeric(fit_Weibull[["beta"]])
       scale <- as.numeric(fit_Weibull[["theta"]])
       lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x/scale)^shape)
-      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage, parms = c("shape", "scale"), mle = c("shape" = shape, "scale" = scale),
-                                     stepScale = c(shape, scale)))
+      # Hessian on the rescaled data (see .qcFitdistUnitFree), so the finite-difference steps are the same in any unit;
+      # the scale (co)variances are mapped back below
+      unitScale <- .qcUnitScale(dataCurrentStage)
+      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage / unitScale, parms = c("shape", "scale"),
+                                     mle = c("shape" = shape, "scale" = scale / unitScale), stepScale = c(shape, scale / unitScale)))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
@@ -3469,8 +3472,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         covarSS <- NA
       } else {
         varShape <- matrix$varcov[1,1]
-        varScale <- matrix$varcov[2,2]
-        covarSS <- matrix$varcov[1,2]
+        varScale <- matrix$varcov[2,2] * unitScale^2
+        covarSS <- matrix$varcov[1,2] * unitScale
       }
       zp <- log(-1*log(1-pSeq))
       zalpha <- qnorm(0.975) # normal critical value for log percentile (delta method), not the Weibull axis transform
