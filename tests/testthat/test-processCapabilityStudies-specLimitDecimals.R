@@ -6,6 +6,11 @@ lsl <- 0.0144
 usl <- 0.0274
 
 runNonNormal <- function(method) {
+  # the expectations below assume 3 displayed decimals (setup-numDecimals.R sets 2 for the suite)
+  oldDecimals <- get0(".numDecimals", envir = globalenv(), inherits = FALSE)
+  assign(".numDecimals", 3, envir = globalenv())
+  on.exit(if (is.null(oldDecimals)) rm(".numDecimals", envir = globalenv()) else assign(".numDecimals", oldDecimals, envir = globalenv()))
+
   set.seed(1)
   # two observations between the rounded (0.014, 0.027) and the exact limits
   dataset <- data.frame(Diameter = c(exp(rnorm(30, log(0.02), 0.2)), 0.0142, 0.0272))
