@@ -101,6 +101,7 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
     jaspResults[["rChart"]]$dependOn(c("rChart", "measurementsWideFormat", "measurementLongFormat",
                                       "partWideFormat", "partLongFormat", "operator", "dataFormat"))
     jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by part"), width = 800, height = 400)
+    jaspResults[["rChart"]][["plot"]]$info <- gettext("A range chart for the measurements, using the parts as subgroups.")
     if (ready) {
       rChart <- .controlChart(dataset = dataset[measurements], plotType = "R", xAxisLabels = dataset[[parts]])
       jaspResults[["rChart"]][["plot"]]$plotObject <- rChart$plotObject
@@ -134,6 +135,7 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
     TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec[1], ToleranceUsed = options[["tolerance"]],
                                                ToleranceVar = valuesVec[2], options = options, ready = ready,
                                                Xlab.StudySD = "Percent study variation of GRR", Xlab.Tol = "Percent tolerance of GRR")
+    TrafficContainer[["plot"]]$info <- gettext("GRR as a percentage of the standard deviation and of the tolerance.")
 
   }
   return()
@@ -144,6 +146,7 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
 
 
   plot <- createJaspPlot(title = gettext("Run chart of parts"), width = 500, height = 320)
+  plot$info <- gettext("All measurement values per part.")
   plot$dependOn(c("runChartPart", "measurementsWideFormat", "partWideFormat", "measurementLongFormat",
                   "partLongFormat", "operator", "dataFormat"))
 
@@ -182,6 +185,7 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
     return(c(GRRpercent.PSD * 100, GRRpercent.Tol * 100))
   else {
     table <- createJaspTable(title = gettext("Short gauge study"))
+    table$info <- gettext("The sample size, R-bar, historical standard deviation, tolerance, GRR, and GRR as a percentage of the standard deviation and of the tolerance.")
     table$position <- 1
     table$dependOn(c("repeatabilityAndReproducibilityTable", "toleranceValue", "manualProcessSdValue",
                      "tolerance", "manualProcessSd", "measurementsWideFormat", "partWideFormat",
@@ -221,6 +225,7 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
 .ScatterPlotOperators <- function(dataset, measurements, parts, operators, options, ready) {
 
   plot <- createJaspPlot(title = gettext("Scatterplot of 1st measurement vs 2nd measurement"))
+  plot$info <- gettext("A scatter plot of the first versus the second measurement.")
   plot$dependOn(c("scatterPlotMeasurement", "scatterPlotMeasurementFitLine", "scatterPlotMeasurementAllValues",
                   "measurementsWideFormat", "partWideFormat", "measurementLongFormat", "partLongFormat",
                   "operator", "dataFormat"))

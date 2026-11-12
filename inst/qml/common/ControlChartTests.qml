@@ -20,6 +20,12 @@ import JASP
 Group
 {
 	title:		qsTr("Tests for control charts")
+	info:		qsTr("Out-of-control tests used to flag special-cause variation. Choose a predefined test set (JASP defaults, Nelson laws, or Western Electric rules) or a custom selection in which each test can be individually enabled and its parameter adjusted.") + " "
+		+ qsTr("JASP: the default set of tests. For charts of subgroups (e.g., X-bar & R or X-bar & s): Test 1; Test 2 (7 points); Test 3 (7 points). For charts of individuals (X-mR): additionally Test 4 (2 out of 3 points); Test 5 (15 points); Test 6 (8 points).") + " "
+		+ qsTr("Nelson laws: Test 1; Test 2 (9 points); Test 3 (6 points); Test 4 (2 out of 3 points); Test 5 (15 points); Test 6 (8 points); Test 7 (4 out of 5 points); Test 8 (14 points).") + " "
+		+ qsTr("Western Electric rules: Test 1; Test 2 (8 points); Test 4 (2 out of 3 points); Test 7 (4 out of 5 points).") + " "
+		+ qsTr("Custom: select the tests to apply and modify the number of points N of each test.") + " "
+		+ qsTr("Tests 4 to 7 are only applied to the chart of the central tendency (e.g., the X-bar chart); the range, standard deviation and moving range charts only use tests 1, 2, 3 and 8.")
 
 	DropDown
 	{
@@ -27,6 +33,7 @@ Group
 		label:									qsTr("Test set")
 		id: 									testSet
 		indexDefaultValue:						0
+		info:									qsTr("Predefined set of out-of-control tests, or a custom selection that can be individually modified.")
 		values: [
 			{ label: qsTr("JASP"), value: "jaspDefault"},
 			{ label: qsTr("Nelson laws"), value: "nelsonLaws"},
@@ -42,6 +49,7 @@ Group
 		label: 								qsTr("One point outside of control limits - Test 1: Beyond limit")
 		checked:							true
 		visible:							testSet.currentValue == "custom"
+		info:								qsTr("Test 1 (beyond limit): flag one point beyond the control limits (a sporadic issue).")
 	}
 
 	CheckBox
@@ -51,6 +59,7 @@ Group
 		checked:							true
 		visible:							testSet.currentValue == "custom"
 		childrenOnSameRow:					true
+		info:								qsTr("Test 2 (shift): flag N consecutive points on the same side of the central line (a mean shift).")
 
 		IntegerField
 		{
@@ -69,6 +78,7 @@ Group
 		checked:							testSet.currentValue != "westernElectric"
 		visible:							testSet.currentValue == "custom"
 		childrenOnSameRow:					true
+		info:								qsTr("Test 3 (trend): flag N consecutive points all increasing or all decreasing (a trend).")
 
 		IntegerField
 		{
@@ -87,6 +97,7 @@ Group
 		checked:							true
 		visible:							testSet.currentValue == "custom"
 		childrenOnSameRow:					true
+		info:								qsTr("Test 4 (increasing variation): flag when k out of k+1 points are more than two standard deviations from the central line on the same side.")
 
 		IntegerField
 		{
@@ -105,6 +116,7 @@ Group
 		checked:							testSet.currentValue == "nelsonLaws" | testSet.currentValue == "custom" | testSet.currentValue == "jaspDefault"
 		visible:							testSet.currentValue == "custom"
 		childrenOnSameRow:					true
+		info:								qsTr("Test 5 (reducing variation): flag N consecutive points within one standard deviation of the central line (hugging the central line).")
 
 		IntegerField
 		{
@@ -123,6 +135,7 @@ Group
 		checked:							testSet.currentValue == "nelsonLaws" | testSet.currentValue == "custom" | testSet.currentValue == "jaspDefault"
 		visible:							testSet.currentValue == "custom"
 		childrenOnSameRow:					true
+		info:								qsTr("Test 6 (bimodal distribution): flag N consecutive points beyond one standard deviation from the central line on either side.")
 
 		IntegerField
 		{
@@ -141,6 +154,7 @@ Group
 		checked:							testSet.currentValue != "jaspDefault"
 		visible:							testSet.currentValue == "custom"
 		childrenOnSameRow:					true
+		info:								qsTr("Test 7 (slightly increasing variation): flag when k out of k+1 points are more than one standard deviation from the central line on the same side.")
 
 		IntegerField
 		{
@@ -159,6 +173,7 @@ Group
 		checked:							testSet.currentValue == "nelsonLaws" | testSet.currentValue == "custom"
 		visible:							testSet.currentValue == "custom"
 		childrenOnSameRow:					true
+		info:								qsTr("Test 8 (oscillation): flag N consecutive points alternating up and down.")
 
 		IntegerField
 		{
