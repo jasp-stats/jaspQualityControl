@@ -718,7 +718,8 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
     table$setData(tableColumns)
 
     if (length(measurements) > 1) {
-      table$addFootnote(gettext("Between appraisers: Kendall's tau-b over all combinations of the two appraisers' ratings of each part."))
+      if (length(operatorVector) > 1)
+        table$addFootnote(gettext("Between appraisers: Kendall's tau-b over all combinations of the two appraisers' ratings of each part."))
       if (standards != "")
         table$addFootnote(gettext("Appraiser vs standard: Kendall's tau-b of each trial with the standard, averaged over trials."))
     }
