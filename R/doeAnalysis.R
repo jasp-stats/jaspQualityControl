@@ -2171,7 +2171,9 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   saturated <- result[["saturated"]]
   plotData  <- data.frame(value  = if (saturated) coefs[["effects"]] else result[["objectSummary"]]$coefficients[, "t value"],
                           terms  = coefs[["terms"]],
-                          fac    = if (options[["tableAlias"]]) coefs[["termsAliased"]] else coefs[["terms"]],
+                          # decoded here: JASP decodes plot text only after the layout is made, which then has room
+                          # for the much longer encoded names and squeezes the plot
+                          fac    = jaspBase::decodeColNames(if (options[["tableAlias"]]) coefs[["termsAliased"]] else coefs[["terms"]]),
                           pValue = coefs[["p"]])
   plotData <- plotData[c(FALSE, coefs[["unique"]][-1]), , drop = FALSE]
   if (length(blocks) > 0 && !identical(blocks, ""))
@@ -2314,14 +2316,22 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     tDf$labelYPos <- stats::pnorm(stats::qnorm(tDf$percentile) + 0.2) # offset the label by a small amount (0.2) so it is displayed above the point
     yLabels <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
     yBreaks <- yLabels/100
+    yLimits <- c(0.0001, 0.9999)
     xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(tDf$value, -3 * referenceSd, 3 * referenceSd))
     xLimits <- range(c(tDf$value, xBreaks))
 
+    # Reference line N(0, referenceSd), drawn only between the percent limits: far in the right tail pnorm() is exactly 1,
+    # which the probit scale would draw along the top of the panel. The line is straight on the probit scale, so its end
+    # points suffice; the y scale keeps them when rounding puts them just outside the limits.
+    lineX  <- pmin(pmax(referenceSd * stats::qnorm(yLimits), xLimits[1]), xLimits[2])
+    lineDf <- data.frame(value = lineX, percentile = stats::pnorm(lineX, sd = referenceSd))
+
     # Create the ggplot with probit transformation
     p <- ggplot2::ggplot(data = tDf, mapping = ggplot2::aes(x = value, y = percentile)) +
-      ggplot2::stat_function(fun = stats::pnorm, args = list(sd = referenceSd), linewidth = 1) +  # Reference line
+      ggplot2::geom_line(data = lineDf, linewidth = 1) +
       jaspGraphs::geom_point(mapping = ggplot2::aes(fill = significant), size = 4) +
-      ggplot2::scale_y_continuous(trans = 'probit', labels = yLabels, breaks = yBreaks, name = gettext("Percent"), limits = c(0.0001, 0.9999)) +
+      ggplot2::scale_y_continuous(trans = 'probit', labels = yLabels, breaks = yBreaks, name = gettext("Percent"), limits = yLimits,
+                                  oob = function(x, range) x) +
       ggplot2::scale_x_continuous(name = valueLabel, breaks = xBreaks, limits = xLimits) +
       ggplot2::scale_fill_manual(values = c("S" = "darkred", "N" = "grey"), name = NULL, labels = c(gettext("Significant"), gettext("Not Significant")), breaks = c("S", "N")) +
       ggplot2::geom_label(mapping = ggplot2::aes(label = fac, y = labelYPos), size = 4) +

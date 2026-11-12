@@ -28,6 +28,7 @@ Form
 				+ "## " + qsTr("References") + "\n"
 				+ "- Fox, J., & Weisberg, S. (2019). *An R companion to applied regression* (3rd ed.). Sage." + "\n"
 				+ "- Langsrud, Ø. (2003). ANOVA for unbalanced data: Use Type II instead of Type III sums of squares. *Statistics and Computing, 13*(2), 163-167." + "\n"
+				+ "- Lenth, R. V. (1989). Quick and easy analysis of unreplicated factorials. *Technometrics, 31*(4), 469-473." + "\n"
 				+ "- Montgomery, D. C. (2017). *Design and analysis of experiments* (9th ed.). Wiley." + "\n"
 				+ "\n---\n"
 				+ "## " + qsTr("R Packages") + "\n"
@@ -480,14 +481,14 @@ Form
 			{
 				name:									"plotPareto"
 				label:									qsTr("Pareto plot of effects")
-				info:									qsTr("Show a Pareto plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the absolute effects with the margin of error based on Lenth's pseudo standard error; other saturated models give an error.")
+				info:									qsTr("Show a Pareto plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the absolute effects with the margin of error based on Lenth's (1989) pseudo standard error; other saturated models give an error.")
 			}
 
 			CheckBox
 			{
 				name:									"normalEffectsPlot"
 				label:									qsTr("Normal plot of effects")
-				info:									qsTr("Show a normal probability plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the effects with a reference line based on Lenth's pseudo standard error, and effects larger than its margin of error are marked significant; other saturated models give an error.")
+				info:									qsTr("Show a normal probability plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the effects with a reference line based on Lenth's (1989) pseudo standard error, and effects larger than its margin of error are marked significant; other saturated models give an error.")
 			}
 		}
 
