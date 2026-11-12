@@ -583,7 +583,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
 
   #Sixsigma
   center = sum(data1$D)/sum(data1$sample)
-  z_scores <- (data1$P - center)/sqrt(center/data1$sample[1])
+  z_scores <- (data1$P - center)/sqrt(center/data1$sample)
   R <- vector()
   for (i in c(1:length(z_scores) - 1))
     R[i] <- abs(z_scores[i+1] - z_scores[i])
@@ -659,7 +659,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
 
   #Sixsigma
   center = sum(data1$D)/sum(data1$sample)
-  z_scores <- (data1$P - center)/sqrt(center*(1 - center)/data1$sample[1])
+  z_scores <- (data1$P - center)/sqrt(center*(1 - center)/data1$sample)
   R <- vector()
   for (i in c(1:length(z_scores) - 1))
     R[i] <- abs(z_scores[i+1] - z_scores[i])
