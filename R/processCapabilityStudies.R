@@ -3691,7 +3691,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plot$setError(gettext("At least one of the stages contains no valid measurements."))
     return()
   }
-  plotList <- .qcDistributionPlotObject(options, dataset, measurements, stages)
+  plotList <- try(.qcDistributionPlotObject(options, dataset, measurements, stages))
+  if (jaspBase::isTryError(plotList)) {
+    plot$setError(.extractErrorMessage(plotList))
+    return()
+  }
   # if number of plots is odd, add an empty plot at the end
   if (nStages > 1 && nStages %% 2 != 0)
     plotList[[nStages + 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
@@ -3770,7 +3774,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         densDf <- .qcDensityCurveData(dlogis, list(location = location, scale = scale), xGrid, "logisticDist")
         legendLabel <- gettext("Logistic dist.")
       } else if(options[['nullDistribution']]  == "loglogistic") {
-        fitLoglogis <- .distributionParameters(dataCurrentStage, distribution = "logistic", fix.arg = NULL)
+        fitLoglogis <- .distributionParameters(dataCurrentStage, distribution = "loglogistic", fix.arg = NULL)
         shape <- 1/fitLoglogis[["theta"]]
         scale <- exp(fitLoglogis[["beta"]])
         densDf <- .qcDensityCurveData(flexsurv::dllogis, list(shape = shape, scale = scale), xGrid, "loglogisticDist")
