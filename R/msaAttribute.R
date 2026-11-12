@@ -52,6 +52,9 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
   # give them their numbers back, which Kendall's tau and the rating correlations need.
   for (measurement in numeric.vars)
     dataset[[measurement]] <- .msaAttributeAsNumberIfPossible(dataset[[measurement]])
+  # The standard is compared with the ratings, so it needs the same representation (e.g., 1 rather than "1.0").
+  if (standards != "")
+    dataset[[standards]] <- .msaAttributeAsNumberIfPossible(dataset[[standards]])
 
   # Check for missing values and infinity
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
@@ -239,7 +242,10 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 # irr::kappam.fleiss (>= 0.85) drops a single-column data.frame to a vector in its
 # internal NA-omit step, so ncol() is NULL and it errors on `1:nr`. Degenerate
 # single-column input has no within-agreement; return NaN as older irr versions did.
+# The ratings are passed as text: kappam.fleiss calls as.matrix(), which formats the numbers of a data.frame that
+# also has a factor column to a common width (" 1", "-1"), so they would no longer match the factor's labels ("1").
 .fleissKappaValue <- function(ratings) {
+  ratings <- as.data.frame(lapply(ratings, as.character))
   value <- try(irr::kappam.fleiss(ratings)$value, silent = TRUE)
   if (jaspBase::isTryError(value))
     return(NaN)
