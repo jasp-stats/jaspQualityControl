@@ -7140,3 +7140,18 @@ test_that("62.11 Lenth's method with one very large effect", {
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   expect_equal(ggplot2::layer_data(testPlot, 2)[["yintercept"]], qt(0.975, 7 / 3) * 5.25, tolerance = 1e-6)
 })
+
+test_that("62.12 Lenth's margin of error label keeps significant digits for small effects", {
+  # effects 1e-4, ..., 7e-4: s0 = 6e-4, no effect above 2.5 * s0, so PSE = 6e-4 and ME = t(0.975, 7 / 3) * 6e-4 = 0.002258
+  data <- expand.grid(A = c(-1, 1), B = c(-1, 1), C = c(-1, 1))
+  data$y <- with(data, 10 + 1e-4 * (A + 2 * B + 3 * C + 4 * A * B + 5 * A * C + 6 * B * C + 7 * A * B * C) / 2)
+  terms <- unlist(lapply(1:3, function(k) combn(c("A", "B", "C"), k, simplify = FALSE)), recursive = FALSE)
+  options <- saturatedFactorialOptions("y", c("A", "B", "C"), terms = terms)
+  options$plotPareto <- TRUE
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", data, options)
+  plotName <- results[["results"]][["y"]][["collection"]][["y_plotPareto"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  expect_equal(ggplot2::layer_data(testPlot, 2)[["yintercept"]], qt(0.975, 7 / 3) * 6e-4, tolerance = 1e-6)
+  expect_identical(ggplot2::layer_data(testPlot, 3)[["label"]], "ME = 0.002258")
+})
