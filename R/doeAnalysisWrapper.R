@@ -52,7 +52,7 @@
 #' @param histogramBinWidthType, Select the method used to calculate the bin widths of the residual histogram, or specify a manual number of bins.
 #' @param histogramManualNumberOfBins, Number of bins when the bin width type is set to manual.
 #' @param modelTerms, Allows manually defining the main effects and interactions in the model.
-#' @param normalEffectsPlot, Show a normal probability plot of the standardized effects.
+#' @param normalEffectsPlot, Show a normal probability plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the effects with a reference line based on Lenth's (1989) pseudo standard error, and effects larger than its margin of error are marked significant; other saturated models give an error.
 #'    Defaults to \code{FALSE}.
 #' @param optimizationIntervals, Predicted response at the optimal (or manually set) factor levels, with the confidence interval for the mean response and the prediction interval for a single new run. Blocks are averaged out; covariates are held at their mean.
 #'    Defaults to \code{FALSE}.
@@ -71,7 +71,7 @@
 #'    Defaults to \code{FALSE}.
 #' @param plotNorm, Show a normal probability plot of the residuals.
 #'    Defaults to \code{FALSE}.
-#' @param plotPareto, Show a Pareto plot of the standardized effects.
+#' @param plotPareto, Show a Pareto plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the absolute effects with the margin of error based on Lenth's (1989) pseudo standard error; other saturated models give an error.
 #'    Defaults to \code{FALSE}.
 #' @param plotRunOrder, Show a plot of the residuals per run order value.
 #'    Defaults to \code{FALSE}.

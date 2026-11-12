@@ -120,7 +120,7 @@ Defaults to \code{TRUE}.}
 
 \item{modelTerms, }{Allows manually defining the main effects and interactions in the model.}
 
-\item{normalEffectsPlot, }{Show a normal probability plot of the standardized effects.
+\item{normalEffectsPlot, }{Show a normal probability plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the effects with a reference line based on Lenth's (1989) pseudo standard error, and effects larger than its margin of error are marked significant; other saturated models give an error.
 Defaults to \code{FALSE}.}
 
 \item{optimizationIntervals, }{Predicted response at the optimal (or manually set) factor levels, with the confidence interval for the mean response and the prediction interval for a single new run. Blocks are averaged out; covariates are held at their mean.
@@ -150,7 +150,7 @@ Defaults to \code{FALSE}.}
 \item{plotNorm, }{Show a normal probability plot of the residuals.
 Defaults to \code{FALSE}.}
 
-\item{plotPareto, }{Show a Pareto plot of the standardized effects.
+\item{plotPareto, }{Show a Pareto plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the absolute effects with the margin of error based on Lenth's (1989) pseudo standard error; other saturated models give an error.
 Defaults to \code{FALSE}.}
 
 \item{plotRunOrder, }{Show a plot of the residuals per run order value.
