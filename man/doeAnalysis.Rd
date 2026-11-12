@@ -70,7 +70,7 @@ doeAnalysis(
 
 \item{blocksResponseSurface, }{The column corresponding to the blocks in the design. The difference between a block variable and a discrete factor is that the blocks will not be analysed for interaction effects and are excluded from effect plots.}
 
-\item{codeFactors, }{Display the results in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. For factorial designs, continuous factors are treated as categorical in the ANOVA table when this option is unchecked.
+\item{codeFactors, }{Display the results in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. For factorial designs, the ANOVA table is calculated in coded units, so it does not change with this option, unless coding changes the model (an interaction or squared term without its main effects).
 Defaults to \code{TRUE}.}
 
 \item{codeFactorsManualTable, }{Enter the low and high level of each factor. Blocks and discrete factors with more than two levels are not rescaled to -1/1, so they have no low and high level ("Not available").}
@@ -200,7 +200,7 @@ Defaults to \code{FALSE}.}
 \itemize{
 \item \strong{Type I}: Sequential sums of squares: each term is adjusted only for the terms entered before it, so the results depend on the order of the terms. The term rows add up to the Model row.
 \item \strong{Type II}: Each term is adjusted for all other terms, except for higher-order terms that contain it. For example, A is adjusted for B, but not for A✻B.
-\item \strong{Type III}: Each term is adjusted for all other terms in the model, i.e. it measures what the term adds when it is entered last. Results for lower-order terms depend on how the factors are coded.
+\item \strong{Type III}: Each term is adjusted for all other terms in the model, i.e. it measures what the term adds when it is entered last. Results for lower-order terms depend on how the factors are coded. Not available when some coefficients are aliased.
 }}
 
 \item{surfacePlotHorizontalRotation, }{Rotation of the surface plot in the horizontal plane, in degrees.}

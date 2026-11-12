@@ -387,7 +387,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       regressionFit <- lm(formula, data = dataset)
     }
 
-    regressionFitCoded     <- lm(formula, data = datasetCoded)
+    regressionFitCoded     <- stats::lm(formula, data = datasetCoded)
     regressionSummary      <- summary(regressionFit)
     regressionSummaryCoded <- summary(regressionFitCoded)
     regressionFit[["nullSpace"]]      <- list(value = .doeNullSpace(regressionFit)) # see .doeFitNullSpace
@@ -425,9 +425,9 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     # say which units the ANOVA of an uncoded factorial analysis with continuous predictors uses
     if (options[["designType"]] == "factorialDesign" && !options[["codeFactors"]] && length(setdiff(unlist(continuousPredictors), "")) > 0) {
       result[["anova"]][["codingNote"]] <- if (sameModelCoded) {
-        gettext("Calculated with the continuous predictors in coded (−1/+1) units, so the table is the same in coded and uncoded units.")
+        gettext("Calculated with the continuous predictors in coded (\u22121/+1) units, so the table is the same in coded and uncoded units.")
       } else {
-        gettext("Calculated in uncoded units: coding the continuous predictors changes this model (e.g., an interaction or squared term without its main effects).")
+        gettext("Calculated in uncoded units: coding the predictors changes this model (e.g., an interaction or squared term without its main effects).")
       }
     }
     anovaFitData    <- if (anovaFitCoded) regressionFitCoded else regressionFit
@@ -437,7 +437,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     anovaFit        <- NULL
 
     # no type III SS with aliased columns: the test of a term then depends on how its remaining columns are parameterized
-    if (options[["sumOfSquaresType"]] == "type3" && anyNA(stats::coef(anovaFitData))) {
+    # (ssType, not the option: a saturated model shows sequential SS whatever type is selected)
+    if (ssType == "type3" && anyNA(stats::coef(anovaFitData))) {
       result[["anova"]][["error"]] <- resultCoded[["anova"]][["error"]] <-
         gettext("Type III sums of squares are unavailable for this model, because some of its coefficients are aliased. Use Type I or Type II sums of squares.")
     } else if (!anovaSaturated) {
@@ -755,7 +756,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   roDependent <- roOptionsDf$variable
   models      <- .doeOptimizerModels(jaspResults, roDependent, dataset, blocks, covariates)
 
-  optimParam <- roOutcome$parameters
+  optimParam  <- roOutcome$parameters
+  hasSolution <- !is.null(optimParam) # NULL when no setting with a unique prediction was found (aliased contrasts)
   desi <- roOutcome$desirability
   desi <- pmax(0, pmin(1, desi)) # after optim. desi can be bounded to 0 and 1
   if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, ""))
@@ -763,8 +765,9 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   if (length(discretePredictors) >= 1 && !identical(discretePredictors, ""))
     discLevels <- .doeDiscreteSettings(optimParam, discretePredictors)
 
-  predValues <- .doePredictResponses(continuousLevels = contLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
-                                     currentDiscreteLevels = discLevels, models = models, dependent = roDependent)
+  if (hasSolution)
+    predValues <- .doePredictResponses(continuousLevels = contLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
+                                       currentDiscreteLevels = discLevels, models = models, dependent = roDependent)
 
   # Did all the required calculations and saved to state, if tables should not be displayed return now
   if (!options[["optimizationSolutionTable"]])
@@ -816,6 +819,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
   tb2$position <- 2
   jaspResults[["tableRoSolution"]] <- tb2
+  if (!hasSolution) {
+    tb2$setError(.doeOptimizerNotEstimableError())
+    return()
+  }
 
   rows2 <- data.frame(desi = desi)
   for (pred in allPredictors) {
@@ -916,6 +923,13 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     }
   } else { # if default optimal parameters should be used
     currentSettings <- roOutcome$parameters
+    if (is.null(currentSettings)) { # no setting with a unique prediction was found; manual settings can still have one
+      jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
+      jaspPlot$dependOn(options = .doeOptimizationPlotDependencies())
+      jaspResults[["plotRo"]][["plot"]] <- jaspPlot
+      jaspPlot$setError(.doeOptimizerNotEstimableError())
+      return()
+    }
     if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
       continuousLevels <- currentSettings[continuousPredictors]
     } else {
@@ -990,8 +1004,6 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
                                                            roOptionsDf = roOptionsDf)
         if (outcomeType == "compDesi"| outcomeType == "individualDesirability")
           plottingWindowDf$y <- pmax(0, pmin(1, plottingWindowDf$y))
-        yLimits <- .doeOptimizationPlotLimits(plottingWindowDf$y, outcomeType)
-        yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plottingWindowDf$y[!is.na(plottingWindowDf$y)], yLimits))
         xBreaks <- jaspGraphs::getPrettyAxisBreaks(plottingWindowDf$x)
         # Coordinates for the indication of the current parameter settings
         redPointCoordX <- currentPredValue
@@ -1010,6 +1022,11 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
                                                        roOptionsDf = roOptionsDf)
         if (outcomeType == "compDesi"| outcomeType == "individualDesirability")
           redPointCoordY <- pmax(0, pmin(1, redPointCoordY))
+        # with aliased contrasts, the current setting can be the only one with a unique prediction, between the grid points
+        # of the curve (e.g., the mean of a factor confounded with the blocks); then the axis must still show it
+        yValues <- if (all(is.na(plottingWindowDf$y))) redPointCoordY else plottingWindowDf$y
+        yLimits <- .doeOptimizationPlotLimits(yValues, outcomeType)
+        yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(yValues[!is.na(yValues)], yLimits))
         plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y)) +
           ggplot2::geom_line(color = "blue", linewidth = 1) +
           ggplot2::annotate("point", x = redPointCoordX, y = redPointCoordY, color = "red", size = 3) +
@@ -1091,6 +1108,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   table$dependOn(options = c(.doeResponseOptimizerDependencies(), "optimizationIntervals", "optimizationIntervalsLevel"))
   table$position <- 3
   jaspResults[["tableRoPrediction"]] <- table
+  if (is.null(jaspResults[["roResult"]]$object[["parameters"]])) { # no setting with a unique prediction was found
+    table$setError(.doeOptimizerNotEstimableError())
+    return()
+  }
 
   predictors <- c(unlist(discretePredictors), unlist(continuousPredictors))
   predictors <- predictors[predictors != ""]
@@ -1291,8 +1312,12 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     optimalResultDf <- data.frame("outcomeValue" = currrentOptimResult$value * -1)  # after optimization the sign can be switched again
     optimalResultDf[continuousPredictors] <- currrentOptimResult$par
   }
+  # Settings without a unique prediction (aliased contrasts) have NA and are skipped. Averaged over the blocks, not even
+  # the design points need to have one, e.g. when a factor is held constant within blocks (a block contrast aliased with
+  # it); then only settings between the design points can have one, which the search can miss.
+  if (all(is.na(optimalResultDf$outcomeValue)))
+    return(list(parameters = NULL, desirability = NA_real_))
   # drop = FALSE keeps a named one-row data frame also with a single predictor
-  # which.max() and na.rm skip the settings without a unique prediction (NA); the design points always have one
   optimalParameters <- optimalResultDf[which.max(optimalResultDf$outcomeValue), names(optimalResultDf) != "outcomeValue", drop = FALSE]
   maxDesirability <- max(optimalResultDf$outcomeValue, na.rm = TRUE)
 
@@ -1406,6 +1431,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
 .doeAliasedOptimizerNote <- function() {
   gettext("Some contrasts of the model are aliased, so the data cannot estimate the response at some settings (e.g., combinations of factor levels without runs). These settings are left out.")
+}
+
+.doeOptimizerNotEstimableError <- function() {
+  gettext("The response optimizer cannot be used with this model: some contrasts are aliased, and it found no setting at which the data can estimate the response (e.g., when a factor is held constant within blocks, as the predictions are averaged over the blocks).")
 }
 
 .doeNotEstimablePredictionNote <- function() {
@@ -2075,6 +2104,18 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   gettext("Some contrasts of the model are aliased. Values left empty depend on which aliased contrasts are left out (e.g., on the order of the factor levels), so they are not shown.")
 }
 
+.doeNoUniqueEffectsError <- function() {
+  gettext("No effects to plot: some contrasts of the model are aliased, so no effect has a unique estimate.")
+}
+
+# Error of an effect plot without effects (after leaving out blocks and covariates, which can have unique estimates):
+# because of aliased contrasts, or because the model has no effect terms
+.doeNoEffectsError <- function(result) {
+  if (all(result[["coefficients"]][["unique"]]))
+    return(gettext("There are no effects to plot."))
+  return(.doeNoUniqueEffectsError())
+}
+
 .doeAnalysisStepwiseTable <- function(jaspResults, dependent, options, ready, coded, stepwiseMethod) {
   for (dep in dependent) {
 
@@ -2191,7 +2232,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       plot$title <- gettext("Pareto Chart of Effects")
     plotData <- .doeEffectPlotData(result, options, blocks, covariates)
     if (nrow(plotData) == 0) {
-      plot$setError(gettext("There are no effects to plot."))
+      plot$setError(.doeNoEffectsError(result))
       next
     }
 
@@ -2246,7 +2287,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       plot$title <- gettext("Normal Plot of Effects")
     tDf <- .doeEffectPlotData(result, options, blocks, covariates)
     if (nrow(tDf) == 0) {
-      plot$setError(gettext("There are no effects to plot."))
+      plot$setError(.doeNoEffectsError(result))
       next
     }
 
