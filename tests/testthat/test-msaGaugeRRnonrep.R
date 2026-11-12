@@ -558,3 +558,44 @@ test_that("LF4.5 Unequal number of parts per operator gives an error", {
   expect_identical(resultsUnbalanced[["results"]][["gaugeRRNonRep"]][["error"]][["errorMessage"]],
                    "Unbalanced design. Some operators measured more parts than others.")
 })
+
+# Wide format, part labels reused across operators ####
+# 2 operators x 3 parts per operator x 2 replicates; reproducibility = (MS_O - MS_P(O)) / (3 * 2)
+nestedDataWide <- data.frame(
+  Operator = rep(c("A", "B"), each = 3),
+  Batch    = rep(1:3, 2),
+  Result1  = c(10.1, 11.0, 10.5, 12.2, 12.9, 12.4),
+  Result2  = c(10.3, 10.8, 10.6, 12.5, 13.0, 12.1)
+)
+
+options <- analysisOptions("msaGaugeRRnonrep")
+options$dataFormat <- "wideFormat"
+options$partWideFormat <- "Batch"
+options$operatorWideFormat <- "Operator"
+options$measurementsWideFormat <- c("Result1", "Result2")
+options$tolerance <- TRUE
+options$toleranceValue <- 15
+set.seed(1)
+results <- runAnalysis("msaGaugeRRnonrep", nestedDataWide, options)
+
+test_that("WF4.1 Reused part labels - Gauge r&R (nested) table results match", {
+  table <- results[["results"]][["gaugeRRNonRep"]][["collection"]][["gaugeRRNonRep_Table1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, 43.6489028213168, 11.6033333333333, 11.6033333333333, 0.00272033418242098,
+                                      "Operator", 4, 11.3928571428572, 0.265833333333332, 1.06333333333333,
+                                      0.00574955819130926, "Batch(Operator)", 6, "", 0.0233333333333331,
+                                      0.139999999999998, "", "Repeatability", 11, "", "", 12.8066666666666,
+                                      "", "Total"))
+})
+
+test_that("WF4.2 Reused part labels - Variance components table results match", {
+  table <- results[["results"]][["gaugeRRNonRep"]][["collection"]][["gaugeRRNonRep_Table2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.91291666666666, 94.0393281442032, "Total gauge r&amp;R", 0.0233333333333331,
+                                      1.14707087259319, "Repeatability", 1.88958333333333, 92.89225727161,
+                                      "Reproducibility", 0.121249999999999, 5.96067185579679, "Part-To-part",
+                                      2.03416666666666, 100, "Total variation"))
+  # moment estimators: (MS_O - MS_P(O)) / (b * r) and (MS_P(O) - MS_E) / r
+  expect_equal(table[[3]][["Var"]], (11.6033333333333 - 0.265833333333332) / (3 * 2))
+  expect_equal(table[[4]][["Var"]], (0.265833333333332 - 0.0233333333333331) / 2)
+})
