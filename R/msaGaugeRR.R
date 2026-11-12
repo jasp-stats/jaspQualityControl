@@ -426,25 +426,23 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
       msInteraction <- ssInteraction / dfInteraction
     }
 
-    if(singleOperator){
-      fPart <- msPart / msRepWithInteraction
-      pPart <- pf(fPart, dfPart, dfRepWithInteraction, lower.tail = F)
-    } else if (options[["anovaModelType"]] == "fixedEffect") {
-      # fixed effects: Part and Operator are tested against repeatability (error) mean square
-      fPart <- msPart / msRepWithInteraction
-      fOperator <- msOperator / msRepWithInteraction
-      pPart <- pf(fPart, dfPart, dfRepWithInteraction, lower.tail = F)
-      pOperator <- pf(fOperator, dfOperators, dfRepWithInteraction, lower.tail = F)
+    # Error term for Part and Operator: repeatability for the one-way (Type 3) and the fixed-effects model,
+    # Part x Operator interaction for the random-effects model. The interaction is always tested against repeatability.
+    if (singleOperator || options[["anovaModelType"]] == "fixedEffect") {
+      msError <- msRepWithInteraction
+      dfError <- dfRepWithInteraction
     } else {
-      # random effects: Part and Operator are tested against the interaction mean square
-      fPart <- msPart / msInteraction
-      fOperator <- msOperator / msInteraction
-      pPart <- pf(fPart, dfPart, dfInteraction, lower.tail = F)
-      pOperator <- pf(fOperator, dfOperators, dfInteraction, lower.tail = F)
+      msError <- msInteraction
+      dfError <- dfInteraction
     }
-    if(!singleOperator){
+
+    fPart <- msPart / msError
+    pPart <- pf(fPart, dfPart, dfError, lower.tail = FALSE)
+    if (!singleOperator) {
+      fOperator    <- msOperator / msError
+      pOperator    <- pf(fOperator, dfOperators, dfError, lower.tail = FALSE)
       fInteraction <- msInteraction / msRepWithInteraction
-      pInteraction <- pf(fInteraction, dfInteraction, dfRepWithInteraction, lower.tail = F)
+      pInteraction <- pf(fInteraction, dfInteraction, dfRepWithInteraction, lower.tail = FALSE)
     }
 
     if(singleOperator){
