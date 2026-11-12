@@ -7268,3 +7268,52 @@ test_that("62.12 Lenth's margin of error label keeps significant digits for smal
   expect_equal(ggplot2::layer_data(testPlot, 2)[["yintercept"]], qt(0.975, 7 / 3) * 6e-4, tolerance = 1e-6)
   expect_identical(ggplot2::layer_data(testPlot, 3)[["label"]], "ME = 0.002258")
 })
+
+test_that("62.13 Lenth's method leaves out blocks and covariates", {
+  # Montgomery's 2^4 with ABCD confounded with the blocks, or as a covariate (orthogonal to all terms): the 14 effects
+  # up to the three-way interactions are as in 62.1. s0 = 1.5 * 2.875; the 10 effects below 2.5 * s0 have median 2.125,
+  # so PSE = 3.1875 with 14 / 3 df
+  filtrationData       <- read.csv("datasets/doeAnalysis/doe_filtrationRate.csv")
+  filtrationData$Block <- ifelse(with(filtrationData, A * B * C * D) > 0, "I", "II")
+  filtrationData$Cov   <- with(filtrationData, A * B * C * D)
+  terms <- unlist(lapply(1:3, function(k) combn(c("A", "B", "C", "D"), k, simplify = FALSE)), recursive = FALSE)
+  for (nuisance in c("block", "covariate")) {
+    options <- saturatedFactorialOptions("Rate", c("A", "B", "C", "D"), terms = terms)
+    if (nuisance == "block") options$blocksFactorial <- "Block" else options$covariates <- "Cov"
+    options$plotPareto        <- TRUE
+    options$normalEffectsPlot <- TRUE
+    set.seed(123)
+    results    <- runAnalysis("doeAnalysis", filtrationData, options)
+    collection <- results[["results"]][["Rate"]][["collection"]]
+    pareto     <- results[["state"]][["figures"]][[collection[["Rate_plotPareto"]][["data"]]]][["obj"]]
+    normal     <- results[["state"]][["figures"]][[collection[["Rate_normalEffectsPlot"]][["data"]]]][["obj"]]
+    expect_equal(nrow(pareto[["data"]]), 14)
+    expect_equal(ggplot2::layer_data(pareto, 2)[["yintercept"]], qt(0.975, 14 / 3) * 3.1875)
+    expect_setequal(normal[["data"]][["fac"]][normal[["data"]][["significant"]] == "S"], c("A", "C", "D", "AC", "AD"))
+  }
+})
+
+test_that("62.14 Effect plots of a model without effect terms give an error", {
+  # forward selection enters no term, so only the intercept is left (and nothing is aliased)
+  data    <- data.frame(A = rep(c(-1, 1), 4), B = rep(c(-1, -1, 1, 1), 2), y = c(10.1, 9.9, 10.0, 10.2, 9.8, 10.1, 10.0, 9.9))
+  options <- saturatedFactorialOptions("y", c("A", "B"), terms = list("A", "B"))
+  options$stepwiseMethodFactorial <- "forward"
+  expect_identical(saturatedPlotErrors(data, options, "y"), rep("There are no effects to plot.", 2))
+})
+
+test_that("62.15 Saturated model without unique effects: the effect plots are titled as plots of effects", {
+  # the data of 62.10 with one run per setting: saturated (5 runs, rank 5), and as A is constant within level c of F,
+  # no effect has a unique value
+  data <- data.frame(F = c("a", "a", "b", "b", "c"), A = c(-1, 1, -1, 1, -1), y = c(12.1, 15.9, 11.2, 14.8, 12.6))
+  for (codeFactors in c(TRUE, FALSE)) {
+    options <- saturatedFactorialOptions("y", "A", "F", terms = list("A", "F", c("A", "F")), codeFactors = codeFactors)
+    options$plotPareto        <- TRUE
+    options$normalEffectsPlot <- TRUE
+    set.seed(123)
+    results    <- runAnalysis("doeAnalysis", data, options)
+    collection <- results[["results"]][["y"]][["collection"]]
+    expect_identical(collection[["y_plotPareto"]][["title"]], "Pareto Chart of Effects")
+    expect_identical(collection[["y_normalEffectsPlot"]][["title"]], "Normal Plot of Effects")
+    expect_match(collection[["y_plotPareto"]][["error"]][["errorMessage"]], "No effects to plot")
+  }
+})
