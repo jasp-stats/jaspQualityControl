@@ -458,16 +458,8 @@ test_that("LF4.7 Type 3 study - Measurements by part plot matches", {
   jaspTools::expect_equal_plots(testPlot, "4_measurements-by-part")
 })
 
-test_that("LF4.9 Type 3 study - Range chart by operator plot matches", {
-  plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "4_range-chart-by-operator")
-})
-
-test_that("LF4.10 Type 3 study - Test results for range chart table results match", {
-  table <- results[["results"]][["rChart"]][["collection"]][["rChart_table"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list(1, "Point 10", "Point 8", "", "", "Point 9"))
+test_that("LF4.9 Type 3 study - Range chart by operator is not shown", {
+  expect_null(results[["results"]][["rChart"]])
 })
 
 test_that("LF4.11 Type 3 study - traffic plot matches", {
@@ -476,18 +468,8 @@ test_that("LF4.11 Type 3 study - traffic plot matches", {
   jaspTools::expect_equal_plots(testPlot, "4_traffic-plot")
 })
 
-test_that("LF4.12 Type 3 study - Average chart by operator plot matches", {
-  plotName <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "4_average-chart-by-operator")
-})
-
-test_that("LF4.13 Type 3 study - Test results for x-bar chart table results match", {
-  table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list(1, "Point 1", "", "Point 2", "", "Point 3", "", "Point 4", "",
-                                      "Point 5", "", "Point 6", "", "Point 7", "", "Point 8", "",
-                                      "Point 9", "", "Point 10"))
+test_that("LF4.12 Type 3 study - Average chart by operator is not shown", {
+  expect_null(results[["results"]][["xBarChart"]])
 })
 
 ## Report ####
@@ -1015,16 +997,8 @@ test_that("WF4.7 Type 3 study - Measurements by part plot matches", {
   jaspTools::expect_equal_plots(testPlot, "WF4_measurements-by-part")
 })
 
-test_that("WF4.9 Type 3 study - Range chart by operator plot matches", {
-  plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "WF4_range-chart-by-operator")
-})
-
-test_that("WF4.10 Type 3 study - Test results for range chart table results match", {
-  table <- results[["results"]][["rChart"]][["collection"]][["rChart_table"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list(1, "Point 9", "", "Point 10"))
+test_that("WF4.9 Type 3 study - Range chart by operator is not shown", {
+  expect_null(results[["results"]][["rChart"]])
 })
 
 test_that("WF4.11 Type 3 study - Traffic plot matches", {
@@ -1033,20 +1007,8 @@ test_that("WF4.11 Type 3 study - Traffic plot matches", {
   jaspTools::expect_equal_plots(testPlot, "WF4_traffic-plot")
 })
 
-test_that("WF4.12 Type 3 study - Average chart by operator plot matches", {
-  plotName <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "WF4_average-chart-by-operator")
-})
-
-test_that("WF4.13 Type 3 study - Test results for x-bar chart table results match", {
-  table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list(1, "Point 1", "Point 16", "", "Point 2", "Point 17", "", "Point 3",
-                                      "Point 18", "", "Point 9", "", "", "Point 13", "", "", "Point 14",
-                                      "", "", "Point 15", "", "", "Point 22", "", "", "Point 23",
-                                      "", "", "Point 28", "", "", "Point 29", "", "", "Point 30",
-                                      ""))
+test_that("WF4.12 Type 3 study - Average chart by operator is not shown", {
+  expect_null(results[["results"]][["xBarChart"]])
 })
 
 ## Report ####
