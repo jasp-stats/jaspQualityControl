@@ -1089,13 +1089,14 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     return(if (ggPlot) plotObject else Plot)
   }
 
-  if (StudyVar >= 100) {StudyVar = 100}
-  if (ToleranceVar >= 100) {ToleranceVar = 100}
+  # cap only the marker position at the axis end, label shows the real value
+  studyVarPos <- min(StudyVar, 100)
+  toleranceVarPos <- min(ToleranceVar, 100)
 
   p1 <- ggplot2::ggplot(mat[c(1:3),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::scale_fill_manual(values= rev(c('#008450','#EFB700', '#B81D13'))) +
-    ggplot2::geom_vline(xintercept = StudyVar) +
+    ggplot2::geom_vline(xintercept = studyVarPos) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15)) +
     ggplot2::scale_y_discrete(name = NULL) +
@@ -1104,7 +1105,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
                    axis.ticks.y = ggplot2::element_blank(),
                    axis.title.y = ggplot2::element_blank()) +
     ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent measurement system variation of the process variation") +
-    ggplot2::annotate("text", x = StudyVar + 5, y = 1.52, size = 5, label = paste0(gettextf("%.2f", StudyVar), "%"))
+    ggplot2::annotate("text", x = studyVarPos + 5, y = 1.52, size = 5, label = paste0(gettextf("%.2f", StudyVar), "%"))
 
   if (Xlab.StudySD != "")
     p1 <- p1 + ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = gettext(Xlab.StudySD))
@@ -1114,7 +1115,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     p2 <- ggplot2::ggplot(mat[c(4:6),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
       ggplot2::geom_bar(stat = "identity") +
       ggplot2::scale_fill_manual(values= rev(c('#008450','#EFB700', '#B81D13')))+
-      ggplot2::geom_vline(xintercept = ToleranceVar) +
+      ggplot2::geom_vline(xintercept = toleranceVarPos) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15)) +
       ggplot2::theme(legend.position="none",
@@ -1122,7 +1123,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
                      axis.ticks.y = ggplot2::element_blank(),
                      axis.title.y = ggplot2::element_blank()) +
       ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent measurement system variation of the tolerance") +
-      ggplot2::annotate("text", x = ToleranceVar + 5, y = 1.52, size = 5, label = paste0(gettextf("%.2f", ToleranceVar), "%"))
+      ggplot2::annotate("text", x = toleranceVarPos + 5, y = 1.52, size = 5, label = paste0(gettextf("%.2f", ToleranceVar), "%"))
 
     if (Xlab.Tol != "")
       p2 <- p2 + ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = gettext(Xlab.Tol))
