@@ -48,8 +48,7 @@ variablesChartsSubgroupsInternal <- function(jaspResults, dataset, options) {
   if (!ready) {
     plot <- createJaspPlot(title = gettext("Control charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
-    plot$dependOn(c("report", "chartType", "measurementLongFormat", "variables", "stagesWideFormat", "stagesLongFormat",
-                    "subgroup", "subgroupSizeType", "measurementsWideFormat", "dataFormat", "groupingVariableMethod"))
+    plot$dependOn(.variablesChartsSubgroupsDependencies("notReadyPlot"))
     return()
   }
 
@@ -115,8 +114,7 @@ variablesChartsSubgroupsInternal <- function(jaspResults, dataset, options) {
     plot <- createJaspPlot(title = gettext("Control charts"), width = 700, height = 400)
     plot$setError(gettext("All subgroups are of size 1. Variables charts for subgroups cannot be calculated. Use variables charts for individuals."))
     jaspResults[["plot"]] <- plot
-    plot$dependOn(c("report", "chartType", "measurementLongFormat", "variables", "subgroup", "stagesWideFormat", "stagesLongFormat",
-                    "subgroupSizeType", "groupingVariableMethod"))
+    plot$dependOn(.variablesChartsSubgroupsDependencies("subgroupSizeOnePlot"))
     return()
   }
 
@@ -130,12 +128,7 @@ variablesChartsSubgroupsInternal <- function(jaspResults, dataset, options) {
 
     if (is.null(jaspResults[["controlCharts"]])) {
       jaspResults[["controlCharts"]] <- createJaspContainer(position = 1)
-      jaspResults[["controlCharts"]]$dependOn(c("chartType", "variables", "warningLimits", "knownParameters", "knownParametersMean", "manualTicks", 'nTicks',
-                                                "knownParametersSd", "manualSubgroupSizeValue", "dataFormat", "subgroup", "measurementLongFormat",
-                                                "report", "reportTitle", "reportMeasurementName", "reportMiscellaneous","reportReportedBy","reportDate", "reportSubtitle",
-                                                "reportChartName", "subgroupSizeUnequal", "axisLabels", "stagesWideFormat", "stagesLongFormat",
-                                                "subgroupSizeType", "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas",
-                                                "groupingVariableMethod", .getDependenciesControlChartRules()))
+      jaspResults[["controlCharts"]]$dependOn(.variablesChartsSubgroupsDependencies("controlCharts"))
       secondPlotType <- ifelse(options[["chartType"]] == "xBarAndR", "R", "s")
       jaspResults[["controlCharts"]][["plot"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s control chart", secondPlotType), width = 1200, height = 500)
       if (length(measurements) > 50 && secondPlotType == "R") { # if the subgroup size is above 50, the R package cannot calculate R charts.
@@ -179,16 +172,7 @@ variablesChartsSubgroupsInternal <- function(jaspResults, dataset, options) {
         jaspResults[["NelsonTables"]] <- NULL
         reportPlot <- createJaspPlot(title = gettext("Variables Chart for Subgroups Report"), width = 1250, height = 1000)
         jaspResults[["report"]] <- reportPlot
-        jaspResults[["report"]]$dependOn(c("chartType", "variables", "warningLimits", "knownParameters", "knownParametersMean", "manualTicks", 'nTicks',
-                                           "knownParametersSd", "manualSubgroupSizeValue", "dataFormat", "subgroup", "measurementLongFormat",
-                                           "subgroupSizeUnequal", "axisLabels", "stagesWideFormat", "stagesLongFormat",
-                                           "subgroupSizeType", "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas",
-                                           "groupingVariableMethod", "report", "reportMetaData", "reportTitle", "reportTitleText",
-                                           "reportChartName", "reportChartNameText", "reportSubtitle", "reportSubtitleText",
-                                           "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
-                                           "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate",
-                                           "reportDateText", "reportPerformedBy", "reportPerformedByText", "reportPrintDate",
-                                           "reportPrintDateText", .getDependenciesControlChartRules()))
+        jaspResults[["report"]]$dependOn(.variablesChartsSubgroupsDependencies("report"))
 
         # Plot meta data
         if (options[["reportTitle"]] ) {
@@ -218,4 +202,26 @@ variablesChartsSubgroupsInternal <- function(jaspResults, dataset, options) {
       }
     }
   }
+}
+
+.variablesChartsSubgroupsDependencies <- function(element = c("notReadyPlot", "subgroupSizeOnePlot", "controlCharts", "report")) {
+  element <- match.arg(element)
+  # options that determine the data, the subgroups and the stages
+  dataDependencies <- c("dataFormat", "measurementsWideFormat", "measurementLongFormat", "subgroup", "stagesWideFormat",
+                        "stagesLongFormat", "subgroupSizeType", "manualSubgroupSizeValue", "groupingVariableMethod")
+  chartDependencies <- c(dataDependencies, "chartType", "warningLimits", "knownParameters", "knownParametersMean",
+                         "knownParametersSd", "subgroupSizeUnequal", "fixedSubgroupSizeValue",
+                         "axisLabels", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas",
+                         .getDependenciesControlChartRules())
+  switch(element,
+         notReadyPlot        = ,
+         subgroupSizeOnePlot = c("report", "chartType", dataDependencies),
+         controlCharts       = c(chartDependencies, "report", "reportTitle", "reportMeasurementName", "reportDate",
+                                 "reportSubtitle", "reportChartName"),
+         report              = c(chartDependencies, "report", "reportMetaData", "reportTitle", "reportTitleText",
+                                 "reportChartName", "reportChartNameText", "reportSubtitle", "reportSubtitleText",
+                                 "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
+                                 "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate",
+                                 "reportDateText", "reportPerformedBy", "reportPerformedByText", "reportPrintDate",
+                                 "reportPrintDateText"))
 }
