@@ -340,7 +340,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$D ,UCL))
-  yLimits <- range(yBreaks * 1.2)
+  yLimits <- range(yBreaks)
   if (length(subgroups) > 60)
     xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
   else
@@ -384,7 +384,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$D ,UCL))
-  yLimits <- range(yBreaks * 1.2)
+  yLimits <- range(yBreaks)
   if (length(subgroups) > 60)
     xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
   else
@@ -497,8 +497,8 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   center <- sixsigma_I$center
   UCL <- max(sixsigma_I$limits)
   LCL <- min(sixsigma_I$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL))
-  yLimits <- range(yBreaks * 1.2)
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$P, UCL))
+  yLimits <- range(yBreaks)
   if (length(subgroups) > 60)
     xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
   else
@@ -537,8 +537,8 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   center <- sixsigma_R$center
   UCL <- max(sixsigma_R$limits)
   LCL <- min(sixsigma_R$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL))
-  yLimits <- range(yBreaks * 1.2)
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$data, UCL))
+  yLimits <- range(yBreaks)
   if (length(subgroups) > 60)
     xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
   else
