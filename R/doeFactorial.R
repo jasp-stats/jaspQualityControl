@@ -89,7 +89,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     "replications",
     "repetitions",
     "setSeed",
-    "seed"
+    "seed",
+    "randomSeed"
   ))
 }
 
@@ -338,7 +339,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
 }
 
 .doeFactorialGenerateDesign <- function(jaspResults, options) {
-  seed <- .doeGetAndSetSeed(jaspResults, options)
+  seed <- .doeGetSeed(options)
   twoLevelDesign <- options[["factorialType"]] != "generalFullFactorial"
   df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
   designSpec <- .doeFactorialGetSelectedDesign(jaspResults, options)
@@ -498,22 +499,16 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   display <- .doeFactorialSetDisplayOrder(options, display)
   display <- .doeFactorialDecodeDesign(options, display)
   result[["display"]] <- display
-  jaspResults[["seed"]] <- createJaspState(seed)
-  jaspResults[["seed"]]$dependOn(options = .doeFactorialBaseDependencies())
+  result[["seed"]] <- seed
   return(result)
 }
 
-.doeGetAndSetSeed <- function(jaspResults, options) {
-  if (!is.null(jaspResults[["seed"]])) {
-    seed <- jaspResults[["seed"]]$object
-  } else {
-    if (options[["setSeed"]]) {
-      seed <- options[["seed"]]
-    } else {
-      seed <- sample(1:1e6, 1)
-    }
-  }
-  return(seed)
+# Without "Set seed", use the seed drawn by the QML form when the analysis was created; it is an option,
+# so it is saved in the .jasp file and the run order is the same after reopening (a jaspResults state is not saved)
+.doeGetSeed <- function(options) {
+  if (options[["setSeed"]])
+    return(options[["seed"]])
+  return(options[["randomSeed"]])
 }
 
 .doeFactorialAddCenterPoints <- function(options, display) {
@@ -607,6 +602,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     tb$addFootnote(gettextf("Hard-to-change factors: %1$s", paste0(df[["name"]][1:options[["factorialDesignTypeSplitPlotNumberHardToChangeFactors"]]], collapse = ", ")))
   }
   jaspResults[["displayDesign"]] <- tb
+  if (!is.null(design[["seed"]]))
+    tb$addFootnote(gettextf("Run order randomized with seed %1$s.", design[["seed"]]))
   if (jaspResults$getError()) {
     return()
   }
