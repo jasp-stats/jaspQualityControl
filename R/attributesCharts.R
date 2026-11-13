@@ -311,12 +311,12 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
       ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
       ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
       jaspGraphs::geom_line(data = data_plot, ggplot2::aes(x = subgroups, y = P),col = "blue") +
-      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue'))
+      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(.attributesRedPoints(sixsigma), 'red', 'blue'))
   } else{
     n <- length(UCL)
     p <- p + ggplot2::geom_step(ggplot2::aes(x = subgroups, y = UCL, col = "red"), size = 1.5, linetype = "F1") +
       jaspGraphs::geom_line(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),col = "blue") +
-      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
+      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(.attributesRedPoints(sixsigma), 'red', 'blue')) +
       ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = xBreaks - 0.5) +
       ggplot2::geom_step(ggplot2::aes(x = subgroups, y = LCL, col = "red"), size = 1.5, linetype = "F1") +
       ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = UCL[n], col = "red"), size = 1.5)+
@@ -466,13 +466,13 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
       ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
       ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
       jaspGraphs::geom_line(data = data_plot, ggplot2::aes(x = subgroups, y = P),col = "blue") +
-      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue'))
+      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(.attributesRedPoints(sixsigma), 'red', 'blue'))
   } else{
 
     n <- length(UCL)
     p <- p + ggplot2::geom_step(ggplot2::aes(x = subgroups, y = UCL, col = "red"), size = 1.5, linetype = "F1") +
       jaspGraphs::geom_line(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),col = "blue") +
-      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
+      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(.attributesRedPoints(sixsigma), 'red', 'blue')) +
       ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = xBreaks - 0.5) +
       ggplot2::geom_step(ggplot2::aes(x = subgroups, y = LCL, col = "red"), size = 1.5, linetype = "F1") +
       ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = UCL[n], col = "red"), size = 1.5)+
@@ -521,7 +521,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_line(col = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_I, chart = "i")$red_points, 'red', 'blue')) +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(.attributesRedPoints(sixsigma_I, allsix = TRUE), 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
@@ -632,12 +632,12 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
       ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
       ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
       jaspGraphs::geom_line(data = data_plot, ggplot2::aes(x = subgroups, y = P),col = "blue") +
-      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue'))
+      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(.attributesRedPoints(sixsigma), 'red', 'blue'))
   } else{
     n <- length(UCL)
     p <- p + ggplot2::geom_step(ggplot2::aes(x = subgroups, y = UCL, col = "red"), size = 1.5, linetype = "F1") +
       jaspGraphs::geom_line(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),col = "blue") +
-      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
+      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(.attributesRedPoints(sixsigma), 'red', 'blue')) +
       ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = xBreaks - 0.5) +
       ggplot2::geom_step(ggplot2::aes(x = subgroups, y = LCL, col = "red"), size = 1.5, linetype = "F1") +
       ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = UCL[n], col = "red"), size = 1.5)+
@@ -708,12 +708,12 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
       ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
       ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
       jaspGraphs::geom_line(data = data_plot, ggplot2::aes(x = subgroups, y = P),col = "blue") +
-      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue'))
+      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(.attributesRedPoints(sixsigma), 'red', 'blue'))
   } else{
     n <- length(UCL)
     p <- p + ggplot2::geom_step(ggplot2::aes(x = subgroups, y = UCL, col = "red"), size = 1.5, linetype = "F1") +
       jaspGraphs::geom_line(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),col = "blue") +
-      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
+      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(.attributesRedPoints(sixsigma), 'red', 'blue')) +
       ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = xBreaks - 0.5) +
       ggplot2::geom_step(ggplot2::aes(x = subgroups, y = LCL, col = "red"), size = 1.5, linetype = "F1") +
       ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = UCL[n], col = "red"), size = 1.5)+
@@ -726,6 +726,15 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
 
   return(list(p = p, sixsigma = sixsigma))
 }
+# Red points: subgroups failing any test listed in the chart's test table (tests 1-3, all six for X-mR)
+.attributesRedPoints <- function(sixsigma, allsix = FALSE) {
+  if (length(sixsigma$statistics) < 2) # NelsonLaws() needs at least two points; only test 1 applies
+    return((sixsigma$statistics > sixsigma$limits[, 2] | sixsigma$statistics < sixsigma$limits[, 1]) %in% TRUE)
+  if (allsix)
+    return(NelsonLaws(sixsigma, allsix = TRUE)$red_points)
+  NelsonLaws(sixsigma, chart = "c")$red_points
+}
+
 .Check_equal_samples <- function(dataset,options) {
   .hasErrors(
     dataset,
