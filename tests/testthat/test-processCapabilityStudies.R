@@ -4488,8 +4488,9 @@ test_that("Box-Cox with negative lambda keeps specification limits in order", {
   # LSL = -1^-1, target = -2^-1, USL = -4^-1; mean = -mean(1/x)
   jaspTools::expect_equal_tables(tables[["summary"]],
                                  list(-1, -0.475, 4, 0.14497764834111, 0.0985027580772262, -0.5, -0.25))
+  # CIs use the moving range df = 3: Cp CI = Cp * sqrt(qchisq(c(0.05, 0.95), 3) / 3), Cpk CI = Cpk +- z * sqrt(1 / (9 * 4) + Cpk^2 / (2 * 3))
   jaspTools::expect_equal_tables(tables[["within"]],
-                                 list(1.269, 0.761, 0.157, 1.366, 1.777, 0.396, 0.761, 2.085))
+                                 list(1.269, 0.761, 0.181, 1.342, 1.777, 0.435, 0.761, 2.048))
   jaspTools::expect_equal_tables(tables[["overall"]],
                                  list(0.651, 0.275, 1.002, 0.862, 0.517, 0.075, 0.96, 1.207, 0.295, 0.517, 1.392))
   jaspTools::expect_equal_tables(tables[["performance"]],
@@ -4514,7 +4515,7 @@ test_that("Box-Cox with negative lambda and only a lower specification limit", {
 
   # all observations conform to LSL = 1
   jaspTools::expect_equal_tables(tables[["overall"]], list(1.207, 0.351, 2.063, 1.207))
-  jaspTools::expect_equal_tables(tables[["within"]], list(1.777, 0.49, 3.064, 1.777))
+  jaspTools::expect_equal_tables(tables[["within"]], list(1.777, 0.553, 3.001, 1.777))
   jaspTools::expect_equal_tables(tables[["performance"]],
                                  list(146.593, 0.049, 0, "ppm &lt; LSL", "*", "*", "*", "ppm &gt; USL",
                                       146.593, 0.049, 0, "ppm total"))
@@ -4557,7 +4558,7 @@ test_that("Box-Cox with negative lambda, shift and only an upper specification l
   jaspTools::expect_equal_tables(tables[["summary"]],
                                  list(-0.317261904761905, 4, 0.0648672986944061, 0.0443262411347518, -0.222))
   jaspTools::expect_equal_tables(tables[["overall"]], list(0.488, 0.061, 0.916, 0.488))
-  jaspTools::expect_equal_tables(tables[["within"]], list(0.715, 0.139, 1.29, 0.715))
+  jaspTools::expect_equal_tables(tables[["within"]], list(0.715, 0.162, 1.267, 0.715))
   jaspTools::expect_equal_tables(tables[["performance"]],
                                  list("*", "*", "*", "ppm &lt; LSL", 71441.345, 16012.628, 0, "ppm &gt; USL",
                                       71441.345, 16012.628, 0, "ppm total"))
