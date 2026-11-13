@@ -64,7 +64,9 @@ expectWeibullBandsMatchDeltaMethod <- function(x, label) {
                            -n / scale + sum(z^shape) / scale + shape * sum(z^shape * log(z)) / scale,
                            -n / scale + sum(z^shape) / scale + shape * sum(z^shape * log(z)) / scale,
                            n * shape / scale^2 - shape * (shape + 1) * sum(z^shape) / scale^2), 2)
-  varcov <- solve(information)
+  # adjugate inverse: solve() reports a singular matrix for a high shape (entries differ by ~shape^4 / scale^2)
+  varcov <- matrix(c(information[2, 2], -information[1, 2], -information[2, 1], information[1, 1]), 2) /
+    (information[1, 1] * information[2, 2] - information[1, 2]^2)
   # Var(log percentile) = Var(log scale + zp / shape)
   gradient <- rbind(-band$zp / shape^2, 1 / scale)
   sdLogPercentile <- sqrt(colSums(gradient * (varcov %*% gradient)))
@@ -119,6 +121,41 @@ test_that("Weibull observed information matches a finite-difference Hessian with
       expect_equal(information * scaling, reference * scaling, tolerance = 1e-4, label = sprintf("information, shape %g, scale %g", shape, scale))
     }
   }
+})
+
+test_that("Weibull probability plot confidence bands are correct for data with a coefficient of variation of 1e-5", {
+  # shape ~1e5 (e.g. 100 +- 0.001): the shape and scale information differ by a factor of about shape^4, so a plain
+  # solve() reports a singular matrix even in unit 1
+  set.seed(1)
+  expectWeibullBandsMatchDeltaMethod(rweibull(30, shape = 1e5, scale = 100), "shape 1e5, scale 100")
+})
+
+test_that("Weibull observed information gives no variances where it is not positive definite", {
+  # positive definite at the maximum likelihood estimate; away from it (a fit that did not converge) it need not be,
+  # and the variances would be invalid
+  set.seed(1)
+  x <- rweibull(20, shape = 3, scale = 2)
+  mle <- weibullProfileMle(x)
+  observedVarcov <- qcFunction(".qcWeibullObservedVarcov")
+  varcov <- observedVarcov(x, mle[["shape"]], mle[["scale"]])$varcov
+  expect_true(all(eigen(varcov, symmetric = TRUE, only.values = TRUE)$values > 0))
+
+  invalid <- "Hessian contains invalid values"
+  expect_error(observedVarcov(x, mle[["shape"]], 0.5 * mle[["scale"]]), invalid) # positive diagonal, correlation below -1
+  expect_error(observedVarcov(x, mle[["shape"]], 2 * mle[["scale"]]), invalid)   # negative scale information
+  expect_error(observedVarcov(c(0, x), mle[["shape"]], mle[["scale"]]), invalid) # log(0): not finite
+})
+
+test_that("Weibull probability plot omits the bands when the observed information cannot be inverted", {
+  # cannot happen at the maximum likelihood estimate, so the failure is simulated
+  local_mocked_bindings(.qcWeibullObservedVarcov = function(...) stop("not positive definite", call. = FALSE),
+                        .package = "jaspQualityControl")
+  set.seed(1)
+  options <- list(nullDistribution = "weibull", probabilityPlotRankMethod = "bernard", probabilityPlotGridLines = FALSE)
+  plot <- qcFunction(".qcProbabilityPlotObject")(options, data.frame(x = rweibull(30, shape = 3, scale = 2)), "x", "")[[1]]
+  lines <- Filter(function(layer) inherits(layer$geom, "GeomLine"), plot$layers)
+  expect_length(lines, 1) # the fitted line, no bands
+  expect_true(all(is.finite(lines[[1]]$data$percentileEstimate)))
 })
 
 test_that("Zero-heavy data fall back to the largest absolute value as unit", {
