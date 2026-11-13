@@ -334,11 +334,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     if(options[["trafficLightChart"]] & is.null(jaspResults[["trafficPlot"]] )) {
       jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light chart"))
       jaspResults[["trafficPlot"]]$position <- 9
-      jaspResults[["trafficPlot"]]$dependOn(c("trafficLightChart", "toleranceValue", "tolerance", "gaugeRRmethod",
-                        "processVariationReference", "historicalSdValue", "studyVarianceMultiplierType",
-                        "studyVarianceMultiplierValue", "measurementLongFormat", "operatorLongFormat",
-                        "partLongFormat", "measurementsWideFormat", "operatorWideFormat",
-                        "partWideFormat", "dataFormat", "type3", "report"))
+      jaspResults[["trafficPlot"]]$dependOn(.gaugeRRTrafficLightDependencies())
       trafficContainer <- jaspResults[["trafficPlot"]]
 
       valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, returnTrafficValues = TRUE, Type3 = Type3)
@@ -348,6 +344,15 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
   }
 
   return()
+}
+
+# options that change the traffic light chart's %Study variation / %Tolerance
+.gaugeRRTrafficLightDependencies <- function() {
+  c("trafficLightChart", "toleranceValue", "tolerance", "gaugeRRmethod",
+    "processVariationReference", "historicalSdValue", "studyVarianceMultiplierType",
+    "studyVarianceMultiplierValue", "anovaAlphaForInteractionRemoval", "measurementLongFormat",
+    "operatorLongFormat", "partLongFormat", "measurementsWideFormat", "operatorWideFormat",
+    "partWideFormat", "dataFormat", "type3", "report")
 }
 
 .gaugeANOVA <- function(dataset, measurements, parts, operators, options, ready, returnPlotOnly = FALSE, returnTrafficValues = FALSE,
