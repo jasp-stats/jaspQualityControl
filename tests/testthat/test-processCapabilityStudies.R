@@ -4406,8 +4406,9 @@ test_that("BoxCox (Auto) works", {
                          "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
 
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
-  jaspTools::expect_equal_tables(table, list(1, 2.69160828615533, 100, 0.298231720046251,
-                                             0.284621111299297, 2.53, 3.399))
+  # lambda = car::powerTransform(Diameter + 1 ~ Time) = 0.505 (by subgroup)
+  jaspTools::expect_equal_tables(table, list(1, 2.85324632792781, 100, 0.334400897906984,
+                                             0.31910839319546, 2.671, 3.652))
 })
 
 test_that("Yeo-Johnson works", {
@@ -4529,13 +4530,14 @@ test_that("Box-Cox (auto) with negative estimated lambda keeps specification lim
   tables  <- .boxCoxNegativeLambdaTables(results)
 
   lambda <- results[["results"]][["dataTransformationContainer"]][["collection"]][["dataTransformationContainer_table"]][["data"]][[1]][["value"]]
-  expect_equal(lambda, -1.10421797241949)
+  # lambda by subgroup (row) = car::powerTransform / MASS::boxcox = -1.408
+  expect_equal(lambda, -1.40817809818093)
   jaspTools::expect_equal_tables(tables[["summary"]],
-                                 list(-1, -0.568432072972538, 10, 0.232657470563089, 0.0737364718667231, -0.169))
-  jaspTools::expect_equal_tables(tables[["overall"]], list(0.595, 0.572, 0.291, 0.854, 0.618, 0.362, 0.572, 0.816))
+                                 list(-1, -0.500177210010711, 10, 0.248728228973728, 0.0777554521491026, -0.104))
+  jaspTools::expect_equal_tables(tables[["overall"]], list(0.601, 0.531, 0.262, 0.801, 0.67, 0.365, 0.531, 0.823))
   jaspTools::expect_equal_tables(tables[["performance"]],
-                                 list(31801.698, 0.002, 0, "ppm &lt; LSL", 43051.203, 0.031, 0, "ppm &gt; USL",
-                                      74852.901, 0.033, 0, "ppm total"))
+                                 list(22241.34, 0, 0, "ppm &lt; LSL", 55460.332, 0.171, 0, "ppm &gt; USL",
+                                      77701.673, 0.171, 0, "ppm total"))
 
   optionsAdjusted <- options
   optionsAdjusted$dataTransformationContinuityAdjustment <- TRUE
