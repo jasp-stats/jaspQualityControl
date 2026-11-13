@@ -69,8 +69,10 @@ expectWeibullBandsMatchDeltaMethod <- function(x, label) {
   gradient <- rbind(-band$zp / shape^2, 1 / scale)
   sdLogPercentile <- sqrt(colSums(gradient * (varcov %*% gradient)))
   logPercentile <- log(scale) + band$zp / shape
-  expect_equal(band$percentileLower, logPercentile - qnorm(0.975) * sdLogPercentile, tolerance = 1e-5, label = paste("lower band,", label))
-  expect_equal(band$percentileUpper, logPercentile + qnorm(0.975) * sdLogPercentile, tolerance = 1e-5, label = paste("upper band,", label))
+  # compare the half-width itself: a tolerance on the log percentile would be relative to its magnitude (e.g. 7 for
+  # scale 1000) and hide percent-level errors of the much smaller half-width
+  expect_equal((band$percentileUpper - band$percentileLower) / 2, qnorm(0.975) * sdLogPercentile, tolerance = 1e-6, label = paste("band half-width,", label))
+  expect_equal((band$percentileUpper + band$percentileLower) / 2, logPercentile, tolerance = 1e-8, label = paste("band centre,", label))
 }
 
 test_that("Weibull probability plot confidence bands are correct in any unit", {
@@ -114,7 +116,7 @@ test_that("Weibull observed information matches a finite-difference Hessian with
       # shape and scale entries differ by orders of magnitude: compare in correlation form (entries of order 1)
       information <- unname(solve(varcov, tol = 0))
       scaling <- outer(1 / sqrt(diag(information)), 1 / sqrt(diag(information)))
-      expect_equal(information * scaling, reference * scaling, tolerance = 1e-3, label = sprintf("information, shape %g, scale %g", shape, scale))
+      expect_equal(information * scaling, reference * scaling, tolerance = 1e-4, label = sprintf("information, shape %g, scale %g", shape, scale))
     }
   }
 })

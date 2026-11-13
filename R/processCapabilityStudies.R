@@ -3395,22 +3395,23 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   z <- data / scale
   zShape <- z^shape
   logZ <- log(z)
-  covariance <- (n - sum(zShape) - shape * sum(zShape * logZ)) / scale
-  information <- matrix(c(n / shape^2 + sum(zShape * logZ^2), covariance,
-                          covariance, shape * ((shape + 1) * sum(zShape) - n) / scale^2), nrow = 2)
+  crossInformation <- (n - sum(zShape) - shape * sum(zShape * logZ)) / scale
+  information <- matrix(c(n / shape^2 + sum(zShape * logZ^2), crossInformation,
+                          crossInformation, shape * ((shape + 1) * sum(zShape) - n) / scale / scale), nrow = 2)
 
   invalidMessage <- gettext("Could not compute variance-covariance matrix: Hessian contains invalid values.")
-  if (anyNA(information) || any(!is.finite(information)))
+  if (anyNA(information) || any(!is.finite(information)) || any(diag(information) <= 0))
     stop(invalidMessage, call. = FALSE)
 
   # The shape and scale entries can differ by many orders of magnitude (small units, high shape), which makes solve()
   # report a singular matrix; inverting the correlation form depends only on the correlation of the estimates.
   inverseSd <- 1 / sqrt(diag(information))
-  if (!all(is.finite(inverseSd)))
+  scaling <- outer(inverseSd, inverseSd)
+  correlation <- information * scaling
+  if (abs(correlation[1, 2]) >= 1) # not positive definite, so there are no valid variances
     stop(invalidMessage, call. = FALSE)
 
-  scaling <- outer(inverseSd, inverseSd)
-  varcov <- solve(information * scaling) * scaling
+  varcov <- solve(correlation) * scaling
   dimnames(varcov) <- list(c("shape", "scale"), c("shape", "scale"))
 
   list(varcov = varcov)
