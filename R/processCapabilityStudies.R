@@ -454,6 +454,39 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   tryCatch(.movingRangeSigma(dataset, k)[["sigma"]], qcDataError = function(error) NA_real_)
 }
 
+# Degrees of freedom of the within-subgroup std. dev. for the Cp and Cpk confidence intervals, by estimation method.
+# Subgroups with fewer than 2 observations do not contribute.
+#   pooled:       sum(n_i - 1)
+#   R-bar:        0.9 * sum(n_i - 1)        (= 0.9 * m * (nBar - 1) with m subgroups of mean size nBar)
+#   S-bar:        f(nBar) * sum(n_i - 1)
+#   moving range: number of complete moving ranges (= N - w + 1 without missing values)
+# Returns NA if there are no degrees of freedom.
+.qcCapabilityWithinSdDf <- function(dataset, sdType = c("pooled", "r", "s", "movingRange"), movingRangeLength = 2) {
+  sdType <- match.arg(sdType)
+  if (sdType == "movingRange") {
+    x          <- unlist(dataset, use.names = FALSE)
+    windowEnds <- if (length(x) >= movingRangeLength) seq.int(movingRangeLength, length(x)) else integer(0)
+    df         <- sum(vapply(windowEnds, function(end) !anyNA(x[(end - movingRangeLength + 1):end]), logical(1)))
+  } else {
+    subgroupSizes <- rowSums(!is.na(as.matrix(dataset)))
+    subgroupSizes <- subgroupSizes[subgroupSizes >= 2]
+    df <- sum(subgroupSizes - 1)
+    if (sdType == "r")
+      df <- 0.9 * df
+    else if (sdType == "s" && df > 0)
+      df <- .qcSBarDfFactor(mean(subgroupSizes)) * df
+  }
+  if (df > 0) df else NA_real_
+}
+
+# Factor f(n) for the degrees of freedom of the S-bar estimate; a non-integer mean subgroup size uses the factor of the
+# next smaller integer size (the smaller, more conservative factor).
+.qcSBarDfFactor <- function(subgroupSize) {
+  sizes   <- c(2,    3,    4,    5,    6,    8,    10,   18,   65)
+  factors <- c(0.88, 0.92, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1)
+  factors[findInterval(floor(subgroupSize), sizes)]
+}
+
 # Functions for capability analysis section ####
 
 ## Containers ####
@@ -499,7 +532,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   ready <- (length(measurements) > 0)
 
-  if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis" && ready && (any(na.omit(unlist(dataset[measurements])) < 0))) {
+  # the logistic distribution is defined for negative values
+  if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis" && ready &&
+      options[["nonNormalDistribution"]] != "logistic" && any(na.omit(unlist(dataset[measurements])) < 0)) {
     p <- createJaspPlot(title = gettext("Process capability study"), width = 400, height = 400)
     p$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
     container[["p"]] <- p
@@ -1700,6 +1735,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
     table$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."))
 
+  if (options[["processCapabilityTableCi"]] && options[["historicalStdDev"]])
+    table$addFootnote(gettext("Confidence intervals for Cp and Cpk are not computed when a historical standard deviation is used."))
+
   if (nStages > 1)
     tableColNames <- c("stage", tableColNames)
   tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
@@ -1709,6 +1747,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
 
     if (length(measurements) < 2) {
+      sdType <- "movingRange"
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
       sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .qcCapabilityMovingRangeSd(dataCurrentStage[measurements], k)
     } else {
@@ -1722,7 +1761,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     usl <- options[["upperSpecificationLimitValue"]]
     lsl <- options[["lowerSpecificationLimitValue"]]
     n <- length(allData)
-    k <- length(measurements)
     processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
     tolMultiplier <- 6
     cp <- if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]) NA else (usl - lsl) / (tolMultiplier * sdw)
@@ -1738,15 +1776,17 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
     if (options[["processCapabilityTableCi"]]) {
       ciAlpha <- 1 - ciLevel
+      # a historical std. dev. is not estimated from the data, so it has no degrees of freedom and no interval is computed
+      dfWithin <- if (options[["historicalStdDev"]]) NA_real_ else .qcCapabilityWithinSdDf(dataCurrentStage[measurements], sdType, options[["controlChartSdEstimationMethodMeanMovingRangeLength"]])
       if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
         #CI for Cp
-        dfCp <- 0.9 * k * ((n/k) - 1)
+        dfCp <- dfWithin
         ciLbCp <- cp * sqrt( qchisq(p = ciAlpha/2, df = dfCp) /dfCp)
         ciUbCp <- cp * sqrt( qchisq(p = 1 - (ciAlpha/2), df = dfCp) /dfCp)
       }
       if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
         #CI for Cpk
-        dfCpk <- 0.9 * k * ((n/k) - 1)
+        dfCpk <- dfWithin
         normCIrange <- qnorm(1 - (ciAlpha / 2))
         intervalCpk <- sqrt(1 / (((tolMultiplier / 2)^2) * n)  +  ((cpk^2)/ (2 * dfCpk)))
         ciLbCpk <- cpk - (normCIrange * intervalCpk)
@@ -1812,6 +1852,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   nStars <- if (nStages > 1) length(tableList[["stage"]]) else 1
   for (name in tableListAllNANames)
     tableList[[name]] <- rep("*", nStars) # This looks better in the table and makes clearer that there is not an error
+  if (options[["historicalStdDev"]]) # intervals not computed (see footnote), also in the stage rows next to the "Change" rows
+    for (name in intersect(c("cplci", "cpuci", "cpklci", "cpkuci"), names(tableList)))
+      tableList[[name]][is.na(tableList[[name]])] <- "*"
   table$setData(tableList)
 
   if (returnDataframe) {
@@ -2394,14 +2437,16 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     }
   }
 
+  # specification limits as entered: the capability indices and ppm below use these, the summary table shows them rounded
+  lsl <- options[["lowerSpecificationLimitValue"]]
+  usl <- options[["upperSpecificationLimitValue"]]
+  target <- options[["targetValue"]]
+
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
     n <- length(allData)
-    lsl <- round(options[["lowerSpecificationLimitValue"]], .numDecimals)
-    usl <- round(options[["upperSpecificationLimitValue"]], .numDecimals)
-    target <- round(options[["targetValue"]], .numDecimals)
     sd <- sd(allData)
     processMean <- mean(allData, na.rm = TRUE)
     beta <- distParameters[[i]]$beta
@@ -2410,9 +2455,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     tableDfCurrentStage <- data.frame("n" = n,
                                       "mean" = processMean,
                                       "sd" = sd,
-                                      "lsl" = lsl,
-                                      "usl" = usl,
-                                      "target" = target,
+                                      "lsl" = round(lsl, .numDecimals),
+                                      "usl" = round(usl, .numDecimals),
+                                      "target" = round(target, .numDecimals),
                                       "beta" = beta,
                                       "theta" = theta)
 
@@ -2541,7 +2586,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- plnorm(q = usl,  meanlog = beta, sdlog = theta)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, plnorm(q = usl, meanlog = beta, sdlog = theta, lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <- qlnorm(p = uPercentile, meanlog = beta, sdlog = theta)
@@ -2574,7 +2619,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- pweibull(q = usl, shape = beta, scale = theta)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, pweibull(q = usl, shape = beta, scale = theta, lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <- qweibull(p = uPercentile, shape = beta, scale = theta)
@@ -2606,7 +2651,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
         if(options[['nonNormalMethod' ]] == "nonConformance"){
           p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, plnorm(q = usl - threshold, meanlog = beta, sdlog = theta, lower.tail = FALSE)) # plnorm3() takes 1 - F for the upper tail, so use plnorm() on the shifted value
           ppu <- zUSL/3
         } else {
           x99 <- FAdist::qlnorm3(p = uPercentile, shape = theta, scale = beta, thres = threshold)
@@ -2638,7 +2683,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold, lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <- FAdist::qweibull3(p = uPercentile, shape = beta, scale = theta, thres = threshold)
@@ -2669,7 +2714,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- pgamma(q = usl, shape = beta, scale = theta, lower.tail = TRUE)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, pgamma(q = usl, shape = beta, scale = theta, lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <-   qgamma(p = uPercentile, shape = beta, scale = theta)
@@ -2701,7 +2746,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <-  pexp(q = usl, rate = 1/theta, lower.tail = TRUE)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, pexp(q = usl, rate = 1/theta, lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <-  qexp(p = uPercentile, rate = 1/theta)
@@ -2732,7 +2777,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <-  plogis(q = usl, location = beta, scale = theta, lower.tail = TRUE)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, plogis(q = usl, location = beta, scale = theta, lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <- qlogis(p = uPercentile, location = beta, scale = theta)
@@ -2763,7 +2808,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- flexsurv::pllogis(q = usl, shape = 1/theta, scale = exp(beta), lower.tail = TRUE)
-          zUSL <- qnorm(p2)
+          zUSL <- .pcNormalQuantileFromTails(p2, flexsurv::pllogis(q = usl, shape = 1/theta, scale = exp(beta), lower.tail = FALSE))
           ppu <- zUSL/3
         } else {
           x99 <- flexsurv::qllogis(p = uPercentile, shape = 1/theta, scale = exp(beta))
@@ -2898,7 +2943,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - plnorm(q = usl, meanlog = beta, sdlog = theta))
+        eoUSL <- 1e6 * plnorm(q = usl, meanlog = beta, sdlog = theta, lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -2913,7 +2958,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - pweibull(q = usl, shape = beta, scale = theta))
+        eoUSL <- 1e6 * pweibull(q = usl, shape = beta, scale = theta, lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -2928,7 +2973,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold)) # in this function, shape is theta and scale is beta, which is reverse to convention
+        eoUSL <- 1e6 * plnorm(q = usl - threshold, meanlog = beta, sdlog = theta, lower.tail = FALSE) # plnorm3() takes 1 - F for the upper tail, so use plnorm() on the shifted value
       } else {
         eoUSL <- NA
       }
@@ -2943,7 +2988,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold))
+        eoUSL <- 1e6 * FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold, lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -2959,7 +3004,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - pgamma(q = usl, shape = beta, scale = theta, lower.tail = TRUE))
+        eoUSL <- 1e6 * pgamma(q = usl, shape = beta, scale = theta, lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -2975,7 +3020,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - pexp(q = usl, rate = 1/theta, lower.tail = TRUE))
+        eoUSL <- 1e6 * pexp(q = usl, rate = 1/theta, lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -2990,7 +3035,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - plogis(q = usl, location = beta, scale = theta, lower.tail = TRUE))
+        eoUSL <- 1e6 * plogis(q = usl, location = beta, scale = theta, lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -3005,7 +3050,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - flexsurv::pllogis(q = usl, shape = 1/theta, scale = exp(beta), lower.tail = TRUE))
+        eoUSL <- 1e6 * flexsurv::pllogis(q = usl, shape = 1/theta, scale = exp(beta), lower.tail = FALSE)
       } else {
         eoUSL <- NA
       }
@@ -3220,10 +3265,14 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       sdx    <- fit$parameters[2]
       test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
     } else if (options[["nullDistribution"]] == "weibull") {
-      fit    <- fitdistrplus::fitdist(values, 'weibull',
-                                      control = list(maxit = 10000))
-      meanx  <- fit$estimate[1]
-      sdx    <- fit$estimate[2]
+      fit    <- try(.distributionParameters(values, distribution = "weibull", fix.arg = NULL))
+      if (jaspBase::isTryError(fit)) {
+        table$setError(.extractErrorMessage(fit))
+        container[["probabilityTable"]] <- table
+        return()
+      }
+      meanx  <- fit[["beta"]]  # shape
+      sdx    <- fit[["theta"]] # scale
       test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
     }
     n      <- length(values)
@@ -3462,8 +3511,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       shape <- as.numeric(fit_Weibull[["beta"]])
       scale <- as.numeric(fit_Weibull[["theta"]])
       lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x/scale)^shape)
-      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage, parms = c("shape", "scale"), mle = c("shape" = shape, "scale" = scale),
-                                     stepScale = c(shape, scale)))
+      # Hessian on the rescaled data (see .qcFitdistUnitFree), so the finite-difference steps are the same in any unit;
+      # the scale (co)variances are mapped back below
+      unitScale <- .qcUnitScale(dataCurrentStage)
+      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage / unitScale, parms = c("shape", "scale"),
+                                     mle = c("shape" = shape, "scale" = scale / unitScale), stepScale = c(shape, scale / unitScale)))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
@@ -3472,8 +3524,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         covarSS <- NA
       } else {
         varShape <- matrix$varcov[1,1]
-        varScale <- matrix$varcov[2,2]
-        covarSS <- matrix$varcov[1,2]
+        varScale <- matrix$varcov[2,2] * unitScale^2
+        covarSS <- matrix$varcov[1,2] * unitScale
       }
       zp <- log(-1*log(1-pSeq))
       zalpha <- qnorm(0.975) # normal critical value for log percentile (delta method), not the Weibull axis transform
@@ -3498,7 +3550,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     if (hasConfidenceBands) {
       bandData <- data.frame(zp = zp, percentileLower = percentileLower, percentileUpper = percentileUpper)
     }
-    yLimits <- range(yBreaks)
+    # The outer points of a large sample lie beyond the 0.1% and 99.9% ticks; widen the axis so they are not dropped
+    yLimits <- range(yBreaks, y)
     label_x <- round(label_x, .numDecimals)
     p <- ggplot2::ggplot() +
       ggplot2::geom_line(data = lineData, ggplot2::aes(y = zp, x = percentileEstimate), na.rm = TRUE) +
@@ -3554,6 +3607,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   n <- length(x)
   i <- rank(x)
   p <- (i) / (n)
+  # A unique largest observation gets p = 1, which has no finite plotting position. Place it at 90% of the distance
+  # between the prior p (0 if n = 1) and 1, i.e. (n - 0.1) / n without ties. A tied maximum has an average rank below
+  # n, so p < 1 and nothing changes.
+  isLargest    <- p == 1
+  pPrior       <- max(0, p[!isLargest])
+  p[isLargest] <- pPrior + 0.9 * (1 - pPrior)
   return(p)
 }
 
@@ -3646,7 +3705,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plot$setError(gettext("At least one of the stages contains no valid measurements."))
     return()
   }
-  plotList <- .qcDistributionPlotObject(options, dataset, measurements, stages)
+  plotList <- try(.qcDistributionPlotObject(options, dataset, measurements, stages))
+  if (jaspBase::isTryError(plotList)) {
+    plot$setError(.extractErrorMessage(plotList))
+    return()
+  }
   # if number of plots is odd, add an empty plot at the end
   if (nStages > 1 && nStages %% 2 != 0)
     plotList[[nStages + 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
@@ -3725,7 +3788,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         densDf <- .qcDensityCurveData(dlogis, list(location = location, scale = scale), xGrid, "logisticDist")
         legendLabel <- gettext("Logistic dist.")
       } else if(options[['nullDistribution']]  == "loglogistic") {
-        fitLoglogis <- .distributionParameters(dataCurrentStage, distribution = "logistic", fix.arg = NULL)
+        fitLoglogis <- .distributionParameters(dataCurrentStage, distribution = "loglogistic", fix.arg = NULL)
         shape <- 1/fitLoglogis[["theta"]]
         scale <- exp(fitLoglogis[["beta"]])
         densDf <- .qcDensityCurveData(flexsurv::dllogis, list(shape = shape, scale = scale), xGrid, "loglogisticDist")
@@ -3755,6 +3818,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plotList[[i]] <- p
   }
   return(plotList)
+}
+
+# Standard normal quantile z with pnorm(z) = pBelow = 1 - pAbove, taken from the smaller tail: the other tail
+# probability can round to 1 (e.g. P(X <= USL) of a highly capable process), which would give an infinite z
+.pcNormalQuantileFromTails <- function(pBelow, pAbove) {
+  if (isTRUE(pAbove < pBelow)) qnorm(pAbove, lower.tail = FALSE) else qnorm(pBelow)
 }
 
 .pcTableFormatNumbers <- function(number) {
@@ -3798,8 +3867,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   dataset[["value"]] <- switch(
     options[["dataTransformation"]],
-    boxCox = jaspBase::BoxCox(x, lambda=lambda, shift=shift, continuityAdjustment=ca),
-    boxCoxAuto = jaspBase::BoxCoxAuto(x, predictor=as.factor(group), shift=shift, method=method, continuityAdjustment=ca),
+    boxCox = .qcBoxCoxKeepOrder(jaspBase::BoxCox(x, lambda=lambda, shift=shift, continuityAdjustment=ca), lambda=lambda, continuityAdjustment=ca),
+    boxCoxAuto = {
+      y <- jaspBase::BoxCoxAuto(x, predictor=as.factor(group), shift=shift, method=method, continuityAdjustment=ca)
+      .qcBoxCoxKeepOrder(y, lambda=attr(y, "lambda"), continuityAdjustment=ca)
+    },
     yeoJohnson = jaspBase::YeoJohnson(x, lambda=lambda),
     yeoJohnsonAuto = jaspBase::YeoJohnsonAuto(x),
     johnson = jaspBase::Johnson(x)
@@ -3840,10 +3912,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     if (any(specs + shift <= 0))
       stop(gettextf("Some specification limits or target value are outside of the support of the Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f).", -shift))
 
-    specs <- BoxCox(specs, lambda=lambda, shift=shift, continuityAdjustment=options[["dataTransformationContinuityAdjustment"]])
+    ca <- options[["dataTransformationContinuityAdjustment"]]
+    specs <- .qcBoxCoxKeepOrder(jaspBase::BoxCox(specs, lambda=lambda, shift=shift, continuityAdjustment=ca), lambda=lambda, continuityAdjustment=ca)
   } else if(options[["dataTransformation"]] %in% c("yeoJohnson", "yeoJohnsonAuto")) {
     lambda <- if(options[["dataTransformation"]] == "yeoJohnson") options[["dataTransformationLambda"]] else parameters[["lambda"]]
-    specs <- YeoJohnson(specs, lambda=lambda)
+    specs <- jaspBase::YeoJohnson(specs, lambda=lambda)
   } else if (options[["dataTransformation"]] == "johnson") {
     args <- parameters[["params"]]
     args[["x"]] <- specs
@@ -3878,6 +3951,14 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   return(as.list(specs))
 }
 
+.qcBoxCoxKeepOrder <- function(y, lambda, continuityAdjustment) {
+  # without the continuity adjustment, y = x^lambda is decreasing for lambda < 0, which would swap the roles of
+  # the lower and upper specification limits; negating keeps the order (as (x^lambda - 1) / lambda does)
+  if (lambda < 0 && !continuityAdjustment)
+    y <- -y
+  return(y)
+}
+
 .qcFillTransformOutput <- function(container, options, parameters) {
   container[["formula"]] <- .qcTransformFormula(options, parameters)
   container[["table"]] <- .qcTransformTable(options, parameters)
@@ -3892,6 +3973,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     if (shift == 0) {
       if (lambda == 0) {
         formula <- r"(y = \ln(x))"
+      } else if (!options[["dataTransformationContinuityAdjustment"]] && lambda < 0) {
+        formula <- r"(y = -x^\lambda)"
       } else if (!options[["dataTransformationContinuityAdjustment"]]) {
         formula <- r"(y = x^\lambda)"
       } else {
@@ -3900,6 +3983,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     } else {
       if (lambda == 0) {
         formula <- r"(y = \ln(x + \text{shift}))"
+      } else if (!options[["dataTransformationContinuityAdjustment"]] && lambda < 0) {
+        formula <- r"(y = -(x+\text{shift})^\lambda)"
       } else if (!options[["dataTransformationContinuityAdjustment"]]) {
         formula <- r"(y = (x+\text{shift})^\lambda)"
       } else {

@@ -481,3 +481,121 @@ test_that("WF3 Report - Gauge r&R (non-replicable) report plot matches", {
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "WF3_gauge-r-r-non-replicable-report")
 })
+
+# Operator variance larger than part(operator) variance ####
+# 3 operators x 3 parts per operator x 2 replicates; reproducibility = (MS_O - MS_P(O)) / (3 * 2)
+nestedData <- data.frame(
+  Operator    = rep(c("A", "B", "C"), each = 6),
+  Part        = rep(1:9, each = 2),
+  PartReused  = rep(rep(1:3, each = 2), 3),
+  Measurement = c(10.1, 10.3, 11.0, 10.8, 10.5, 10.6,
+                  12.2, 12.5, 12.9, 13.0, 12.4, 12.1,
+                  14.8, 15.0, 15.6, 15.3, 14.9, 15.2)
+)
+
+options <- analysisOptions("msaGaugeRRnonrep")
+options$partLongFormat <- "Part"
+options$operatorLongFormat <- "Operator"
+options$measurementLongFormat <- "Measurement"
+options$tolerance <- TRUE
+options$toleranceValue <- 15
+set.seed(1)
+results <- runAnalysis("msaGaugeRRnonrep", nestedData, options)
+
+test_that("LF4.1 Operator effect - Gauge r&R (nested) table results match", {
+  table <- results[["results"]][["gaugeRRNonRep"]][["collection"]][["gaugeRRNonRep_Table1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2, 137.257211538462, 31.7216666666667, 63.4433333333333, 9.78561585176688e-06,
+                                      "Operator", 6, 8.32000000000006, 0.231111111111111, 1.38666666666666,
+                                      0.00291404920796518, "Part(Operator)", 9, "", 0.0277777777777775,
+                                      0.249999999999998, "", "Repeatability", 17, "", "", 65.08, "",
+                                      "Total"))
+})
+
+test_that("LF4.2 Operator effect - Variance components table results match", {
+  table <- results[["results"]][["gaugeRRNonRep"]][["collection"]][["gaugeRRNonRep_Table2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(5.2762037037037, 98.109536681531, "Total gauge r&amp;R", 0.0277777777777775,
+                                      0.516520032368585, "Repeatability", 5.24842592592592, 97.5930166491624,
+                                      "Reproducibility", 0.101666666666667, 1.89046331846903, "Part-To-part",
+                                      5.37787037037037, 100, "Total variation"))
+  # moment estimators: (MS_O - MS_P(O)) / (b * r) and (MS_P(O) - MS_E) / r
+  expect_equal(table[[3]][["Var"]], (31.7216666666667 - 0.231111111111111) / (3 * 2))
+  expect_equal(table[[4]][["Var"]], (0.231111111111111 - 0.0277777777777775) / 2)
+})
+
+test_that("LF4.3 Operator effect - Gauge evaluation table results match", {
+  table <- results[["results"]][["gaugeRRNonRep"]][["collection"]][["gaugeRRNonRep_Table3"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2.2969988471272, 99.050258294227, 91.8799538850881, "Total gauge r&amp;R",
+                                      13.7819930827632, 0.166666666666666, 7.18693281148909, 6.66666666666664,
+                                      "Repeatability", 0.999999999999996, 2.29094433060385, 98.7891778734707,
+                                      91.637773224154, "Reproducibility", 13.7456659836231, 0.318852107828483,
+                                      13.74941205459, 12.7540843131393, "Part-To-part", 1.9131126469709,
+                                      2.319023581245, 100, 92.7609432497999, "Total variation", 13.91414148747))
+})
+
+## Part labels reused across operators ####
+options$partLongFormat <- "PartReused"
+set.seed(1)
+resultsReused <- runAnalysis("msaGaugeRRnonrep", nestedData, options)
+
+test_that("LF4.4 Part labels reused across operators give the same variance components", {
+  table <- resultsReused[["results"]][["gaugeRRNonRep"]][["collection"]][["gaugeRRNonRep_Table2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(5.2762037037037, 98.109536681531, "Total gauge r&amp;R", 0.0277777777777775,
+                                      0.516520032368585, "Repeatability", 5.24842592592592, 97.5930166491624,
+                                      "Reproducibility", 0.101666666666667, 1.89046331846903, "Part-To-part",
+                                      5.37787037037037, 100, "Total variation"))
+})
+
+## Unequal number of parts per operator ####
+options$partLongFormat <- "Part"
+set.seed(1)
+resultsUnbalanced <- runAnalysis("msaGaugeRRnonrep", nestedData[nestedData$Part != 9, ], options)
+
+test_that("LF4.5 Unequal number of parts per operator gives an error", {
+  expect_identical(resultsUnbalanced[["results"]][["gaugeRRNonRep"]][["error"]][["errorMessage"]],
+                   "Unbalanced design. Some operators measured more parts than others.")
+})
+
+# Wide format, part labels reused across operators ####
+# 2 operators x 3 parts per operator x 2 replicates; reproducibility = (MS_O - MS_P(O)) / (3 * 2)
+nestedDataWide <- data.frame(
+  Operator = rep(c("A", "B"), each = 3),
+  Batch    = rep(1:3, 2),
+  Result1  = c(10.1, 11.0, 10.5, 12.2, 12.9, 12.4),
+  Result2  = c(10.3, 10.8, 10.6, 12.5, 13.0, 12.1)
+)
+
+options <- analysisOptions("msaGaugeRRnonrep")
+options$dataFormat <- "wideFormat"
+options$partWideFormat <- "Batch"
+options$operatorWideFormat <- "Operator"
+options$measurementsWideFormat <- c("Result1", "Result2")
+options$tolerance <- TRUE
+options$toleranceValue <- 15
+set.seed(1)
+results <- runAnalysis("msaGaugeRRnonrep", nestedDataWide, options)
+
+test_that("WF4.1 Reused part labels - Gauge r&R (nested) table results match", {
+  table <- results[["results"]][["gaugeRRNonRep"]][["collection"]][["gaugeRRNonRep_Table1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, 43.6489028213168, 11.6033333333333, 11.6033333333333, 0.00272033418242098,
+                                      "Operator", 4, 11.3928571428572, 0.265833333333332, 1.06333333333333,
+                                      0.00574955819130926, "Batch(Operator)", 6, "", 0.0233333333333331,
+                                      0.139999999999998, "", "Repeatability", 11, "", "", 12.8066666666666,
+                                      "", "Total"))
+})
+
+test_that("WF4.2 Reused part labels - Variance components table results match", {
+  table <- results[["results"]][["gaugeRRNonRep"]][["collection"]][["gaugeRRNonRep_Table2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.91291666666666, 94.0393281442032, "Total gauge r&amp;R", 0.0233333333333331,
+                                      1.14707087259319, "Repeatability", 1.88958333333333, 92.89225727161,
+                                      "Reproducibility", 0.121249999999999, 5.96067185579679, "Part-To-part",
+                                      2.03416666666666, 100, "Total variation"))
+  # moment estimators: (MS_O - MS_P(O)) / (b * r) and (MS_P(O) - MS_E) / r
+  expect_equal(table[[3]][["Var"]], (11.6033333333333 - 0.265833333333332) / (3 * 2))
+  expect_equal(table[[4]][["Var"]], (0.265833333333332 - 0.0233333333333331) / 2)
+})

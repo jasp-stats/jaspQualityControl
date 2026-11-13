@@ -266,14 +266,9 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   subgroups = c(1:length(sixsigma$statistics))
   data_plot <- data.frame(subgroups = subgroups, P = sixsigma$statistics)
   center <- sixsigma$center
+  # Limits per subgroup size around the pooled CL, bounded to [0, 1] (qcc), as in Minitab
   UCL <- sixsigma$limits[,2]
   LCL <- sixsigma$limits[,1]
-  if (min(sample)/max(sample) >= 0.75){
-    p.hat <- mean(sixsigma$statistics)
-    n.mean <- mean(sample)
-    UCL <- p.hat + 3 * (sqrt(p.hat*(1 - p.hat))) / (sqrt(n.mean))
-    LCL <- p.hat - 3 * (sqrt(p.hat*(1 - p.hat))) / (sqrt(n.mean))
-  }
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
   yLimits <- range(c(0,yBreaks * 1.2))
   if (length(subgroups) > 60)
@@ -296,7 +291,10 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  if (length(unique(UCL)) == 1){
+  # both limits are checked: with UCL capped at 1 for every subgroup, LCL can still vary
+  if (length(unique(UCL)) == 1 && length(unique(LCL)) == 1){
+    UCL <- UCL[1]
+    LCL <- LCL[1]
     dfLabel <- data.frame(
       x = max(xLimits) * .95,
       y = c(center, UCL, LCL),
@@ -669,7 +667,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   MR_mean <- sum(R)/ (length(data1$P) - 1)
   sigma <- MR_mean/1.128
   LCL <- ifelse(center - 3*sqrt(center*(1 - center)/data1$sample) * sigma < 0, 0, center - 3*sqrt(center*(1 - center)/data1$sample) * sigma)
-  UCL <- center + 3*sqrt(center*(1 - center)/data1$sample) * sigma
+  UCL <- pmin(1, center + 3*sqrt(center*(1 - center)/data1$sample) * sigma)
   sixsigma <- list(statistics = data1$P, limits = data.frame(LCL, UCL), center = center)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
   yLimits <- range(c(0,yBreaks * 1.2))
@@ -783,10 +781,8 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   }
   else {
 
-    if (name == "np" || name == "c" || name == "u" || name == "Laney p'" || name == "Laney u'")
+    if (name %in% c("P", "np", "c", "u", "Laney p'", "Laney u'"))
       Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "c")
-    else if (name == "P")
-      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "p")
     else
       Test <- NelsonLaws(data = sixsigma, xLabels = xLabels)
 

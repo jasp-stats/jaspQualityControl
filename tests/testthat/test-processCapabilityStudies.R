@@ -51,7 +51,7 @@ test_that("LF1.3 (Normal) Basic tests of Non-conformance statistics table with s
 test_that("LF1.4 (Normal) Basic tests of Process capability (within) table with subgroup variable and no stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.135, 0.93, 0.801, 1.06, 1.339, 0.991, 0.93, 1.276, 2.791))
+                                 list(1.135, 0.93, 0.792, 1.069, 1.339, 0.978, 0.93, 1.288, 2.791))
 })
 
 test_that("LF1.5 (Normal) Basic tests of Process summary table with subgroup variable and no stages", {
@@ -132,8 +132,8 @@ test_that("LF2.3 (Normal) Basic tests of Non-conformance statistics table with s
 test_that("LF2.4 (Normal) Basic tests of Process capability (within) table with subgroup variable and stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.069, 0.876, 0.675, 1.078, 1.262, 0.845, 0.876, 1.287, "1 (BL)",
-                                      2.629, 1.183, 0.97, 0.795, 1.145, 1.395, 0.985, 0.97, 1.375, 2, 2.91,
+                                 list(1.069, 0.876, 0.668, 1.085, 1.262, 0.835, 0.876, 1.296, "1 (BL)",
+                                      2.629, 1.183, 0.97, 0.784, 1.156, 1.395, 0.971, 0.97, 1.388, 2, 2.91,
                                       0.113, 0.094, "-", "-", 0.133, "-", 0.094, "-", "Change (2 vs. BL)",
                                       0.281))
 })
@@ -218,7 +218,7 @@ test_that("LF3.3 (Normal) Basic tests of Non-conformance statistics table with m
 test_that("LF3.4 (Normal) Basic tests of Process capability (within) table with manual subgroups and no stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.135, 0.93, 0.801, 1.06, 1.339, 0.991, 0.93, 1.276))
+                                 list(1.135, 0.93, 0.792, 1.069, 1.339, 0.978, 0.93, 1.288))
 })
 
 test_that("LF3.5 (Normal) Basic tests of Process summary table with manual subgroups and no stages", {
@@ -298,8 +298,8 @@ test_that("LF4.3 (Normal) Basic tests of Non-conformance statistics table with m
 test_that("LF4.4 (Normal) Basic tests of Process capability (within) table with manual subgroups and stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.069, 0.876, 0.675, 1.078, 1.262, 0.845, 0.876, 1.287, "1 (BL)",
-                                      1.183, 0.97, 0.795, 1.145, 1.395, 0.985, 0.97, 1.375, 2, 0.113, 0.094,
+                                 list(1.069, 0.876, 0.668, 1.085, 1.262, 0.835, 0.876, 1.296, "1 (BL)",
+                                      1.183, 0.97, 0.784, 1.156, 1.395, 0.971, 0.97, 1.388, 2, 0.113, 0.094,
                                       "-", "-", 0.133, "-", 0.094, "-", "Change (2 vs. BL)"))
 })
 
@@ -367,8 +367,8 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("LF5.1 (Weibull) Basic tests of non-conformance statistics table with manual subgroups and stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0, 0, 0, 0, 0, 0, "ppm &lt; LSL", 3563.27, 2041.66, -1521.61,
-                                      0, 16666.67, 16666.67, "ppm &gt; USL", 3563.27, 2041.66, -1521.61,
+                                 list(0, 0, 0, 0, 0, 0, "ppm &lt; LSL", 3561.71, 2044.21, -1517.499,
+                                      0, 16666.67, 16666.67, "ppm &gt; USL", 3561.71, 2044.21, -1517.499,
                                       0, 16666.67, 16666.67, "Total ppm"))
 })
 
@@ -388,11 +388,11 @@ test_that("LF5.3 (Weibull) Basic tests of process performance (total) table with
 test_that("LF5.4 (Weibull) Basic tests of process summary table with manual subgroups and stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(4.04074076167675, 0, 7.0825, 40, 1.9949792750032, "1 (BL)", 6,
+                                 list(4.04049730144013, 0, 7.0825, 40, 1.9949792750032, "1 (BL)", 6,
                                       7.82155648030048, 12, 4.18662734025142, 0, 7.07833333333333,
                                       60, 1.77526237417885, 2, 6, 7.76307853935701, 12, 0.146094153376669,
                                       "-", -0.00416666666666643, 20, -0.21971690082435, "Change (2 vs. BL)",
-                                      "-", -0.0589775986021728, "-"))
+                                      "-", -0.0584586031029692, "-"))
 })
 
 test_that("LF5.5 (Weibull) Basic tests of distribution histogram with manual subgroups and stages", {
@@ -410,9 +410,9 @@ test_that("LF5.6 (Weibull) Basic tests of probability plot against Weibull distr
 test_that("LF5.7 (Weibull) Basic tests of summary of test against the Weibull distribution table with manual subgroups and stages", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.318, 4.04074076167675, 40, 0.525, 7.82187513782923, "1 (BL)",
+                                 list(0.318, 4.04049730144013, 40, 0.525, 7.82187513782923, "1 (BL)",
                                       0.792, 4.18683491505342, 60, 0.038, 7.76289753922706, 2, "-",
-                                      0.146094153376669, 20, "-", -0.0589775986021728,
+                                      0.146094153376669, 20, "-", -0.0584586031029692,
                                       "Change (2 vs. BL)"))
 })
 
@@ -527,8 +527,8 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("LF7.1 (3-parameter-Weibull) Basic tests of non-conformance statistics table with manual subgroups and stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0, 0, 0, 0, 0, 0, "ppm &lt; LSL", 6970.32, 5985.64, -984.68, 0,
-                                      16666.67, 16666.67, "ppm &gt; USL", 6970.32, 5985.64, -984.68,
+                                 list(0, 0, 0, 0, 0, 0, "ppm &lt; LSL", 6971.5, 5985.64, -985.74, 0,
+                                      16666.67, 16666.67, "ppm &gt; USL", 6971.5, 5985.64, -985.74,
                                       0, 16666.67, 16666.67, "Total ppm"))
 })
 
@@ -688,8 +688,8 @@ test_that("LF9.3 (Normal) Missing value test of Non-conformance statistics table
 test_that("LF9.4 (Normal) Missing value test of Process capability (within) table with single missing value in measurement", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.079, 0.902, 0.693, 1.111, 1.256, 0.85, 0.902, 1.301, "1 (BL)", 1.183,
-                                      0.97, 0.795, 1.145, 1.395, 0.985, 0.97, 1.375, 2, 0.103, 0.068, "-",
+                                 list(1.079, 0.902, 0.685, 1.119, 1.256, 0.839, 0.902, 1.312, "1 (BL)", 1.183,
+                                      0.97, 0.784, 1.156, 1.395, 0.971, 0.97, 1.388, 2, 0.103, 0.068, "-",
                                       "-", 0.139, "-", 0.068, "-", "Change (2 vs. BL)"))
 })
 
@@ -771,9 +771,9 @@ test_that("LF10.2 (Normal) Missing value test of Non-conformance statistics tabl
 test_that("LF10.3 (Normal) Missing value test of Process capability (within) with all but one missing value in measurement", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("<unicode>", "<unicode>", "NaN", "NaN", "<unicode>", "NaN", "<unicode>",
-                                      "NaN", "1 (BL)", "<unicode>", "<unicode>", "NaN", "NaN", "NaN",
-                                      "NaN", "NaN", "NaN", 2, "NaN", "NaN", "-", "-", "NaN", "-",
+                                 list("<unicode>", "<unicode>", "", "", "<unicode>", "", "<unicode>",
+                                      "", "1 (BL)", "<unicode>", "<unicode>", "", "", "NaN",
+                                      "", "NaN", "", 2, "NaN", "NaN", "-", "-", "NaN", "-",
                                       "NaN", "-", "Change (2 vs. BL)"))
 })
 
@@ -867,10 +867,10 @@ test_that("LF12.3 (Normal) Missing value test of Non-conformance statistics tabl
 test_that("LF12.4 (Normal) Missing value test of Process capability (within) table with missing values in stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.806, 0.638, 0.402, 0.874, 0.973, 0.547, 0.638, 1.052, "1 (BL)",
-                                      1.095, 0.901, 0.659, 1.144, 1.288, 0.823, 0.901, 1.356, 2, 0.289,
+                                 list(0.806, 0.638, 0.407, 0.868, 0.973, 0.555, 0.638, 1.045, "1 (BL)",
+                                      1.095, 0.901, 0.654, 1.148, 1.288, 0.817, 0.901, 1.362, 2, 0.289,
                                       0.263, "-", "-", 0.315, "-", 0.263, "-", "Change (2 vs. BL)", 1.151,
-                                      0.963, 0.729, 1.198, 1.338, 0.89, 0.963, 1.403, 3, 0.345, 0.326, "-",
+                                      0.963, 0.722, 1.205, 1.338, 0.881, 0.963, 1.411, 3, 0.345, 0.326, "-",
                                       "-", 0.365, "-", 0.326, "-", "Change (3 vs. BL)"))
 })
 
@@ -960,8 +960,8 @@ test_that("LF13.3 (Normal) Missing value test of Non-conformance statistics tabl
 test_that("LF13.4 (Normal) Missing value test of Process capability (within) table with missing values in subgroups variable", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.057, 0.848, 0.633, 1.063, 1.267, 0.814, 0.848, 1.292, "1 (BL)", 1.1,
-                                      0.893, 0.714, 1.071, 1.307, 0.899, 0.893, 1.295, 2, 0.042, 0.045, "-",
+                                 list(1.057, 0.848, 0.623, 1.072, 1.267, 0.8, 0.848, 1.305, "1 (BL)", 1.1,
+                                      0.893, 0.701, 1.084, 1.307, 0.881, 0.893, 1.311, 2, 0.042, 0.045, "-",
                                       "-", 0.04, "-", 0.045, "-", "Change (2 vs. BL)"))
 })
 
@@ -1045,7 +1045,7 @@ test_that("LF14.3 (Normal) Option test of Non-conformance statistics table with 
 test_that("LF14.4 (Normal) Option test of Process capability (within) table with changed manual subgroup size", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.071, 0.878, 0.754, 1.002, 1.263, 0.933, 0.878, 1.205))
+                                 list(1.071, 0.878, 0.749, 1.007, 1.263, 0.927, 0.878, 1.211))
 })
 
 test_that("LF14.5 (Normal) Option test of Process summary table with changed manual subgroup size", {
@@ -1152,7 +1152,7 @@ test_that("LF16.3 (Normal) Option test of Non-conformance statistics table with 
 test_that("LF16.4 (Normal) Option test of Process capability (within) table with s-bar calculation method", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.082, 0.887, 0.763, 1.011, 1.276, 0.945, 0.887, 1.216))
+                                 list(1.082, 0.887, 0.757, 1.017, 1.276, 0.936, 0.887, 1.224))
 })
 
 test_that("LF16.5 (Normal) Option test of Process summary table with s-bar calculation method", {
@@ -1230,7 +1230,7 @@ test_that("LF17.3 (Normal) Option test of Non-conformance statistics table with 
 test_that("LF17.4 (Normal) Option test of Process capability (within) table with x-mR calculation method", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.073, 0.88, 0.759, 1.002, 1.266, 0.94, 0.88, 1.204))
+                                 list(1.073, 0.88, 0.763, 0.997, 1.266, 0.947, 0.88, 1.197))
 })
 
 test_that("LF17.5 (Normal) Option test of Process summary table with x-mR calculation method", {
@@ -1402,7 +1402,7 @@ test_that("LF19.3 (Normal) Option test of Non-conformance statistics table with 
 test_that("LF19.4 (Normal) Option test of Process capability (within) table with s-bar calculation method without unbiasing constant", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.151, 0.944, 0.813, 1.074, 1.358, 1.005, 0.944, 1.294))
+                                 list(1.151, 0.944, 0.806, 1.081, 1.358, 0.996, 0.944, 1.303))
 })
 
 test_that("LF19.5 (Normal) Option test of Process summary table with s-bar calculation method without unbiasing constant", {
@@ -1489,10 +1489,10 @@ test_that("LF20.3 (Normal) Edge case test of Non-conformance statistics table wi
 test_that("LF20.4 (Normal) Edge case test of Process capability (within) table with multiple stages assigned per subgroup", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.813, 0.626, 0.393, 0.859, 0.999, 0.552, 0.626, 1.061, "1 (BL)",
-                                      1.416, 1.218, 0.93, 1.506, 1.613, 1.095, 1.218, 1.726, 2, 0.603, 0.593,
+                                 list(0.813, 0.626, 0.398, 0.853, 0.999, 0.56, 0.626, 1.054, "1 (BL)",
+                                      1.416, 1.218, 0.921, 1.515, 1.613, 1.084, 1.218, 1.736, 2, 0.603, 0.593,
                                       "-", "-", 0.614, "-", 0.593, "-", "Change (2 vs. BL)", 1.16, 0.94,
-                                      0.741, 1.14, 1.379, 0.932, 0.94, 1.38, 3, 0.347, 0.315, "-", "-", 0.38,
+                                      0.731, 1.149, 1.379, 0.92, 0.94, 1.392, 3, 0.347, 0.315, "-", "-", 0.38,
                                       "-", 0.315, "-", "Change (3 vs. BL)"))
 })
 
@@ -1731,7 +1731,7 @@ test_that("LF25.3 Normal distribution with one historical param. - Non-conforman
 test_that("LF25.4 Normal distribution with one historical param. - Process capability (within) table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.082, 1.082, 0.935, 1.228, 1.082, 0.945, 1.082, 1.216))
+                                 list(1.082, 1.082, 0.927, 1.236, 1.082, 0.936, 1.082, 1.224))
 })
 
 test_that("LF25.5 Normal distribution with one historical param. - Process summary table results match", {
@@ -1787,7 +1787,7 @@ test_that("LF26.3 Normal distribution with all historical param. - Non-conforman
 test_that("LF26.4 Normal distribution with all historical param. - Process capability (within) table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.667, 0.667, 0.566, 0.767, 0.667, 0.582, 0.667, 0.75))
+                                 list(0.667, 0.667, "*", "*", 0.667, "*", 0.667, "*"))
 })
 
 test_that("LF26.5 Normal distribution with all historical param. - Process summary table results match", {
@@ -1843,7 +1843,7 @@ test_that("LF27.3 Normal distribution with mismatching historical dist. - Non-co
 test_that("LF27.4 Normal distribution with mismatching historical dist. - Process capability (within) table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.133, -0.622, -0.718, -0.527, 0.889, 0.116, -0.622, 0.15))
+                                 list(0.133, -0.622, "*", "*", 0.889, "*", -0.622, "*"))
 })
 
 test_that("LF27.5 Normal distribution with mismatching historical dist. - Process summary table results match", {
@@ -2181,7 +2181,7 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("LF34.1 3ParameterWeibull distribution with one historical param. - Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0, 0, "ppm &lt; LSL", 8933.26, 10000, "ppm &gt; USL", 8933.26,
+                                 list(0, 0, "ppm &lt; LSL", 8929.31, 10000, "ppm &gt; USL", 8929.31,
                                       10000, "Total ppm"))
 })
 
@@ -2194,7 +2194,7 @@ test_that("LF34.2 3ParameterWeibull distribution with one historical param. - Ca
 test_that("LF34.3 3ParameterWeibull distribution with one historical param. - Process performance (total) table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("<unicode>", 0.789, "<unicode>", 0.789))
+                                 list("<unicode>", 0.79, "<unicode>", 0.79))
 })
 
 test_that("LF34.4 3ParameterWeibull distribution with one historical param. - Process summary table results match", {
@@ -2495,8 +2495,8 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("LF40.1 Gamma distribution basic test - Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(30443.64, 40000, "ppm &lt; LSL", 11716.86, 10000, "ppm &gt; USL",
-                                      42161.6, 50000, "Total ppm"))
+                                 list(30404.434, 40000, "ppm &lt; LSL", 11716.845, 10000, "ppm &gt; USL",
+                                      42121.279, 50000, "Total ppm"))
 })
 
 test_that("LF40.2 Gamma distribution basic test - Capability of the process plot matches", {
@@ -2514,7 +2514,7 @@ test_that("LF40.3 Gamma distribution basic test - Process performance (total) ta
 test_that("LF40.4 Gamma distribution basic test - Process summary table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(14.2311221847139, 4, 7.08, 100, 1.85635681000733, 6, 0.497635133384866,
+                                 list(14.2311221847139, 4, 7.08, 100, 1.85635681000733, 6, 0.49750499145822,
                                       12))
 })
 
@@ -2638,8 +2638,8 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("LF43.1 Log-logistic distribution basic test - Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(28611.73, 40000, "ppm &lt; LSL", 27725.49, 10000, "ppm &gt; USL",
-                                      56336.21, 50000, "Total ppm"))
+                                 list(28604.73, 40000, "ppm &lt; LSL", 27704.79, 10000, "ppm &gt; USL",
+                                      56309.52, 50000, "Total ppm"))
 })
 
 test_that("LF43.2 Log-logistic distribution basic test - Capability of the process plot matches", {
@@ -2651,7 +2651,7 @@ test_that("LF43.2 Log-logistic distribution basic test - Capability of the proce
 test_that("LF43.3 Log-logistic distribution basic test - Process performance (total) table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.636, 0.634, 0.634, 0.638))
+                                 list(0.636, 0.634, 0.634, 0.639))
 })
 
 test_that("LF43.4 Log-logistic distribution basic test - Process summary table results match", {
@@ -3099,7 +3099,7 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("LF52.1 Log-logistic distribution single hist. param. test - Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(31824.38, 40000, "ppm &lt; LSL", 30734.71, 10000, "ppm &gt; USL",
+                                 list(31824.38, 40000, "ppm &lt; LSL", 30735.63, 10000, "ppm &gt; USL",
                                       62559.08, 50000, "Total ppm"))
 })
 
@@ -3320,7 +3320,7 @@ test_that("WF1.3 (Normal) Basic tests of Non-conformance statistics table withou
 test_that("WF1.4 (Normal) Basic tests of Process capability (within) table without stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.135, 0.93, 0.801, 1.06, 1.339, 0.991, 0.93, 1.276))
+                                 list(1.135, 0.93, 0.792, 1.069, 1.339, 0.978, 0.93, 1.288))
 })
 
 test_that("WF1.5 (Normal) Basic tests of Process summary table without stages", {
@@ -3400,8 +3400,8 @@ test_that("WF2.3 (Normal) Basic tests of Non-conformance statistics table with s
 test_that("WF2.4 (Normal) Basic tests of Process capability (within) table with stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.077, 0.877, 0.699, 1.055, 1.277, 0.878, 0.877, 1.27, "1 (BL)",
-                                      1.199, 0.99, 0.793, 1.187, 1.408, 0.977, 0.99, 1.414, 2, 0.122,
+                                 list(1.077, 0.877, 0.69, 1.064, 1.277, 0.866, 0.877, 1.282, "1 (BL)",
+                                      1.199, 0.99, 0.783, 1.197, 1.408, 0.964, 0.99, 1.427, 2, 0.122,
                                       0.113, "-", "-", 0.131, "-", 0.113, "-", "Change (2 vs. BL)"))
 })
 
@@ -3485,7 +3485,7 @@ test_that("WF3.3 (Weibull) Basic tests of Process performance (total) table", {
 test_that("WF3.4 (Weibull) Basic tests of Process summary table", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(4.13179160447975, 0, 7.08, 100, 1.85635681000733, 6, 7.78757547787008,
+                                 list(4.13179160447975, 0, 7.08, 100, 1.85635681000733, 6, 7.78734253885561,
                                       12))
 })
 
@@ -3504,7 +3504,7 @@ test_that("WF3.6 (Weibull) Basic tests of Probability plot against Weibull distr
 test_that("WF3.7 (Weibull) Basic tests of Summary of test against the Weibull distribution table", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.601, 4.13213439552013, 100, 0.116, 7.78757547787008))
+                                 list(0.6, 4.13213439552013, 100, 0.116, 7.78734253885561))
 })
 
 test_that("WF3.8 (Weibull) Basic tests of X-bar & R control chart", {
@@ -3647,7 +3647,7 @@ test_that("WF5.6 (3-parameter-Weibull) Basic tests of Probability plot against W
 test_that("WF5.7 (3-parameter-Weibull) Basic tests of Summary of test against the Weibull distribution table", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.601, 4.13213439552013, 100, 0.116, 7.78757547787008))
+                                 list(0.6, 4.13213439552013, 100, 0.116, 7.78734253885561))
 })
 
 test_that("WF5.8 (3-parameter-Weibull) Basic tests of X-bar & R control chart", {
@@ -3773,7 +3773,7 @@ test_that("WF7.3 (Normal) Missing value test of Non-conformance statistics table
 test_that("WF7.4 (Normal) Missing value test of Process capability (within) table with single missing value in measurement", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.14, 0.942, 0.811, 1.073, 1.338, 0.994, 0.942, 1.282))
+                                 list(1.14, 0.942, 0.801, 1.083, 1.338, 0.981, 0.942, 1.295))
 })
 
 test_that("WF7.5 (Normal) Missing value test of Process summary table with single missing value in measurement", {
@@ -3889,9 +3889,9 @@ test_that("WF10.4 (Normal) Missing value test of Process capability (within) tab
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(1.011, 0.734, 0.504, 0.963, 1.289, 0.73, 0.734, 1.281, "1 (BL)", 1,
-                                      0.807, 0.524, 1.09, 1.194, 0.68, 0.807, 1.307, 2, -0.011, 0.073, "-",
-                                      "-", -0.095, "-", 0.073, "-", "Change (2 vs. BL)", 1.489, 1.298, 0.869,
-                                      1.726, 1.68, 1.011, 1.298, 1.944, 3, 0.477, 0.564, "-", "-", 0.391,
+                                      0.807, 0.531, 1.083, 1.194, 0.69, 0.807, 1.297, 2, -0.011, 0.073, "-",
+                                      "-", -0.095, "-", 0.073, "-", "Change (2 vs. BL)", 1.489, 1.298, 0.881,
+                                      1.714, 1.68, 1.026, 1.298, 1.93, 3, 0.477, 0.564, "-", "-", 0.391,
                                       "-", 0.564, "-", "Change (3 vs. BL)"))
 })
 
@@ -4008,7 +4008,7 @@ test_that("WF12.3 (Normal) Option test of Non-conformance statistics table with 
 test_that("WF12.4 (Normal) Option test of Process capability (within) table with s-bar calculation method", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.082, 0.887, 0.763, 1.011, 1.276, 0.945, 0.887, 1.216))
+                                 list(1.082, 0.887, 0.757, 1.017, 1.276, 0.936, 0.887, 1.224))
 })
 
 test_that("WF12.5 (Normal) Option test of Process summary table with s-bar calculation method", {
@@ -4191,7 +4191,7 @@ test_that("WF15.3 (Normal) Option test of Non-conformance statistics table with 
 test_that("WF15.4 (Normal) Option test of Process capability (within) table with s-bar method and no unbiasing constant", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.151, 0.944, 0.813, 1.074, 1.358, 1.005, 0.944, 1.294))
+                                 list(1.151, 0.944, 0.806, 1.081, 1.358, 0.996, 0.944, 1.303))
 })
 
 test_that("WF15.5 (Normal) Option test of Process summary table with s-bar method and no unbiasing constant", {
@@ -4446,6 +4446,131 @@ test_that("Johnson works", {
                                              2.467))
 })
 
+# Box-Cox with negative lambda: x^lambda is decreasing, so it is negated to keep LSL below USL
+.boxCoxNegativeLambdaOptions <- function(dataset, transformation, continuityAdjustment) {
+  options <- analysisOptions("processCapabilityStudies")
+  options$testSet <- "jaspDefault"
+  options$dataFormat <- "wideFormat"
+  options$measurementsWideFormat <- names(dataset)
+  options$axisLabels <- ""
+  options$capabilityStudyType <- "normalCapabilityAnalysis"
+  options$controlChartType <- "xBarR"
+  options$controlChart <- FALSE
+  options$histogram <- FALSE
+  options$probabilityPlot <- FALSE
+  options$dataTransformation <- transformation
+  options$dataTransformationLambda <- -1
+  options$dataTransformationContinuityAdjustment <- continuityAdjustment
+  options$lowerSpecificationLimit <- TRUE
+  options$lowerSpecificationLimitValue <- 1
+  options$upperSpecificationLimit <- TRUE
+  options$upperSpecificationLimitValue <- 4
+  options$target <- TRUE
+  options$targetValue <- 2
+  return(options)
+}
+
+.boxCoxNegativeLambdaTables <- function(results) {
+  collection <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]]
+  tableNames <- paste0("capabilityAnalysis_normalCapabilityAnalysis_",
+                       c("processSummaryTable", "capabilityTableWithin", "capabilityTableOverall", "capabilityTablePerformance"))
+  tables <- lapply(collection[tableNames], function(x) x[["data"]])
+  names(tables) <- c("summary", "within", "overall", "performance")
+  return(tables)
+}
+
+test_that("Box-Cox with negative lambda keeps specification limits in order", {
+  dataset <- data.frame(x = c(1.5, 2, 2.5, 3))
+  options <- .boxCoxNegativeLambdaOptions(dataset, "boxCox", continuityAdjustment = FALSE)
+  results <- runAnalysis("processCapabilityStudies", dataset, options)
+  tables  <- .boxCoxNegativeLambdaTables(results)
+
+  # LSL = -1^-1, target = -2^-1, USL = -4^-1; mean = -mean(1/x)
+  jaspTools::expect_equal_tables(tables[["summary"]],
+                                 list(-1, -0.475, 4, 0.14497764834111, 0.0985027580772262, -0.5, -0.25))
+  jaspTools::expect_equal_tables(tables[["within"]],
+                                 list(1.269, 0.761, 0.157, 1.366, 1.777, 0.396, 0.761, 2.085))
+  jaspTools::expect_equal_tables(tables[["overall"]],
+                                 list(0.651, 0.275, 1.002, 0.862, 0.517, 0.075, 0.96, 1.207, 0.295, 0.517, 1.392))
+  jaspTools::expect_equal_tables(tables[["performance"]],
+                                 list(146.593, 0.049, 0, "ppm &lt; LSL", 60335.494, 11179.89, 0, "ppm &gt; USL",
+                                      60482.087, 11179.939, 0, "ppm total"))
+
+  formula <- results[["results"]][["dataTransformationContainer"]][["collection"]][["dataTransformationContainer_formula"]][["text"]]
+  expect_true(grepl("y = -x^\\lambda", formula, fixed = TRUE))
+
+  # (x^lambda - 1) / lambda is a positive affine map of -x^lambda, so capability results must be identical
+  optionsAdjusted <- .boxCoxNegativeLambdaOptions(dataset, "boxCox", continuityAdjustment = TRUE)
+  tablesAdjusted  <- .boxCoxNegativeLambdaTables(runAnalysis("processCapabilityStudies", dataset, optionsAdjusted))
+  expect_equal(tables[c("within", "overall", "performance")], tablesAdjusted[c("within", "overall", "performance")])
+})
+
+test_that("Box-Cox with negative lambda and only a lower specification limit", {
+  dataset <- data.frame(x = c(1.5, 2, 2.5, 3))
+  options <- .boxCoxNegativeLambdaOptions(dataset, "boxCox", continuityAdjustment = FALSE)
+  options$upperSpecificationLimit <- FALSE
+  options$target <- FALSE
+  tables <- .boxCoxNegativeLambdaTables(runAnalysis("processCapabilityStudies", dataset, options))
+
+  # all observations conform to LSL = 1
+  jaspTools::expect_equal_tables(tables[["overall"]], list(1.207, 0.351, 2.063, 1.207))
+  jaspTools::expect_equal_tables(tables[["within"]], list(1.777, 0.49, 3.064, 1.777))
+  jaspTools::expect_equal_tables(tables[["performance"]],
+                                 list(146.593, 0.049, 0, "ppm &lt; LSL", "*", "*", "*", "ppm &gt; USL",
+                                      146.593, 0.049, 0, "ppm total"))
+})
+
+test_that("Box-Cox (auto) with negative estimated lambda keeps specification limits in order", {
+  dataset <- data.frame(x1 = c(1.1, 1.3, 1.5, 2.0, 3.0), x2 = c(1.2, 1.4, 1.7, 2.4, 4.5))
+  options <- .boxCoxNegativeLambdaOptions(dataset, "boxCoxAuto", continuityAdjustment = FALSE)
+  options$upperSpecificationLimitValue <- 5
+  options$target <- FALSE
+  results <- runAnalysis("processCapabilityStudies", dataset, options)
+  tables  <- .boxCoxNegativeLambdaTables(results)
+
+  lambda <- results[["results"]][["dataTransformationContainer"]][["collection"]][["dataTransformationContainer_table"]][["data"]][[1]][["value"]]
+  expect_equal(lambda, -1.10421797241949)
+  jaspTools::expect_equal_tables(tables[["summary"]],
+                                 list(-1, -0.568432072972538, 10, 0.232657470563089, 0.0737364718667231, -0.169))
+  jaspTools::expect_equal_tables(tables[["overall"]], list(0.595, 0.572, 0.291, 0.854, 0.618, 0.362, 0.572, 0.816))
+  jaspTools::expect_equal_tables(tables[["performance"]],
+                                 list(31801.698, 0.002, 0, "ppm &lt; LSL", 43051.203, 0.031, 0, "ppm &gt; USL",
+                                      74852.901, 0.033, 0, "ppm total"))
+
+  optionsAdjusted <- options
+  optionsAdjusted$dataTransformationContinuityAdjustment <- TRUE
+  tablesAdjusted  <- .boxCoxNegativeLambdaTables(runAnalysis("processCapabilityStudies", dataset, optionsAdjusted))
+  expect_equal(tables[c("within", "overall", "performance")], tablesAdjusted[c("within", "overall", "performance")])
+})
+
+test_that("Box-Cox with negative lambda, shift and only an upper specification limit", {
+  dataset <- data.frame(x = c(1.5, 2, 2.5, 3))
+  options <- .boxCoxNegativeLambdaOptions(dataset, "boxCox", continuityAdjustment = FALSE)
+  options$dataTransformationShift <- 1
+  options$lowerSpecificationLimit <- FALSE
+  options$upperSpecificationLimitValue <- 3.5
+  options$target <- FALSE
+  results <- runAnalysis("processCapabilityStudies", dataset, options)
+  tables  <- .boxCoxNegativeLambdaTables(results)
+
+  # USL = -(3.5 + 1)^-1; PpU = (USL - mean) / (3 * sd) with mean = -mean(1 / (x + 1))
+  jaspTools::expect_equal_tables(tables[["summary"]],
+                                 list(-0.317261904761905, 4, 0.0648672986944061, 0.0443262411347518, -0.222))
+  jaspTools::expect_equal_tables(tables[["overall"]], list(0.488, 0.061, 0.916, 0.488))
+  jaspTools::expect_equal_tables(tables[["within"]], list(0.715, 0.139, 1.29, 0.715))
+  jaspTools::expect_equal_tables(tables[["performance"]],
+                                 list("*", "*", "*", "ppm &lt; LSL", 71441.345, 16012.628, 0, "ppm &gt; USL",
+                                      71441.345, 16012.628, 0, "ppm total"))
+
+  formula <- results[["results"]][["dataTransformationContainer"]][["collection"]][["dataTransformationContainer_formula"]][["text"]]
+  expect_true(grepl("y = -(x+\\text{shift})^\\lambda", formula, fixed = TRUE))
+
+  optionsAdjusted <- options
+  optionsAdjusted$dataTransformationContinuityAdjustment <- TRUE
+  tablesAdjusted  <- .boxCoxNegativeLambdaTables(runAnalysis("processCapabilityStudies", dataset, optionsAdjusted))
+  expect_equal(tables[c("within", "overall", "performance")], tablesAdjusted[c("within", "overall", "performance")])
+})
+
 test_that("Thin x-axis labels snapshot matches", {
   values <- 38 + qnorm(ppoints(100), sd = 0.004)
   values[length(values)] <- 38.012
@@ -4631,6 +4756,74 @@ for (distribution in c("weibull", "lognormal")) {
     testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
     xLimits <- testPlot$subplots[[1]]$scales$get_scales("x")$limits
     testthat::expect_gt(diff(range(log(dataNearHundred$x))) / diff(xLimits), 0.75)
+  })
+}
+
+# Non-normal capability: PpU and Pp stay finite when USL lies far in a tail of the fitted distribution ####
+# Each USL lies about 10 SDs (normal equivalent) from the fitted distribution's centre, where one of P(X <= USL) and P(X > USL)
+# rounds to 1: above the process for the capable cases, below it for the last case.
+# Reference: Z_USL with pnorm(Z_USL) = P(X <= USL) from the smaller tail, Z_LSL = qnorm(P(X < LSL)), PpU = Z_USL/3, PpL = -Z_LSL/3,
+# Pp = (Z_USL - Z_LSL)/6, evaluated at the fitted parameters reported in the summary table.
+farTailCases <- list(
+  list(distribution = "lognormal",           x = qlnorm(ppoints(100), meanlog = 2, sdlog = 0.2),          lsl = 3,    usl = 60),
+  list(distribution = "weibull",             x = qweibull(ppoints(100), shape = 5, scale = 8),            lsl = 3,    usl = 18),
+  list(distribution = "3ParameterLognormal", x = 5 + qlnorm(ppoints(100), meanlog = 1, sdlog = 0.3),      lsl = 6,    usl = 70),
+  list(distribution = "3ParameterWeibull",   x = 5 + qweibull(ppoints(100), shape = 2, scale = 3),        lsl = 5.5,  usl = 27),
+  list(distribution = "gamma",               x = qgamma(ppoints(100), shape = 25, scale = 0.3),           lsl = 3,    usl = 30),
+  list(distribution = "exponential",         x = qexp(ppoints(100), rate = 1/2),                          lsl = 0.01, usl = 110),
+  list(distribution = "logistic",            x = qlogis(ppoints(100), location = 7.5, scale = 0.5),       lsl = 3,    usl = 35),
+  list(distribution = "loglogistic",         x = flexsurv::qllogis(ppoints(100), shape = 8, scale = 7.4), lsl = 3,    usl = 7000),
+  list(distribution = "lognormal",           x = qlnorm(ppoints(100), meanlog = 2, sdlog = 0.2),          lsl = 0.5,  usl = 1)
+)
+farTailCdf <- function(distribution, q, beta, theta, threshold, lower.tail) {
+  switch(distribution,
+         lognormal             = plnorm(q, meanlog = beta, sdlog = theta, lower.tail = lower.tail),
+         weibull               = pweibull(q, shape = beta, scale = theta, lower.tail = lower.tail),
+         "3ParameterLognormal" = plnorm(q - threshold, meanlog = beta, sdlog = theta, lower.tail = lower.tail),
+         "3ParameterWeibull"   = pweibull(q - threshold, shape = beta, scale = theta, lower.tail = lower.tail),
+         gamma                 = pgamma(q, shape = beta, scale = theta, lower.tail = lower.tail),
+         exponential           = pexp(q, rate = 1/theta, lower.tail = lower.tail),
+         logistic              = plogis(q, location = beta, scale = theta, lower.tail = lower.tail),
+         loglogistic           = flexsurv::pllogis(q, shape = 1/theta, scale = exp(beta), lower.tail = lower.tail))
+}
+# table values are rounded to .numDecimals (at least 2) before they are returned
+expectRoundedValue <- function(actual, reference) expect_lt(abs(actual - reference), 0.006)
+for (farTailCase in farTailCases) {
+  distribution <- farTailCase$distribution
+  options <- analysisOptions("processCapabilityStudies")
+  options$testSet <- "jaspDefault"
+  options$measurementLongFormat <- "x"
+  options$subgroupSizeType <- "manual"
+  options$manualSubgroupSizeValue <- 5
+  options$probabilityPlotRankMethod <- "bernard"
+  options$controlChartType <- "xBarR"
+  options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+  options$nonNormalDistribution <- distribution
+  options$nullDistribution <- if (distribution %in% c("lognormal", "weibull", "3ParameterLognormal", "3ParameterWeibull")) distribution else "normal"
+  options$nonNormalMethod <- "nonConformance"
+  options$lowerSpecificationLimit <- TRUE
+  options$upperSpecificationLimit <- TRUE
+  options$lowerSpecificationLimitValue <- farTailCase$lsl
+  options$upperSpecificationLimitValue <- farTailCase$usl
+  set.seed(1)
+  results <- runAnalysis("processCapabilityStudies", data.frame(x = farTailCase$x), options)
+
+  test_that(sprintf("(%s, USL = %s) PpU and Pp are finite when USL lies far in a tail", distribution, farTailCase$usl), {
+    nonNormalContainer <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]]
+    fit         <- nonNormalContainer[["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]][[1]]
+    performance <- nonNormalContainer[["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]][[1]]
+    pBelowUsl <- farTailCdf(distribution, farTailCase$usl, fit[["beta"]], fit[["theta"]], fit[["threshold"]], lower.tail = TRUE)
+    pAboveUsl <- farTailCdf(distribution, farTailCase$usl, fit[["beta"]], fit[["theta"]], fit[["threshold"]], lower.tail = FALSE)
+    pBelowLsl <- farTailCdf(distribution, farTailCase$lsl, fit[["beta"]], fit[["theta"]], fit[["threshold"]], lower.tail = TRUE)
+    zUsl <- if (pAboveUsl < pBelowUsl) qnorm(pAboveUsl, lower.tail = FALSE) else qnorm(pBelowUsl)
+    zLsl <- qnorm(pBelowLsl)
+    expect_gt(abs(zUsl), 8.5)
+    expect_true(is.finite(performance[["ppu"]]))
+    expect_true(is.finite(performance[["pp"]]))
+    expectRoundedValue(performance[["ppu"]], zUsl / 3)
+    expectRoundedValue(performance[["ppl"]], -zLsl / 3)
+    expectRoundedValue(performance[["pp"]],  (zUsl - zLsl) / 6)
+    expectRoundedValue(performance[["ppk"]], min(zUsl, -zLsl) / 3)
   })
 }
 
