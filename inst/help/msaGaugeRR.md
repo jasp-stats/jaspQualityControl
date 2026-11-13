@@ -24,7 +24,7 @@ The method used in the analysis.
 - Std.Deviation reference: either a historically known standard deviation (Historical process std.Deviation) or estimated from the data (Study std.Deviation).
 - Tolerance: include a value for tolerance. 
 - r&R table Analysis of Variance method: options for the Analysis of Variance table. 
- - Type of model for F-statistic: in the ANOVA table with interaction, Fixed effects tests Part and Operator against the repeatability mean square, Random effects tests them against the Part x Operator interaction mean square. The interaction is always tested against repeatability. Not available for Type 3 studies (single operator), where Part is tested against repeatability.
+ - Type of model for F-statistic: in the ANOVA table with interaction, Random effects (default, as in AIAG and Minitab) tests Part and Operator against the Part x Operator interaction mean square, Fixed effects tests Part and Operator against the repeatability mean square. The interaction is always tested against repeatability. Not available for Type 3 studies (single operator), where Part is tested against repeatability.
  - Alpha interaction removal: value for alpha level. 
  - Study Var. multiplier type: multiplier based on either Std.Deviation or Percent. 
  - Study Var. multiplier value: value for the multiplier. 

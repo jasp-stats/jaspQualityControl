@@ -190,7 +190,7 @@ Form
 						{ label: qsTr("Fixed effects"), value: "fixedEffect"},
 						{ label: qsTr("Random effects"), value: "randomEffect"}
 					]
-					indexDefaultValue: (type3.checked) ? 1 : 2
+					indexDefaultValue: 1
 					enabled:      !type3.checked
 				}
 

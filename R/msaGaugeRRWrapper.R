@@ -24,7 +24,7 @@ msaGaugeRR <- function(
           version = "1",
           anova = TRUE,
           anovaAlphaForInteractionRemoval = 0.05,
-          anovaModelType = "fixedEffect",
+          anovaModelType = "randomEffect",
           dataFormat = "longFormat",
           historicalSdValue = 3,
           measurementLongFormat = list(types = list(), value = ""),
