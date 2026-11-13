@@ -166,8 +166,12 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   # Number of levels of each factor including levels without runs, i.e., the levels the form counts when it hides the
   # low/high fields of discrete factors with more than two levels (see .doeMultiLevelDiscretePredictors)
   allLevels <- lapply(dataset[intersect(factorVars, names(dataset))], levels)
+  # Runs with a missing predictor, block or covariate are left out for all responses. Runs with a missing response are
+  # only left out of the analysis of that response (.doeResponseRuns), so each response is analysed on all its runs.
   # droplevels: levels without runs (filtered or missing) would make lm() drop the sum-to-zero contrasts
-  dataset <- droplevels(na.omit(dataset))
+  completePredictors <- stats::complete.cases(dataset[setdiff(names(dataset), dependent)])
+  dataset <- droplevels(dataset[completePredictors, , drop = FALSE])
+  attr(dataset, "runsMissingPredictors") <- sum(!completePredictors)
   attr(dataset, "allLevelCounts") <- lengths(allLevels)
   levelsWithoutRuns <- Map(function(var, varLevels) setdiff(varLevels, levels(dataset[[var]])), names(allLevels), allLevels)
   attr(dataset, "levelsWithoutRuns") <- Filter(length, levelsWithoutRuns) # reported below the coefficients table
@@ -175,6 +179,36 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   if (length(blocks) > 0 && !identical(blocks, "")) # name of variable should always be "Block"
     names(dataset)[names(dataset) == blocks] <- "Block"
   return(dataset)
+}
+
+# Runs of one response: the rows in `keep` (runs without a missing value of that response). Discrete predictors and blocks
+# drop their levels without runs left, like .doeAnalysisReadData; droplevels() also drops the contrasts, so they are set again.
+.doeResponseRuns <- function(dataset, keep) {
+  dataset <- dataset[keep, , drop = FALSE]
+  for (var in names(Filter(is.factor, dataset))) {
+    if (nlevels(droplevels(dataset[[var]])) < nlevels(dataset[[var]])) {
+      dataset[[var]] <- droplevels(dataset[[var]])
+      if (nlevels(dataset[[var]]) > 1)
+        contrasts(dataset[[var]]) <- "contr.sum"
+    }
+  }
+  return(dataset)
+}
+
+# Footnotes with the number of runs left out of the analysis of a response
+.doeAddRunsLeftOutFootnotes <- function(table, runsLeftOut, dep) {
+  nPredictors <- runsLeftOut[["predictors"]]
+  nResponse   <- runsLeftOut[["response"]]
+  if (length(nPredictors) == 1 && nPredictors > 0)
+    table$addFootnote(sprintf(ngettext(nPredictors,
+                                       "%1$d run with a missing value of a predictor, block or covariate was left out of the analysis of all responses.",
+                                       "%1$d runs with a missing value of a predictor, block or covariate were left out of the analysis of all responses."),
+                              nPredictors))
+  if (length(nResponse) == 1 && nResponse > 0)
+    table$addFootnote(sprintf(ngettext(nResponse,
+                                       "%1$d run with a missing value of %2$s was left out of the analysis of this response.",
+                                       "%1$d runs with a missing value of %2$s were left out of the analysis of this response."),
+                              nResponse, dep))
 }
 
 .doeAnalysisBaseDependencies <- function() {
@@ -203,8 +237,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     return()
   }
 
+  allRuns <- dataset
   for (dep in dependent) {
     currentDependent <- dep
+    dataset <- allRuns
 
     result <- list()
     result[["regression"]] <- list()
@@ -277,6 +313,19 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
         varData[j] <- codes[codeIndex]
       }
       datasetCoded[[var]] <- as.numeric(varData)
+    }
+
+    # Fit this response on its own runs (after coding, so that the coding comes from the full design)
+    responseRuns <- !is.na(dataset[[dep]])
+    dataset      <- .doeResponseRuns(dataset, responseRuns)
+    datasetCoded <- .doeResponseRuns(datasetCoded, responseRuns)
+    result[["regression"]][["runsLeftOut"]] <- resultCoded[["regression"]][["runsLeftOut"]] <-
+      c(predictors = attr(allRuns, "runsMissingPredictors"), response = sum(!responseRuns))
+    for (var in names(Filter(is.factor, allRuns))) {
+      lostLevels <- setdiff(levels(allRuns[[var]]), levels(dataset[[var]]))
+      if (length(lostLevels) > 0)
+        result[["regression"]][["levelsWithoutRuns"]][[var]] <- resultCoded[["regression"]][["levelsWithoutRuns"]][[var]] <-
+          c(result[["regression"]][["levelsWithoutRuns"]][[var]], lostLevels)
     }
 
     if ((options[["designType"]] == "factorialDesign" && !options[["highestOrder"]]) ||
@@ -1498,6 +1547,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   for (i in seq_len(nrow(roOptionsDf))) {
     response <- dataset[[roOptionsDf$variable[i]]]
     goal     <- roOptionsDf$responseOptimizerGoal[i]
+    response <- response[!is.na(response)] # runs with a missing value of this response
     lower    <- if (manualBounds) roOptionsDf$responseOptimizerLowerBound[i] else min(response)
     upper    <- if (manualBounds) roOptionsDf$responseOptimizerUpperBound[i] else max(response)
     target   <- if (manualTarget || goal == "target") roOptionsDf$responseOptimizerTarget[i]
@@ -1921,6 +1971,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     )
     tb$addRows(row)
     .doeAddAliasFootnotes(tb, result[["aliasNotes"]])
+    .doeAddRunsLeftOutFootnotes(tb, result[["runsLeftOut"]], dep)
   }
 }
 
@@ -2430,8 +2481,9 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 }
 
 .doeAnalysisPlotResidualsVsOrderPlotObject <- function(result, dataset, options) {
-  runOrder <- seq_len(nrow(dataset))
-  plotData <- data.frame(x = runOrder, y = resid(result[["object"]]))
+  residuals <- resid(result[["object"]])
+  runOrder  <- match(names(residuals), rownames(dataset)) # the runs of this response (without those with a missing response)
+  plotData  <- data.frame(x = runOrder, y = residuals)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData$x)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData$y)
   p <- ggplot2::ggplot(data = plotData, ggplot2::aes(x = x, y = y)) +
@@ -2534,7 +2586,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
         jaspResults[[dep]][["contourSurfacePlot"]][[plotTitle]] <- plot
         next
       }
-      if (!.doeContourEstimable(result[["object"]], dataset, variablePair)) {
+      if (!.doeContourEstimable(result[["object"]], .doeResponseRuns(dataset, !is.na(dataset[[dep]])), variablePair)) {
         plot$setError(gettext("Could not plot: some contrasts of the model are aliased, so the data cannot estimate the predicted response over this plot (averaged over the levels of the discrete predictors)."))
         jaspResults[[dep]][["contourSurfacePlot"]][[plotTitle]] <- plot
         next
