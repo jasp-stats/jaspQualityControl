@@ -22,7 +22,7 @@ bias (matching between measurements and reference values) of a system.
 
 ## Output 
 -------
-- Gauge Bias table: per part the- reference values, mean per reference value, bias per reference value, and a t-test of the bias against a value of 0.  
+- Gauge Bias table: per part the reference values, mean per reference value, bias per reference value, and a t-test of the bias against a value of 0, using the standard deviation of that part's measurements. The Total row tests the average bias against 0 using the pooled within-part standard deviation (repeatability), with degrees of freedom equal to the number of measurements minus the number of parts.  
 - Regression Model table: the predictors' (intercept and slope) coefficients, t-statistics, standard errors, and p-values.  
 - Gauge Linearity table: the regression model's sigma (S), absolute coefficient values multiplied by the process variation (linearity), r-squared, the percentage of linearity in relation to the process variation.
 - Bias and linearity plot: linear relationship between the bias and reference values, reference values' means (red dots), and values (black axes) given the linear equation.
