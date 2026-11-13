@@ -31,7 +31,7 @@ The paired range method requires exactly two measurement sets. In across-rows fo
 ## Output 
 -------
 - Short gauge study table: sample size, R-bar, historical standard variation, tolerance, GRR, GRR's percentage of the standard variation and tolerance.  
-- Traffic light graph: GRR's percentage of the standard variation and tolerance.  
+- Traffic light graph: GRR's percentage of the process standard deviation and/or tolerance; a panel is shown only for the reference value that is ticked (Process std. dev., Tolerance).  
 - Run chart of parts: all measurements' values per part.
 - Range chart by part: range chart for the measurements using the parts as subgroups.
 - Scatter plot: a scatter plot of the measurements. 
