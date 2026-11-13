@@ -844,45 +844,46 @@ test_that("LF12.1 (Normal) Missing value test of Capability of the process plot 
 test_that("LF12.2 (Normal) Missing value test of Process performance (total) table with missing values in stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.734, 0.544, 0.916, 0.805, 0.637, 0.427, 0.847, 0.972, 0.587, 0.637,
-                                      1.013, "1 (BL)", 0.954, 0.756, 1.147, 1.088, 0.896, 0.678, 1.113, 1.28,
-                                      0.85, 0.896, 1.318, 2, 0.221, "-", "-", 0.283, 0.259, "-", "-", 0.308,
-                                      "-", 0.259, "-", "Change (2 vs. BL)", 1.013, 0.818, 1.203, 1.15, 0.962,
-                                      0.749, 1.176, 1.337, 0.918, 0.962, 1.375, 3, 0.28, "-", "-", 0.345,
-                                      0.325, "-", "-", 0.365, "-", 0.325, "-", "Change (3 vs. BL)"))
+                                 list(0.707, 0.516, 0.891, 0.783, 0.606, 0.392, 0.821, 0.96, 0.559,
+                                      0.606, 0.998, "1 (BL)", 1.133, 0.886, 1.372, 1.247, 1.081, 0.818,
+                                      1.345, 1.412, 0.964, 1.081, 1.52, 2, 0.426, "-", "-", 0.464,
+                                      0.475, "-", "-", 0.452, "-", 0.475, "-", "Change (2 vs. BL)",
+                                      0.917, 0.751, 1.079, 1.06, 0.86, 0.675, 1.044, 1.261, 0.858,
+                                      0.86, 1.257, 3, 0.21, "-", "-", 0.277, 0.253, "-", "-", 0.301,
+                                      "-", 0.253, "-", "Change (3 vs. BL)"))
 })
 
 test_that("LF12.3 (Normal) Missing value test of Non-conformance statistics table with missing values in stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1768.49, 61.64, 30.29, -1706.85, -1738.21, 1749.67, 55.8, 29.82,
-                                      -1693.87, -1719.85, 0, 0, 0, 0, 0, "ppm &lt; LSL", 28003.94,
-                                      3609.52, 1943.35, -24394.42, -26060.59, 27863.78, 3429.3, 1927.26,
-                                      -24434.47, -25936.52, 0, 0, 28571.43, 0, 28571.43, "ppm &gt; USL",
-                                      29772.43, 3671.16, 1973.64, -26101.27, -27798.8, 29613.45, 3485.1,
-                                      1957.08, -26128.35, -27656.36, 0, 0, 28571.43, 0, 28571.43,
-                                      "ppm total"))
+                                 list(1987.868, 11.323, 77.475, -1976.545, -1910.394, 2124.837, 2.776,
+                                      36.187, -2122.061, -2088.651, 0, 0, 0, 0, 0, "ppm &lt; LSL",
+                                      34490.799, 589.241, 4959.521, -33901.558, -29531.279, 35518.963,
+                                      252.518, 3415.452, -35266.445, -32103.511, 0, 0, 25641.026,
+                                      0, 25641.026, "ppm &gt; USL", 36478.668, 600.564, 5036.995,
+                                      -35878.103, -31441.672, 37643.8, 255.294, 3451.639, -37388.506,
+                                      -34192.162, 0, 0, 25641.026, 0, 25641.026, "ppm total"))
 })
 
 test_that("LF12.4 (Normal) Missing value test of Process capability (within) table with missing values in stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.806, 0.638, 0.407, 0.868, 0.973, 0.555, 0.638, 1.045, "1 (BL)",
-                                      1.095, 0.901, 0.654, 1.148, 1.288, 0.817, 0.901, 1.362, 2, 0.289,
-                                      0.263, "-", "-", 0.315, "-", 0.263, "-", "Change (2 vs. BL)", 1.151,
-                                      0.963, 0.722, 1.205, 1.338, 0.881, 0.963, 1.411, 3, 0.345, 0.326, "-",
-                                      "-", 0.365, "-", 0.326, "-", "Change (3 vs. BL)"))
+                                 list(0.777, 0.602, 0.366, 0.837, 0.953, 0.519, 0.602, 1.023, "1 (BL)",
+                                      1.337, 1.159, 0.832, 1.486, 1.514, 0.975, 1.159, 1.685, 2, 0.559,
+                                      0.558, "-", "-", 0.561, "-", 0.558, "-", "Change (2 vs. BL)",
+                                      1.112, 0.902, 0.682, 1.122, 1.323, 0.86, 0.902, 1.356, 3, 0.335,
+                                      0.3, "-", "-", 0.37, "-", 0.3, "-", "Change (3 vs. BL)"))
 })
 
 test_that("LF12.5 (Normal) Missing value test of Process summary table with missing values in stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0, 7.25, 20, 2.48564298575471, 2.48280309544282, "1 (BL)", 6,
-                                      12, 0, 7.06, 30, 1.83877770496487, 1.82717110920034, 2, 6, 12,
-                                      "-", -0.19, 10, -0.646865280789841, -0.655631986242477, "Change (2 vs. BL)",
-                                      "-", "-", 0, 6.97714285714286, 35, 1.73968991731382, 1.73811571060066,
-                                      3, 6, 12, "-", -0.272857142857143, 15, -0.745953068440889, -0.744687384842157,
-                                      "Change (3 vs. BL)", "-", "-"))
+                                 list(0, 7.35555555555556, 18, 2.55394095058695, 2.57276454409441, "1 (BL)",
+                                      6, 12, 0, 6.79642857142857, 28, 1.60404168756605, 1.49610834301589,
+                                      2, 6, 12, "-", -0.559126984126984, 10, -0.949899263020901, -1.07665620107852,
+                                      "Change (2 vs. BL)", "-", "-", 0, 7.13589743589744, 39, 1.88630621774369,
+                                      1.79820452795275, 3, 6, 12, "-", -0.21965811965812, 21, -0.667634732843256,
+                                      -0.77456001614166, "Change (3 vs. BL)", "-", "-"))
 })
 
 test_that("LF12.6 (Normal) Missing value test of distribution histogram with missing values in stages", {
@@ -900,11 +901,11 @@ test_that("LF12.7 (Normal) Missing value test of Probability plot against normal
 test_that("LF12.8 (Normal) Missing value test of Summary of test against the normal distribution table with missing values in stages", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.512, 7.25, 20, 0.172, 2.48564298575471, "1 (BL)", 0.316, 7.06,
-                                      30, 0.523, 1.83877770496487, 2, "-", -0.19, 10, "-",
-                                      -0.646865280789841, "Change (2 vs. BL)", 0.561, 6.97714285714286,
-                                      35, 0.136, 1.73968991731382, 3, "-", -0.272857142857143, 15, "-",
-                                      -0.745953068440889, "Change (3 vs. BL)"))
+                                 list(0.564, 7.35555555555556, 18, 0.123, 2.55394095058695, "1 (BL)",
+                                      0.17, 6.79642857142857, 28, 0.925, 1.60404168756605, 2, "-",
+                                      -0.559126984126984, 10, "-", -0.949899263020901, "Change (2 vs. BL)",
+                                      0.747, 7.13589743589744, 39, 0.047, 1.88630621774369, 3, "-",
+                                      -0.21965811965812, 21, "-", -0.667634732843256, "Change (3 vs. BL)"))
 })
 
 test_that("LF12.9 (Normal) Missing value test of X-bar & R control chart with missing values in stages", {
