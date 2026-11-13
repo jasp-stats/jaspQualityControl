@@ -1397,10 +1397,11 @@ test_that("29.3 Test of all rules for xbar & r chart - Test results for x-bar ch
                                  list("No test violations occurred."))
 })
 
-# Interleaved stages: test results use the label of the flagged subgroup (jasp-issues#4672) ####
-# Stages alternate by row; the chart shows all A subgroups, then all B subgroups. Row 4 (R4) is out of control.
+# Recurring stage (A, B, A): test results use the label of the flagged subgroup (jasp-issues#4672) ####
+# A new stage starts at each change of the stage value, so the chart shows the rows in their order: A (R1-R3),
+# B (R4-R9), A (R10-R12). In stage B, R4 is above and R5, R7-R9 are below the limits.
 interleavedStagesDataset <- data.frame(
-  Stage = rep(c("A", "B"), 6),
+  Stage = rep(c("A", "B", "A"), c(3, 6, 3)),
   Label = paste0("R", 1:12),
   M1    = c(10, 8, 10, 40, 10, 9, 10, 8, 10, 9, 10, 8),
   M2    = c(11, 13, 11, 41, 11, 14, 11, 13, 11, 14, 11, 13)
@@ -1422,7 +1423,8 @@ options$rule7 <- FALSE
 options$rule8 <- FALSE
 results <- runAnalysis("variablesChartsSubgroups", interleavedStagesDataset, options)
 
-test_that("WF interleaved stages - x-bar chart test results use the flagged subgroup's label", {
+test_that("WF recurring stage - x-bar chart test results use the flagged subgroup's label", {
   table <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_xBarTable"]][["data"]]
-  jaspTools::expect_equal_tables(table, list("B", "Point 8 (R4)"))
+  jaspTools::expect_equal_tables(table, list("B", "Point 4 (R4)", "", "Point 5 (R5)", "", "Point 7 (R7)", "",
+                                        "Point 8 (R8)", "", "Point 9 (R9)"))
 })
