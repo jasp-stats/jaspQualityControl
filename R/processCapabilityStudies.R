@@ -3387,6 +3387,35 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   list(varcov = varcov)
 }
 
+# Inverse observed information of the Weibull log-likelihood at (shape, scale), in closed form. A finite-difference
+# Hessian needs a step that is small relative to the width of the likelihood; that width shrinks like 1 / shape, so
+# data that vary little relative to their location (high shape) need steps no fixed size provides.
+.qcWeibullObservedVarcov <- function(data, shape, scale) {
+  n <- length(data)
+  z <- data / scale
+  zShape <- z^shape
+  logZ <- log(z)
+  covariance <- (n - sum(zShape) - shape * sum(zShape * logZ)) / scale
+  information <- matrix(c(n / shape^2 + sum(zShape * logZ^2), covariance,
+                          covariance, shape * ((shape + 1) * sum(zShape) - n) / scale^2), nrow = 2)
+
+  invalidMessage <- gettext("Could not compute variance-covariance matrix: Hessian contains invalid values.")
+  if (anyNA(information) || any(!is.finite(information)))
+    stop(invalidMessage, call. = FALSE)
+
+  # The shape and scale entries can differ by many orders of magnitude (small units, high shape), which makes solve()
+  # report a singular matrix; inverting the correlation form depends only on the correlation of the estimates.
+  inverseSd <- 1 / sqrt(diag(information))
+  if (!all(is.finite(inverseSd)))
+    stop(invalidMessage, call. = FALSE)
+
+  scaling <- outer(inverseSd, inverseSd)
+  varcov <- solve(information * scaling) * scaling
+  dimnames(varcov) <- list(c("shape", "scale"), c("shape", "scale"))
+
+  list(varcov = varcov)
+}
+
 .qcProbabilityPlotObject <- function(options, dataset, measurements, stages) {
   if (identical(stages, "")) {
     nStages <- 1
@@ -3510,12 +3539,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       }
       shape <- as.numeric(fit_Weibull[["beta"]])
       scale <- as.numeric(fit_Weibull[["theta"]])
-      lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x/scale)^shape)
-      # Hessian on the rescaled data (see .qcFitdistUnitFree), so the finite-difference steps are the same in any unit;
-      # the scale (co)variances are mapped back below
-      unitScale <- .qcUnitScale(dataCurrentStage)
-      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage / unitScale, parms = c("shape", "scale"),
-                                     mle = c("shape" = shape, "scale" = scale / unitScale), stepScale = c(shape, scale / unitScale)))
+      matrix <- try(.qcWeibullObservedVarcov(dataCurrentStage, shape, scale))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
@@ -3524,8 +3548,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         covarSS <- NA
       } else {
         varShape <- matrix$varcov[1,1]
-        varScale <- matrix$varcov[2,2] * unitScale^2
-        covarSS <- matrix$varcov[1,2] * unitScale
+        varScale <- matrix$varcov[2,2]
+        covarSS <- matrix$varcov[1,2]
       }
       zp <- log(-1*log(1-pSeq))
       zalpha <- qnorm(0.975) # normal critical value for log percentile (delta method), not the Weibull axis transform
