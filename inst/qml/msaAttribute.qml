@@ -136,6 +136,28 @@ Form
 				label: 							qsTr("Positive reference:")
 				id:								positiveReference
 				enabled:						!kendallsTau.checked
+				info:							qsTr("The rating category treated as positive in the kappa studies, as it is written in the results (for example, \"Yes\", \"Go\", \"Good\").")
+			}
+
+			RadioButtonGroup
+			{
+				name:							"positiveReferenceCategory"
+				title:							qsTr("Positive reference is the")
+				enabled:						!kendallsTau.checked && positiveReference.value != ""
+				info:							qsTr("Whether the positive reference is the accept (good) or the reject (defect) category. The miss rate (bad part accepted) and false alarm rate (good part rejected) of the study effectiveness summary are computed relative to the accept category.")
+
+				RadioButton
+				{
+					value:						"accept"
+					label:						qsTr("Accept (good) category")
+					checked:					true
+				}
+
+				RadioButton
+				{
+					value:						"reject"
+					label:						qsTr("Reject (defect) category")
+				}
 			}
 
 			CheckBox
