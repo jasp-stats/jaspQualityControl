@@ -258,11 +258,10 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     }
 
     # R chart by operator
-    if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
+    if (options[["rChart"]] && !options[["type3"]] && is.null(jaspResults[["rChart"]])) {
       jaspResults[["rChart"]] <- createJaspContainer(gettext("Range chart by operator"))
       jaspResults[["rChart"]]$position <- 3
-      jaspResults[["rChart"]]$dependOn(c("rChart", "gaugeRRmethod", "anovaGaugeReport", "measurementLongFormat",
-                                         "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
+      jaspResults[["rChart"]]$dependOn(.msaGaugeRRChartByOperatorDependencies("rChart"))
       jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
       if (ready) {
         rChart <- .controlChart(dataset = dataset[c(measurements, operators)], plotType = "R", ruleList = ruleList2,
@@ -275,11 +274,10 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     }
 
     # Xbar chart by operator
-    if (options[["xBarChart"]] && is.null(jaspResults[["xBarChart"]])) {
+    if (options[["xBarChart"]] && !options[["type3"]] && is.null(jaspResults[["xBarChart"]])) {
       jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Xbar chart by operator"))
       jaspResults[["xBarChart"]]$position <- 4
-      jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "gaugeRRmethod", "anovaGaugeReport", "measurementLongFormat",
-                                            "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
+      jaspResults[["xBarChart"]]$dependOn(.msaGaugeRRChartByOperatorDependencies("xBarChart"))
       jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
       if (ready) {
         xBarChart <- .controlChart(dataset = dataset[c(measurements, operators)], ruleList = ruleList1,
@@ -1143,4 +1141,13 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     else
       return(p1)
   }
+}
+
+# Dependencies of the range/average chart by operator containers: the chart's own checkbox,
+# the data assignment (both formats), Type 3, report mode and the control chart rules.
+.msaGaugeRRChartByOperatorDependencies <- function(chartOption) {
+  c(chartOption, "dataFormat", "type3", "report",
+    "measurementLongFormat", "operatorLongFormat", "partLongFormat",
+    "measurementsWideFormat", "operatorWideFormat", "partWideFormat",
+    .getDependenciesControlChartRules())
 }
