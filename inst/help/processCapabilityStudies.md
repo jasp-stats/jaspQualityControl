@@ -34,7 +34,7 @@ The size of the subgroups is relevant for the calculation of the process varianc
 #### Data transformation
 - Transform data before any analysis.
   - **None**: The data is analysed as-is
-  - **Box-Cox**: The data is transformed using the equation $y = (x+\text{shift})^\lambda$ if $\lambda > 0$, $y = -(x+\text{shift})^\lambda$ if $\lambda < 0$ (the sign keeps the order of the data and specification limits), otherwise $y = \ln(x + \text{shift})$.
+  - **Box-Cox**: The data is transformed using the equation $y = (x+\text{shift})^\lambda$ if $\lambda > 0$, $y = -(x+\text{shift})^\lambda$ if $\lambda < 0$ (the sign keeps the order of the data and specification limits), otherwise $y = \ln(x + \text{shift})$. All measurements must satisfy $x + \text{shift} > 0$; otherwise the analysis stops (increase the shift or use the Yeo-Johnson or Johnson transformation).
   - **Box-Cox (auto)**: The data is transformed using the Box-Cox transformation, but with the $\lambda$ parameter automatically estimated using one of the methods specified (see 'Method').
   - **Yeo-Johnson**: The data is transformed using the Yeo-Johnson transform as described in Yeo & Johnson (2000). It can be used for unbounded data.
   - **Yeo-Johnson (auto)**: The data is transformed using the Yeo-Johnson transform, but with the $\lambda$ parameter automatically estimated using the profile likelihood of a normal distribution. This procedure allows only process performance results (no process capability).
