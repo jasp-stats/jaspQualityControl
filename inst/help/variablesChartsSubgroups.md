@@ -15,7 +15,7 @@ Data can be in the form of all observations in one column ("Single column") or a
 - Measurements: the observations collected from a process.
 - Subgroups ("Column" option): the subgroup that each observation is assigned to, if all observations are in the same column.
 - Timestamp ("Row" option): optinal subgroup names for each row of observations, that are used as x-axis labels. 
-- Stages: a column to split the analysis into multiple parts by assigning a stage to each subgroup. In "row" format, only one stage per subgroup is possible. In "column" format, only the first specified stage for each subgroup is considered.
+- Stages: a column to split the analysis into multiple parts by assigning a stage to each subgroup. A new stage starts each time the stage value changes from one row (subgroup) to the next, so a recurring value (e.g., A, B, A) forms separate stages, shown in row order and each with its own limits and estimates; moving ranges do not span a stage change. In "row" format, only one stage per subgroup is possible. In "column" format, only the first specified stage for each subgroup is considered.
 
 ### Specifying Subgroups in "Column" Format
 -------

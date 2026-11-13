@@ -14,7 +14,7 @@ The g and t charts are essential tools in Statistical Quality Control (SQC) when
 ### Assignment box
 --------
 - Variable: either the timepoint when the event took place or the intervals beetween events.
-- Stages: a column to split the analysis into multiple parts by assigning a stage to each subgroup.
+- Stages: a column to split the analysis into multiple parts by assigning a stage to each subgroup. A new stage starts each time the stage value changes from one row (subgroup) to the next, so a recurring value (e.g., A, B, A) forms separate stages, shown in row order and each with its own limits and estimates; moving ranges do not span a stage change.
 
 ### Data type
 -------

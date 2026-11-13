@@ -85,8 +85,42 @@
               xAxisTitle = xAxisTitle))
 }
 
-# .controlChart() plots the stages one after another, in order of first appearance, so the
-# axis and table labels (one per subgroup, in data order) must follow that order as well.
+# Stages are periods: a new stage starts at each change of the stage value (as Minitab's "with each new value"),
+# so a recurring value (A, B, A) gives three stages in row order, two of them labelled A.
+# Returns the stage number of each row (subgroup). runs = FALSE pools all rows with the same value into one stage,
+# numbered in order of first appearance (used for the operators in Gauge R&R).
+.qcStageIndex <- function(stageValues, runs = TRUE) {
+  stageValues <- as.character(stageValues)
+  if (!runs)
+    return(match(stageValues, unique(stageValues)))
+  n <- length(stageValues)
+  if (n < 2)
+    return(rep(1L, n))
+  changed  <- stageValues[-1] != stageValues[-n]
+  naChange <- is.na(changed) # a missing stage value is a stage of its own
+  changed[naChange] <- xor(is.na(stageValues[-1]), is.na(stageValues[-n]))[naChange]
+  cumsum(c(TRUE, changed))
+}
+
+.qcNumberOfStages <- function(stageValues) {
+  length(unique(.qcStageIndex(stageValues)))
+}
+
+.qcStageRows <- function(stageValues, i) {
+  which(.qcStageIndex(stageValues) == i)
+}
+
+# the stage value (label) of stage i
+.qcStageValue <- function(stageValues, i) {
+  stageValues[.qcStageRows(stageValues, i)[1]]
+}
+
+.qcAnyStageWithoutCompleteRows <- function(dataset, stages) {
+  !all(seq_len(.qcNumberOfStages(dataset[[stages]])) %in% .qcStageIndex(dataset[[stages]])[complete.cases(dataset)])
+}
+
+# With stages pooled by value (stagesAsRuns = FALSE), .controlChart() plots the stages one after another, in order
+# of first appearance, so the axis and table labels (one per subgroup, in data order) must follow that order as well.
 .qcLabelsInStageOrder <- function(labels, stageValues) {
   if (identical(labels, "")) # no labels
     return(labels)
@@ -742,6 +776,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                           movingRangeLength         = 2,
                           clLabelSize               = 4.5,
                           stagesSeparateCalculation = TRUE,
+                          stagesAsRuns              = TRUE, # FALSE: pool all subgroups with the same stage value (Gauge R&R operators)
                           unbiasingConstantUsed     = TRUE,
                           cusumShiftSize            = 0.5,
                           cusumTarget               = 0,
@@ -754,8 +789,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 ) {
   plotType <- match.arg(plotType)
 
-  # xAxisLabels and tableLabels come in data order (one per subgroup); the plot and table show the subgroups in stage order
-  if (!identical(stages, "") && labelsInDataOrder) {
+  # xAxisLabels and tableLabels come in data order (one per subgroup); with stages pooled by value, the plot and table show the subgroups in stage order
+  if (!identical(stages, "") && labelsInDataOrder && !stagesAsRuns) {
     xAxisLabels <- .qcLabelsInStageOrder(xAxisLabels, dataset[[stages]])
     tableLabels <- .qcLabelsInStageOrder(tableLabels, dataset[[stages]])
   }
@@ -765,7 +800,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                  nSigmasControlLimits = nSigmasControlLimits, phase2 = phase2,
                                                  phase2Mu = phase2Mu, phase2Sd = phase2Sd, fixedSubgroupSize = fixedSubgroupSize,
                                                  warningLimits = warningLimits, movingRangeLength = movingRangeLength,
-                                                 stagesSeparateCalculation = stagesSeparateCalculation, unbiasingConstantUsed = unbiasingConstantUsed,
+                                                 stagesSeparateCalculation = stagesSeparateCalculation, stagesAsRuns = stagesAsRuns,
+                                                 unbiasingConstantUsed = unbiasingConstantUsed,
                                                  cusumShiftSize = cusumShiftSize, cusumTarget = cusumTarget, ewmaLambda = ewmaLambda,
                                                  tChartDistribution = tChartDistribution, phase2tChartDistributionShape = phase2tChartDistributionShape,
                                                  phase2tChartDistributionScale = phase2tChartDistributionScale,
@@ -800,6 +836,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                        warningLimits                   = FALSE,
                                        movingRangeLength               = 2,
                                        stagesSeparateCalculation       = TRUE,
+                                       stagesAsRuns                    = TRUE,
                                        unbiasingConstantUsed           = TRUE,
                                        cusumShiftSize                  = 0.5,
                                        cusumTarget                     = 0,
@@ -812,12 +849,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   plotType <- match.arg(plotType)
   hasStages <- !identical(stages, "")
   if (identical(stages, "")) {
-    nStages <- 1
     dataset[["stage"]] <- 1
     stages <- "stage"
-  } else if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
   }
+  stageIndex <- .qcStageIndex(dataset[[stages]], runs = stagesAsRuns)
+  nStages <- max(stageIndex)
 
   ### Calculate plot values per stage and combine into single dataframe ###
   plotData <- data.frame(matrix(ncol = 4, nrow = 0))
@@ -838,8 +874,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   ### Beginning of loop over all stages to calculate all values
   ###
   for (i in seq_len(nStages)) {
-    stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stageRows <- which(stageIndex == i)
+    stage <- dataset[[stages]][stageRows[1]]
+    dataCurrentStage <- dataset[stageRows, ][!names(dataset) %in% stages]
     stageLabel <- if (hasStages) as.character(stage) else NULL # names the stage in data errors
     ###
     ### Calculations for I, MR and MMR chart
@@ -1067,12 +1104,13 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     if (nOutOfLimits > length(plotStatistic)/2)
       dotColor <- "blue"
 
+    # "stage" is the stage number: it groups the lines, and stages can share a label
     stagePlotData <- data.frame("plotStatistic" = plotStatistic,
                                 "subgroup" = subgroups,
-                                "stage" = stage,
+                                "stage" = i,
                                 "dotColor" = dotColor)
     stageClData <- data.frame("subgroup" = subgroups,
-                              "stage" = stage,
+                              "stage" = i,
                               "LCL" = LCL,
                               "UCL" = UCL,
                               "center" = center)
