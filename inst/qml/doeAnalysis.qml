@@ -289,7 +289,7 @@ Form
 			{
 				name:								"tableAlias"
 				label:								qsTr("Use alias names")
-				info:								qsTr("Assign alias names to the factors. Useful when factors have long names.")
+				info:								qsTr("Assign alias letters to the factors. Useful when factors have long names. The letters follow the order of the factors in the discrete and continuous factor lists, whatever the model terms. A factor named by a single capital letter keeps it, and no factor gets a letter that is the name of another column. The tables and effect plots list the aliases.")
 				checked:							true
 			}
 

@@ -588,13 +588,15 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
     termNamesAliased <- termNames
     termNamesAliasedCoded <- termNamesCoded
-    allPredictorsAliases <- LETTERS[seq_along(allPredictors)]
-    for (pred_i in seq_along(allPredictors)) {
-      termNamesAliased <- gsub(allPredictors[pred_i], allPredictorsAliases[pred_i], termNamesAliased)
-      termNamesAliasedCoded <- gsub(allPredictors[pred_i], allPredictorsAliases[pred_i], termNamesAliasedCoded)
-    }
-    termNamesAliased <- gsub("✻", "", termNamesAliased)
-    termNamesAliasedCoded <- gsub("✻", "", termNamesAliasedCoded)
+    # one alias per design factor, whatever the model terms (see .doeFactorAliases)
+    originalBlocks <- if (options[["designType"]] == "factorialDesign") options[["blocksFactorial"]] else options[["blocksResponseSurface"]]
+    factorAliases  <- .doeFactorAliases(c(unlist(discretePredictors), unlist(continuousPredictors)),
+                                        otherColumns = c(unlist(originalBlocks), unlist(covariates), unlist(dependent)))
+    termNamesAliased      <- vapply(termNamesAliased, .doeAliasTermName, character(1), aliases = factorAliases,
+                                    discreteFactors = unlist(discretePredictors), USE.NAMES = FALSE)
+    termNamesAliasedCoded <- vapply(termNamesAliasedCoded, .doeAliasTermName, character(1), aliases = factorAliases,
+                                    discreteFactors = unlist(discretePredictors), USE.NAMES = FALSE)
+    result[["regression"]][["factorAliases"]] <- resultCoded[["regression"]][["factorAliases"]] <- factorAliases
     if (length(blocks) > 0 && !identical(blocks, "")) {
       blockNameIndices <- which(termNamesRemoved == blocks) # get the indices of the block variables
       blockNameIndicesCoded <- which(termNamesRemovedCoded == blocks) # get the indices of the block variables in the coded terms
@@ -650,37 +652,21 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["coefficients"]][c("se", "t", "p")] <-
       coefficientTests(coefsCoded, valid_coefsCoded, resultCoded[["regression"]][["saturated"]], uniqueCoefsCoded)
 
-    ## Model formula for predictors, based on coding/aliasing
-    if (options[["tableAlias"]]) {
-      coefNames <- if (options[["codeFactors"]]) termNamesAliasedCoded else termNamesAliased
-    } else {
-      coefNames <- if (options[["codeFactors"]]) termNamesCoded else termNames
+    ## Model formula for predictors, based on coding, with and without aliases (the state does not depend on tableAlias)
+    filledFormulaFor <- function(coefTable, coefNames) {
+      fmtCoef     <- .formatCoefEquation(abs(coefTable[-1, 1]), digits = .numDecimals)
+      coefFormula <- paste(ifelse(sign(coefTable[-1, 1]) == 1, " +", " \u2013"), fmtCoef, coefNames[-1], collapse = "", sep = " ")
+      paste0(dep, " = ", .formatCoefEquation(coefTable[1, 1], digits = .numDecimals), coefFormula)
     }
+    coefNames        <- if (options[["codeFactors"]]) termNamesCoded else termNames
+    coefNamesAliased <- if (options[["codeFactors"]]) termNamesAliasedCoded else termNamesAliased
+    filledFormula             <- filledFormulaFor(coefs, coefNames)
+    filledFormulaAliased      <- filledFormulaFor(coefs, coefNamesAliased)
+    filledFormulaCoded        <- filledFormulaFor(coefsCoded, coefNames)
+    filledFormulaCodedAliased <- filledFormulaFor(coefsCoded, coefNamesAliased)
 
-    # Uncoded Formula
-    fmtCoef <- .formatCoefEquation(abs(coefs[-1, 1]), digits = .numDecimals)
-    coefFormula <- paste(ifelse(sign(coefs[-1,1])==1, " +", " \u2013"),
-                         fmtCoef,
-                         coefNames[-1],
-                         collapse = "", sep = " ")
-
-    # Now add dependent name and intercept
-    filledFormula <- paste0(dep, " = ",
-                            .formatCoefEquation(coefs[1, 1], digits = .numDecimals),
-                            coefFormula)
-
-    # Coded Formula
-    fmtCoefCoded <- .formatCoefEquation(abs(coefsCoded[-1, 1]), digits = .numDecimals)
-    coefFormulaCoded <- paste(ifelse(sign(coefsCoded[-1,1])==1, " +", " \u2013"),
-                              fmtCoefCoded,
-                              coefNames[-1],
-                              collapse = "", sep = " ")
-
-
-    filledFormulaCoded <- paste0(dep, " = ",
-                                 .formatCoefEquation(coefsCoded[1, 1], digits = .numDecimals),
-                                 coefFormulaCoded)
-
+    result[["regression"]][["filledFormulaAliased"]]      <- gsubInteractionSymbol(filledFormulaAliased)
+    resultCoded[["regression"]][["filledFormulaAliased"]] <- gsubInteractionSymbol(filledFormulaCodedAliased)
     result[["regression"]][["filledFormula"]] <- gsubInteractionSymbol(filledFormula)
     jaspResults[[currentDependent]][["doeResult"]] <- createJaspState(result)
     jaspResults[[currentDependent]][["doeResult"]]$dependOn(options = .doeAnalysisBaseDependencies())
@@ -700,6 +686,57 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     levelIndex <- as.integer(substring(coefNames[i], nchar(factorVars[i]) + 1))
     levels(dataset[[factorVars[i]]])[levelIndex]
   }, character(1))
+}
+
+# Alias letters of the design factors, assigned once from all factors in the order of the form (discrete factors, then
+# continuous factors), whatever the model terms. A factor whose (decoded) name is a single capital letter keeps it as its
+# alias (designs made in JASP name their factors A, B, C, ...). The other factors get the remaining letters in order,
+# skipping every letter that is the name of a column of the analysis, so a letter never stands for another column than
+# the one of that name. Factors left without a letter (more than 26) keep their name. Returns a named vector: alias by
+# factor name.
+.doeFactorAliases <- function(factors, otherColumns = character(0)) {
+  factors <- factors[factors != ""]
+  if (length(factors) == 0)
+    return(character(0))
+  decoded      <- jaspBase::decodeColNames(factors)
+  otherDecoded <- jaspBase::decodeColNames(otherColumns[otherColumns != ""])
+  aliases      <- ifelse(decoded %in% LETTERS, decoded, NA_character_)
+  freeLetters  <- setdiff(LETTERS, c(decoded, otherDecoded))
+  toAssign     <- which(is.na(aliases))
+  nAssigned    <- min(length(toAssign), length(freeLetters))
+  aliases[toAssign[seq_len(nAssigned)]] <- freeLetters[seq_len(nAssigned)]
+  aliases[is.na(aliases)] <- factors[is.na(aliases)]
+  return(stats::setNames(aliases, factors))
+}
+
+# Alias of a coefficient name ("<factor>", "<factor>^2" or "<discrete factor><level index>", joined by the interaction
+# symbol): each whole component is mapped to the alias of its factor, keeping "^2" and the level index; the components
+# are joined without the symbol (e.g. "AB"). Components of no factor (blocks, covariates, the intercept) are kept.
+.doeAliasTermName <- function(term, aliases, discreteFactors) {
+  components <- strsplit(term, "✻", fixed = TRUE)[[1]]
+  factorNames <- gsub("\\s", "", names(aliases)) # whitespace is removed from the term names
+  aliasedComponents <- vapply(components, function(component) {
+    for (i in order(nchar(factorNames), decreasing = TRUE)) {
+      name <- factorNames[i]
+      if (component == name || component == paste0(name, "^2"))
+        return(paste0(aliases[[i]], substring(component, nchar(name) + 1)))
+      suffix <- substring(component, nchar(name) + 1)
+      if (names(aliases)[i] %in% discreteFactors && startsWith(component, name) && grepl("^[0-9]+$", suffix))
+        return(paste0(aliases[[i]], suffix))
+    }
+    return(component)
+  }, character(1))
+  return(paste0(aliasedComponents, collapse = ""))
+}
+
+# Legend of the alias letters, e.g. "Aliases: A = Temperature, B = Pressure.", without factors that are their own alias;
+# NULL when there are none. Tables decode the names themselves, plots need decode = TRUE.
+.doeAliasLegend <- function(aliases, decode = FALSE) {
+  factorNames <- if (decode) jaspBase::decodeColNames(names(aliases)) else names(aliases)
+  isAlias     <- aliases != jaspBase::decodeColNames(names(aliases)) & aliases != names(aliases)
+  if (!any(isAlias))
+    return(NULL)
+  gettextf("Aliases: %s.", paste(aliases[isAlias], "=", factorNames[isAlias], collapse = ", "))
 }
 
 # VIF of each coefficient: car::vif() gives one (generalized) VIF per model term, so each coefficient gets the VIF of
@@ -2032,8 +2069,11 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       terms = result[["terms"]], effects = result[["effects"]], coef = result[["est"]],
       se = result[["se"]], tval = result[["t"]], pval = result[["p"]], vif = result[["vif"]]
     )
-    if (options[["tableAlias"]])
+    if (options[["tableAlias"]]) {
       rows["alias"] <- result[["termsAliased"]]
+      if (!is.null(.doeAliasLegend(resultRegression[["factorAliases"]])))
+        tb$addFootnote(.doeAliasLegend(resultRegression[["factorAliases"]]))
+    }
     if (showCi) {
       effectLimits <- .doeConfidenceLimits(result[["effects"]], result[["effectsSe"]], result[["effectsDf"]], ciLevel)
       coefLimits   <- .doeConfidenceLimits(result[["est"]], result[["se"]], resultRegression[["object"]][["df.residual"]], ciLevel)
@@ -2082,7 +2122,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     codedString <- ifelse(options[["codeFactors"]], gettext("Coded"), gettext("Uncoded"))
     tb <- createJaspTable(gettextf("Regression equation in %s Units", codedString))
     tb$addColumnInfo(name = "formula", title = "", type = "string")
-    tb$dependOn(options = .doeAnalysisBaseDependencies())
+    tb$dependOn(options = c("tableAlias", .doeAnalysisBaseDependencies()))
     tb$position <- 4
     jaspResults[[dep]][["tableEquation"]] <- tb
     if (!ready || is.null(jaspResults[[dep]][["doeResult"]]) || jaspResults[[dep]]$getError()) {
@@ -2095,8 +2135,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       tb$addFootnote(gettext("Not shown: some contrasts of the model are aliased, so the coefficients of the equation are not unique (see the coefficients table)."))
       next
     }
-    row <- data.frame(formula = result[["filledFormula"]])
+    row <- data.frame(formula = if (options[["tableAlias"]]) result[["filledFormulaAliased"]] else result[["filledFormula"]])
     tb$addRows(row)
+    if (options[["tableAlias"]] && !is.null(.doeAliasLegend(result[["factorAliases"]])))
+      tb$addFootnote(.doeAliasLegend(result[["factorAliases"]]))
   }
 }
 
@@ -2181,6 +2223,17 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   if (length(covariates) > 0 && !identical(covariates, ""))
     plotData <- plotData[!plotData$terms %in% unlist(covariates), , drop = FALSE]
   return(plotData)
+}
+
+# Alias legend under the Pareto and normal effect plots, decoded here like the term labels (see .doeEffectPlotData)
+.doeAddAliasCaption <- function(p, result, options) {
+  legend <- if (options[["tableAlias"]]) .doeAliasLegend(result[["factorAliases"]], decode = TRUE)
+  if (is.null(legend))
+    return(p)
+  # wrap between the entries only: the spaces around "=" are non-breaking while wrapping
+  caption <- gsub("\u00A0", " ", paste(strwrap(gsub(" = ", "\u00A0=\u00A0", legend), width = 55), collapse = "\n"))
+  p + ggplot2::labs(caption = caption) +
+    ggplot2::theme(plot.caption = ggplot2::element_text(hjust = 0, size = 13))
 }
 
 # Lenth's (1989) pseudo standard error (PSE) and margin of error (ME) of the effects of an unreplicated two-level design,
@@ -2268,7 +2321,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       ggplot2::coord_flip() +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()
-    plot$plotObject <- p
+    plot$plotObject <- .doeAddAliasCaption(p, result, options)
   }
 }
 
@@ -2339,7 +2392,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       jaspGraphs::geom_rangeframe() +
       ggplot2::theme(legend.position = "right")
 
-    plot$plotObject <- p
+    plot$plotObject <- .doeAddAliasCaption(p, result, options)
   }
 }
 
