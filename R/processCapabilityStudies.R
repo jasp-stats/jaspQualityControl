@@ -3859,7 +3859,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   dataset <- tidyr::pivot_longer(dataset, tidyr::all_of(measurements))
 
   x <- dataset[["value"]]
-  group <- dataset[["name"]]
+  # each row is one subgroup: Box-Cox (auto) pools the variation within subgroups;
+  # with subgroup size 1 (individuals) there is no grouping, so the overall variation is used
+  group <- if (length(measurements) > 1) as.factor(dataset[["id"]]) else NULL
   lambda <- options[["dataTransformationLambda"]]
   shift <- options[["dataTransformationShift"]]
   method <- options[["dataTransformationMethod"]]
@@ -3869,7 +3871,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     options[["dataTransformation"]],
     boxCox = .qcBoxCoxKeepOrder(jaspBase::BoxCox(x, lambda=lambda, shift=shift, continuityAdjustment=ca), lambda=lambda, continuityAdjustment=ca),
     boxCoxAuto = {
-      y <- jaspBase::BoxCoxAuto(x, predictor=as.factor(group), shift=shift, method=method, continuityAdjustment=ca)
+      y <- jaspBase::BoxCoxAuto(x, predictor=group, shift=shift, method=method, continuityAdjustment=ca)
       .qcBoxCoxKeepOrder(y, lambda=attr(y, "lambda"), continuityAdjustment=ca)
     },
     yeoJohnson = jaspBase::YeoJohnson(x, lambda=lambda),

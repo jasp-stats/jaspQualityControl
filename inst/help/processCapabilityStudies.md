@@ -42,7 +42,7 @@ The size of the subgroups is relevant for the calculation of the process varianc
 
 - **Shift** numerical value of the shift parameter used for transforms that accept bounded data. This option is disabled for unbounded transforms (Yeo-Johnson, Johnson)
 - **Lambda** numerical value of the $\lambda$ parameter of the transforms. This option is disabled for transforms which automatically estimate their parameter(s).
-- **Method** method for selecting the best $\lambda$ value. 'Log-Lik' maximizes the normal-likelihood of the transformed variable. 'SD' minimizes the sums of squares of the power-transformed variable. 'Average moving range' minimizes the estimate of variabiliy based on the average moving range of the power-transformed variable. 'Log-Lik' and 'Sd' are appropriate for grouped data, 'Average moving range' is appropriate for individual's data.
+- **Method** method for selecting the best $\lambda$ value. 'Log-Lik' maximizes the normal-likelihood of the transformed variable. 'SD' minimizes the sums of squares of the power-transformed variable. 'Average moving range' minimizes the estimate of variabiliy based on the average moving range of the power-transformed variable. 'Log-Lik' and 'SD' are appropriate for grouped data: they use the variation within subgroups (with subgroup size 1, the overall variation). 'Average moving range' is appropriate for individual's data.
 - **Continuity Adjustment** if enabled, the Box-Cox transform includes the adjustment term $y = \frac{(x+\text{shift})^\lambda-1}{\lambda}$.
 
 #### Type of data distribution
