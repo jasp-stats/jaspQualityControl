@@ -1494,6 +1494,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(returnBol)
 }
 
+# Standard deviation used to standardize data before finite-difference optimization (fallback 1 for constant data).
+.qcSpread <- function(data) {
+  spread <- stats::sd(data)
+  if (is.finite(spread) && spread > 0) spread else 1
+}
+
 # The Weibull, gamma, log-logistic and 3-parameter Weibull MLEs are scale-equivariant, but optim works on the raw
 # scale, so fits failed or drifted for data in very small or large units. Fit on data / unitScale and scale back.
 .qcUnitScale <- function(data) {
@@ -1594,12 +1600,26 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fitLnorm$parameters[[2]] # scale / log std. dev.
     } else {
     # If arguments are fixed, we have to use fitdistrplus
-      fitLnorm <- try(fitdistrplus::fitdist(data, "lnorm", method = "mle", fix.arg = fix.arg))
+      # Fit exp(standardized log data), so that the finite-difference Hessian (step 1e-3) also works for a small sdlog;
+      # meanlog = center + spread * meanlog', sdlog = spread * sdlog'
+      center <- mean(log(data))
+      spread <- .qcSpread(log(data))
+      fixArgStandardized <- fix.arg
+      if (!is.null(fix.arg[["meanlog"]]))
+        fixArgStandardized[["meanlog"]] <- (fix.arg[["meanlog"]] - center) / spread
+      if (!is.null(fix.arg[["sdlog"]]))
+        fixArgStandardized[["sdlog"]] <- fix.arg[["sdlog"]] / spread
+
+      fitLnorm <- try(fitdistrplus::fitdist(exp((log(data) - center) / spread), "lnorm", method = "mle", fix.arg = fixArgStandardized))
 
       if (jaspBase::isTryError(fitLnorm))
         stop(estimationErrorMessage, call. = FALSE)
 
       lnormPars <- fitLnorm$estimate
+      if ("meanlog" %in% names(lnormPars))
+        lnormPars[["meanlog"]] <- center + spread * lnormPars[["meanlog"]]
+      if ("sdlog" %in% names(lnormPars))
+        lnormPars[["sdlog"]] <- spread * lnormPars[["sdlog"]]
       if (!is.null(fix.arg)) { # we already know that, but to keep it consistent with the other chunks
         lnormPars[names(fix.arg)] <- fix.arg
       }
@@ -1782,14 +1802,28 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fix.arg[["scale"]] # scale
     } else {
 
-      logFit <- try(fitdistrplus::fitdist(data, "logis", method = "mle",
+      # The logistic MLE is location-scale equivariant, but optim's finite-difference Hessian (step 1e-3) fails for a
+      # scale below ~0.002 (e.g. 10.000 +- 0.001). Fit the standardized data and transform the estimates back.
+      center <- mean(data)
+      spread <- .qcSpread(data)
+      fixArgStandardized <- fix.arg
+      if (!is.null(fix.arg[["location"]]))
+        fixArgStandardized[["location"]] <- (fix.arg[["location"]] - center) / spread
+      if (!is.null(fix.arg[["scale"]]))
+        fixArgStandardized[["scale"]] <- fix.arg[["scale"]] / spread
+
+      logFit <- try(fitdistrplus::fitdist((data - center) / spread, "logis", method = "mle",
                                           control = list(maxit = 10000),
-                                          fix.arg = fix.arg))
+                                          fix.arg = fixArgStandardized))
 
       if (jaspBase::isTryError(logFit))
         stop(estimationErrorMessage, call. = FALSE)
 
       logPars <- logFit$estimate
+      if ("location" %in% names(logPars))
+        logPars[["location"]] <- logPars[["location"]] * spread + center
+      if ("scale" %in% names(logPars))
+        logPars[["scale"]] <- logPars[["scale"]] * spread
 
       if (!is.null(fix.arg)) {
         logPars[names(fix.arg)] <- fix.arg

@@ -3433,9 +3433,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     # Computing according to the distribution
     if (options[["nullDistribution"]] == "normal") {
       lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (x - mu) ^ 2)
-      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage, parms = c("mu", "sigma"),
-                                     mle = c(mean(dataCurrentStage), sd(dataCurrentStage)),
-                                     stepScale = rep(sd(dataCurrentStage), 2)))
+      # finite-difference Hessian on standardized data, so that the steps fit any spread (small or large std. dev.);
+      # the (co)variances of mu and sigma scale with spread^2
+      center <- mean(dataCurrentStage)
+      spread <- .qcSpread(dataCurrentStage)
+      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = (dataCurrentStage - center) / spread, parms = c("mu", "sigma"),
+                                     mle = c(0, sd(dataCurrentStage) / spread), stepScale = c(1, sd(dataCurrentStage) / spread)))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
@@ -3443,9 +3446,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         varSigma <- NA
         covarMuSigma <- NA
       } else {
-        varMu <- matrix$varcov[1, 1]
-        varSigma <- matrix$varcov[2,2]
-        covarMuSigma <- matrix$varcov[1, 2]
+        varMu <- matrix$varcov[1, 1] * spread^2
+        varSigma <- matrix$varcov[2,2] * spread^2
+        covarMuSigma <- matrix$varcov[1, 2] * spread^2
       }
       zp <- qnorm(p = pSeq)
       zalpha <- qnorm(0.975)
@@ -3466,8 +3469,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       meanlog <- as.numeric(fit$parameters[1])
       sdlog <- as.numeric(fit$parameters[2])
       lpdf <- quote(log(1/(sqrt(2*pi)*x*sdlog) * exp(-(log(x)- meanlog)^2/(2*sdlog^2))))
-      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage, parms = c("meanlog", "sdlog"), mle = fit$parameters,
-                                     stepScale = rep(sdlog, 2)))
+      # finite-difference Hessian on exp(standardized log data), so that the steps fit any sdlog;
+      # the (co)variances of meanlog and sdlog scale with spread^2
+      center <- mean(log(dataCurrentStage))
+      spread <- .qcSpread(log(dataCurrentStage))
+      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = exp((log(dataCurrentStage) - center) / spread), parms = c("meanlog", "sdlog"),
+                                     mle = c((meanlog - center) / spread, sdlog / spread), stepScale = c(1, sdlog / spread)))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
@@ -3475,9 +3482,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         varsdlog <- NA
         covarSS <- NA
       } else {
-        varmeanlog <- matrix$varcov[1, 1]
-        varsdlog <- matrix$varcov[2,2]
-        covarSS <- matrix$varcov[1, 2]
+        varmeanlog <- matrix$varcov[1, 1] * spread^2
+        varsdlog <- matrix$varcov[2,2] * spread^2
+        covarSS <- matrix$varcov[1, 2] * spread^2
       }
       zp <- qnorm(p = pSeq)
       zalpha <- qnorm(0.975)

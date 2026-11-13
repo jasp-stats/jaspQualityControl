@@ -2590,7 +2590,7 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("LF42.1 Logistic distribution basic test - Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(54517.88, 40000, "ppm &lt; LSL", 9151.9, 10000, "ppm &gt; USL",
+                                 list(54513.52, 40000, "ppm &lt; LSL", 9151.9, 10000, "ppm &gt; USL",
                                       63669.78, 50000, "Total ppm"))
 })
 
