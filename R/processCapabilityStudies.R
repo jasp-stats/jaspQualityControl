@@ -3388,23 +3388,25 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 }
 
 # Inverse observed information of the Weibull log-likelihood at (shape, scale), in closed form. A finite-difference
-# Hessian needs a step that is small relative to the width of the likelihood; that width shrinks like 1 / shape, so
-# data that vary little relative to their location (high shape) need steps no fixed size provides.
+# Hessian needs steps that are small relative to the width of the likelihood; in the scale that width is about
+# scale / (shape * sqrt(n)), so data that vary little relative to their location (high shape) need steps no fixed
+# size provides.
 .qcWeibullObservedVarcov <- function(data, shape, scale) {
-  n <- length(data)
-  z <- data / scale
+  n      <- length(data)
+  z      <- data / scale
   zShape <- z^shape
-  logZ <- log(z)
+  logZ   <- log(z)
   crossInformation <- (n - sum(zShape) - shape * sum(zShape * logZ)) / scale
   information <- matrix(c(n / shape^2 + sum(zShape * logZ^2), crossInformation,
                           crossInformation, shape * ((shape + 1) * sum(zShape) - n) / scale / scale), nrow = 2)
 
   invalidMessage <- gettext("Could not compute variance-covariance matrix: Hessian contains invalid values.")
-  if (anyNA(information) || any(!is.finite(information)) || any(diag(information) <= 0))
+  if (!all(is.finite(information)) || any(diag(information) <= 0))
     stop(invalidMessage, call. = FALSE)
 
-  # The shape and scale entries can differ by many orders of magnitude (small units, high shape), which makes solve()
-  # report a singular matrix; inverting the correlation form depends only on the correlation of the estimates.
+  # The scale and shape entries differ by a factor of about shape^4 / scale^2, which makes solve() report a singular
+  # matrix for small units or a high shape (from a shape of about 1e4 for a scale of 1); inverting the correlation
+  # form depends only on the correlation of the estimates.
   inverseSd <- 1 / sqrt(diag(information))
   scaling <- outer(inverseSd, inverseSd)
   correlation <- information * scaling
