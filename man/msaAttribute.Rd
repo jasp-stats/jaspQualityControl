@@ -20,9 +20,19 @@ msaAttribute(
   plotHeight = 320,
   plotWidth = 480,
   positiveReference = "",
+  positiveReferenceCategory = "accept",
   standardLongFormat = list(types = list(), value = ""),
   standardWideFormat = list(types = list(), value = "")
 )
+}
+\arguments{
+\item{positiveReference, }{The rating category treated as positive in the kappa studies, as it is written in the results (for example, "Yes", "Go", "Good").}
+
+\item{positiveReferenceCategory, }{Whether the positive reference is the accept (good) or the reject (defect) category. The miss rate (bad part accepted) and false alarm rate (good part rejected) of the study effectiveness summary are computed relative to the accept category.
+\itemize{
+\item \code{"accept"}
+\item \code{"reject"}
+}}
 }
 \description{
 Attributes Agreement Analysis
