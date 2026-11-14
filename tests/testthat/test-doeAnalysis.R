@@ -7011,7 +7011,8 @@ test_that("60.19 Optimization plot with manual settings that have a unique predi
   reference <- mean(stats::predict(stats::lm(y ~ Block + B + A:B, data = blockedAData),
                                    newdata = data.frame(Block = factor(1:4), A = 0, B = 1)))
   expect_equal(collection[["plotRo_predictionTable"]][["data"]][[1]][["fit"]], reference)
-  expect_equal(collection[["plotRo_table"]][["data"]][[1]][["y fit"]], round(reference, 3))
+  # the reference is 15.7875 up to float noise, i.e. on a rounding boundary: round(reference, 3) is 15.787 or 15.788 depending on the platform
+  expect_equal(collection[["plotRo_table"]][["data"]][[1]][["y fit"]], reference, tolerance = 1e-4)
 })
 
 test_that("60.20 Saturated model with aliased coefficients: Type III shows the sequential sums of squares of Type I", {
