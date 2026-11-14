@@ -72,9 +72,7 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
   # ImR chart
   if (options$xmrChart && is.null(jaspResults[["Ichart"]])) {
     jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
-    jaspResults[["Ichart"]]$dependOn(c("xmrChart", "xmrChartMovingRangeLength", "axisLabels", "reportTitle",
-                                       "reportMeasurementName", "reportMiscellaneous","reportReportedByBy","reportDate", "report",
-                                       "stage", "controlLimitsNumberOfSigmas", .getDependenciesControlChartRules()))
+    jaspResults[["Ichart"]]$dependOn(.variablesChartsIndividualsXmrDependencies())
     jaspResults[["Ichart"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
     if (ready) {
       columnsToPass <- c(variables, stages)
@@ -120,14 +118,7 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
     plotHeight <- if ((options[["reportIMRChart"]] && nElements == 2) || nElements == 0) 1000 else ceiling(nElements/2) * 500
     reportPlot <- createJaspPlot(title = gettext("Variables Chart for Individuals Report"), width = 1250, height = plotHeight)
     jaspResults[["report"]] <- reportPlot
-    jaspResults[["report"]]$dependOn(c("xmrChart", "xmrChartMovingRangeLength", "axisLabels",
-                                      "stage", "controlLimitsNumberOfSigmas", "autocorrelationPlotLagsNumber",
-                                      "reportMetaData", "reportTitle", "reportTitleText", "reportIMRChart", "reportAutocorrelationChart",
-                                      "reportChartName", "reportChartNameText", "reportSubtitle", "reportSubtitleText",
-                                      "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
-                                      "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate",
-                                      "reportDateText", "reportPerformedBy", "reportPerformedByText", "reportPrintDate",
-                                      "reportPrintDateText", .getDependenciesControlChartRules()))
+    jaspResults[["report"]]$dependOn(.variablesChartsIndividualsReportDependencies())
 
     if (nElements == 0) {
       reportPlot$setError(gettext("No report components selected."))
@@ -179,6 +170,23 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
                                   reportTitle = title)
     reportPlot$plotObject <- reportPlotObject
   }
+}
+
+.variablesChartsIndividualsXmrDependencies <- function() {
+  c("measurement", "xmrChart", "xmrChartMovingRangeLength", "axisLabels", "reportTitle",
+    "reportMeasurementName", "reportMiscellaneous", "reportReportedByBy", "reportDate", "report",
+    "stage", "controlLimitsNumberOfSigmas", .getDependenciesControlChartRules())
+}
+
+.variablesChartsIndividualsReportDependencies <- function() {
+  c("measurement", "report", "xmrChart", "xmrChartMovingRangeLength", "axisLabels",
+    "stage", "controlLimitsNumberOfSigmas", "autocorrelationPlotLagsNumber", "autocorrelationPlotCiLevel",
+    "reportMetaData", "reportTitle", "reportTitleText", "reportIMRChart", "reportAutocorrelationChart",
+    "reportChartName", "reportChartNameText", "reportSubtitle", "reportSubtitleText",
+    "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
+    "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate",
+    "reportDateText", "reportPerformedBy", "reportPerformedByText", "reportPrintDate",
+    "reportPrintDateText", .getDependenciesControlChartRules())
 }
 
 .autocorrelationPlot <- function(dataset = dataset, options = options, variable, lags = NULL, CI = 0.95) {
