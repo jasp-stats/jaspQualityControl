@@ -128,6 +128,8 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
   observedMeansVec <- c()
   biasesVec <- c()
   pValuesVec <- c()
+  nVec <- c()
+  varVec <- c()
   for (part in unique(dataset[[parts]])) {
     currentData <- dataset[dataset[[parts]] == part,]
     currentRef <- unique(currentData[[standards]]) # Check above establishes that length == 1
@@ -140,6 +142,8 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
     observedMeansVec <- c(observedMeansVec, currentMean)
     biasesVec <- c(biasesVec, currentBias)
     pValuesVec <- c(pValuesVec, currentPVal)
+    nVec <- c(nVec, nrow(currentData))
+    varVec <- c(varVec, var(currentData[[measurements]]))
   }
 
   biasDf <- data.frame("Part" = partsVec,
@@ -156,8 +160,12 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
   regressionFitRaw <- lm(Bias ~ Ref, biasPlotDf)
   regressionFit <- summary(regressionFitRaw)
 
-  totalBiasPValueModel <- car::linearHypothesis(regressionFitRaw, c("(Intercept)" = 1, "reference" = mean(biasPlotDf[["Ref"]])))
-  totalBiasPValue <- totalBiasPValueModel[["Pr(>F)"]][2]
+  # t-test of the average bias against the repeatability (pooled within-reference SD), as in AIAG/Minitab;
+  # the regression residual SD would also contain lack of fit (e.g. curvature) of the bias line
+  pooledDf <- sum(nVec - 1)
+  pooledSd <- sqrt(sum((nVec - 1) * varVec) / pooledDf)
+  totalBiasT <- meanBias / (pooledSd / sqrt(sum(nVec)))
+  totalBiasPValue <- 2 * pt(-abs(totalBiasT), pooledDf)
   regressionFitConstant <- regressionFit$coefficients[1]
   regressionFitSlope <- regressionFit$coefficients[2]
   coefficients <- c(regressionFitConstant, regressionFitSlope)
