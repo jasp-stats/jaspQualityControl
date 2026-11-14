@@ -1,7 +1,7 @@
 context("[Quality Control] MSA - Gauge Linearity")
 set.seed(1)
 
-# Basic test  (verified with other software) ####
+# Basic test  (verified with other software; Total p-value changed to pooled within-part SD, see test-msaGaugeLinearity-totalBias.R) ####
 
 options <- analysisOptions("msaGaugeLinearity")
 options$part <- "Part"
@@ -59,7 +59,7 @@ test_that("1.6 Basic test - Regression equation table results match", {
                                  list("Bias = 0.74 - 0.13 * Reference value"))
 })
 
-# Missing values test (verified with other software) ####
+# Missing values test (verified with other software, except the Total p-value: pooled within-part SD, checked analytically in test-msaGaugeLinearity-totalBias.R) ####
 
 options <- analysisOptions("msaGaugeLinearity")
 options$part <- "PartMissing5"

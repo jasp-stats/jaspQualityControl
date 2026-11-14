@@ -164,7 +164,7 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
   # the regression residual SD would also contain lack of fit (e.g. curvature) of the bias line
   pooledDf <- sum(nVec - 1)
   pooledSd <- sqrt(sum((nVec - 1) * varVec) / pooledDf)
-  totalBiasT <- meanBias / (pooledSd / sqrt(length(rawBiases)))
+  totalBiasT <- meanBias / (pooledSd / sqrt(sum(nVec)))
   totalBiasPValue <- 2 * pt(-abs(totalBiasT), pooledDf)
   regressionFitConstant <- regressionFit$coefficients[1]
   regressionFitSlope <- regressionFit$coefficients[2]
