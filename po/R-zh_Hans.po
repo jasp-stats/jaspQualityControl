@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-09-05 03:43\n"
+"POT-Creation-Date: 2026-11-14 03:40\n"
 "PO-Revision-Date: 2026-11-01 08:51+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
@@ -60,11 +60,21 @@ msgstr "累积和控制图"
 msgid "Exponentially weighted moving average chart"
 msgstr "指数加权移动平均控制图"
 
-msgid "The number of Defectives/Defects is larger than the sample  size."
-msgstr "不合格品/缺陷的数量大于样本量。"
-
 msgid "Attributes Control Charts"
 msgstr "属性控制图"
+
+msgid "Defective item and defect counts must be nonnegative integers."
+msgstr ""
+
+msgid "Sample sizes or exposures must be positive."
+msgstr ""
+
+msgid "Sample sizes for defective items must be positive integers."
+msgstr ""
+
+#, fuzzy
+msgid "The number of defective items cannot exceed the sample size."
+msgstr "不合格品/缺陷的数量大于样本量。"
 
 msgid "p Chart"
 msgstr "p 控制图"
@@ -126,6 +136,9 @@ msgstr "缺陷品数"
 msgid "D"
 msgstr "D"
 
+msgid "Defects per unit"
+msgstr ""
+
 msgid "Moving Range"
 msgstr "移动极差"
 
@@ -152,6 +165,26 @@ msgstr "检验 6：双峰分布"
 
 msgid "Points where a test failed."
 msgstr "检验失败的点。"
+
+msgid ""
+"Cannot estimate the standard deviation from moving ranges of length %1$s: "
+"the data have fewer than %1$s consecutive non-missing observations."
+msgstr ""
+
+msgid ""
+"Cannot estimate the standard deviation from moving ranges of length %1$s: "
+"stage '%2$s' has fewer than %1$s consecutive non-missing observations."
+msgstr ""
+
+#, fuzzy
+msgid "CL = %s"
+msgstr "UCL = %s"
+
+msgid "LCL = %s"
+msgstr "LCL = %s"
+
+msgid "UCL = %s"
+msgstr "UCL = %s"
 
 msgid "Test results for %1$s chart"
 msgstr "%1$s 控制图的检验结果"
@@ -243,35 +276,52 @@ msgid ""
 "dataset."
 msgstr "为 %2$s 指定的低/高水平 %1$s 与数据集中的水平不匹配。"
 
-msgid "Terms removed from Regression:"
-msgstr "从回归中移除的项："
+msgid ""
+"Calculated with the continuous predictors in coded (−1/+1) units, so the "
+"table is the same in coded and uncoded units."
+msgstr ""
 
-msgid "and from ANOVA:"
-msgstr "以及从方差分析中移除的项："
+msgid ""
+"Calculated in uncoded units: coding the predictors changes this model (e.g., "
+"an interaction or squared term without its main effects)."
+msgstr ""
 
-msgid "Terms removed from ANOVA:"
-msgstr "从方差分析中移除的项："
+msgid ""
+"Type III sums of squares are unavailable for this model, because some of its "
+"coefficients are aliased. Use Type I or Type II sums of squares."
+msgstr ""
 
 msgid "Response Optimizer Settings"
 msgstr "响应优化器设置"
 
-msgid "lower and upper bounds and target are"
+msgid ""
+"Bounds and targets that are not set manually are the observed minimum or "
+"maximum of the response."
+msgstr ""
+
+msgid ""
+"The lower and upper bounds, and the targets of the goals maximize and "
+"minimize, are estimated from data."
+msgstr ""
+
+#, fuzzy
+msgid "The lower and upper bounds are estimated from data."
 msgstr "下界和上界以及目标为"
 
-msgid "lower and upper bounds are"
-msgstr "下界和上界为"
-
-msgid "target is"
-msgstr "目标为"
-
-msgid "The %s estimated from data."
-msgstr "从数据估计的%s。"
+msgid "The targets of the goals maximize and minimize are estimated from data."
+msgstr ""
 
 msgid "Response Optimizer Solution"
 msgstr "响应优化器解"
 
 msgid "%s fit"
 msgstr "%s 拟合"
+
+msgid ""
+"No factor setting with a composite desirability above 0 was found. The "
+"optimizer starts from the design points and can miss acceptable settings "
+"that lie between them."
+msgstr ""
 
 msgid "Optimization Plot"
 msgstr "优化图"
@@ -315,14 +365,105 @@ msgstr "优化图摘要"
 msgid "Composite desirability"
 msgstr "合意度"
 
+#, fuzzy
 msgid ""
 "One or more input parameters for continuous predictors are outside of the "
-"design space.\n"
-"                           Extrapolation beyond the design space might not "
-"be valid."
+"design space. Extrapolation beyond the design space might not be valid."
 msgstr ""
 "连续预测变量的一个或多个输入参数位于设计空间之外。\n"
 "超出设计空间的外推可能无效。"
+
+#, fuzzy
+msgid "Predicted Responses (Manual Predictor Values)"
+msgstr "优化图摘要（手动预测变量值）"
+
+#, fuzzy
+msgid "Predicted Responses (Optimal Solution)"
+msgstr "响应优化器解"
+
+msgid "Response"
+msgstr ""
+
+msgid "Fit"
+msgstr ""
+
+msgid "Standard error"
+msgstr "标准误"
+
+msgid "Lower"
+msgstr "下限"
+
+msgid "%s%% CI"
+msgstr ""
+
+msgid "Upper"
+msgstr "上界"
+
+msgid "%s%% PI"
+msgstr ""
+
+msgid "PI: prediction interval for a single new run."
+msgstr ""
+
+msgid ""
+"Intervals cannot be calculated when the model has no degrees of freedom for "
+"error."
+msgstr ""
+
+msgid ""
+"Predictions are averaged over the blocks; the prediction interval excludes "
+"variation between blocks."
+msgstr ""
+
+msgid "Predictions are averaged over the blocks."
+msgstr ""
+
+msgid "Covariates are held at their mean."
+msgstr ""
+
+msgid ""
+"Some contrasts of the model are aliased, so the data cannot estimate the "
+"response at some settings (e.g., combinations of factor levels without "
+"runs). These settings are left out."
+msgstr ""
+
+msgid ""
+"The response optimizer cannot be used with this model: some contrasts are "
+"aliased, and it found no setting at which the data can estimate the response "
+"(e.g., when a factor is held constant within blocks, as the predictions are "
+"averaged over the blocks)."
+msgstr ""
+
+msgid ""
+"Not shown: the data cannot estimate the response at these settings, because "
+"some contrasts of the model are aliased (e.g., a combination of factor "
+"levels without runs)."
+msgstr ""
+
+msgid "%1$s: the lower bound (%2$s) is above the target (%3$s)."
+msgstr ""
+
+msgid "%1$s: the target (%2$s) is above the upper bound (%3$s)."
+msgstr ""
+
+msgid "%1$s: the lower bound (%2$s) is above the upper bound (%3$s)."
+msgstr ""
+
+msgid "%1$s: the target (%2$s) is outside the bounds (%3$s to %4$s)."
+msgstr ""
+
+msgid ""
+"The target of %1$s is outside its observed range (%2$s to %3$s), so "
+"predictions beyond that range have desirability 0. Set the bounds manually "
+"to allow them."
+msgstr ""
+
+msgid "Lack of fit"
+msgstr ""
+
+#, fuzzy
+msgid "Pure error"
+msgstr "标准误"
 
 msgid "Model Summary"
 msgstr "模型摘要"
@@ -334,6 +475,21 @@ msgid "Predictive %s"
 msgstr "预测 %s"
 
 msgid "The following aliased terms were removed: %s."
+msgstr ""
+
+#, fuzzy
+msgid "The following terms are aliased and were not estimated: %s."
+msgstr "以下协变量已考虑但未纳入：%1$s。"
+
+msgid ""
+"Some contrasts of the following terms are aliased and were not estimated: %s."
+msgstr ""
+
+msgid ""
+"Each of these factors has a level that only occurs in the same runs as a "
+"level of another of these factors (e.g., center points entered as a factor "
+"level): %s. To estimate one effect per factor, enter these factors as "
+"continuous predictors."
 msgstr ""
 
 msgid "Analysis of Variance"
@@ -350,6 +506,11 @@ msgstr "自由度"
 
 msgid "Mean square"
 msgstr "均方"
+
+msgid ""
+"Type I (sequential) sums of squares, whatever type is selected: the model "
+"has no degrees of freedom for error, so there are no F-tests."
+msgstr ""
 
 msgid "Type I sums of squares."
 msgstr "I 型平方和。"
@@ -378,11 +539,49 @@ msgstr "项"
 msgid "Effect"
 msgstr "效应"
 
+#, fuzzy
+msgid "%s%% CI for effect"
+msgstr "Cp 的 %s 置信区间"
+
 msgid "Coefficient"
 msgstr "系数"
 
-msgid "Standard error"
-msgstr "标准误"
+#, fuzzy
+msgid "%s%% CI for coefficient"
+msgstr "%s 系数"
+
+msgid ""
+"Effect = 2 × coefficient: the change in the response when a term goes from "
+"its −1 to its +1 setting."
+msgstr ""
+
+msgid ""
+"Effect = 2 × coefficient in coded (−1/+1) units, not 2 × the coefficient "
+"shown: the change in the response when a term goes from its −1 to its +1 "
+"setting. For discrete predictors the sign follows the level shown in the "
+"Discrete Predictor Levels table."
+msgstr ""
+
+msgid ""
+"Not shown for squared terms, discrete predictors with more than two levels, "
+"blocks, and covariates."
+msgstr ""
+
+msgid "Levels without runs are left out of the model: %s."
+msgstr ""
+
+msgid ""
+"Confidence intervals cannot be calculated: the model has no degrees of "
+"freedom for error."
+msgstr ""
+
+msgid ""
+"Effects are not shown: coding the continuous predictors changes this model "
+"(e.g., an interaction or squared term without its main effects)."
+msgstr ""
+
+msgid "VIF is not available when some coefficients are aliased."
+msgstr ""
 
 msgid "Discrete Predictor Levels"
 msgstr "离散预测变量水平"
@@ -396,6 +595,25 @@ msgstr "水平"
 msgid "Regression equation in %s Units"
 msgstr "以%s单位的回归方程"
 
+msgid ""
+"Not shown: some contrasts of the model are aliased, so the coefficients of "
+"the equation are not unique (see the coefficients table)."
+msgstr ""
+
+msgid ""
+"Some contrasts of the model are aliased. Values left empty depend on which "
+"aliased contrasts are left out (e.g., on the order of the factor levels), so "
+"they are not shown."
+msgstr ""
+
+msgid ""
+"No effects to plot: some contrasts of the model are aliased, so no effect "
+"has a unique estimate."
+msgstr ""
+
+msgid "There are no effects to plot."
+msgstr ""
+
 msgid "Stepwise results"
 msgstr "逐步结果"
 
@@ -405,14 +623,46 @@ msgstr "步"
 msgid "Formula"
 msgstr "公式"
 
+msgid ""
+"The model is saturated (no error degrees of freedom) and its effects are not "
+"available in uncoded units, because coding changes the model."
+msgstr ""
+
+msgid ""
+"The model is saturated (no error degrees of freedom). Lenth's method for "
+"assessing its effects applies to two-level factorial terms only, but the "
+"model has squared terms or terms of discrete factors with more than two "
+"levels."
+msgstr ""
+
+msgid ""
+"The model is saturated (no error degrees of freedom) and Lenth's pseudo "
+"standard error of its effects is zero, so the effects cannot be assessed."
+msgstr ""
+
 msgid "Pareto Chart of Standardized Effects"
 msgstr "标准化效果的帕累托图"
+
+#, fuzzy
+msgid "Pareto Chart of Effects"
+msgstr "标准化效果的帕累托图"
+
+#, fuzzy
+msgid "ME = %s"
+msgstr "UCL = %s"
 
 msgid "Standardized Effect"
 msgstr "标准化效应"
 
 msgid "Normal Plot of Standardized Effects"
 msgstr "标准化效应正态图"
+
+#, fuzzy
+msgid "Normal Plot of Effects"
+msgstr "标准化效应正态图"
+
+msgid "Percent"
+msgstr "百分比"
 
 msgid "Significant"
 msgstr "显著"
@@ -475,6 +725,12 @@ msgid ""
 msgstr ""
 "无法绘图，因为以下所选变量未包含在最终模型中：%1$s。它们可能在模型选择过程中"
 "被移除。"
+
+msgid ""
+"Could not plot: some contrasts of the model are aliased, so the data cannot "
+"estimate the predicted response over this plot (averaged over the levels of "
+"the discrete predictors)."
+msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
 msgstr "分析失败，出现以下错误消息：%s"
@@ -627,8 +883,8 @@ msgstr "评估者与标准比较的 Cohen's kappa"
 msgid "Appraiser"
 msgstr "评估者"
 
-msgid "Cohen's kappa correlations summary"
-msgstr "Cohen's kappa 相关性摘要"
+msgid "Correlations between appraisers' ratings"
+msgstr ""
 
 msgid ""
 "Please inseret a vaild positive reference as used in the results variables."
@@ -646,6 +902,11 @@ msgstr "评估者与标准"
 msgid "Between appraisers"
 msgstr "评估者间"
 
+msgid ""
+"Averaged over trials; trial k is the k-th row of an appraiser and part in "
+"the data."
+msgstr ""
+
 msgid "Each appraiser vs standard"
 msgstr "每位评估者与标准"
 
@@ -658,17 +919,8 @@ msgstr "检查的"
 msgid "Matched"
 msgstr "一致的"
 
-msgid "Percent"
-msgstr "百分比"
-
-msgid "Lower"
-msgstr "下限"
-
 msgid "Confidence interval of 95%%"
 msgstr "95%% 置信区间"
-
-msgid "Upper"
-msgstr "上界"
 
 msgid "Invalid reference and/or results were inserted."
 msgstr "插入了无效的参考值和/或结果。"
@@ -709,6 +961,17 @@ msgstr "不可接受：x < 80%%（有效性），x > 5%%（漏检率），x > 10
 msgid "More than one measurement per operator required."
 msgstr "每位操作者需要超过 1 次测量。"
 
+#, fuzzy
+msgid ""
+"Each appraiser must rate each part, and each part the same number of times."
+msgstr "设计不平衡：并非每个零件的测量次数相同。"
+
+msgid "Each appraiser must have exactly one row per part."
+msgstr ""
+
+msgid "Each part must have a single reference value."
+msgstr ""
+
 msgid "Kendall's tau is only available for numeric measurements."
 msgstr "Kendall's tau 仅适用于数值测量。"
 
@@ -717,6 +980,19 @@ msgstr "Kendall's tau 仅适用于非二值测量。"
 
 msgid "Operator"
 msgstr "操作者"
+
+msgid ""
+"Between appraisers: Kendall's tau-b over all combinations of the two "
+"appraisers' ratings of each part."
+msgstr ""
+
+msgid ""
+"Appraiser vs standard: Kendall's tau-b of each trial with the standard, "
+"averaged over trials."
+msgstr ""
+
+msgid "Agreement counts and totals must have compatible lengths."
+msgstr ""
 
 msgid "%g (unacceptable)"
 msgstr "%g（不可接受）"
@@ -792,12 +1068,14 @@ msgstr "t 检验需要超过 1 次测量。在 %2$s 中检测到 %1$i 次有效�
 msgid ""
 "Every unique part must have one corresponding reference value. %1$i "
 "reference values were found for %2$s unique parts."
-msgstr "每个唯一零件必须有一个对应的参考值。为 %2$s 个唯一零件找到了 %1$i 个参考值。"
+msgstr ""
+"每个唯一零件必须有一个对应的参考值。为 %2$s 个唯一零件找到了 %1$i 个参考值。"
 
 msgid ""
 "t-test requires more than 1 measurement per part. Less than 2 valid "
 "measurement(s) detected in Part(s) %s."
-msgstr "t 检验要求每个零件有超过 1 次测量。在零件 %s 中检测到的有效测量少于 2 次。"
+msgstr ""
+"t 检验要求每个零件有超过 1 次测量。在零件 %s 中检测到的有效测量少于 2 次。"
 
 msgid "t-test not possible. No variance detected in Part(s) %s."
 msgstr "无法进行 t 检验。在零件 %s 中未检测到方差。"
@@ -1010,12 +1288,16 @@ msgstr ""
 msgid "%.2f"
 msgstr "%.2f"
 
-msgid "Gauge r&R - nested"
-msgstr "量具 r&R - 嵌套"
-
 msgid ""
 "Unbalanced design. Some parts have more repeated measurements than others."
 msgstr "设计不平衡。某些零件的重复测量次数多于其他零件。"
+
+#, fuzzy
+msgid "Unbalanced design. Some operators measured more parts than others."
+msgstr "设计不平衡。某些零件的重复测量次数多于其他零件。"
+
+msgid "Gauge r&R - nested"
+msgstr "量具 r&R - 嵌套"
 
 msgid "Gauge r&R (non-replicable) report"
 msgstr "量具 r&R（不可重复）报告"
@@ -1056,9 +1338,25 @@ msgstr "测量值按零件 x 操作者"
 msgid "Operator %s"
 msgstr "操作者 %s"
 
+#, fuzzy
+msgid "At least one complete pair of measurements is required."
+msgstr "至少有一个阶段不包含有效测量。"
+
+msgid "Test-retest requires exactly two measurement columns."
+msgstr ""
+
+msgid "Each part must occupy one row with two measurements."
+msgstr ""
+
 msgid ""
-"Design is not balanced: not all parts were measured the same number of times."
-msgstr "设计不平衡：并非所有零件的测量次数相同。"
+"Test-retest requires exactly two observed measurement sets or operators."
+msgstr ""
+
+msgid "Each part must have only one reading in each measurement set."
+msgstr ""
+
+msgid "Each part must have a reading in both measurement sets."
+msgstr ""
 
 msgid "Scatterplot operators vs parts"
 msgstr "操作者与零件的散点图"
@@ -1230,13 +1528,8 @@ msgstr "Hotelling T² 控制图"
 msgid ""
 "Displays the Hotelling T² statistic for each sample with upper and lower "
 "control limits. Points exceeding the UCL are flagged as out of control."
-msgstr "显示每个样本的 Hotelling T² 统计量及上下控制限。超过 UCL 的点被标记为失控。"
-
-msgid "UCL = %s"
-msgstr "UCL = %s"
-
-msgid "LCL = %s"
-msgstr "LCL = %s"
+msgstr ""
+"显示每个样本的 Hotelling T² 统计量及上下控制限。超过 UCL 的点被标记为失控。"
 
 msgid "Hotelling T²"
 msgstr "Hotelling T²"
@@ -1285,7 +1578,8 @@ msgstr "|S|"
 msgid ""
 "Control limits for the training phase use the Beta distribution; test phase "
 "limits use the F distribution (prediction limits)."
-msgstr "训练阶段的控制限使用 Beta 分布；测试阶段的控制限使用 F 分布（预测限）。"
+msgstr ""
+"训练阶段的控制限使用 Beta 分布；测试阶段的控制限使用 F 分布（预测限）。"
 
 msgid "Variable Centers"
 msgstr "变量中心"
@@ -1374,9 +1668,6 @@ msgstr "AIC"
 msgid "Detection Plot"
 msgstr "检测图"
 
-msgid "log(%s)"
-msgstr "log(%s)"
-
 msgid ""
 "The detection plot failed with the following error message:\n"
 "%s"
@@ -1396,6 +1687,11 @@ msgstr "水平渐近线"
 msgid "Vertical asymptotes"
 msgstr "垂直渐近线"
 
+msgid ""
+"X-coordinates are on the natural-log scale, including entered values for "
+"vertical asymptotes."
+msgstr ""
+
 msgid "Label"
 msgstr "标签"
 
@@ -1404,6 +1700,9 @@ msgstr "<b><em>警告.</em></b>"
 
 msgid "Probability of detecting %s"
 msgstr "检测的概率 %s"
+
+msgid "log(%s)"
+msgstr "log(%s)"
 
 msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
 msgstr "子组大小大于 5，结果可能有偏。建议使用 s 控制图。"
@@ -1453,6 +1752,9 @@ msgstr "子组大小为 1，无法计算所选控制图。请使用 x-mR 控制�
 
 msgid "X-mR control chart"
 msgstr "单值-移动极差控制图"
+
+msgid "%1$s chart not shown. %2$s"
+msgstr ""
 
 msgid "Capability study"
 msgstr "能力研究"
@@ -1648,6 +1950,11 @@ msgid ""
 "specification limit is not set or set as boundary."
 msgstr "显示为 * 的统计量未计算，因为相关规格限未设置或设置为边界。"
 
+msgid ""
+"Confidence intervals for Cp and Cpk are not computed when a historical "
+"standard deviation is used."
+msgstr ""
+
 msgid "Process performance (total)"
 msgstr "过程性能（整体）"
 
@@ -1832,8 +2139,8 @@ msgid ""
 "Some specification limits or target value are outside of the support of the "
 "Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f)."
 msgstr ""
-"某些规格限或目标值位于 Box-Cox 变换的支持范围之外。Box-Cox 变换的下界为 -"
-"shift（%1$f）。"
+"某些规格限或目标值位于 Box-Cox 变换的支持范围之外。Box-Cox 变换的下界为 "
+"-shift（%1$f）。"
 
 msgid ""
 "Some specification limits or target value are outside of the support of the "
@@ -1893,12 +2200,6 @@ msgstr "<i>注。</i>已移除未分配到任何阶段的 %i 个观测。"
 msgid "Variables Charts for Individuals"
 msgstr "单值图"
 
-msgid ""
-"Moving range length is larger than the number of observations\n"
-"                                                           in one of the "
-"stages."
-msgstr "移动极差长度大于其中一个阶段的观测数。"
-
 msgid "Variables Chart for Individuals Report"
 msgstr "单值变量控制图报告"
 
@@ -1941,6 +2242,38 @@ msgid_plural ""
 "The main effects %1$s were retained to respect marginality (their squared "
 "terms are in the model)."
 msgstr[0] "为保持边际性，保留了主效应 %1$s（其平方项在模型中）。"
+
+#~ msgid "Terms removed from Regression:"
+#~ msgstr "从回归中移除的项："
+
+#~ msgid "and from ANOVA:"
+#~ msgstr "以及从方差分析中移除的项："
+
+#~ msgid "Terms removed from ANOVA:"
+#~ msgstr "从方差分析中移除的项："
+
+#~ msgid "lower and upper bounds are"
+#~ msgstr "下界和上界为"
+
+#~ msgid "target is"
+#~ msgstr "目标为"
+
+#~ msgid "The %s estimated from data."
+#~ msgstr "从数据估计的%s。"
+
+#~ msgid "Cohen's kappa correlations summary"
+#~ msgstr "Cohen's kappa 相关性摘要"
+
+#~ msgid ""
+#~ "Design is not balanced: not all parts were measured the same number of "
+#~ "times."
+#~ msgstr "设计不平衡：并非所有零件的测量次数相同。"
+
+#~ msgid ""
+#~ "Moving range length is larger than the number of observations\n"
+#~ "                                                           in one of the "
+#~ "stages."
+#~ msgstr "移动极差长度大于其中一个阶段的观测数。"
 
 #~ msgid "ANOVA"
 #~ msgstr "方差分析"

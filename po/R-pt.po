@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2026-09-05 03:43\n"
+"POT-Creation-Date: 2026-11-14 03:40\n"
 "PO-Revision-Date: 2026-01-28 10:47+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
@@ -63,11 +63,21 @@ msgstr "Gráficos de somas cumulativas"
 msgid "Exponentially weighted moving average chart"
 msgstr "Gráfico de média móvel ponderada exponencialmente"
 
-msgid "The number of Defectives/Defects is larger than the sample  size."
-msgstr "O número de defeituosos/defeitos é maior do que o tamanho de amostra."
-
 msgid "Attributes Control Charts"
 msgstr "Gráficos de Controle de Atributos"
+
+msgid "Defective item and defect counts must be nonnegative integers."
+msgstr ""
+
+msgid "Sample sizes or exposures must be positive."
+msgstr ""
+
+msgid "Sample sizes for defective items must be positive integers."
+msgstr ""
+
+#, fuzzy
+msgid "The number of defective items cannot exceed the sample size."
+msgstr "O número de defeituosos/defeitos é maior do que o tamanho de amostra."
 
 msgid "p Chart"
 msgstr "Carta P"
@@ -129,6 +139,9 @@ msgstr "Número de defeitos"
 msgid "D"
 msgstr "D"
 
+msgid "Defects per unit"
+msgstr ""
+
 msgid "Moving Range"
 msgstr "Amplitude Móvel"
 
@@ -155,6 +168,28 @@ msgstr "Teste 6: Distribuição bimodal"
 
 msgid "Points where a test failed."
 msgstr "Pontos onde um teste falhou."
+
+msgid ""
+"Cannot estimate the standard deviation from moving ranges of length %1$s: "
+"the data have fewer than %1$s consecutive non-missing observations."
+msgstr ""
+
+msgid ""
+"Cannot estimate the standard deviation from moving ranges of length %1$s: "
+"stage '%2$s' has fewer than %1$s consecutive non-missing observations."
+msgstr ""
+
+#, fuzzy
+msgid "CL = %s"
+msgstr "NCS = %g"
+
+#, fuzzy
+msgid "LCL = %s"
+msgstr "NCI = %g"
+
+#, fuzzy
+msgid "UCL = %s"
+msgstr "NCS = %g"
 
 msgid "Test results for %1$s chart"
 msgstr "Resultados do teste para o gráfico %1$s"
@@ -246,34 +281,51 @@ msgstr ""
 "Os níveis baixo/alto especificados %1$s para %2$s não correspondem aos "
 "níveis no conjunto de dados."
 
-msgid "Terms removed from Regression:"
+msgid ""
+"Calculated with the continuous predictors in coded (−1/+1) units, so the "
+"table is the same in coded and uncoded units."
 msgstr ""
 
-msgid "and from ANOVA:"
+msgid ""
+"Calculated in uncoded units: coding the predictors changes this model (e.g., "
+"an interaction or squared term without its main effects)."
 msgstr ""
 
-msgid "Terms removed from ANOVA:"
+msgid ""
+"Type III sums of squares are unavailable for this model, because some of its "
+"coefficients are aliased. Use Type I or Type II sums of squares."
 msgstr ""
 
 msgid "Response Optimizer Settings"
 msgstr "Configurações do Otimizador de Resposta"
 
-msgid "lower and upper bounds and target are"
+msgid ""
+"Bounds and targets that are not set manually are the observed minimum or "
+"maximum of the response."
+msgstr ""
+
+msgid ""
+"The lower and upper bounds, and the targets of the goals maximize and "
+"minimize, are estimated from data."
+msgstr ""
+
+#, fuzzy
+msgid "The lower and upper bounds are estimated from data."
 msgstr "limites inferior e superior e alvo são"
 
-msgid "lower and upper bounds are"
-msgstr "os limites inferior e superior são"
-
-msgid "target is"
-msgstr "o alvo é"
-
-msgid "The %s estimated from data."
-msgstr "As %s estimadas a partir dos dados."
+msgid "The targets of the goals maximize and minimize are estimated from data."
+msgstr ""
 
 msgid "Response Optimizer Solution"
 msgstr "Solução Otimizadora de Resposta"
 
 msgid "%s fit"
+msgstr ""
+
+msgid ""
+"No factor setting with a composite desirability above 0 was found. The "
+"optimizer starts from the design points and can miss acceptable settings "
+"that lie between them."
 msgstr ""
 
 msgid "Optimization Plot"
@@ -320,16 +372,107 @@ msgstr "Resumo do Gráfico de Otimização"
 msgid "Composite desirability"
 msgstr "Comp. desejabilidade"
 
+#, fuzzy
 msgid ""
 "One or more input parameters for continuous predictors are outside of the "
-"design space.\n"
-"                           Extrapolation beyond the design space might not "
-"be valid."
+"design space. Extrapolation beyond the design space might not be valid."
 msgstr ""
 "Um ou mais parâmetros de entrada para preditores contínuos estão fora do "
 "espaço de delineamento.\n"
 "                           A extrapolação para além do espaço de "
 "delineamento pode não ser válida."
+
+#, fuzzy
+msgid "Predicted Responses (Manual Predictor Values)"
+msgstr "Resumo do Gráfico de Otimização"
+
+#, fuzzy
+msgid "Predicted Responses (Optimal Solution)"
+msgstr "Solução Otimizadora de Resposta"
+
+msgid "Response"
+msgstr ""
+
+msgid "Fit"
+msgstr ""
+
+msgid "Standard error"
+msgstr "Erro padrão"
+
+msgid "Lower"
+msgstr "Inferior"
+
+msgid "%s%% CI"
+msgstr ""
+
+msgid "Upper"
+msgstr "Superior"
+
+msgid "%s%% PI"
+msgstr ""
+
+msgid "PI: prediction interval for a single new run."
+msgstr ""
+
+msgid ""
+"Intervals cannot be calculated when the model has no degrees of freedom for "
+"error."
+msgstr ""
+
+msgid ""
+"Predictions are averaged over the blocks; the prediction interval excludes "
+"variation between blocks."
+msgstr ""
+
+msgid "Predictions are averaged over the blocks."
+msgstr ""
+
+msgid "Covariates are held at their mean."
+msgstr ""
+
+msgid ""
+"Some contrasts of the model are aliased, so the data cannot estimate the "
+"response at some settings (e.g., combinations of factor levels without "
+"runs). These settings are left out."
+msgstr ""
+
+msgid ""
+"The response optimizer cannot be used with this model: some contrasts are "
+"aliased, and it found no setting at which the data can estimate the response "
+"(e.g., when a factor is held constant within blocks, as the predictions are "
+"averaged over the blocks)."
+msgstr ""
+
+msgid ""
+"Not shown: the data cannot estimate the response at these settings, because "
+"some contrasts of the model are aliased (e.g., a combination of factor "
+"levels without runs)."
+msgstr ""
+
+msgid "%1$s: the lower bound (%2$s) is above the target (%3$s)."
+msgstr ""
+
+msgid "%1$s: the target (%2$s) is above the upper bound (%3$s)."
+msgstr ""
+
+msgid "%1$s: the lower bound (%2$s) is above the upper bound (%3$s)."
+msgstr ""
+
+msgid "%1$s: the target (%2$s) is outside the bounds (%3$s to %4$s)."
+msgstr ""
+
+msgid ""
+"The target of %1$s is outside its observed range (%2$s to %3$s), so "
+"predictions beyond that range have desirability 0. Set the bounds manually "
+"to allow them."
+msgstr ""
+
+msgid "Lack of fit"
+msgstr ""
+
+#, fuzzy
+msgid "Pure error"
+msgstr "Erro pad."
 
 msgid "Model Summary"
 msgstr "Resumo do Modelo"
@@ -342,6 +485,21 @@ msgstr "%s preditivo"
 
 msgid "The following aliased terms were removed: %s."
 msgstr "Os seguintes termos alternativos foram removidos: %s."
+
+#, fuzzy
+msgid "The following terms are aliased and were not estimated: %s."
+msgstr "Os seguintes termos alternativos foram removidos: %s."
+
+msgid ""
+"Some contrasts of the following terms are aliased and were not estimated: %s."
+msgstr ""
+
+msgid ""
+"Each of these factors has a level that only occurs in the same runs as a "
+"level of another of these factors (e.g., center points entered as a factor "
+"level): %s. To estimate one effect per factor, enter these factors as "
+"continuous predictors."
+msgstr ""
 
 msgid "Analysis of Variance"
 msgstr ""
@@ -357,6 +515,11 @@ msgstr "gl"
 
 msgid "Mean square"
 msgstr "Quadrado médio"
+
+msgid ""
+"Type I (sequential) sums of squares, whatever type is selected: the model "
+"has no degrees of freedom for error, so there are no F-tests."
+msgstr ""
 
 msgid "Type I sums of squares."
 msgstr "Soma dos quadrados tipo I."
@@ -385,11 +548,49 @@ msgstr "Termo"
 msgid "Effect"
 msgstr "Efeito"
 
+#, fuzzy
+msgid "%s%% CI for effect"
+msgstr "%s IC para Cp"
+
 msgid "Coefficient"
 msgstr "Coeficiente"
 
-msgid "Standard error"
-msgstr "Erro padrão"
+#, fuzzy
+msgid "%s%% CI for coefficient"
+msgstr "%s Coeficientes"
+
+msgid ""
+"Effect = 2 × coefficient: the change in the response when a term goes from "
+"its −1 to its +1 setting."
+msgstr ""
+
+msgid ""
+"Effect = 2 × coefficient in coded (−1/+1) units, not 2 × the coefficient "
+"shown: the change in the response when a term goes from its −1 to its +1 "
+"setting. For discrete predictors the sign follows the level shown in the "
+"Discrete Predictor Levels table."
+msgstr ""
+
+msgid ""
+"Not shown for squared terms, discrete predictors with more than two levels, "
+"blocks, and covariates."
+msgstr ""
+
+msgid "Levels without runs are left out of the model: %s."
+msgstr ""
+
+msgid ""
+"Confidence intervals cannot be calculated: the model has no degrees of "
+"freedom for error."
+msgstr ""
+
+msgid ""
+"Effects are not shown: coding the continuous predictors changes this model "
+"(e.g., an interaction or squared term without its main effects)."
+msgstr ""
+
+msgid "VIF is not available when some coefficients are aliased."
+msgstr ""
 
 msgid "Discrete Predictor Levels"
 msgstr "Níveis de Preditores Discretos"
@@ -403,6 +604,25 @@ msgstr "Nível"
 msgid "Regression equation in %s Units"
 msgstr "Equação de regressão em unidades %s"
 
+msgid ""
+"Not shown: some contrasts of the model are aliased, so the coefficients of "
+"the equation are not unique (see the coefficients table)."
+msgstr ""
+
+msgid ""
+"Some contrasts of the model are aliased. Values left empty depend on which "
+"aliased contrasts are left out (e.g., on the order of the factor levels), so "
+"they are not shown."
+msgstr ""
+
+msgid ""
+"No effects to plot: some contrasts of the model are aliased, so no effect "
+"has a unique estimate."
+msgstr ""
+
+msgid "There are no effects to plot."
+msgstr ""
+
 msgid "Stepwise results"
 msgstr ""
 
@@ -412,14 +632,46 @@ msgstr ""
 msgid "Formula"
 msgstr ""
 
+msgid ""
+"The model is saturated (no error degrees of freedom) and its effects are not "
+"available in uncoded units, because coding changes the model."
+msgstr ""
+
+msgid ""
+"The model is saturated (no error degrees of freedom). Lenth's method for "
+"assessing its effects applies to two-level factorial terms only, but the "
+"model has squared terms or terms of discrete factors with more than two "
+"levels."
+msgstr ""
+
+msgid ""
+"The model is saturated (no error degrees of freedom) and Lenth's pseudo "
+"standard error of its effects is zero, so the effects cannot be assessed."
+msgstr ""
+
 msgid "Pareto Chart of Standardized Effects"
 msgstr "Gráfico de Pareto de Efeitos Padronizados"
+
+#, fuzzy
+msgid "Pareto Chart of Effects"
+msgstr "Gráfico de Pareto de Efeitos Padronizados"
+
+#, fuzzy
+msgid "ME = %s"
+msgstr "NCS = %g"
 
 msgid "Standardized Effect"
 msgstr "Efeito Padronizado"
 
 msgid "Normal Plot of Standardized Effects"
 msgstr "Gráfico Normal de Efeitos Padronizados"
+
+#, fuzzy
+msgid "Normal Plot of Effects"
+msgstr "Gráfico Normal de Efeitos Padronizados"
+
+msgid "Percent"
+msgstr "Porcento"
 
 msgid "Significant"
 msgstr "Significante"
@@ -479,6 +731,12 @@ msgid ""
 "Could not plot because the following selected variable(s) were not included "
 "in the final model: %1$s. They might have been removed during model "
 "selection."
+msgstr ""
+
+msgid ""
+"Could not plot: some contrasts of the model are aliased, so the data cannot "
+"estimate the predicted response over this plot (averaged over the levels of "
+"the discrete predictors)."
 msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
@@ -633,8 +891,8 @@ msgstr "Kappa de Cohen por avaliador vs padrão"
 msgid "Appraiser"
 msgstr "Avaliador"
 
-msgid "Cohen's kappa correlations summary"
-msgstr "Resumo das correlações kappa de Cohen"
+msgid "Correlations between appraisers' ratings"
+msgstr ""
 
 msgid ""
 "Please inseret a vaild positive reference as used in the results variables."
@@ -654,6 +912,11 @@ msgstr "Avaliador vs padrão"
 msgid "Between appraisers"
 msgstr "Entre avaliadores"
 
+msgid ""
+"Averaged over trials; trial k is the k-th row of an appraiser and part in "
+"the data."
+msgstr ""
+
 msgid "Each appraiser vs standard"
 msgstr "Cada avaliador vs padrão"
 
@@ -666,17 +929,8 @@ msgstr "Inspecionado"
 msgid "Matched"
 msgstr "Coincide"
 
-msgid "Percent"
-msgstr "Porcento"
-
-msgid "Lower"
-msgstr "Inferior"
-
 msgid "Confidence interval of 95%%"
 msgstr "Intervalo de confiança de 95%%"
-
-msgid "Upper"
-msgstr "Superior"
 
 msgid "Invalid reference and/or results were inserted."
 msgstr "Referência e/ou resultados inválidos foram inseridos."
@@ -723,6 +977,19 @@ msgstr ""
 msgid "More than one measurement per operator required."
 msgstr "Necessário mais de 1 medição por operador."
 
+#, fuzzy
+msgid ""
+"Each appraiser must rate each part, and each part the same number of times."
+msgstr ""
+"O desenho não é equilibrado: nem todas as partes foram mensuradas o mesmo "
+"número de vezes."
+
+msgid "Each appraiser must have exactly one row per part."
+msgstr ""
+
+msgid "Each part must have a single reference value."
+msgstr ""
+
 msgid "Kendall's tau is only available for numeric measurements."
 msgstr "O tau de Kendall está disponível apenas para medições numéricas."
 
@@ -731,6 +998,19 @@ msgstr "O tau de Kendall está disponível apenas para medições não binárias
 
 msgid "Operator"
 msgstr "Operador"
+
+msgid ""
+"Between appraisers: Kendall's tau-b over all combinations of the two "
+"appraisers' ratings of each part."
+msgstr ""
+
+msgid ""
+"Appraiser vs standard: Kendall's tau-b of each trial with the standard, "
+"averaged over trials."
+msgstr ""
+
+msgid "Agreement counts and totals must have compatible lengths."
+msgstr ""
 
 msgid "%g (unacceptable)"
 msgstr "%g (inaceitável)"
@@ -1048,14 +1328,20 @@ msgstr ""
 msgid "%.2f"
 msgstr "%.2f"
 
-msgid "Gauge r&R - nested"
-msgstr "Gauge r&R - aninhado"
-
 msgid ""
 "Unbalanced design. Some parts have more repeated measurements than others."
 msgstr ""
 "Delineamento desbalanceado. Algumas peças têm mais medições repetidas do que "
 "outras."
+
+#, fuzzy
+msgid "Unbalanced design. Some operators measured more parts than others."
+msgstr ""
+"Delineamento desbalanceado. Algumas peças têm mais medições repetidas do que "
+"outras."
+
+msgid "Gauge r&R - nested"
+msgstr "Gauge r&R - aninhado"
 
 msgid "Gauge r&R (non-replicable) report"
 msgstr "Relatório de medição r&R (não replicável)"
@@ -1098,11 +1384,24 @@ msgid "Operator %s"
 msgstr "Operador %s"
 
 #, fuzzy
-msgid ""
-"Design is not balanced: not all parts were measured the same number of times."
+msgid "At least one complete pair of measurements is required."
+msgstr "Pelo menos uma das etapas não contém medições válidas."
+
+msgid "Test-retest requires exactly two measurement columns."
 msgstr ""
-"O desenho não é equilibrado: nem todas as partes foram mensuradas o mesmo "
-"número de vezes."
+
+msgid "Each part must occupy one row with two measurements."
+msgstr ""
+
+msgid ""
+"Test-retest requires exactly two observed measurement sets or operators."
+msgstr ""
+
+msgid "Each part must have only one reading in each measurement set."
+msgstr ""
+
+msgid "Each part must have a reading in both measurement sets."
+msgstr ""
 
 msgid "Scatterplot operators vs parts"
 msgstr "Gráfico de dispersão operadores vs peças"
@@ -1275,14 +1574,6 @@ msgid ""
 "control limits. Points exceeding the UCL are flagged as out of control."
 msgstr ""
 
-#, fuzzy
-msgid "UCL = %s"
-msgstr "NCS = %g"
-
-#, fuzzy
-msgid "LCL = %s"
-msgstr "NCI = %g"
-
 msgid "Hotelling T²"
 msgstr ""
 
@@ -1428,9 +1719,6 @@ msgstr "AIC"
 msgid "Detection Plot"
 msgstr "Gráfico de Detecção"
 
-msgid "log(%s)"
-msgstr "log(%s)"
-
 msgid ""
 "The detection plot failed with the following error message:\n"
 "%s"
@@ -1450,6 +1738,11 @@ msgstr "Assíntotas horizontais"
 msgid "Vertical asymptotes"
 msgstr "Assíntotas verticais"
 
+msgid ""
+"X-coordinates are on the natural-log scale, including entered values for "
+"vertical asymptotes."
+msgstr ""
+
 msgid "Label"
 msgstr "Rótulo"
 
@@ -1458,6 +1751,9 @@ msgstr "<b><em>Aviso.</em></b>"
 
 msgid "Probability of detecting %s"
 msgstr "Probabilidade de detectar %s"
+
+msgid "log(%s)"
+msgstr "log(%s)"
 
 msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
 msgstr ""
@@ -1515,6 +1811,9 @@ msgstr ""
 
 msgid "X-mR control chart"
 msgstr "Gráfico de controle X-mR"
+
+msgid "%1$s chart not shown. %2$s"
+msgstr ""
 
 msgid "Capability study"
 msgstr "Estudo de capacidade"
@@ -1726,6 +2025,11 @@ msgstr ""
 "As estatísticas exibidas como * não foram calculadas porque o limite de "
 "especificação relevante não foi definido ou definido como limite."
 
+msgid ""
+"Confidence intervals for Cp and Cpk are not computed when a historical "
+"standard deviation is used."
+msgstr ""
+
 msgid "Process performance (total)"
 msgstr "Desempenho do processo (total)"
 
@@ -1923,8 +2227,8 @@ msgid ""
 "Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f)."
 msgstr ""
 "Alguns limites de especificação ou valor-alvo estão fora do alcance da "
-"transformação de Box-Cox. O limite inferior da transformação de Box-Cox é -"
-"shift (%1$f)."
+"transformação de Box-Cox. O limite inferior da transformação de Box-Cox é "
+"-shift (%1$f)."
 
 msgid ""
 "Some specification limits or target value are outside of the support of the "
@@ -1993,14 +2297,6 @@ msgstr ""
 msgid "Variables Charts for Individuals"
 msgstr "Gráficos de Variáveis para Indivíduos"
 
-msgid ""
-"Moving range length is larger than the number of observations\n"
-"                                                           in one of the "
-"stages."
-msgstr ""
-"O comprimento da amplitude móvel é maior que o número de observações\n"
-"                                                           em uma das etapas."
-
 msgid "Variables Chart for Individuals Report"
 msgstr "Gráfico de Variáveis para Relatório Individual"
 
@@ -2050,6 +2346,35 @@ msgid_plural ""
 "terms are in the model)."
 msgstr[0] ""
 msgstr[1] ""
+
+#~ msgid "lower and upper bounds are"
+#~ msgstr "os limites inferior e superior são"
+
+#~ msgid "target is"
+#~ msgstr "o alvo é"
+
+#~ msgid "The %s estimated from data."
+#~ msgstr "As %s estimadas a partir dos dados."
+
+#~ msgid "Cohen's kappa correlations summary"
+#~ msgstr "Resumo das correlações kappa de Cohen"
+
+#, fuzzy
+#~ msgid ""
+#~ "Design is not balanced: not all parts were measured the same number of "
+#~ "times."
+#~ msgstr ""
+#~ "O desenho não é equilibrado: nem todas as partes foram mensuradas o mesmo "
+#~ "número de vezes."
+
+#~ msgid ""
+#~ "Moving range length is larger than the number of observations\n"
+#~ "                                                           in one of the "
+#~ "stages."
+#~ msgstr ""
+#~ "O comprimento da amplitude móvel é maior que o número de observações\n"
+#~ "                                                           em uma das "
+#~ "etapas."
 
 #~ msgid "ANOVA"
 #~ msgstr "ANOVA"
