@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.98.2\n"
-"POT-Creation-Date: 2026-10-31 03:41\n"
+"POT-Creation-Date: 2026-11-14 03:40\n"
 "PO-Revision-Date: 2026-11-12 10:35+0000\n"
 "Last-Translator: Fahad Mahfouz Al-Subhi "
 "<fahadalsubhi@users.noreply.hosted.weblate.org>\n"
@@ -15,7 +15,9 @@ msgstr ""
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 "X-Generator: Weblate 2026.11.2.dev0\n"
 
-msgid "One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"
+msgid ""
+"One or more subgroups are assigned to more than one stage, only first stage "
+"is considered.<br>"
 msgstr ""
 "أُسندت مجموعة فرعية واحدة أو أكثر إلى عدة مراحل. يُعتد بالمرحلة الأولى فقط.<br>"
 
@@ -61,11 +63,21 @@ msgstr "خريطة المجموع التراكمي"
 msgid "Exponentially weighted moving average chart"
 msgstr "خريطة المتوسط المتحرك الموزون أُسّيًا"
 
-msgid "The number of Defectives/Defects is larger than the sample  size."
-msgstr "عدد الوحدات المعيبة/العيوب أكبر من حجم العينة."
-
 msgid "Attributes Control Charts"
 msgstr "مخططات ضبط الصفات"
+
+msgid "Defective item and defect counts must be nonnegative integers."
+msgstr ""
+
+msgid "Sample sizes or exposures must be positive."
+msgstr ""
+
+msgid "Sample sizes for defective items must be positive integers."
+msgstr ""
+
+#, fuzzy
+msgid "The number of defective items cannot exceed the sample size."
+msgstr "عدد الوحدات المعيبة/العيوب أكبر من حجم العينة."
 
 msgid "p Chart"
 msgstr "خريطة p"
@@ -127,6 +139,9 @@ msgstr "عدد الوحدات المعيبة"
 msgid "D"
 msgstr "D"
 
+msgid "Defects per unit"
+msgstr ""
+
 msgid "Moving Range"
 msgstr "المدى المتحرك"
 
@@ -153,6 +168,26 @@ msgstr "الاختبار 6: توزيع ثنائي المنوال"
 
 msgid "Points where a test failed."
 msgstr "النقاط التي خالفت قاعدة الاختبار."
+
+msgid ""
+"Cannot estimate the standard deviation from moving ranges of length %1$s: "
+"the data have fewer than %1$s consecutive non-missing observations."
+msgstr ""
+
+msgid ""
+"Cannot estimate the standard deviation from moving ranges of length %1$s: "
+"stage '%2$s' has fewer than %1$s consecutive non-missing observations."
+msgstr ""
+
+#, fuzzy
+msgid "CL = %s"
+msgstr "UCL = %s"
+
+msgid "LCL = %s"
+msgstr "LCL = %s"
+
+msgid "UCL = %s"
+msgstr "UCL = %s"
 
 msgid "Test results for %1$s chart"
 msgstr "نتائج اختبارات خريطة %1$s"
@@ -217,10 +252,14 @@ msgstr "القيمة المستهدفة = %g"
 msgid "USL = %g"
 msgstr "USL = %g"
 
-msgid "The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."
+msgid ""
+"The parameters could not be estimated for the selected distribution, most "
+"likely because the observed distribution of the data are very far away from "
+"the selected distribution, please try one that describes your data more "
+"closely."
 msgstr ""
-"تعذّر تقدير المعلمات للتوزيع المحدد، والأرجح أن التوزيع المشاهَد للبيانات يختلف "
-"كثيرًا عن التوزيع المحدد. جرّب توزيعًا يصف بياناتك بصورة أقرب."
+"تعذّر تقدير المعلمات للتوزيع المحدد، والأرجح أن التوزيع المشاهَد للبيانات "
+"يختلف كثيرًا عن التوزيع المحدد. جرّب توزيعًا يصف بياناتك بصورة أقرب."
 
 msgid "Design of Experiments - Analysis"
 msgstr "تحليل تصميم التجارب"
@@ -228,7 +267,8 @@ msgstr "تحليل تصميم التجارب"
 msgid "Error"
 msgstr "خطأ"
 
-msgid "Stepwise method failed. Please consider a different method or starting model."
+msgid ""
+"Stepwise method failed. Please consider a different method or starting model."
 msgstr ""
 "فشلت الطريقة التدريجية. يرجى النظر في استخدام طريقة أخرى أو نموذج بداية "
 "مختلف."
@@ -236,34 +276,47 @@ msgstr ""
 msgid "The specified low/high levels for %1$s are not distinct."
 msgstr "المستويات المنخفضة/العالية المحددة لـ %1$s غير متمايزة."
 
-msgid "The specified low/high level(s) %1$s for %2$s do not match the levels in the dataset."
+msgid ""
+"The specified low/high level(s) %1$s for %2$s do not match the levels in the "
+"dataset."
 msgstr ""
 "لا تتطابق المستويات المنخفضة/العالية المحددة %1$s لـ %2$s مع مستويات مجموعة "
 "البيانات."
 
-msgid "Terms removed from Regression:"
-msgstr "الحدود المحذوفة من الانحدار:"
+msgid ""
+"Calculated with the continuous predictors in coded (−1/+1) units, so the "
+"table is the same in coded and uncoded units."
+msgstr ""
 
-msgid "and from ANOVA:"
-msgstr "ومن تحليل التباين (ANOVA):"
+msgid ""
+"Calculated in uncoded units: coding the predictors changes this model (e.g., "
+"an interaction or squared term without its main effects)."
+msgstr ""
 
-msgid "Terms removed from ANOVA:"
-msgstr "الحدود المحذوفة من تحليل التباين:"
+msgid ""
+"Type III sums of squares are unavailable for this model, because some of its "
+"coefficients are aliased. Use Type I or Type II sums of squares."
+msgstr ""
 
 msgid "Response Optimizer Settings"
 msgstr "إعدادات مُحسّن الاستجابة"
 
-msgid "lower and upper bounds and target are"
+msgid ""
+"Bounds and targets that are not set manually are the observed minimum or "
+"maximum of the response."
+msgstr ""
+
+msgid ""
+"The lower and upper bounds, and the targets of the goals maximize and "
+"minimize, are estimated from data."
+msgstr ""
+
+#, fuzzy
+msgid "The lower and upper bounds are estimated from data."
 msgstr "الحدَّين الأدنى والأعلى والقيمة المستهدفة"
 
-msgid "lower and upper bounds are"
-msgstr "الحدَّين الأدنى والأعلى"
-
-msgid "target is"
-msgstr "القيمة المستهدفة"
-
-msgid "The %s estimated from data."
-msgstr "جرى تقدير %s من البيانات."
+msgid "The targets of the goals maximize and minimize are estimated from data."
+msgstr ""
 
 msgid "Response Optimizer Solution"
 msgstr "حل مُحسّن الاستجابة"
@@ -271,22 +324,35 @@ msgstr "حل مُحسّن الاستجابة"
 msgid "%s fit"
 msgstr "ملاءمة %s"
 
+msgid ""
+"No factor setting with a composite desirability above 0 was found. The "
+"optimizer starts from the design points and can miss acceptable settings "
+"that lie between them."
+msgstr ""
+
 msgid "Optimization Plot"
 msgstr "مخطط التحسين"
 
-msgid "Enter values for all predictors to create an optimization Plot with manual input parameters."
+msgid ""
+"Enter values for all predictors to create an optimization Plot with manual "
+"input parameters."
 msgstr "أدخل قيم جميع المتنبئات لإنشاء مخطط تحسين بمعلمات مدخلة يدويًا."
 
 msgid "Summary Plot"
 msgstr "رسم تلخيصي"
 
-msgid "Enter plausible values for all discrete predictors.\n                                   Value %1$s is not a possible for the discrete predictor %2$s. Allowed values:"
+msgid ""
+"Enter plausible values for all discrete predictors.\n"
+"                                   Value %1$s is not a possible for the "
+"discrete predictor %2$s. Allowed values:"
 msgstr ""
 "أدخل قيمًا ممكنة لجميع المتنبئات المتقطعة.\n"
 "                                   القيمة %1$s غير ممكنة للمتنبئ المتقطع "
 "%2$s. القيم المسموح بها:"
 
-msgid "Enter plausible values for all continuous predictors. Only numeric values are allowed."
+msgid ""
+"Enter plausible values for all continuous predictors. Only numeric values "
+"are allowed."
 msgstr "أدخل قيمًا معقولة لجميع المتنبئات المستمرة. يُسمح بالقيم العددية فقط."
 
 msgid "Comp. desirability"
@@ -304,10 +370,105 @@ msgstr "ملخص مخطط التحسين"
 msgid "Composite desirability"
 msgstr "الاستحسان المركب"
 
-msgid "One or more input parameters for continuous predictors are outside of the design space.\n                           Extrapolation beyond the design space might not be valid."
+#, fuzzy
+msgid ""
+"One or more input parameters for continuous predictors are outside of the "
+"design space. Extrapolation beyond the design space might not be valid."
 msgstr ""
 "تقع قيمة مدخلة واحدة أو أكثر للمتنبئات المستمرة خارج فضاء التصميم.\n"
 "                           قد لا يصح الاستقراء الإحصائي خارج فضاء التصميم."
+
+#, fuzzy
+msgid "Predicted Responses (Manual Predictor Values)"
+msgstr "ملخص مخطط التحسين (قيم المتغيرات المتنبئة المدخلة يدويًا)"
+
+#, fuzzy
+msgid "Predicted Responses (Optimal Solution)"
+msgstr "حل مُحسّن الاستجابة"
+
+msgid "Response"
+msgstr ""
+
+msgid "Fit"
+msgstr ""
+
+msgid "Standard error"
+msgstr "الخطأ المعياري"
+
+msgid "Lower"
+msgstr "الحد الأدنى"
+
+msgid "%s%% CI"
+msgstr ""
+
+msgid "Upper"
+msgstr "الحد الأعلى"
+
+msgid "%s%% PI"
+msgstr ""
+
+msgid "PI: prediction interval for a single new run."
+msgstr ""
+
+msgid ""
+"Intervals cannot be calculated when the model has no degrees of freedom for "
+"error."
+msgstr ""
+
+msgid ""
+"Predictions are averaged over the blocks; the prediction interval excludes "
+"variation between blocks."
+msgstr ""
+
+msgid "Predictions are averaged over the blocks."
+msgstr ""
+
+msgid "Covariates are held at their mean."
+msgstr ""
+
+msgid ""
+"Some contrasts of the model are aliased, so the data cannot estimate the "
+"response at some settings (e.g., combinations of factor levels without "
+"runs). These settings are left out."
+msgstr ""
+
+msgid ""
+"The response optimizer cannot be used with this model: some contrasts are "
+"aliased, and it found no setting at which the data can estimate the response "
+"(e.g., when a factor is held constant within blocks, as the predictions are "
+"averaged over the blocks)."
+msgstr ""
+
+msgid ""
+"Not shown: the data cannot estimate the response at these settings, because "
+"some contrasts of the model are aliased (e.g., a combination of factor "
+"levels without runs)."
+msgstr ""
+
+msgid "%1$s: the lower bound (%2$s) is above the target (%3$s)."
+msgstr ""
+
+msgid "%1$s: the target (%2$s) is above the upper bound (%3$s)."
+msgstr ""
+
+msgid "%1$s: the lower bound (%2$s) is above the upper bound (%3$s)."
+msgstr ""
+
+msgid "%1$s: the target (%2$s) is outside the bounds (%3$s to %4$s)."
+msgstr ""
+
+msgid ""
+"The target of %1$s is outside its observed range (%2$s to %3$s), so "
+"predictions beyond that range have desirability 0. Set the bounds manually "
+"to allow them."
+msgstr ""
+
+msgid "Lack of fit"
+msgstr ""
+
+#, fuzzy
+msgid "Pure error"
+msgstr "الخطأ المعياري"
 
 msgid "Model Summary"
 msgstr "ملخص النموذج"
@@ -320,6 +481,21 @@ msgstr "%s تنبؤي"
 
 msgid "The following aliased terms were removed: %s."
 msgstr "حُذفت الحدود التالية بسبب الاعتماد الخطي: %s."
+
+#, fuzzy
+msgid "The following terms are aliased and were not estimated: %s."
+msgstr "حُذفت الحدود التالية بسبب الاعتماد الخطي: %s."
+
+msgid ""
+"Some contrasts of the following terms are aliased and were not estimated: %s."
+msgstr ""
+
+msgid ""
+"Each of these factors has a level that only occurs in the same runs as a "
+"level of another of these factors (e.g., center points entered as a factor "
+"level): %s. To estimate one effect per factor, enter these factors as "
+"continuous predictors."
+msgstr ""
 
 msgid "Analysis of Variance"
 msgstr "تحليل التباين"
@@ -335,6 +511,11 @@ msgstr "درجات الحرية"
 
 msgid "Mean square"
 msgstr "متوسط المربعات"
+
+msgid ""
+"Type I (sequential) sums of squares, whatever type is selected: the model "
+"has no degrees of freedom for error, so there are no F-tests."
+msgstr ""
 
 msgid "Type I sums of squares."
 msgstr "مجموع المربعات من النوع الأول."
@@ -363,11 +544,49 @@ msgstr "حد"
 msgid "Effect"
 msgstr "الأثر"
 
+#, fuzzy
+msgid "%s%% CI for effect"
+msgstr "فترة ثقة %s لـCp"
+
 msgid "Coefficient"
 msgstr "المعامل"
 
-msgid "Standard error"
-msgstr "الخطأ المعياري"
+#, fuzzy
+msgid "%s%% CI for coefficient"
+msgstr "معاملات %s"
+
+msgid ""
+"Effect = 2 × coefficient: the change in the response when a term goes from "
+"its −1 to its +1 setting."
+msgstr ""
+
+msgid ""
+"Effect = 2 × coefficient in coded (−1/+1) units, not 2 × the coefficient "
+"shown: the change in the response when a term goes from its −1 to its +1 "
+"setting. For discrete predictors the sign follows the level shown in the "
+"Discrete Predictor Levels table."
+msgstr ""
+
+msgid ""
+"Not shown for squared terms, discrete predictors with more than two levels, "
+"blocks, and covariates."
+msgstr ""
+
+msgid "Levels without runs are left out of the model: %s."
+msgstr ""
+
+msgid ""
+"Confidence intervals cannot be calculated: the model has no degrees of "
+"freedom for error."
+msgstr ""
+
+msgid ""
+"Effects are not shown: coding the continuous predictors changes this model "
+"(e.g., an interaction or squared term without its main effects)."
+msgstr ""
+
+msgid "VIF is not available when some coefficients are aliased."
+msgstr ""
 
 msgid "Discrete Predictor Levels"
 msgstr "مستويات المتنبئات المتقطعة"
@@ -381,6 +600,25 @@ msgstr "المستوى"
 msgid "Regression equation in %s Units"
 msgstr "معادلة الانحدار بوحدات %s"
 
+msgid ""
+"Not shown: some contrasts of the model are aliased, so the coefficients of "
+"the equation are not unique (see the coefficients table)."
+msgstr ""
+
+msgid ""
+"Some contrasts of the model are aliased. Values left empty depend on which "
+"aliased contrasts are left out (e.g., on the order of the factor levels), so "
+"they are not shown."
+msgstr ""
+
+msgid ""
+"No effects to plot: some contrasts of the model are aliased, so no effect "
+"has a unique estimate."
+msgstr ""
+
+msgid "There are no effects to plot."
+msgstr ""
+
 msgid "Stepwise results"
 msgstr "نتائج الاختيار التدريجي"
 
@@ -390,14 +628,46 @@ msgstr "الخطوة"
 msgid "Formula"
 msgstr "صيغة"
 
+msgid ""
+"The model is saturated (no error degrees of freedom) and its effects are not "
+"available in uncoded units, because coding changes the model."
+msgstr ""
+
+msgid ""
+"The model is saturated (no error degrees of freedom). Lenth's method for "
+"assessing its effects applies to two-level factorial terms only, but the "
+"model has squared terms or terms of discrete factors with more than two "
+"levels."
+msgstr ""
+
+msgid ""
+"The model is saturated (no error degrees of freedom) and Lenth's pseudo "
+"standard error of its effects is zero, so the effects cannot be assessed."
+msgstr ""
+
 msgid "Pareto Chart of Standardized Effects"
 msgstr "مخطط باريتو للآثار المعيارية"
+
+#, fuzzy
+msgid "Pareto Chart of Effects"
+msgstr "مخطط باريتو للآثار المعيارية"
+
+#, fuzzy
+msgid "ME = %s"
+msgstr "UCL = %s"
 
 msgid "Standardized Effect"
 msgstr "الأثر المعياري"
 
 msgid "Normal Plot of Standardized Effects"
 msgstr "رسم الاحتمال الطبيعي للآثار المعيارية"
+
+#, fuzzy
+msgid "Normal Plot of Effects"
+msgstr "رسم الاحتمال الطبيعي للآثار المعيارية"
+
+msgid "Percent"
+msgstr "النسبة المئوية"
 
 msgid "Significant"
 msgstr "دال إحصائيًا"
@@ -453,10 +723,19 @@ msgstr "و"
 msgid "%1$s of %2$s vs %3$s"
 msgstr "%1$s لـ%2$s مقابل %3$s"
 
-msgid "Could not plot because the following selected variable(s) were not included in the final model: %1$s. They might have been removed during model selection."
+msgid ""
+"Could not plot because the following selected variable(s) were not included "
+"in the final model: %1$s. They might have been removed during model "
+"selection."
 msgstr ""
 "تعذر الرسم لأن المتغيرات المحددة التالية لم تُدرَج في النموذج النهائي: %1$s. "
 "ربما أُزيلت أثناء اختيار النموذج."
+
+msgid ""
+"Could not plot: some contrasts of the model are aliased, so the data cannot "
+"estimate the predicted response over this plot (averaged over the levels of "
+"the discrete predictors)."
+msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
 msgstr "فشل التحليل مع رسالة الخطأ التالية: %s"
@@ -509,10 +788,13 @@ msgstr "لا يُصدَّر التصميم إلا عند تحديد 'تصدير 
 msgid "The design is exported as '%1$s'."
 msgstr "يُصدَّر التصميم باسم '%1$s'."
 
-msgid "The selected design is a full factorial; no generators can be specified."
+msgid ""
+"The selected design is a full factorial; no generators can be specified."
 msgstr "التصميم المحدد عاملي كامل؛ لا يمكن تحديد مولّدات."
 
-msgid "All generators must either all include a factor name (e.g., D=ABC) or none should."
+msgid ""
+"All generators must either all include a factor name (e.g., D=ABC) or none "
+"should."
 msgstr ""
 "يجب أن تتضمن جميع المولّدات اسم العامل (مثل D=ABC)، أو ألّا يتضمنه أي منها."
 
@@ -525,12 +807,16 @@ msgstr "المتوقع %1$s من المولّدات للعوامل المضاف�
 msgid "Factor(s) defined more than once in generators: %s."
 msgstr "العوامل المعرّفة أكثر من مرة في المولّدات: %s."
 
-msgid "Generator for %1$s references non-base or unknown factor(s): %2$s. Base factors are: %3$s."
+msgid ""
+"Generator for %1$s references non-base or unknown factor(s): %2$s. Base "
+"factors are: %3$s."
 msgstr ""
 "يشير مولّد %1$s إلى عوامل غير أساسية أو غير معروفة: %2$s. العوامل الأساسية: "
 "%3$s."
 
-msgid "Generator %1$s references non-base or unknown factor(s): %2$s. Base factors are: %3$s."
+msgid ""
+"Generator %1$s references non-base or unknown factor(s): %2$s. Base factors "
+"are: %3$s."
 msgstr ""
 "يشير المولّد %1$s إلى عوامل غير أساسية أو غير معروفة: %2$s. العوامل الأساسية: "
 "%3$s."
@@ -605,10 +891,11 @@ msgstr "كابا كوهين للمقيّم مقابل المعيار"
 msgid "Appraiser"
 msgstr "المقيّم"
 
-msgid "Cohen's kappa correlations summary"
-msgstr "ملخص معاملات كابا لكوهين"
+msgid "Correlations between appraisers' ratings"
+msgstr ""
 
-msgid "Please inseret a vaild positive reference as used in the results variables."
+msgid ""
+"Please inseret a vaild positive reference as used in the results variables."
 msgstr "يرجى إدخال مرجع موجب صالح كما هو مستخدم في متغيرات النتائج."
 
 msgid "Fleiss' kappa"
@@ -623,6 +910,11 @@ msgstr "المقيّم مقابل المعيار"
 msgid "Between appraisers"
 msgstr "بين المقيّمين"
 
+msgid ""
+"Averaged over trials; trial k is the k-th row of an appraiser and part in "
+"the data."
+msgstr ""
+
 msgid "Each appraiser vs standard"
 msgstr "كل مقيّم مقابل المعيار"
 
@@ -635,17 +927,8 @@ msgstr "المفحوص"
 msgid "Matched"
 msgstr "متطابق"
 
-msgid "Percent"
-msgstr "النسبة المئوية"
-
-msgid "Lower"
-msgstr "الحد الأدنى"
-
 msgid "Confidence interval of 95%%"
 msgstr "فترة ثقة بنسبة 95%%"
-
-msgid "Upper"
-msgstr "الحد الأعلى"
 
 msgid "Invalid reference and/or results were inserted."
 msgstr "أُدرج مرجع غير صالح و/أو نتائج غير صالحة."
@@ -668,23 +951,40 @@ msgstr "معدل الإغفال"
 msgid "False alarm rate"
 msgstr "معدل الإنذارات الكاذبة"
 
-msgid "Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false alarm rate)"
+msgid ""
+"Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false "
+"alarm rate)"
 msgstr ""
-"مقبول: x >= 90%% (الفعالية)، x <= 2%% (معدل الإغفال)، x <= 5%% (معدل الإنذارات "
-"الكاذبة)"
+"مقبول: x >= 90%% (الفعالية)، x <= 2%% (معدل الإغفال)، x <= 5%% (معدل "
+"الإنذارات الكاذبة)"
 
-msgid "Marginally acceptable: x >= 80%% (effectiveness), x =< 5%% (miss rate), x =< 10%% (false alarm rate)"
+msgid ""
+"Marginally acceptable: x >= 80%% (effectiveness), x =< 5%% (miss rate), x =< "
+"10%% (false alarm rate)"
 msgstr ""
 "مقبول بدرجة حدية: x >= 80%% (الفعالية)، x <= 5%% (معدل الإغفال)، x <= 10%% "
 "(معدل الإنذارات الكاذبة)"
 
-msgid "Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false alarm rate)"
+msgid ""
+"Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false "
+"alarm rate)"
 msgstr ""
 "غير مقبول: x < 80%% (الفعالية)، x > 5%% (معدل الإغفال)، x > 10%% (معدل "
 "الإنذارات الكاذبة)"
 
 msgid "More than one measurement per operator required."
 msgstr "يلزم أكثر من قياس واحد لكل مشغّل."
+
+#, fuzzy
+msgid ""
+"Each appraiser must rate each part, and each part the same number of times."
+msgstr "التصميم غير متوازن: لم تُقَس جميع القطع العدد نفسه من المرات."
+
+msgid "Each appraiser must have exactly one row per part."
+msgstr ""
+
+msgid "Each part must have a single reference value."
+msgstr ""
 
 msgid "Kendall's tau is only available for numeric measurements."
 msgstr "معامل تاو لكندال متاح للقياسات العددية فقط."
@@ -694,6 +994,19 @@ msgstr "تاو لكندال متاح فقط للقياسات غير الثنائ
 
 msgid "Operator"
 msgstr "المشغّل"
+
+msgid ""
+"Between appraisers: Kendall's tau-b over all combinations of the two "
+"appraisers' ratings of each part."
+msgstr ""
+
+msgid ""
+"Appraiser vs standard: Kendall's tau-b of each trial with the standard, "
+"averaged over trials."
+msgstr ""
+
+msgid "Agreement counts and totals must have compatible lengths."
+msgstr ""
 
 msgid "%g (unacceptable)"
 msgstr "%g (غير مقبول)"
@@ -761,16 +1074,22 @@ msgstr "التحيز والخطية"
 msgid "Percentage process variation graph"
 msgstr "رسم النسبة المئوية لتشتت العملية"
 
-msgid "t-test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
+msgid ""
+"t-test requires more than 1 measurement. %1$i valid measurement(s) detected "
+"in %2$s."
 msgstr ""
 "يتطلب اختبار t أكثر من قياس واحد. عُثر على %1$i من القياسات الصالحة في %2$s."
 
-msgid "Every unique part must have one corresponding reference value. %1$i reference values were found for %2$s unique parts."
+msgid ""
+"Every unique part must have one corresponding reference value. %1$i "
+"reference values were found for %2$s unique parts."
 msgstr ""
 "يجب أن تكون لكل قطعة متميزة قيمة مرجعية واحدة تقابلها. عُثر على %1$i قيمة "
 "مرجعية لـ %2$s قطعة متميزة."
 
-msgid "t-test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s."
+msgid ""
+"t-test requires more than 1 measurement per part. Less than 2 valid "
+"measurement(s) detected in Part(s) %s."
 msgstr ""
 "يتطلب اختبار t أكثر من قياس واحد لكل جزء. كُشف أقل من قياسين صالحين في الجزء/"
 "الأجزاء %s."
@@ -790,13 +1109,18 @@ msgstr "الإجمالي"
 msgid "Gauge r&R"
 msgstr "دراسة قابلية التكرار وإعادة الإنتاج لنظام القياس (GR&R)"
 
-msgid "Design is not balanced: not every operator measured every part the same number of times."
+msgid ""
+"Design is not balanced: not every operator measured every part the same "
+"number of times."
 msgstr "التصميم غير متوازن: لم يقِس كل مشغّل كل قطعة العدد نفسه من المرات."
 
-msgid "Design is not balanced: not every part was measured the same number of times."
+msgid ""
+"Design is not balanced: not every part was measured the same number of times."
 msgstr "التصميم غير متوازن: لم تُقَس جميع القطع العدد نفسه من المرات."
 
-msgid "The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times."
+msgid ""
+"The measurements selected seem to be in a 'Single Column' format as every "
+"operator's part is measured %d times."
 msgstr ""
 "تبدو القياسات المحددة بتنسيق 'عمود واحد'، إذ تُقاس كل قطعة لدى كل مشغّل %d مرة."
 
@@ -917,15 +1241,19 @@ msgstr "يُحسب تشتت الدراسة بالصّيغة: الانحراف ا
 msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
 msgstr "يُحسب تشتت الدراسة بالصّيغة: الانحراف المعياري <span>&#215;</span> %.2f"
 
-msgid "Historical standard deviation is used to calculate some values for std. dev., study variation, and %%study variation."
+msgid ""
+"Historical standard deviation is used to calculate some values for std. "
+"dev., study variation, and %%study variation."
 msgstr ""
 "يُستخدم الانحراف المعياري التاريخي لحساب بعض قيم الانحراف المعياري وتشتت "
 "الدراسة والنسبة المئوية لتشتت الدراسة (%%study variation)."
 
-msgid "Values for %%process variation are not displayed because they are identical to values for %%study variation."
+msgid ""
+"Values for %%process variation are not displayed because they are identical "
+"to values for %%study variation."
 msgstr ""
-"لا تُعرض قيم النسبة المئوية لتشتت العملية (%%process variation) لأنها تطابق قيم "
-"النسبة المئوية لتشتت الدراسة (%%study variation)."
+"لا تُعرض قيم النسبة المئوية لتشتت العملية (%%process variation) لأنها تطابق "
+"قيم النسبة المئوية لتشتت الدراسة (%%study variation)."
 
 msgid "Two-way Analysis of Variance table without interaction"
 msgstr "جدول تحليل التباين ثنائي الاتجاه دون تفاعل"
@@ -978,11 +1306,16 @@ msgstr "خطأ: فشلت دراسة نظام القياس. تعذّر إنشاء
 msgid "%.2f"
 msgstr "%.2f"
 
+msgid ""
+"Unbalanced design. Some parts have more repeated measurements than others."
+msgstr "التصميم غير متوازن. أُعيد قياس بعض القطع مرات أكثر من غيرها."
+
+#, fuzzy
+msgid "Unbalanced design. Some operators measured more parts than others."
+msgstr "التصميم غير متوازن. أُعيد قياس بعض القطع مرات أكثر من غيرها."
+
 msgid "Gauge r&R - nested"
 msgstr "دراسة GR&R لنظام القياس - متداخلة"
-
-msgid "Unbalanced design. Some parts have more repeated measurements than others."
-msgstr "التصميم غير متوازن. أُعيد قياس بعض القطع مرات أكثر من غيرها."
 
 msgid "Gauge r&R (non-replicable) report"
 msgstr "تقرير GR&R لنظام القياس (قياسات غير قابلة للتكرار)"
@@ -1023,8 +1356,25 @@ msgstr "القياسات حسب الجزء × المشغّل"
 msgid "Operator %s"
 msgstr "المشغّل %s"
 
-msgid "Design is not balanced: not all parts were measured the same number of times."
-msgstr "التصميم غير متوازن: لم تُقَس جميع القطع العدد نفسه من المرات."
+#, fuzzy
+msgid "At least one complete pair of measurements is required."
+msgstr "إحدى المراحل على الأقل تخلو من قياسات صالحة."
+
+msgid "Test-retest requires exactly two measurement columns."
+msgstr ""
+
+msgid "Each part must occupy one row with two measurements."
+msgstr ""
+
+msgid ""
+"Test-retest requires exactly two observed measurement sets or operators."
+msgstr ""
+
+msgid "Each part must have only one reading in each measurement set."
+msgstr ""
+
+msgid "Each part must have a reading in both measurement sets."
+msgstr ""
 
 msgid "Scatterplot operators vs parts"
 msgstr "مخطط تشتت للمشغّلين مقابل الأجزاء"
@@ -1134,7 +1484,9 @@ msgstr "<i>t</i>"
 msgid "Bias histogram"
 msgstr "المدرج التكراري للتحيز"
 
-msgid "Histogram requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
+msgid ""
+"Histogram requires more than 1 measurement. %1$i valid measurement(s) "
+"detected in %2$s."
 msgstr ""
 "يتطلب المدرج التكراري أكثر من قياس واحد. عُثر على %1$i من القياسات الصالحة في "
 "%2$s."
@@ -1163,7 +1515,9 @@ msgstr "لا توجد قياسات صالحة في %s."
 msgid "Ref."
 msgstr "المرجع:"
 
-msgid "The stage variable must have at least two levels to define training and test phases."
+msgid ""
+"The stage variable must have at least two levels to define training and test "
+"phases."
 msgstr ""
 "يجب أن يكون لمتغير المرحلة مستويان على الأقل لتحديد مرحلتي التدريب والاختبار."
 
@@ -1173,12 +1527,18 @@ msgstr "أدخل على الأقل اثنين من المتغيرات لبدء �
 msgid "The training phase must contain at least 3 observations."
 msgstr "يجب أن تتضمن مرحلة التدريب 3 مشاهدات على الأقل."
 
-msgid "The covariance matrix of the training phase is computationally singular. This typically occurs when variables are linearly dependent or nearly perfectly correlated. Please remove redundant variables."
+msgid ""
+"The covariance matrix of the training phase is computationally singular. "
+"This typically occurs when variables are linearly dependent or nearly "
+"perfectly correlated. Please remove redundant variables."
 msgstr ""
 "مصفوفة التغاير في مرحلة التدريب منفردة حسابيًا. يحدث هذا عادةً عندما تكون "
 "المتغيرات معتمدة خطيًا أو مرتبطة ارتباطًا شبه تام. احذف المتغيرات الزائدة."
 
-msgid "The covariance matrix of the selected variables is computationally singular. This typically occurs when variables are linearly dependent or nearly perfectly correlated. Please remove redundant variables."
+msgid ""
+"The covariance matrix of the selected variables is computationally singular. "
+"This typically occurs when variables are linearly dependent or nearly "
+"perfectly correlated. Please remove redundant variables."
 msgstr ""
 "مصفوفة تغاير المتغيرات المحددة منفردة حسابيًا. يحدث هذا عادةً عندما تكون "
 "المتغيرات معتمدة خطيًا أو مرتبطة ارتباطًا شبه تام. احذف المتغيرات الزائدة."
@@ -1186,16 +1546,12 @@ msgstr ""
 msgid "Hotelling T² Control Chart"
 msgstr "خريطة ضبط T² لهوتلنغ"
 
-msgid "Displays the Hotelling T² statistic for each sample with upper and lower control limits. Points exceeding the UCL are flagged as out of control."
+msgid ""
+"Displays the Hotelling T² statistic for each sample with upper and lower "
+"control limits. Points exceeding the UCL are flagged as out of control."
 msgstr ""
 "عرض إحصاء T² لهوتلنغ لكل عينة، مع حدَّي الضبط الأعلى والأدنى. تُميَّز النقاط التي "
 "تتجاوز UCL بوصفها خارجة عن الضبط."
-
-msgid "UCL = %s"
-msgstr "UCL = %s"
-
-msgid "LCL = %s"
-msgstr "LCL = %s"
 
 msgid "Hotelling T²"
 msgstr "إحصاء T² لهوتلنغ"
@@ -1209,7 +1565,10 @@ msgstr "اختبار"
 msgid "Hotelling T² Control Chart Summary"
 msgstr "ملخص خريطة ضبط T² لهوتلنغ"
 
-msgid "Summary of the Hotelling T² control chart, including the number of variables, observations, confidence level, control limits, and the determinant of the covariance matrix."
+msgid ""
+"Summary of the Hotelling T² control chart, including the number of "
+"variables, observations, confidence level, control limits, and the "
+"determinant of the covariance matrix."
 msgstr ""
 "ملخص لخريطة الضبط T² لهوتلنغ، يشمل عدد المتغيرات والمشاهدات ومستوى الثقة "
 "وحدود الضبط ومحدِّد مصفوفة التغاير."
@@ -1238,7 +1597,9 @@ msgstr "UCL"
 msgid "|S|"
 msgstr "|S|"
 
-msgid "Control limits for the training phase use the Beta distribution; test phase limits use the F distribution (prediction limits)."
+msgid ""
+"Control limits for the training phase use the Beta distribution; test phase "
+"limits use the F distribution (prediction limits)."
 msgstr ""
 "تستخدم حدود الضبط لمرحلة التدريب توزيع بيتا؛ وتستخدم حدود مرحلة الاختبار "
 "توزيع F (حدود التنبؤ)."
@@ -1246,7 +1607,9 @@ msgstr ""
 msgid "Variable Centers"
 msgstr "مراكز المتغيرات"
 
-msgid "Displays the sample mean of each variable used in the multivariate control chart."
+msgid ""
+"Displays the sample mean of each variable used in the multivariate control "
+"chart."
 msgstr "عرض متوسط العينة لكل متغير مستخدم في خريطة الضبط متعددة المتغيرات."
 
 msgid "Center"
@@ -1258,7 +1621,9 @@ msgstr "مراكز مقدرة من مرحلة التدريب فقط (%s)."
 msgid "Covariance Matrix"
 msgstr "مصفوفة التغاير"
 
-msgid "Displays the sample covariance matrix of the selected variables, used to compute the Hotelling T² statistic."
+msgid ""
+"Displays the sample covariance matrix of the selected variables, used to "
+"compute the Hotelling T² statistic."
 msgstr ""
 "عرض مصفوفة التباين والتغاير في العينة للمتغيرات المحددة، المستخدمة لحساب "
 "إحصاء T² لهوتلنغ."
@@ -1269,7 +1634,9 @@ msgstr "تُقدَّر مصفوفة التغاير من مرحلة التدري�
 msgid "Hotelling T² Values"
 msgstr "قيم T² لهوتلنغ"
 
-msgid "Lists the Hotelling T² statistic for each sample and indicates whether the sample is in or out of control."
+msgid ""
+"Lists the Hotelling T² statistic for each sample and indicates whether the "
+"sample is in or out of control."
 msgstr "عرض إحصاء T² لهوتلنغ لكل عينة، وبيان ما إذا كانت داخل الضبط أو خارجه."
 
 msgid "T²"
@@ -1299,7 +1666,9 @@ msgstr "المعلمة"
 msgid "Estimate"
 msgstr "التقدير"
 
-msgid "Fitting the model failed with the following error message:\n%s"
+msgid ""
+"Fitting the model failed with the following error message:\n"
+"%s"
 msgstr ""
 "فشلت ملاءمة النموذج بسبب الخطأ التالي:\n"
 "%s"
@@ -1307,10 +1676,12 @@ msgstr ""
 msgid "Intercept"
 msgstr "الثابت"
 
-msgid "The IWLS algorithm did not converge. Interpret the results with caution."
+msgid ""
+"The IWLS algorithm did not converge. Interpret the results with caution."
 msgstr "لم تتقارب خوارزمية IWLS. فسّر النتائج بحذر."
 
-msgid "There is only observed category (%s). The results are likely meaningless."
+msgid ""
+"There is only observed category (%s). The results are likely meaningless."
 msgstr "لم تُشاهد سوى فئة واحدة (%s). يُرجّح أن النتائج غير قابلة للتفسير."
 
 msgid "Fit Table"
@@ -1322,10 +1693,9 @@ msgstr "AIC"
 msgid "Detection Plot"
 msgstr "رسم الكشف"
 
-msgid "log(%s)"
-msgstr "log(%s)"
-
-msgid "The detection plot failed with the following error message:\n%s"
+msgid ""
+"The detection plot failed with the following error message:\n"
+"%s"
 msgstr ""
 "فشل مخطط الكشف مع رسالة الخطأ التالية:\n"
 "%s"
@@ -1342,6 +1712,11 @@ msgstr "خطوط التقارب الأفقية"
 msgid "Vertical asymptotes"
 msgstr "خطوط التقارب العمودية"
 
+msgid ""
+"X-coordinates are on the natural-log scale, including entered values for "
+"vertical asymptotes."
+msgstr ""
+
 msgid "Label"
 msgstr "التسمية"
 
@@ -1351,16 +1726,22 @@ msgstr "<b><em>تحذير.</em></b>"
 msgid "Probability of detecting %s"
 msgstr "احتمال الكشف عن %s"
 
+msgid "log(%s)"
+msgstr "log(%s)"
+
 msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
 msgstr "حجم المجموعة الفرعية >5، وقد تكون النتائج متحيزة. يُوصى بمخطط s."
 
-msgid "All zero values have been replaced with a value equal to one-half of the smallest data point."
+msgid ""
+"All zero values have been replaced with a value equal to one-half of the "
+"smallest data point."
 msgstr "استُبدلت جميع القيم الصفرية بقيمة تساوي نصف أصغر قيمة في البيانات."
 
 msgid "Process Capability Report"
 msgstr "تقرير مقدرة العملية"
 
-msgid "Set at least one specification limit (upper or lower) to start the analysis."
+msgid ""
+"Set at least one specification limit (upper or lower) to start the analysis."
 msgstr "تعيين حد مواصفة واحد على الأقل (أعلى أو أدنى) لبدء التحليل."
 
 msgid "Line: %s"
@@ -1384,12 +1765,16 @@ msgstr "استنتاج: %s"
 msgid "X-bar & %s control chart"
 msgstr "خريطة ضبط X-bar و%s"
 
-msgid "Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."
+msgid ""
+"Subgroup size is >50, R chart calculation is not possible. Use S-chart "
+"instead."
 msgstr ""
 "حجم المجموعة الفرعية هو > 50، وحساب خريطة R غير ممكن. استخدم S-chart بدلاً من "
 "ذلك."
 
-msgid "Subgroup size is 1, calculation of selected control chart not possible. Use x-mR chart."
+msgid ""
+"Subgroup size is 1, calculation of selected control chart not possible. Use "
+"x-mR chart."
 msgstr ""
 "حجم المجموعة الفرعية يساوي 1، ولذلك يتعذر حساب مخطط الضبط المحدد. استخدم "
 "مخطط x-mR."
@@ -1397,19 +1782,25 @@ msgstr ""
 msgid "X-mR control chart"
 msgstr "خريطة ضبط X-mR"
 
+msgid "%1$s chart not shown. %2$s"
+msgstr ""
+
 msgid "Capability study"
 msgstr "دراسة المقدرة"
 
 msgid "Process capability study"
 msgstr "دراسة مقدرة العملية"
 
-msgid "Lower specification limit must be smaller than upper specification limit."
+msgid ""
+"Lower specification limit must be smaller than upper specification limit."
 msgstr "يجب أن يكون الحد الأدنى للمواصفة أصغر من الحد الأعلى للمواصفة."
 
 msgid "Target outside of specification limits."
 msgstr "الهدف خارج حدود المواصفات."
 
-msgid "Dataset contains negative numbers. Not compatible with the selected distribution."
+msgid ""
+"Dataset contains negative numbers. Not compatible with the selected "
+"distribution."
 msgstr "تحتوي مجموعة البيانات أعدادًا سالبة، فلا تتوافق مع التوزيع المحدد."
 
 msgid "Process capability"
@@ -1424,7 +1815,10 @@ msgstr "تحويل البيانات"
 msgid "Data could not be transformed: %1$s"
 msgstr "تعذّر تحويل البيانات: %1$s"
 
-msgid "The data after transformations appears to be invalid. This could be caused by unsuitable data transformation (transformation type or extreme parameter used to transform the data)."
+msgid ""
+"The data after transformations appears to be invalid. This could be caused "
+"by unsuitable data transformation (transformation type or extreme parameter "
+"used to transform the data)."
 msgstr ""
 "تبدو البيانات بعد التحويلات غير صالحة. قد ينتج ذلك عن تحويل غير مناسب "
 "للبيانات (بسبب نوع التحويل أو استخدام معلمة ذات قيمة متطرفة)."
@@ -1462,7 +1856,9 @@ msgstr "الانحراف المعياري (الكلي)"
 msgid "Std. dev. (within)"
 msgstr "الانحراف المعياري (داخل المجموعات)"
 
-msgid "Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."
+msgid ""
+"Columns titled 'Change' concern changes of the respective stage in "
+"comparison to baseline (BL)."
 msgstr ""
 "تبيّن الأعمدة المعنونة «التغير» مقدار تغير كل مرحلة مقارنةً بخط الأساس (BL)."
 
@@ -1487,7 +1883,9 @@ msgstr "مقدرة العملية"
 msgid "No valid measurements detected."
 msgstr "لم يتم الكشف عن أي قياسات صالحة."
 
-msgid "Need at least 2 measurements to fit distribution. %1$i measurement(s) detected."
+msgid ""
+"Need at least 2 measurements to fit distribution. %1$i measurement(s) "
+"detected."
 msgstr "يلزم قياسان على الأقل لملاءمة التوزيع. عُثر على %1$i من القياسات."
 
 msgid "At least one of the stages contains no valid measurements."
@@ -1499,12 +1897,16 @@ msgstr "الكثافة"
 msgid "Measurement"
 msgstr "قياس"
 
-msgid "Normal dist.\n(std. dev. total)"
+msgid ""
+"Normal dist.\n"
+"(std. dev. total)"
 msgstr ""
 "التوزيع الطبيعي\n"
 "(الانحراف المعياري الكلي)"
 
-msgid "Normal dist.\n(std. dev. within)"
+msgid ""
+"Normal dist.\n"
+"(std. dev. within)"
 msgstr ""
 "التوزيع الطبيعي\n"
 "(الانحراف المعياري داخل المجموعات)"
@@ -1512,7 +1914,9 @@ msgstr ""
 msgid "Weibull dist."
 msgstr "توزيع ويبل"
 
-msgid "3-parameter\nlognormal dist."
+msgid ""
+"3-parameter\n"
+"lognormal dist."
 msgstr ""
 "التوزيع الطبيعي اللوغاريتمي\n"
 "ذو 3 معلمات"
@@ -1571,10 +1975,17 @@ msgstr "Z (ST)"
 msgid "Z.bench (ST)"
 msgstr "Z.bench (ST)"
 
-msgid "Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."
+msgid ""
+"Statistics displayed as * were not calculated because the relevant "
+"specification limit is not set or set as boundary."
 msgstr ""
 "لم تُحسب الإحصاءات المعروضة بالرمز * لعدم تعيين حد المواصفة المعني أو لتعيينه "
 "كقيمة حدية."
+
+msgid ""
+"Confidence intervals for Cp and Cpk are not computed when a historical "
+"standard deviation is used."
+msgstr ""
 
 msgid "Process performance (total)"
 msgstr "أداء العملية (الكلي)"
@@ -1612,7 +2023,9 @@ msgstr "Cpm"
 msgid "%s CI for Cpm"
 msgstr "فترة ثقة %s لـCpm"
 
-msgid "Rows titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."
+msgid ""
+"Rows titled 'Change' concern changes of the respective stage in comparison "
+"to baseline (BL)."
 msgstr ""
 "تبيّن الصفوف المعنونة «التغير» مقدار تغير المرحلة المعنية مقارنةً بخط الأساس "
 "(BL)."
@@ -1668,12 +2081,16 @@ msgstr "جدول الاحتمالات ورسمها"
 msgid "Probability plot"
 msgstr "مخطط الاحتمال"
 
-msgid "Probability plot and table for %s distribution are not implemented in Quality Control module. Please use the Distributions module."
+msgid ""
+"Probability plot and table for %s distribution are not implemented in "
+"Quality Control module. Please use the Distributions module."
 msgstr ""
 "مخطط الاحتمال وجدوله لتوزيع %s غير متاحين في وحدة ضبط الجودة. يرجى استخدام "
 "وحدة التوزيعات."
 
-msgid "Need at least 2 measurements to calculate probability table/plot. %1$i measurement(s) detected."
+msgid ""
+"Need at least 2 measurements to calculate probability table/plot. %1$i "
+"measurement(s) detected."
 msgstr ""
 "يلزم قياسان على الأقل لحساب جدول/مخطط الاحتمال. عُثر على %1$i من القياسات."
 
@@ -1692,35 +2109,52 @@ msgstr "الانحراف المعياري (%1$s)"
 msgid "AD"
 msgstr "AD"
 
-msgid "The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution."
+msgid ""
+"The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s "
+"distribution."
 msgstr "يُحسب إحصاء أندرسون–دارلينغ A<i>D</i> مقابل توزيع %1$s."
 
-msgid "Red dotted lines in the probability plot below represent a 95%% confidence interval."
-msgstr "تمثل الخطوط الحمراء المنقطة في مخطط الاحتمال أدناه فترة ثقة بنسبة 95%%."
+msgid ""
+"Red dotted lines in the probability plot below represent a 95%% confidence "
+"interval."
+msgstr ""
+"تمثل الخطوط الحمراء المنقطة في مخطط الاحتمال أدناه فترة ثقة بنسبة 95%%."
 
 msgid "Probability plot against %1$s distribution"
 msgstr "رسم الاحتمال مقابل توزيع %1$s"
 
-msgid "Could not compute variance-covariance matrix: parameter vector has unexpected length."
+msgid ""
+"Could not compute variance-covariance matrix: parameter vector has "
+"unexpected length."
 msgstr "تعذّر حساب مصفوفة التباين–التغاير: طول متجه المعلمات غير متوقع."
 
-msgid "Could not compute variance-covariance matrix: Hessian contains invalid values."
+msgid ""
+"Could not compute variance-covariance matrix: Hessian contains invalid "
+"values."
 msgstr "تعذّر حساب مصفوفة التباين–التغاير: تحتوي مصفوفة هسيان قيمًا غير صالحة."
 
-msgid "Fitting lognormal distribution failed, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."
+msgid ""
+"Fitting lognormal distribution failed, most likely because the observed "
+"distribution of the data are very far away from the selected distribution, "
+"please try one that describes your data more closely."
 msgstr ""
-"فشلت ملاءمة التوزيع الطبيعي اللوغاريتمي، غالبًا لابتعاد توزيع البيانات المشاهد "
-"كثيرًا عن التوزيع المحدد. جرّب توزيعًا يصف بياناتك بصورة أقرب."
+"فشلت ملاءمة التوزيع الطبيعي اللوغاريتمي، غالبًا لابتعاد توزيع البيانات "
+"المشاهد كثيرًا عن التوزيع المحدد. جرّب توزيعًا يصف بياناتك بصورة أقرب."
 
-msgid "Fitting Weibull distribution failed, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."
+msgid ""
+"Fitting Weibull distribution failed, most likely because the observed "
+"distribution of the data are very far away from the selected distribution, "
+"please try one that describes your data more closely."
 msgstr ""
-"فشلت ملاءمة توزيع ويبل، غالبًا لابتعاد توزيع البيانات المشاهد كثيرًا عن التوزيع "
-"المحدد. جرّب توزيعًا يصف بياناتك بصورة أقرب."
+"فشلت ملاءمة توزيع ويبل، غالبًا لابتعاد توزيع البيانات المشاهد كثيرًا عن "
+"التوزيع المحدد. جرّب توزيعًا يصف بياناتك بصورة أقرب."
 
 msgid "Histogram"
 msgstr "المدرج التكراري"
 
-msgid "Dataset contains negative numbers. Could not overlay the selected distribution."
+msgid ""
+"Dataset contains negative numbers. Could not overlay the selected "
+"distribution."
 msgstr ""
 "تحتوي مجموعة البيانات أعدادًا سالبة. تعذّرت إضافة التوزيع المحدد إلى الرسم."
 
@@ -1733,27 +2167,39 @@ msgstr "التوزيع الطبيعي"
 msgid "Log-normal dist."
 msgstr "التوزيع الطبيعي اللوغاريتمي"
 
-msgid "3-parameter\nlog-normal dist."
+msgid ""
+"3-parameter\n"
+"log-normal dist."
 msgstr ""
 "التوزيع الطبيعي اللوغاريتمي\n"
 "ذو 3 معلمات"
 
-msgid "Some specification limits or target value are outside of the support of the Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f)."
+msgid ""
+"Some specification limits or target value are outside of the support of the "
+"Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f)."
 msgstr ""
 "تقع بعض حدود المواصفات أو القيمة المستهدفة خارج مجال تحويل بوكس–كوكس. الحد "
 "الأدنى للتحويل هو -shift (%1$f)."
 
-msgid "Some specification limits or target value are outside of the support of the Johnson (SB) transform. The bounds of the transform were identified to between %1$f and %2$f."
+msgid ""
+"Some specification limits or target value are outside of the support of the "
+"Johnson (SB) transform. The bounds of the transform were identified to "
+"between %1$f and %2$f."
 msgstr ""
 "تقع بعض حدود المواصفات أو القيمة المستهدفة خارج مجال تحويل جونسون (SB). حُدد "
 "حدا التحويل بين %1$f و%2$f."
 
-msgid "Some specification limits or target value are outside of the support of the Johnson (SL) transform. The lower bound of the transform was identified as %1$f."
+msgid ""
+"Some specification limits or target value are outside of the support of the "
+"Johnson (SL) transform. The lower bound of the transform was identified as "
+"%1$f."
 msgstr ""
 "تقع بعض حدود المواصفات أو القيمة المستهدفة خارج مجال تحويل جونسون (SL). حُدد "
 "الحد الأدنى للتحويل بأنه %1$f."
 
-msgid "The measurements, specification limits and target value were transformed using the %s transformation, with the following formula,"
+msgid ""
+"The measurements, specification limits and target value were transformed "
+"using the %s transformation, with the following formula,"
 msgstr ""
 "حُوّلت القياسات وحدود المواصفات والقيمة المستهدفة باستخدام تحويل %s وفق الصيغة "
 "الآتية،"
@@ -1770,12 +2216,15 @@ msgstr "تقدير جميع القيم من البيانات"
 msgid "Rare event charts"
 msgstr "خرائط الأحداث النادرة"
 
-msgid "Date/time conversion returned no valid values. Did you select the correct date/time format?"
+msgid ""
+"Date/time conversion returned no valid values. Did you select the correct "
+"date/time format?"
 msgstr ""
-"لم يُنتج تحويل التاريخ/الوقت قيمًا صالحة. هل اخترت التنسيق الصحيح للتاريخ/الوقت"
-"؟"
+"لم يُنتج تحويل التاريخ/الوقت قيمًا صالحة. هل اخترت التنسيق الصحيح للتاريخ/"
+"الوقت؟"
 
-msgid "Negative values for time/intervals detected, calculation is not possible."
+msgid ""
+"Negative values for time/intervals detected, calculation is not possible."
 msgstr "عُثر على قيم سالبة للزمن/الفترات، ولا يمكن إجراء الحساب."
 
 msgid "Rare event charts report"
@@ -1787,21 +2236,19 @@ msgstr "خريطة G"
 msgid "T chart"
 msgstr "خريطة T"
 
-msgid "<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
+msgid ""
+"<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
 msgstr "<i>ملاحظة.</i> حُذفت %i مشاهدة لم تُسند إلى أي مرحلة."
 
 msgid "Variables Charts for Individuals"
 msgstr "خرائط ضبط المتغيرات للأفراد"
 
-msgid "Moving range length is larger than the number of observations\n                                                           in one of the stages."
-msgstr ""
-"طول المدى المتحرك أكبر من عدد المشاهدات\n"
-"                                                           في إحدى المراحل."
-
 msgid "Variables Chart for Individuals Report"
 msgstr "تقرير خريطة ضبط المتغيرات للأفراد"
 
-msgid "Autocorrelation plot requires uninterrupted series of values. Missing values detected in %s."
+msgid ""
+"Autocorrelation plot requires uninterrupted series of values. Missing values "
+"detected in %s."
 msgstr ""
 "يتطلب مخطط الارتباط الذاتي سلسلة متصلة من القيم. كُشفت قيم مفقودة في %s."
 
@@ -1817,7 +2264,9 @@ msgstr "الإبطاء"
 msgid "Control charts"
 msgstr "خرائط الضبط"
 
-msgid "All subgroups are of size 1. Variables charts for subgroups cannot be calculated. Use variables charts for individuals."
+msgid ""
+"All subgroups are of size 1. Variables charts for subgroups cannot be "
+"calculated. Use variables charts for individuals."
 msgstr ""
 "حجم جميع المجموعات الفرعية 1. لا يمكن حساب مخططات المتغيرات للمجموعات "
 "الفرعية. استخدم مخططات المتغيرات للأفراد."
@@ -1837,11 +2286,15 @@ msgstr[3] "المتغيرات المصاحبة التي نُظر فيها دون
 msgstr[4] "المتغيرات المصاحبة التي نُظر فيها دون إدراجها: %1$s."
 msgstr[5] "المتغيرات المصاحبة التي نُظر فيها دون إدراجها: %1$s."
 
-msgid "The main effect %1$s was retained to respect marginality (its squared term is in the model)."
-msgid_plural "The main effects %1$s were retained to respect marginality (their squared terms are in the model)."
+msgid ""
+"The main effect %1$s was retained to respect marginality (its squared term "
+"is in the model)."
+msgid_plural ""
+"The main effects %1$s were retained to respect marginality (their squared "
+"terms are in the model)."
 msgstr[0] ""
-"احتُفظ بالآثار الرئيسية %1$s مراعاةً لمبدأ الهامشية، لأن حدودها التربيعية موجودة "
-"في النموذج."
+"احتُفظ بالآثار الرئيسية %1$s مراعاةً لمبدأ الهامشية، لأن حدودها التربيعية "
+"موجودة في النموذج."
 msgstr[1] ""
 "احتُفظ بالأثر الرئيسي %1$s مراعاةً لمبدأ الهامشية، لأن حده التربيعي موجود في "
 "النموذج."
@@ -1849,11 +2302,46 @@ msgstr[2] ""
 "احتُفظ بالأثرين الرئيسيين %1$s مراعاةً لمبدأ الهامشية، لأن حديهما التربيعيين "
 "موجودان في النموذج."
 msgstr[3] ""
-"احتُفظ بالآثار الرئيسية %1$s مراعاةً لمبدأ الهامشية، لأن حدودها التربيعية موجودة "
-"في النموذج."
+"احتُفظ بالآثار الرئيسية %1$s مراعاةً لمبدأ الهامشية، لأن حدودها التربيعية "
+"موجودة في النموذج."
 msgstr[4] ""
-"احتُفظ بالآثار الرئيسية %1$s مراعاةً لمبدأ الهامشية، لأن حدودها التربيعية موجودة "
-"في النموذج."
+"احتُفظ بالآثار الرئيسية %1$s مراعاةً لمبدأ الهامشية، لأن حدودها التربيعية "
+"موجودة في النموذج."
 msgstr[5] ""
-"احتُفظ بالآثار الرئيسية %1$s مراعاةً لمبدأ الهامشية، لأن حدودها التربيعية موجودة "
-"في النموذج."
+"احتُفظ بالآثار الرئيسية %1$s مراعاةً لمبدأ الهامشية، لأن حدودها التربيعية "
+"موجودة في النموذج."
+
+#~ msgid "Terms removed from Regression:"
+#~ msgstr "الحدود المحذوفة من الانحدار:"
+
+#~ msgid "and from ANOVA:"
+#~ msgstr "ومن تحليل التباين (ANOVA):"
+
+#~ msgid "Terms removed from ANOVA:"
+#~ msgstr "الحدود المحذوفة من تحليل التباين:"
+
+#~ msgid "lower and upper bounds are"
+#~ msgstr "الحدَّين الأدنى والأعلى"
+
+#~ msgid "target is"
+#~ msgstr "القيمة المستهدفة"
+
+#~ msgid "The %s estimated from data."
+#~ msgstr "جرى تقدير %s من البيانات."
+
+#~ msgid "Cohen's kappa correlations summary"
+#~ msgstr "ملخص معاملات كابا لكوهين"
+
+#~ msgid ""
+#~ "Design is not balanced: not all parts were measured the same number of "
+#~ "times."
+#~ msgstr "التصميم غير متوازن: لم تُقَس جميع القطع العدد نفسه من المرات."
+
+#~ msgid ""
+#~ "Moving range length is larger than the number of observations\n"
+#~ "                                                           in one of the "
+#~ "stages."
+#~ msgstr ""
+#~ "طول المدى المتحرك أكبر من عدد المشاهدات\n"
+#~ "                                                           في إحدى "
+#~ "المراحل."
