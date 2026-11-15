@@ -1450,4 +1450,30 @@ Upgrades
 
 		ChangeRename {from: "processCapabilityTableZbench";		to: "processCapabilityTableZ"}
 	}
+
+	// Test Retest: process std. dev. and tolerance now have a minimum above zero; saved zero values fall back to the default
+	Upgrade
+	{
+		functionName:	"msaTestRetest"
+		fromVersion:	"0.98.2"
+		toVersion:		"0.98.3"
+
+		ChangeJS
+		{
+			name:		"manualProcessSdValue"
+			jsFunction:	function(options)
+			{
+				return options["manualProcessSdValue"] >= 0.000000001 ? options["manualProcessSdValue"] : 1;
+			}
+		}
+
+		ChangeJS
+		{
+			name:		"toleranceValue"
+			jsFunction:	function(options)
+			{
+				return options["toleranceValue"] >= 0.000000001 ? options["toleranceValue"] : 1;
+			}
+		}
+	}
 }
