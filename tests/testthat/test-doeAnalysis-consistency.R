@@ -248,3 +248,50 @@ test_that("contour output explains its slice and keeps the plot available", {
   expect_identical(plots[[1]]$status, "complete")
   expect_match(plots[[length(plots)]]$rawtext, "held at their means", fixed = TRUE)
 })
+
+test_that("the slice note follows all contour and surface plots in display order", {
+  data <- expand.grid(A = -1:1, B = -1:1, C = -1:1, rep = 1:2)
+  data$Y <- with(data, 5 + A + B^2 + C + A * B + ifelse(rep == 1, -.1, .1))
+  for (type in c("contourPlot", "surfacePlot")) {
+    options <- .doeConsistencyOptions()
+    options$continuousFactorsResponseSurface <- c("A", "B", "C")
+    options$contourSurfacePlot <- TRUE
+    options$contourSurfacePlotType <- type
+    options$contourSurfacePlotVariables <- c("C", "A", "B")
+    result <- jaspTools::runAnalysis("doeAnalysis", data, options, view = FALSE)
+    responseMeta <- Filter(function(x) x$name == "Y", result$results[[".meta"]])[[1]]
+    plotMeta <- Filter(function(x) x$name == "Y_contourSurfacePlot", responseMeta$meta)[[1]]$meta
+    expect_identical(vapply(plotMeta, function(x) x$type, character(1)), c("image", "image", "image", "htmlNode"))
+    expect_identical(tail(plotMeta, 1)[[1]]$name, "Y_contourSurfacePlot_sliceNote")
+    title <- if (type == "contourPlot") "Contour plot" else "Surface plot"
+    expect_identical(vapply(head(plotMeta, 3), function(x) x$title, character(1)),
+                     paste(title, "of Y vs", c("C and A", "C and B", "A and B")))
+    plots <- .doeConsistencyTable(result, "contourSurfacePlot")$collection
+    for (item in head(plotMeta, 3))
+      expect_identical(plots[[item$name]]$status, "complete")
+  }
+})
+
+test_that("alias removal names the lower-order term required by a retained interaction", {
+  # Non-regular design: A:B is aliased with C, while A:B:C remains estimable.
+  data <- expand.grid(A = -1:1, B = -1:1, rep = 1:2)
+  data$C <- data$A * data$B
+  data$Y <- with(data, 10 + A + 2 * B + 3 * C + .5 * A * B * C + ifelse(rep == 1, -.1, .1))
+  reference <- stats::lm(Y ~ A * B * C, data)
+  expect_true(is.na(stats::coef(reference)[["A:B"]]))
+  expect_false(is.na(stats::coef(reference)[["A:B:C"]]))
+  for (coded in c(TRUE, FALSE)) {
+    options <- jaspTools::analysisOptions("doeAnalysis")
+    options$continuousFactorsFactorial <- c("A", "B", "C")
+    options$dependentFactorial <- "Y"
+    options$highestOrder <- TRUE
+    options$order <- 3
+    options$codeFactors <- coded
+    result <- jaspTools::runAnalysis("doeAnalysis", data, options, view = FALSE)
+    message <- .doeConsistencyTable(result, "tableSummary")$error$errorMessage
+    expect_match(message, "Removing aliased terms leaves missing lower-order terms", fixed = TRUE)
+    expect_match(gsub("\u2009", "", message, fixed = TRUE), "A\u273bB", fixed = TRUE)
+    expect_match(message, "Remove the higher-order terms", fixed = TRUE)
+    expect_length(.doeConsistencyTable(result, "tableAnova")$data, 0)
+  }
+})

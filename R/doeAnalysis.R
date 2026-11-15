@@ -495,9 +495,13 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       regressionFit <- lm(formula, data = dataset)
     }
 
+    missingTerms <- .doeMissingLowerTerms(formula)
+    if (length(missingTerms) > 0) {
+      jaspResults[[currentDependent]]$setError(gettextf("Removing aliased terms leaves missing lower-order terms: %s. Remove the higher-order terms that require them or revise the design.", paste(.doeFormatTermLabels(missingTerms), collapse = ", ")))
+      next
+    }
     regressionFitCoded     <- stats::lm(formula, data = datasetCoded)
-    if (length(.doeMissingLowerTerms(formula)) > 0 ||
-        !.doeSameColumnSpace(stats::model.matrix(regressionFit), stats::model.matrix(regressionFitCoded))) {
+    if (!.doeSameColumnSpace(stats::model.matrix(regressionFit), stats::model.matrix(regressionFitCoded))) {
       jaspResults[[currentDependent]]$setError(gettext("This model is not supported in both display units. Check lower-order terms, aliasing and predictor scales."))
       next
     }
@@ -2794,6 +2798,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       variablePairString <- paste(variablePair, collapse = gettext(" and "))
       plotTitle <- gettextf("%1$s of %2$s vs %3$s", plotTypeString, dep, variablePairString)
       plot <- createJaspPlot(title = plotTitle, width = 560, height = 460)
+      plot$position <- i
       result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
       modelVars <- all.vars(attr(stats::terms(result[["object"]]), "variables"))
       missingVars <- setdiff(variablePair, modelVars)
