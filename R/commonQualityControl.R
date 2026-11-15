@@ -1810,8 +1810,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       # With a free threshold and shape <= 1 the likelihood increases (for shape < 1 without bound) as the threshold
       # approaches the smallest observation, so there is no MLE and the estimate is wherever the optimizer stopped.
-      # A threshold (also a fixed one) at or above the smallest observation gives a likelihood of zero.
-      if ((!"thres" %in% names(fix.arg) && weibull3Pars[["shape"]] <= 1) || weibull3Pars[["thres"]] >= min(data))
+      # At a fixed threshold equal to the smallest observation, a fixed shape of one gives a valid shifted exponential fit.
+      if ((!"thres" %in% names(fix.arg) && weibull3Pars[["shape"]] <= 1) ||
+          weibull3Pars[["thres"]] > min(data) ||
+          (weibull3Pars[["thres"]] == min(data) && !isTRUE(fix.arg[["shape"]] == 1)))
         stop(estimationErrorMessage, call. = FALSE)
 
       beta  <- weibull3Pars[["shape"]] # shape
