@@ -952,7 +952,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   }
   tb2$addRows(rows2)
   if (desi <= 0)
-    tb2$addFootnote(gettext("No factor setting with a composite desirability above 0 was found. The optimizer starts from the design points and can miss acceptable settings that lie between them."))
+    tb2$addFootnote(gettext("The optimizer found no factor setting within the observed factor ranges with a composite desirability above 0."))
   .doeAddPredictionSettingsFootnotes(tb2, blocks, covariates)
   if (.doeOptimizerModelsAliased(models))
     tb2$addFootnote(.doeAliasedOptimizerNote())
@@ -1417,6 +1417,11 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     continuousPredictorsMin <- sapply(continuousPredictorsData, min)
     continuousPredictorsMax <- sapply(continuousPredictorsData, max)
   }
+  # observed range of each response: the unit in which .doeOptimizeContinuous measures how far a prediction is from its bounds
+  responseScale <- vapply(roOptionsDf$variable, function(response) {
+    responseRange <- diff(range(dataset[[response]], na.rm = TRUE))
+    if (is.finite(responseRange) && responseRange > 0) responseRange else 1
+  }, numeric(1))
 
   if (length(discretePredictors) >= 1 && !identical(discretePredictors, "")) {
     discretePredictorLevelList <- list()
@@ -1440,7 +1445,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
         currrentOptimResult <- .doeOptimizeContinuous(continuousPredictorsStarts, continuousPredictorsMin, continuousPredictorsMax,
                                                       continuousPredictors, discretePredictors, currentDiscreteLevels,
-                                                      models, dependent, roOptionsDf)
+                                                      models, dependent, roOptionsDf, responseScale)
         # NA (left out below) when this combination has no setting with a unique prediction (aliased contrasts)
         optimalResultDf[i, "outcomeValue"] <- currrentOptimResult$value * -1  # after optimization the sign can be switched again
         optimalResultDf[i, continuousPredictors] <- currrentOptimResult$par
@@ -1452,7 +1457,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   } else {
     currrentOptimResult <- .doeOptimizeContinuous(continuousPredictorsStarts, continuousPredictorsMin, continuousPredictorsMax,
                                                   continuousPredictors, discretePredictors, currentDiscreteLevels,
-                                                  models, dependent, roOptionsDf)
+                                                  models, dependent, roOptionsDf, responseScale)
     optimalResultDf <- data.frame("outcomeValue" = currrentOptimResult$value * -1)  # after optimization the sign can be switched again
     optimalResultDf[continuousPredictors] <- currrentOptimResult$par
   }
@@ -1469,12 +1474,18 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 }
 
 
-# Maximizes the composite desirability over the continuous predictors (L-BFGS-B within the observed ranges).
-# The desirability is flat (0 beyond a bound, 1 beyond a target), so a single start can stall there; instead start from the
-# first design point (the former single start, so the result is never worse) and the nStarts design points with the
-# highest desirability, and keep the best optimum.
+# Maximizes the composite desirability over the continuous predictors within their observed ranges.
+# 1. L-BFGS-B from the first design point (the former single start, so the result is never worse) and from the nStarts design
+#    points with the highest desirability. The desirability is flat (0 beyond a bound, 1 beyond a target), so a single start can
+#    stall there.
+# 2. If the best result has desirability 0, no start reached the acceptable region: first minimize how far the predictions are
+#    from their acceptable intervals (.doeOptimizerDistanceToBounds, from the design points closest to them), then maximize the
+#    desirability from the point reached.
+# 3. Polish the best result with a derivative-free search, because the desirability has kinks (e.g. where a prediction equals
+#    its target) at which L-BFGS-B can stop short of the optimum.
+# A result is only replaced by a better one, so settings where step 1 already succeeded keep their result unless step 3 improves it.
 .doeOptimizeContinuous <- function(startPoints, lower, upper, continuousPredictors, discretePredictors, currentDiscreteLevels,
-                                   models, dependent, roOptionsDf, nStarts = 3) {
+                                   models, dependent, roOptionsDf, responseScale, nStarts = 3) {
   # NA: no unique prediction at these settings (aliased contrasts). optim() needs a number, so the search treats them as
   # desirability 0; the result is checked afterwards.
   rawNegDesirability <- function(par) .predictDesirability(par, continuousPredictors, discretePredictors, currentDiscreteLevels,
@@ -1483,15 +1494,47 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     value <- rawNegDesirability(par)
     if (is.na(value)) 0 else value
   }
+  distanceToBounds <- function(par) {
+    outcome <- .doePredictResponses(par, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent)
+    if (anyNA(outcome)) 1e3 else .doeOptimizerDistanceToBounds(outcome, roOptionsDf, responseScale)
+  }
   rawStartValue <- vapply(seq_len(nrow(startPoints)), function(s) rawNegDesirability(startPoints[s, ]), numeric(1))
   startValue    <- ifelse(is.na(rawStartValue), 0, rawStartValue)
   startRows     <- unique(c(1, order(startValue)[seq_len(min(nStarts, nrow(startPoints)))])) # order() keeps ties in design order
   best <- NULL
-  for (s in startRows) {
-    result <- optim(par = startPoints[s, ], fn = negDesirability, method = "L-BFGS-B", lower = lower, upper = upper)
-    if (is.null(best) || result$value < best$value)
-      best <- result
+  keepBetter <- function(result) if (is.null(best) || result$value < best$value) result else best
+
+  for (s in startRows)
+    best <- keepBetter(optim(par = startPoints[s, ], fn = negDesirability, method = "L-BFGS-B", lower = lower, upper = upper))
+
+  # Step 2: nothing acceptable reached from the design points. All desirabilities are 0 there, so the design points closest to
+  # the acceptable region are the starts. From the point each start reaches, the desirability is maximized (little cost while it
+  # is still 0, and the result can only get better).
+  if (best$value >= 0) {
+    startDistance <- vapply(seq_len(nrow(startPoints)), function(s) distanceToBounds(startPoints[s, ]), numeric(1))
+    for (s in order(startDistance)[seq_len(min(nStarts, nrow(startPoints)))]) { # order() keeps ties in design order
+      nearest <- optim(par = startPoints[s, ], fn = distanceToBounds, method = "L-BFGS-B", lower = lower, upper = upper)
+      best    <- keepBetter(optim(par = nearest$par, fn = negDesirability, method = "L-BFGS-B", lower = lower, upper = upper))
+    }
   }
+
+  # Step 3: derivative-free polish, with the predictors kept inside their observed ranges
+  clampedNegDesirability <- function(par) negDesirability(pmin(pmax(par, lower), upper))
+  if (best$value < 0) {
+    polished <- if (length(best$par) > 1) {
+      optim(par = best$par, fn = clampedNegDesirability, method = "Nelder-Mead", control = list(reltol = 1e-10, maxit = 500))
+    } else if (upper > lower) {
+      width <- 0.1 * (upper - lower) # one predictor: Brent in a window around the result
+      optim(par = best$par, fn = clampedNegDesirability, method = "Brent",
+            lower = max(lower, best$par - width), upper = min(upper, best$par + width))
+    }
+    if (!is.null(polished)) {
+      polished$par <- pmin(pmax(polished$par, lower), upper)
+      if (!is.na(rawNegDesirability(polished$par)) && polished$value < best$value)
+        best <- polished
+    }
+  }
+
   best$par   <- pmin(pmax(best$par, lower), upper) # L-BFGS-B can overshoot a bound by rounding (1 + 2e-16), which looks like extrapolation
   best$value <- rawNegDesirability(best$par)
   # An optimum without a unique prediction falls back to the best start point that has one; NA when none has
@@ -1501,6 +1544,27 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     best$value <- rawStartValue[s]
   }
   return(best)
+}
+
+# Squared distance of the predicted responses from their acceptable intervals (lower bound and/or upper bound, depending on the
+# goal), 0 when all are within, in units of the observed range of the response and summed over the responses. Squared, so that
+# the optimizer does not stall at a kink. The interval is shrunk by a small margin, so a distance of 0 means every desirability is
+# above 0 (it is 0 on the bound itself).
+.doeOptimizerDistanceToBounds <- function(outcome, roOptionsDf, responseScale) {
+  distance <- 0
+  for (response in names(outcome)) {
+    row    <- roOptionsDf[roOptionsDf$variable == response, ]
+    value  <- unname(outcome[response])
+    margin <- 0.01 * responseScale[[response]]
+    lower  <- row$responseOptimizerLowerBound
+    upper  <- row$responseOptimizerUpperBound
+    target <- row$responseOptimizerTarget
+    # bounds a goal does not use are NA; the margin never reaches beyond the middle between bound and target
+    innerLower <- if (is.na(lower)) -Inf else lower + max(0, min(margin, (target - lower) / 2))
+    innerUpper <- if (is.na(upper))  Inf else upper - max(0, min(margin, (upper - target) / 2))
+    distance   <- distance + (max(0, innerLower - value, value - innerUpper) / responseScale[[response]])^2
+  }
+  return(distance)
 }
 
 .individualValueROprediction <- function(value, valueName,
