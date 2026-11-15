@@ -121,8 +121,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   if (length(measurements) > 5 && options[["controlChartType"]] == "xBarR") # if the subgroup size is above 5, R chart is not recommended
     plotNotes <- paste0(plotNotes, gettext("Subgroup size is >5, results may be biased. An s-chart is recommended."))
 
-  # correction for zero values for non-normal capability
-  if (options$capabilityStudyType == "nonNormalCapabilityAnalysis" && ready) {
+  # correction for zero values for non-normal capability. Only for distributions that cannot be fitted to zeros: the exponential,
+  # logistic and 3-parameter distributions are defined at 0, so their fit, capability indices and ppm use the data as entered.
+  # The Process summary mean and standard deviation always use the data as entered.
+  datasetAsEntered <- dataset
+  if (options$capabilityStudyType == "nonNormalCapabilityAnalysis" && ready &&
+      !options[["nonNormalDistribution"]] %in% c("exponential", "logistic", "3ParameterLognormal", "3ParameterWeibull")) {
     x <- na.omit(unlist(dataset[measurements]))
     zeroCorrect <- any(x == 0)
     if (zeroCorrect) {
@@ -132,7 +136,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                                                      title = "Zero values found in non-normal capability study:",
                                                      position = 1)
       jaspResults[["zeroWarning"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "capabilityStudyType",
-                                              "nullDistribution"))
+                                              "nullDistribution", "nonNormalDistribution"))
     }
   }
 
@@ -293,9 +297,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         }
 
       } else {
-        processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnSummaryDF = TRUE)
-        overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnCapabilityDF = TRUE)
-        performanceDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnPerformanceDF = TRUE)
+        processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnSummaryDF = TRUE,
+                                                            datasetAsEntered = datasetAsEntered)
+        overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnCapabilityDF = TRUE,
+                                                            datasetAsEntered = datasetAsEntered)
+        performanceDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnPerformanceDF = TRUE,
+                                                            datasetAsEntered = datasetAsEntered)
         tableSize <- 6
         if (identical(stages, "")) {
           tables[[1]] <- list(overallCapDF, performanceDF, processSummaryDF)
@@ -414,7 +421,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements, stages)
 
     # Perform capability analysis
-    .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements, stages)
+    .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements, stages, datasetAsEntered)
   }
 }
 
@@ -496,7 +503,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 ## Containers ####
 
 
-.qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults, measurements, stages) {
+.qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults, measurements, stages, datasetAsEntered = dataset) {
   container <- createJaspContainer(gettext("Capability study"))
   container$dependOn(c(
     "capabilityStudyType", "processCapabilityPlot", "processCapabilityTable",
@@ -567,7 +574,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     if (options[["processCapabilityPlot"]])
       .qcProcessCapabilityPlot(options, dataset, ready, nonNormalContainer, measurements, stages, options[["nonNormalDistribution"]])
     if (options[["processCapabilityTable"]])
-      .qcProcessCapabilityTableNonNormal(options, dataset, ready, nonNormalContainer, measurements, stages)
+      .qcProcessCapabilityTableNonNormal(options, dataset, ready, nonNormalContainer, measurements, stages, datasetAsEntered = datasetAsEntered)
   }
 }
 
@@ -2353,9 +2360,14 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 }
 
 .qcProcessCapabilityTableNonNormal <- function(options, dataset, ready, container, measurements, stages,
-                                               returnSummaryDF = FALSE, returnCapabilityDF = FALSE, returnPerformanceDF = FALSE) {
+                                               returnSummaryDF = FALSE, returnCapabilityDF = FALSE, returnPerformanceDF = FALSE,
+                                               datasetAsEntered = NULL) {
   if (!ready)
     return()
+
+  # zeros may have been replaced in dataset for the fit; the sample size, mean and std. dev. of the summary use the data as entered
+  if (is.null(datasetAsEntered))
+    datasetAsEntered <- dataset
 
   nDecimals <- .numDecimals
 
@@ -2459,11 +2471,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   for (i in seq_len(nStages)) {
     stage <- .qcStageValue(dataset[[stages]], i)
-    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
-    allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
-    n <- length(allData)
-    sd <- sd(allData)
-    processMean <- mean(allData, na.rm = TRUE)
+    allDataAsEntered <- as.vector(na.omit(unlist(datasetAsEntered[.qcStageRows(dataset[[stages]], i), measurements])))
+    n <- length(allDataAsEntered)
+    sd <- sd(allDataAsEntered)
+    processMean <- mean(allDataAsEntered)
     beta <- distParameters[[i]]$beta
     theta <- distParameters[[i]]$theta
 
@@ -2922,8 +2933,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
     #Calculate performance
     stage <- .qcStageValue(dataset[[stages]], i)
-    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
-    allData <- na.omit(unlist(dataCurrentStage[, measurements]))
+    allData <- na.omit(unlist(datasetAsEntered[.qcStageRows(dataset[[stages]], i), measurements]))
     n <- length(allData)
     allDataVector <- as.vector(allData)
     beta <- distParameters[[i]]$beta
@@ -3275,7 +3285,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       sdx     <- sd(values)
       test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
     } else if (options[["nullDistribution"]] == "lognormal") {
-      fit    <- EnvStats::elnorm(values)
+      fit    <- try(EnvStats::elnorm(values))
+      if (jaspBase::isTryError(fit)) {
+        table$setError(.extractErrorMessage(fit))
+        container[["probabilityTable"]] <- table
+        return()
+      }
       meanx  <- fit$parameters[1]
       sdx    <- fit$parameters[2]
       test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
