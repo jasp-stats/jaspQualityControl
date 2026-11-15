@@ -1,7 +1,8 @@
 
 # imports from packages
 #' @importFrom jaspBase createJaspContainer createJaspPlot createJaspState createJaspTable createJaspHtml
-#' .extractErrorMessage .hasErrors isTryError .readDataSetToEnd
+#' createJaspColumn .extractErrorMessage .hasErrors isTryError .readDataSetToEnd .quitAnalysis gsubInteractionSymbol mathExpression
+#' %setOrRetrieve%
 
 
 #############################################################

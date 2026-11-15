@@ -6310,6 +6310,57 @@ test_that("Contour plot averages over the blocks and holds covariates at their m
                         Block = rep(blocks, nrow(plotData)), Cov = mean(blockData$Cov))
   expected <- as.vector(tapply(stats::predict(refFit, grid), grid$point, mean))
   expect_equal(plotData$z, expected)
+
+  # the plots say which slice they show
+  note <- results[["results"]][["Result"]][["collection"]][["Result_contourSurfacePlot"]][["collection"]][["Result_contourSurfacePlot_sliceNote"]][["text"]]
+  expect_equal(trimws(gsub("</?p>", "", note)),
+               paste0("Continuous predictors that are not on the axes of a plot are held at their mean (see \"Slice at\" in the plot). ",
+                      "The prediction is averaged over the levels of the discrete factors and blocks (Block)."))
+})
+
+test_that("Contour and surface plots state the slice they show", {
+  # response surface, 3 continuous factors and a discrete factor
+  sliceNote <- function(options, file) {
+    options$contourSurfacePlot <- TRUE
+    set.seed(123)
+    results <- runAnalysis("doeAnalysis", file, options)
+    note <- results[["results"]][[options$dependentResponseSurface]][["collection"]][[paste0(options$dependentResponseSurface, "_contourSurfacePlot")]][["collection"]][[paste0(options$dependentResponseSurface, "_contourSurfacePlot_sliceNote")]][["text"]]
+    trimws(gsub("</?p>", "", note))
+  }
+  held <- "Continuous predictors that are not on the axes of a plot are held at their mean (see \"Slice at\" in the plot)."
+  options <- analysisOptions("doeAnalysis")
+  options$designType <- "responseSurfaceDesign"
+  options$dependentResponseSurface <- "Result"
+  options$continuousFactorsResponseSurface <- c("A", "B", "C")
+  options$codeFactors <- FALSE
+  options$rsmPredefinedModel <- TRUE
+  options$rsmPredefinedTerms <- "linearAndSquared"
+  for (type in c("contourPlot", "surfacePlot")) {
+    options$contourSurfacePlotType <- type
+    for (variables in list(c("A", "B"), c("A", "B", "C")))  { # with three selected, each is off the axes in one plot
+      options$contourSurfacePlotVariables <- variables
+      expect_equal(sliceNote(options, "datasets/doeAnalysis/RSM3contCCD.csv"), held)
+    }
+  }
+
+  # nothing is held when the plot shows both continuous factors, but the discrete factor is averaged
+  options$dependentResponseSurface <- "Syruploss"
+  options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+  options$fixedFactorsResponseSurface <- "Nozzle"
+  options$contourSurfacePlotType <- "contourPlot"
+  options$contourSurfacePlotVariables <- c("Speed", "Pressure")
+  expect_equal(sliceNote(options, "datasets/doeAnalysis/doe_realDataExample3.csv"),
+               "The prediction is averaged over the levels of the discrete factors and blocks (Nozzle).")
+})
+
+test_that("The slice note ignores selected variables that are not in the model", {
+  data <- data.frame(A = rep(c(-1, 1), 4), B = rep(c(-1, -1, 1, 1), 2), C = rep(c(-1, -1, -1, -1, 1, 1, 1, 1)), y = c(5, 7, 6, 9, 5.5, 7.4, 6.2, 8.7))
+  fit  <- stats::lm(y ~ A + B, data = data)
+  fit[["data"]] <- data
+  # C was removed from the model: only the A-B plot is drawn, and nothing is held
+  expect_identical(jaspQualityControl:::.doeContourSliceNote(fit, c("A", "B", "C")), "")
+  # fewer than two plottable variables: no plots, no note
+  expect_identical(jaspQualityControl:::.doeContourSliceNote(fit, c("A", "C")), "")
 })
 
 test_that("Prediction table at manual values outside the design space notes the extrapolation", {
@@ -6804,8 +6855,29 @@ test_that("60.7 Fully aliased terms are removed with a footnote", {
   data$C <- data$A * data$B
   set.seed(123)
   results <- runAnalysis("doeAnalysis", data, doeTestOptions("y", c("A", "B", "C"), character(0), list("A", "B", "C", c("A", "B"))))
-  expect_true(any(grepl("^The following aliased terms were removed: A[^,]+B[.]$", doeSummaryFootnotes(results, "y"))))
+  expect_true(any(grepl("^The following aliased terms were removed; their effects are assumed to be zero: A[^,]+B \\(aliased with C\\)[.]$",
+                        doeSummaryFootnotes(results, "y"))))
   expect_false("A:B" %in% doeAnovaSources(results, "y")[["source"]])
+
+  # factors in real units: the partner is still only C (the uncoded columns are also combinations of the intercept and main effects)
+  real <- transform(data, A = 15 + 5 * A, B = 150 + 50 * B, C = 6 + C)
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", real, doeTestOptions("y", c("A", "B", "C"), character(0), list("A", "B", "C", c("A", "B"))))
+  expect_true(any(grepl("zero: A[^,]+B \\(aliased with C\\)[.]$", doeSummaryFootnotes(results, "y"))))
+
+  # a squared term of a two-level factor is aliased with the intercept
+  twoLevel <- lm(y ~ A + I(A^2), data = data.frame(A = c(-1, 1, -1, 1), y = c(1, 3, 1.2, 2.9)))
+  expect_identical(jaspQualityControl:::.doeAliasedWith(twoLevel, "I(A^2)"), "the intercept")
+
+  # 2^(4-1) with D = A x B x C and all two-factor interactions: three of them are aliased with another
+  fraction   <- expand.grid(A = c(-1, 1), B = c(-1, 1), C = c(-1, 1))
+  fraction$D <- fraction$A * fraction$B * fraction$C
+  fraction$y <- c(8.9, 12.1, 9.7, 14.2, 7.4, 10.6, 9.1, 15.0)
+  twoFactor  <- combn(c("A", "B", "C", "D"), 2, simplify = FALSE)
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", fraction, doeTestOptions("y", c("A", "B", "C", "D"), character(0), c(as.list(c("A", "B", "C", "D")), twoFactor)))
+  expect_true(any(grepl("their effects are assumed to be zero: B[^,]+C \\(aliased with A[^,]+D\\), B[^,]+D \\(aliased with A[^,]+C\\), C[^,]+D \\(aliased with A[^,]+B\\)[.]$",
+                        doeSummaryFootnotes(results, "y"))))
 })
 
 ## Response optimizer and predictions with aliased contrasts ####

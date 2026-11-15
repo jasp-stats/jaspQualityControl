@@ -44,7 +44,7 @@ test_that("Missing timestamps do not suppress recurring-stage plots", {
   expect_identical(plotStageResults$status, "complete")
   for (output in plotStageOutputs) {
     expect_false(is.null(output))
-    expect_null(output$error)
+    expect_null(output[["error"]]) # not output$error: it partial-matches the field errorType ("validationError" of non-editable matrix plots)
     expect_true(nzchar(output$data))
   }
 })
