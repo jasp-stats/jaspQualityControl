@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
-"POT-Creation-Date: 2026-09-05 03:43\n"
+"POT-Creation-Date: 2026-11-14 03:40\n"
 "PO-Revision-Date: 2026-03-22 14:09+0000\n"
 "Last-Translator: தமிழ்நேரம் <tamilneram247@gmail.com>\n"
 "Language-Team: Tamil <https://hosted.weblate.org/projects/jasp/"
@@ -62,11 +62,21 @@ msgstr "ஒட்டுமொத்த தொகை விளக்கப்ப�
 msgid "Exponentially weighted moving average chart"
 msgstr "அதிவேக எடையுள்ள நகரும் சராசரி விளக்கப்படம்"
 
-msgid "The number of Defectives/Defects is larger than the sample  size."
-msgstr "குறைபாடுகள்/குறைபாடுகளின் எண்ணிக்கை மாதிரி அளவை விட அதிகமாக உள்ளது."
-
 msgid "Attributes Control Charts"
 msgstr "பண்புக்கூறுகள் கட்டுப்பாட்டு விளக்கப்படங்கள்"
+
+msgid "Defective item and defect counts must be nonnegative integers."
+msgstr ""
+
+msgid "Sample sizes or exposures must be positive."
+msgstr ""
+
+msgid "Sample sizes for defective items must be positive integers."
+msgstr ""
+
+#, fuzzy
+msgid "The number of defective items cannot exceed the sample size."
+msgstr "குறைபாடுகள்/குறைபாடுகளின் எண்ணிக்கை மாதிரி அளவை விட அதிகமாக உள்ளது."
 
 msgid "p Chart"
 msgstr "ப விளக்கப்படம்"
@@ -128,6 +138,9 @@ msgstr "குறைபாடுகளின் எண்ணிக்கை"
 msgid "D"
 msgstr "டி"
 
+msgid "Defects per unit"
+msgstr ""
+
 msgid "Moving Range"
 msgstr "நகரும் வரம்பு"
 
@@ -154,6 +167,28 @@ msgstr "சோதனை 6: இருமுனை வழங்கல்"
 
 msgid "Points where a test failed."
 msgstr "ஒரு சோதனை தோல்வியடைந்த புள்ளிகள்."
+
+msgid ""
+"Cannot estimate the standard deviation from moving ranges of length %1$s: "
+"the data have fewer than %1$s consecutive non-missing observations."
+msgstr ""
+
+msgid ""
+"Cannot estimate the standard deviation from moving ranges of length %1$s: "
+"stage '%2$s' has fewer than %1$s consecutive non-missing observations."
+msgstr ""
+
+#, fuzzy
+msgid "CL = %s"
+msgstr "உமஅ = %g"
+
+#, fuzzy
+msgid "LCL = %s"
+msgstr "கீமஅ = %g"
+
+#, fuzzy
+msgid "UCL = %s"
+msgstr "உமஅ = %g"
 
 msgid "Test results for %1$s chart"
 msgstr "%1$s விளக்கப்படத்திற்கான சோதனை முடிவுகள்"
@@ -245,35 +280,52 @@ msgstr ""
 "%2$sக்கான குறிப்பிடப்பட்ட குறைந்த/உயர் நிலை(கள்) %1$s தரவுத்தொகுப்பில் உள்ள நிலைகளுடன் "
 "பொருந்தவில்லை."
 
-msgid "Terms removed from Regression:"
+msgid ""
+"Calculated with the continuous predictors in coded (−1/+1) units, so the "
+"table is the same in coded and uncoded units."
 msgstr ""
 
-msgid "and from ANOVA:"
+msgid ""
+"Calculated in uncoded units: coding the predictors changes this model (e.g., "
+"an interaction or squared term without its main effects)."
 msgstr ""
 
-msgid "Terms removed from ANOVA:"
+msgid ""
+"Type III sums of squares are unavailable for this model, because some of its "
+"coefficients are aliased. Use Type I or Type II sums of squares."
 msgstr ""
 
 msgid "Response Optimizer Settings"
 msgstr "ரெச்பான்ச் ஆப்டிமைசர் அமைப்புகள்"
 
-msgid "lower and upper bounds and target are"
+msgid ""
+"Bounds and targets that are not set manually are the observed minimum or "
+"maximum of the response."
+msgstr ""
+
+msgid ""
+"The lower and upper bounds, and the targets of the goals maximize and "
+"minimize, are estimated from data."
+msgstr ""
+
+#, fuzzy
+msgid "The lower and upper bounds are estimated from data."
 msgstr "கீழ் மற்றும் மேல் எல்லைகள் மற்றும் இலக்கு"
 
-msgid "lower and upper bounds are"
-msgstr "கீழ் மற்றும் மேல் எல்லைகள்"
-
-msgid "target is"
-msgstr "இலக்கு ஆகும்"
-
-msgid "The %s estimated from data."
-msgstr "தரவுகளிலிருந்து %s மதிப்பிடப்பட்டது."
+msgid "The targets of the goals maximize and minimize are estimated from data."
+msgstr ""
 
 msgid "Response Optimizer Solution"
 msgstr "ரெச்பான்ச் ஆப்டிமைசர் தீர்வு"
 
 msgid "%s fit"
 msgstr "%s பொருத்தம்"
+
+msgid ""
+"No factor setting with a composite desirability above 0 was found. The "
+"optimizer starts from the design points and can miss acceptable settings "
+"that lie between them."
+msgstr ""
 
 msgid "Optimization Plot"
 msgstr "உகப்பாக்கம் சூழ்ச்சி"
@@ -317,15 +369,106 @@ msgstr "உகப்பாக்கம் சூழ்ச்சி சுரு�
 msgid "Composite desirability"
 msgstr "Comp. விரும்பத்தக்க தன்மை"
 
+#, fuzzy
 msgid ""
 "One or more input parameters for continuous predictors are outside of the "
-"design space.\n"
-"                           Extrapolation beyond the design space might not "
-"be valid."
+"design space. Extrapolation beyond the design space might not be valid."
 msgstr ""
 "தொடர்ச்சியான முன்கணிப்பாளர்களுக்கான ஒன்று அல்லது அதற்கு மேற்பட்ட உள்ளீட்டு அளவுருக்கள் "
 "வடிவமைப்பு இடத்திற்கு வெளியே உள்ளன. \n"
 "டிசைன் ச்பேசுக்கு அப்பாற்பட்ட எக்ச்ட்ராபோலேசன் செல்லுபடியாகாது."
+
+#, fuzzy
+msgid "Predicted Responses (Manual Predictor Values)"
+msgstr "உகப்பாக்கம் ப்ளாட் சுருக்கம் (கையேடு முன்கணிப்பு மதிப்புகள்)"
+
+#, fuzzy
+msgid "Predicted Responses (Optimal Solution)"
+msgstr "ரெச்பான்ச் ஆப்டிமைசர் தீர்வு"
+
+msgid "Response"
+msgstr ""
+
+msgid "Fit"
+msgstr ""
+
+msgid "Standard error"
+msgstr "நிலையான பிழை"
+
+msgid "Lower"
+msgstr "கீழ்"
+
+msgid "%s%% CI"
+msgstr ""
+
+msgid "Upper"
+msgstr "மேல்"
+
+msgid "%s%% PI"
+msgstr ""
+
+msgid "PI: prediction interval for a single new run."
+msgstr ""
+
+msgid ""
+"Intervals cannot be calculated when the model has no degrees of freedom for "
+"error."
+msgstr ""
+
+msgid ""
+"Predictions are averaged over the blocks; the prediction interval excludes "
+"variation between blocks."
+msgstr ""
+
+msgid "Predictions are averaged over the blocks."
+msgstr ""
+
+msgid "Covariates are held at their mean."
+msgstr ""
+
+msgid ""
+"Some contrasts of the model are aliased, so the data cannot estimate the "
+"response at some settings (e.g., combinations of factor levels without "
+"runs). These settings are left out."
+msgstr ""
+
+msgid ""
+"The response optimizer cannot be used with this model: some contrasts are "
+"aliased, and it found no setting at which the data can estimate the response "
+"(e.g., when a factor is held constant within blocks, as the predictions are "
+"averaged over the blocks)."
+msgstr ""
+
+msgid ""
+"Not shown: the data cannot estimate the response at these settings, because "
+"some contrasts of the model are aliased (e.g., a combination of factor "
+"levels without runs)."
+msgstr ""
+
+msgid "%1$s: the lower bound (%2$s) is above the target (%3$s)."
+msgstr ""
+
+msgid "%1$s: the target (%2$s) is above the upper bound (%3$s)."
+msgstr ""
+
+msgid "%1$s: the lower bound (%2$s) is above the upper bound (%3$s)."
+msgstr ""
+
+msgid "%1$s: the target (%2$s) is outside the bounds (%3$s to %4$s)."
+msgstr ""
+
+msgid ""
+"The target of %1$s is outside its observed range (%2$s to %3$s), so "
+"predictions beyond that range have desirability 0. Set the bounds manually "
+"to allow them."
+msgstr ""
+
+msgid "Lack of fit"
+msgstr ""
+
+#, fuzzy
+msgid "Pure error"
+msgstr "படிப்பு பிழை"
 
 msgid "Model Summary"
 msgstr "மாதிரி சுருக்கம்"
@@ -338,6 +481,21 @@ msgstr "கணிப்பு %s"
 
 msgid "The following aliased terms were removed: %s."
 msgstr "பின்வரும் மாற்று சொற்கள் அகற்றப்பட்டன: %s."
+
+#, fuzzy
+msgid "The following terms are aliased and were not estimated: %s."
+msgstr "பின்வரும் மாற்று சொற்கள் அகற்றப்பட்டன: %s."
+
+msgid ""
+"Some contrasts of the following terms are aliased and were not estimated: %s."
+msgstr ""
+
+msgid ""
+"Each of these factors has a level that only occurs in the same runs as a "
+"level of another of these factors (e.g., center points entered as a factor "
+"level): %s. To estimate one effect per factor, enter these factors as "
+"continuous predictors."
+msgstr ""
 
 msgid "Analysis of Variance"
 msgstr ""
@@ -353,6 +511,11 @@ msgstr "டிஎஃப்"
 
 msgid "Mean square"
 msgstr "நாற்கை"
+
+msgid ""
+"Type I (sequential) sums of squares, whatever type is selected: the model "
+"has no degrees of freedom for error, so there are no F-tests."
+msgstr ""
 
 msgid "Type I sums of squares."
 msgstr "வகை I சதுரங்களின் கூட்டுத்தொகைகள்."
@@ -381,11 +544,49 @@ msgstr "கால"
 msgid "Effect"
 msgstr "விளைவு"
 
+#, fuzzy
+msgid "%s%% CI for effect"
+msgstr "Cpக்கான %s தொஒ"
+
 msgid "Coefficient"
 msgstr "கெழு"
 
-msgid "Standard error"
-msgstr "நிலையான பிழை"
+#, fuzzy
+msgid "%s%% CI for coefficient"
+msgstr "%s குணகங்கள்"
+
+msgid ""
+"Effect = 2 × coefficient: the change in the response when a term goes from "
+"its −1 to its +1 setting."
+msgstr ""
+
+msgid ""
+"Effect = 2 × coefficient in coded (−1/+1) units, not 2 × the coefficient "
+"shown: the change in the response when a term goes from its −1 to its +1 "
+"setting. For discrete predictors the sign follows the level shown in the "
+"Discrete Predictor Levels table."
+msgstr ""
+
+msgid ""
+"Not shown for squared terms, discrete predictors with more than two levels, "
+"blocks, and covariates."
+msgstr ""
+
+msgid "Levels without runs are left out of the model: %s."
+msgstr ""
+
+msgid ""
+"Confidence intervals cannot be calculated: the model has no degrees of "
+"freedom for error."
+msgstr ""
+
+msgid ""
+"Effects are not shown: coding the continuous predictors changes this model "
+"(e.g., an interaction or squared term without its main effects)."
+msgstr ""
+
+msgid "VIF is not available when some coefficients are aliased."
+msgstr ""
 
 msgid "Discrete Predictor Levels"
 msgstr "தனித்த கணிப்பு நிலைகள்"
@@ -399,6 +600,25 @@ msgstr "நிலை"
 msgid "Regression equation in %s Units"
 msgstr "%s அலகுகளில் பின்னடைவு சமன்பாடு"
 
+msgid ""
+"Not shown: some contrasts of the model are aliased, so the coefficients of "
+"the equation are not unique (see the coefficients table)."
+msgstr ""
+
+msgid ""
+"Some contrasts of the model are aliased. Values left empty depend on which "
+"aliased contrasts are left out (e.g., on the order of the factor levels), so "
+"they are not shown."
+msgstr ""
+
+msgid ""
+"No effects to plot: some contrasts of the model are aliased, so no effect "
+"has a unique estimate."
+msgstr ""
+
+msgid "There are no effects to plot."
+msgstr ""
+
 msgid "Stepwise results"
 msgstr ""
 
@@ -408,14 +628,46 @@ msgstr ""
 msgid "Formula"
 msgstr ""
 
+msgid ""
+"The model is saturated (no error degrees of freedom) and its effects are not "
+"available in uncoded units, because coding changes the model."
+msgstr ""
+
+msgid ""
+"The model is saturated (no error degrees of freedom). Lenth's method for "
+"assessing its effects applies to two-level factorial terms only, but the "
+"model has squared terms or terms of discrete factors with more than two "
+"levels."
+msgstr ""
+
+msgid ""
+"The model is saturated (no error degrees of freedom) and Lenth's pseudo "
+"standard error of its effects is zero, so the effects cannot be assessed."
+msgstr ""
+
 msgid "Pareto Chart of Standardized Effects"
 msgstr "தரப்படுத்தப்பட்ட விளைவுகளின் பரேட்டோ விளக்கப்படம்"
+
+#, fuzzy
+msgid "Pareto Chart of Effects"
+msgstr "தரப்படுத்தப்பட்ட விளைவுகளின் பரேட்டோ விளக்கப்படம்"
+
+#, fuzzy
+msgid "ME = %s"
+msgstr "உமஅ = %g"
 
 msgid "Standardized Effect"
 msgstr "தரப்படுத்தப்பட்ட விளைவு"
 
 msgid "Normal Plot of Standardized Effects"
 msgstr "தரப்படுத்தப்பட்ட விளைவுகளின் இயல்பான சூழ்ச்சி"
+
+#, fuzzy
+msgid "Normal Plot of Effects"
+msgstr "தரப்படுத்தப்பட்ட விளைவுகளின் இயல்பான சூழ்ச்சி"
+
+msgid "Percent"
+msgstr "விழுக்காடு"
 
 msgid "Significant"
 msgstr "குறிப்பிடத்தக்கது"
@@ -477,6 +729,12 @@ msgid ""
 "Could not plot because the following selected variable(s) were not included "
 "in the final model: %1$s. They might have been removed during model "
 "selection."
+msgstr ""
+
+msgid ""
+"Could not plot: some contrasts of the model are aliased, so the data cannot "
+"estimate the predicted response over this plot (averaged over the levels of "
+"the discrete predictors)."
 msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
@@ -627,8 +885,8 @@ msgstr "மதிப்பீட்டாளர் vs ச்டாண்டர�
 msgid "Appraiser"
 msgstr "மதிப்பீட்டாளர்"
 
-msgid "Cohen's kappa correlations summary"
-msgstr "கோஅனின் கப்பா தொடர்புகளின் சுருக்கம்"
+msgid "Correlations between appraisers' ratings"
+msgstr ""
 
 msgid ""
 "Please inseret a vaild positive reference as used in the results variables."
@@ -646,6 +904,11 @@ msgstr "மதிப்பீட்டாளர் vs தரநிலை"
 msgid "Between appraisers"
 msgstr "மதிப்பீட்டாளர்களுக்கு இடையில்"
 
+msgid ""
+"Averaged over trials; trial k is the k-th row of an appraiser and part in "
+"the data."
+msgstr ""
+
 msgid "Each appraiser vs standard"
 msgstr "ஒவ்வொரு மதிப்பீட்டாளர் vs தரநிலை"
 
@@ -658,17 +921,8 @@ msgstr "ஆய்வு செய்யப்பட்டது"
 msgid "Matched"
 msgstr "பொருந்தியது"
 
-msgid "Percent"
-msgstr "விழுக்காடு"
-
-msgid "Lower"
-msgstr "கீழ்"
-
 msgid "Confidence interval of 95%%"
 msgstr "நம்பிக்கை இடைவெளி 95%%"
-
-msgid "Upper"
-msgstr "மேல்"
 
 msgid "Invalid reference and/or results were inserted."
 msgstr "தவறான குறிப்பு மற்றும்/அல்லது முடிவுகள் செருகப்பட்டன."
@@ -715,6 +969,18 @@ msgstr ""
 msgid "More than one measurement per operator required."
 msgstr "ஒரு ஆபரேட்டருக்கு ஒன்றுக்கும் மேற்பட்ட அளவீடுகள் தேவை."
 
+#, fuzzy
+msgid ""
+"Each appraiser must rate each part, and each part the same number of times."
+msgstr ""
+"வடிவமைப்பு சமநிலையில் இல்லை: ஒவ்வொரு பகுதியும் ஒரே எண்ணிக்கையில் அளவிடப்படவில்லை."
+
+msgid "Each appraiser must have exactly one row per part."
+msgstr ""
+
+msgid "Each part must have a single reference value."
+msgstr ""
+
 msgid "Kendall's tau is only available for numeric measurements."
 msgstr "கெண்டலின் டவு எண் அளவீடுகளுக்கு மட்டுமே கிடைக்கும்."
 
@@ -723,6 +989,19 @@ msgstr "கெண்டலின் டவு பைனரி அல்லாத
 
 msgid "Operator"
 msgstr "ஆபரேட்டர்"
+
+msgid ""
+"Between appraisers: Kendall's tau-b over all combinations of the two "
+"appraisers' ratings of each part."
+msgstr ""
+
+msgid ""
+"Appraiser vs standard: Kendall's tau-b of each trial with the standard, "
+"averaged over trials."
+msgstr ""
+
+msgid "Agreement counts and totals must have compatible lengths."
+msgstr ""
 
 msgid "%g (unacceptable)"
 msgstr "%g (ஏற்றுக்கொள்ள முடியாதது)"
@@ -1034,12 +1313,16 @@ msgstr ""
 msgid "%.2f"
 msgstr "%.2f"
 
-msgid "Gauge r&R - nested"
-msgstr "அளவீடு ஆர்&ஆர் - உள்ளமை"
-
 msgid ""
 "Unbalanced design. Some parts have more repeated measurements than others."
 msgstr "சமநிலையற்ற வடிவமைப்பு. சில பகுதிகளில் மற்றவற்றை விட மறுநிகழ்வு அளவீடுகள் உள்ளன."
+
+#, fuzzy
+msgid "Unbalanced design. Some operators measured more parts than others."
+msgstr "சமநிலையற்ற வடிவமைப்பு. சில பகுதிகளில் மற்றவற்றை விட மறுநிகழ்வு அளவீடுகள் உள்ளன."
+
+msgid "Gauge r&R - nested"
+msgstr "அளவீடு ஆர்&ஆர் - உள்ளமை"
 
 msgid "Gauge r&R (non-replicable) report"
 msgstr "அளவீடு ஆர்&ஆர் (பிரதி செய்ய முடியாத) அறிக்கை"
@@ -1082,10 +1365,24 @@ msgid "Operator %s"
 msgstr "ஆபரேட்டர் %s"
 
 #, fuzzy
-msgid ""
-"Design is not balanced: not all parts were measured the same number of times."
+msgid "At least one complete pair of measurements is required."
+msgstr "குறைந்தபட்சம் ஒரு நிலைகளில் சரியான அளவீடுகள் இல்லை."
+
+msgid "Test-retest requires exactly two measurement columns."
 msgstr ""
-"வடிவமைப்பு சமநிலையில் இல்லை: ஒவ்வொரு பகுதியும் ஒரே எண்ணிக்கையில் அளவிடப்படவில்லை."
+
+msgid "Each part must occupy one row with two measurements."
+msgstr ""
+
+msgid ""
+"Test-retest requires exactly two observed measurement sets or operators."
+msgstr ""
+
+msgid "Each part must have only one reading in each measurement set."
+msgstr ""
+
+msgid "Each part must have a reading in both measurement sets."
+msgstr ""
 
 msgid "Scatterplot operators vs parts"
 msgstr "Scatterplot operators vs பாகங்கள்"
@@ -1258,14 +1555,6 @@ msgid ""
 "control limits. Points exceeding the UCL are flagged as out of control."
 msgstr ""
 
-#, fuzzy
-msgid "UCL = %s"
-msgstr "உமஅ = %g"
-
-#, fuzzy
-msgid "LCL = %s"
-msgstr "கீமஅ = %g"
-
 msgid "Hotelling T²"
 msgstr ""
 
@@ -1408,9 +1697,6 @@ msgstr "எஐசி"
 msgid "Detection Plot"
 msgstr "கண்டறிதல் சூழ்ச்சி"
 
-msgid "log(%s)"
-msgstr "பதிவு (%s)"
-
 msgid ""
 "The detection plot failed with the following error message:\n"
 "%s"
@@ -1430,6 +1716,11 @@ msgstr "கிடைமட்ட அறிகுறிகள்"
 msgid "Vertical asymptotes"
 msgstr "செங்குத்து அறிகுறிகள்"
 
+msgid ""
+"X-coordinates are on the natural-log scale, including entered values for "
+"vertical asymptotes."
+msgstr ""
+
 msgid "Label"
 msgstr "சிட்டை"
 
@@ -1438,6 +1729,9 @@ msgstr "<b><em>எச்சரிக்கை.</em></b>"
 
 msgid "Probability of detecting %s"
 msgstr "%s ஐக் கண்டறியும் நிகழ்தகவு"
+
+msgid "log(%s)"
+msgstr "பதிவு (%s)"
 
 msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
 msgstr ""
@@ -1495,6 +1789,9 @@ msgstr ""
 
 msgid "X-mR control chart"
 msgstr "X-mR கட்டுப்பாட்டு விளக்கப்படம்"
+
+msgid "%1$s chart not shown. %2$s"
+msgstr ""
 
 msgid "Capability study"
 msgstr "திறன் ஆய்வு"
@@ -1702,6 +1999,11 @@ msgid ""
 msgstr ""
 "தொடர்புடைய விவரக்குறிப்பு வரம்பு அமைக்கப்படவில்லை அல்லது எல்லையாக அமைக்கப்படாததால் * எனக் "
 "காட்டப்படும் புள்ளிவிவரங்கள் கணக்கிடப்படவில்லை."
+
+msgid ""
+"Confidence intervals for Cp and Cpk are not computed when a historical "
+"standard deviation is used."
+msgstr ""
 
 msgid "Process performance (total)"
 msgstr "செயல்முறை செயல்திறன் (மொத்தம்)"
@@ -1956,14 +2258,6 @@ msgstr "<i>குறிப்பு.</i> எந்த நிலையிலு�
 msgid "Variables Charts for Individuals"
 msgstr "தனிநபர்களுக்கான மாறிகள் விளக்கப்படங்கள்"
 
-msgid ""
-"Moving range length is larger than the number of observations\n"
-"                                                           in one of the "
-"stages."
-msgstr ""
-"நகரும் வரம்பு நீளம் அவதானிப்புகளின் எண்ணிக்கையை விட பெரியது \n"
-"நிலைகளில் ஒன்றில்."
-
 msgid "Variables Chart for Individuals Report"
 msgstr "தனிநபர்கள் அறிக்கைக்கான மாறிகள் விளக்கப்படம்"
 
@@ -2013,6 +2307,33 @@ msgid_plural ""
 "terms are in the model)."
 msgstr[0] ""
 msgstr[1] ""
+
+#~ msgid "lower and upper bounds are"
+#~ msgstr "கீழ் மற்றும் மேல் எல்லைகள்"
+
+#~ msgid "target is"
+#~ msgstr "இலக்கு ஆகும்"
+
+#~ msgid "The %s estimated from data."
+#~ msgstr "தரவுகளிலிருந்து %s மதிப்பிடப்பட்டது."
+
+#~ msgid "Cohen's kappa correlations summary"
+#~ msgstr "கோஅனின் கப்பா தொடர்புகளின் சுருக்கம்"
+
+#, fuzzy
+#~ msgid ""
+#~ "Design is not balanced: not all parts were measured the same number of "
+#~ "times."
+#~ msgstr ""
+#~ "வடிவமைப்பு சமநிலையில் இல்லை: ஒவ்வொரு பகுதியும் ஒரே எண்ணிக்கையில் அளவிடப்படவில்லை."
+
+#~ msgid ""
+#~ "Moving range length is larger than the number of observations\n"
+#~ "                                                           in one of the "
+#~ "stages."
+#~ msgstr ""
+#~ "நகரும் வரம்பு நீளம் அவதானிப்புகளின் எண்ணிக்கையை விட பெரியது \n"
+#~ "நிலைகளில் ஒன்றில்."
 
 #~ msgid "ANOVA"
 #~ msgstr "அனோவா"
