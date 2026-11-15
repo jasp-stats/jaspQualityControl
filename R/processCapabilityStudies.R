@@ -588,6 +588,17 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   # return state if available
   if (!is.null(jaspResults[["dataTransformationState"]])) return(jaspResults[["dataTransformationState"]]$object)
 
+  # Box-Cox is only defined for x + shift > 0; stop instead of silently dropping the other values
+  if (options[["dataTransformation"]] %in% c("boxCox", "boxCoxAuto")) {
+    shift <- options[["dataTransformationShift"]]
+    nOutside <- sum(unlist(dataset[measurements]) + shift <= 0, na.rm = TRUE)
+    if (nOutside > 0)
+      .quitAnalysis(sprintf(ngettext(nOutside,
+        "The Box-Cox transformation requires measurement + shift > 0, but %1$i measurement is smaller than or equal to -shift (%2$s). Increase the shift or use the Yeo-Johnson or Johnson transformation.",
+        "The Box-Cox transformation requires measurement + shift > 0, but %1$i measurements are smaller than or equal to -shift (%2$s). Increase the shift or use the Yeo-Johnson or Johnson transformation."),
+        nOutside, format(-shift)))
+  }
+
   # transform data and return parameters of the transform
   result <- try(.qcTransformData(dataset = dataset, measurements = measurements, options = options))
 
