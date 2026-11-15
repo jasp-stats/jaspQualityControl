@@ -115,8 +115,9 @@
   stageValues[.qcStageRows(stageValues, i)[1]]
 }
 
-.qcAnyStageWithoutCompleteRows <- function(dataset, stages) {
-  !all(seq_len(.qcNumberOfStages(dataset[[stages]])) %in% .qcStageIndex(dataset[[stages]])[complete.cases(dataset)])
+.qcAnyStageWithoutMeasurements <- function(dataset, stages, measurements) {
+  hasMeasurements <- rowSums(!is.na(dataset[measurements])) > 0
+  !all(seq_len(.qcNumberOfStages(dataset[[stages]])) %in% .qcStageIndex(dataset[[stages]])[hasMeasurements])
 }
 
 # With stages pooled by value (stagesAsRuns = FALSE), .controlChart() plots the stages one after another, in order

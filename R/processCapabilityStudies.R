@@ -802,7 +802,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                            sum(!is.na(dataset[measurements]))))
     return()
   }
-  if (nStages > 1 && .qcAnyStageWithoutCompleteRows(dataset, stages)) {
+  if (nStages > 1 && .qcAnyStageWithoutMeasurements(dataset, stages, measurements)) {
     plot$setError(gettext("At least one of the stages contains no valid measurements."))
     return()
   }
@@ -3188,7 +3188,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                            sum(!is.na(dataset[measurements]))))
     return()
   }
-  if (nStages > 1 && .qcAnyStageWithoutCompleteRows(dataset, stages)) {
+  if (nStages > 1 && .qcAnyStageWithoutMeasurements(dataset, stages, measurements)) {
     plot <- createJaspPlot(width = 400, height = 400,
                            title = gettext("Probability plot"))
     container[["plot"]] <- plot
@@ -3346,9 +3346,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plot$setError(plotList[1])
     return(plot)
   }
-  # if number of plots is odd, add an empty plot at the end
+  # Preserve the empty grid cell for both static and interactive plots.
   if (nStages > 1 && nStages %% 2 != 0)
-    plotList[[nStages + 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
+    plotList[nStages + 1] <- list(NULL)
   plotMat <- matrix(plotList, ncol = nCol, nrow = nRow, byrow = TRUE)
   plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
   return(plot)
@@ -3701,7 +3701,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plot$setError(gettext("Dataset contains negative numbers. Could not overlay the selected distribution."))
     return()
   }
-  if (nStages > 1 && .qcAnyStageWithoutCompleteRows(dataset, stages)) {
+  if (nStages > 1 && .qcAnyStageWithoutMeasurements(dataset, stages, measurements)) {
     plot$setError(gettext("At least one of the stages contains no valid measurements."))
     return()
   }
@@ -3710,9 +3710,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plot$setError(.extractErrorMessage(plotList))
     return()
   }
-  # if number of plots is odd, add an empty plot at the end
+  # Preserve the empty grid cell for both static and interactive plots.
   if (nStages > 1 && nStages %% 2 != 0)
-    plotList[[nStages + 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
+    plotList[nStages + 1] <- list(NULL)
   plotMat <- matrix(plotList, ncol = nCol, nrow = nRow, byrow = TRUE)
   plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
 }
