@@ -97,3 +97,68 @@ test_that("Response optimizer uses the observed range of a response without its 
   expect_equal(settings[["lb"]], min(filtration$Rate2, na.rm = TRUE))
   expect_equal(settings[["target"]], max(filtration$Rate2, na.rm = TRUE))
 })
+
+# A response that misses every run of one level of a discrete factor cannot be fitted (lm() needs 2 levels). Only that
+# response shows an error, the other responses are still analysed, also in the response optimizer.
+filtrationFactor <- filtration
+filtrationFactor$A <- factor(filtrationFactor$A)
+filtrationFactor$RateNoHighA <- ifelse(filtrationFactor$A == 1, NA, filtrationFactor$Rate)
+
+factorOptions <- function(dependent) {
+  options <- filtrationOptions(dependent)
+  options$continuousFactorsFactorial <- c("B", "C", "D")
+  options$fixedFactorsFactorial <- list("A")
+  options$modelTerms <- list(list(components = "A"), list(components = "C"), list(components = "D"))
+  options
+}
+errorOf <- function(element) element[["error"]][["errorMessage"]]
+roSetting <- function(variable)
+  list(responseOptimizerGoal = "maximize", responseOptimizerImportance = 1, responseOptimizerLowerBound = 0,
+       responseOptimizerTarget = 0.5, responseOptimizerUpperBound = 1, responseOptimizerWeight = 1, variable = variable)
+
+set.seed(1)
+resultsFactorAlone <- runAnalysis("doeAnalysis", filtrationFactor[c("A", "B", "C", "D", "Rate")], factorOptions("Rate"), view = FALSE)
+set.seed(1)
+resultsFactorBoth  <- runAnalysis("doeAnalysis", filtrationFactor, factorOptions(c("Rate", "RateNoHighA")), view = FALSE)
+set.seed(1)
+resultsFactorFirst <- runAnalysis("doeAnalysis", filtrationFactor, factorOptions(c("RateNoHighA", "Rate")), view = FALSE)
+
+test_that("Response that loses all runs of a factor level shows its own error", {
+  expect_identical(resultsFactorBoth[["status"]], "complete")
+  expect_null(resultsFactorBoth[["results"]][["errorPlot"]])
+  collection <- resultsFactorBoth[["results"]][["RateNoHighA"]][["collection"]]
+  message    <- errorOf(collection[["RateNoHighA_tableSummary"]]) # the container shows its error once, in its first table
+  expect_match(message, "RateNoHighA cannot be analysed", fixed = TRUE)
+  expect_match(message, "the factor A has fewer than 2 levels left", fixed = TRUE)
+  for (table in c("tableSummary", "tableAnova", "tableCoefficients"))
+    expect_length(collection[[paste0("RateNoHighA_", table)]][["data"]], 0)
+})
+
+test_that("Response that loses all runs of a factor level does not affect the other responses", {
+  # also when the response that could not be analysed comes first
+  for (results in list(resultsFactorBoth, resultsFactorFirst)) {
+    for (table in c("Rate_tableAnova", "Rate_tableCoefficients", "Rate_tableSummary"))
+      expect_equal(results[["results"]][["Rate"]][["collection"]][[table]][["data"]],
+                   resultsFactorAlone[["results"]][["Rate"]][["collection"]][[table]][["data"]])
+    expect_length(results[["results"]][["Rate"]][["collection"]][["Rate_tableSummary"]][["data"]], 1)
+  }
+})
+
+test_that("Response optimizer names the response that could not be analysed", {
+  options <- factorOptions(c("Rate", "RateNoHighA"))
+  options$responsesResponseOptimizer <- list(roSetting("Rate"), roSetting("RateNoHighA"))
+  options$optimizationSolutionTable <- TRUE
+  set.seed(1)
+  results <- runAnalysis("doeAnalysis", filtrationFactor, options, view = FALSE)
+  expect_identical(results[["status"]], "complete")
+  expect_match(errorOf(results[["results"]][["tableRoSettings"]]),
+               "The response optimizer cannot be used because the response RateNoHighA could not be analysed", fixed = TRUE)
+  expect_null(results[["results"]][["tableRoSolution"]])
+  expect_length(results[["results"]][["Rate"]][["collection"]][["Rate_tableSummary"]][["data"]], 1)
+
+  options$responsesResponseOptimizer <- list(roSetting("Rate")) # the response that could be analysed still has its optimizer
+  set.seed(1)
+  results <- runAnalysis("doeAnalysis", filtrationFactor, options, view = FALSE)
+  expect_identical(results[["status"]], "complete")
+  expect_false(is.null(results[["results"]][["tableRoSolution"]]))
+})
