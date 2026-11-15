@@ -162,3 +162,53 @@ test_that("Response optimizer names the response that could not be analysed", {
   expect_identical(results[["status"]], "complete")
   expect_false(is.null(results[["results"]][["tableRoSolution"]]))
 })
+
+# The contour and surface plots of a response must not depend on the other responses: rsm gets the data of the fit from
+# the frame where the fits were made, which holds the runs of the last response unless the fit carries its data.
+contourOptions <- function(dependent) {
+  options <- filtrationOptions(dependent)
+  options$contourSurfacePlot          <- TRUE
+  options$contourSurfacePlotType      <- "contourPlot"
+  options$contourSurfacePlotVariables <- c("A", "D")
+  options
+}
+contourValues <- function(results, dep) {
+  plots <- results[["results"]][[dep]][["collection"]][[paste0(dep, "_contourSurfacePlot")]][["collection"]]
+  results[["state"]][["figures"]][[plots[[1]][["data"]]]][["obj"]][["data"]][["z"]]
+}
+
+test_that("Contour plot of a response does not depend on the other responses or their order", {
+  set.seed(1)
+  rateAlone  <- runAnalysis("doeAnalysis", filtration[c("A", "B", "C", "D", "Rate")], contourOptions("Rate"), view = FALSE)
+  set.seed(1)
+  rate2Alone <- runAnalysis("doeAnalysis", filtration[c("A", "B", "C", "D", "Rate2")], contourOptions("Rate2"), view = FALSE)
+  for (responses in list(c("Rate", "Rate2"), c("Rate2", "Rate"))) {
+    set.seed(1)
+    results <- runAnalysis("doeAnalysis", filtration, contourOptions(responses), view = FALSE)
+    expect_equal(contourValues(results, "Rate"),  contourValues(rateAlone, "Rate"))
+    expect_equal(contourValues(results, "Rate2"), contourValues(rate2Alone, "Rate2"))
+  }
+})
+
+# A factor with 3 levels of which the response misses all runs of one level: the response is fitted on the other two
+# levels, so it cannot be predicted at the third (not estimable) and the response optimizer must not stop the analysis.
+threeLevels <- expand.grid(F = factor(c("a", "b", "c")), B = c(-1, 1), C = c(-1, 1))
+noise       <- c(0.2, -0.1, 0.3, -0.3, 0.1, 0, -0.2, 0.25, -0.15, 0.1, -0.05, 0.2)
+threeLevels$Y1 <- 10 + as.integer(threeLevels$F) + 2 * threeLevels$B + threeLevels$C + noise
+threeLevels$Y2 <- ifelse(threeLevels$F == "c", NA, 5 + as.integer(threeLevels$F) - threeLevels$B + 2 * threeLevels$C + rev(noise))
+
+test_that("Response optimizer skips the settings that a response cannot predict because a factor level has no runs", {
+  options <- filtrationOptions(c("Y1", "Y2"))
+  options$continuousFactorsFactorial <- c("B", "C")
+  options$fixedFactorsFactorial      <- list("F")
+  options$modelTerms                 <- list(list(components = "F"), list(components = "B"), list(components = "C"))
+  options$responsesResponseOptimizer <- list(roSetting("Y1"), roSetting("Y2"))
+  options$optimizationSolutionTable  <- TRUE
+  set.seed(1)
+  results <- runAnalysis("doeAnalysis", threeLevels, options, view = FALSE)
+  expect_identical(results[["status"]], "complete")
+  expect_length(results[["results"]][["Y2"]][["collection"]][["Y2_tableSummary"]][["data"]], 1)
+  solution <- results[["results"]][["tableRoSolution"]][["data"]]
+  expect_length(solution, 1)
+  expect_true(solution[[1]][["F"]] %in% c("a", "b")) # Y2 cannot be predicted at F = c
+})

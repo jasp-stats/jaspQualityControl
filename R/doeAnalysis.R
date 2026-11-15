@@ -467,6 +467,9 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     regressionSummaryCoded <- summary(regressionFitCoded)
     regressionFit[["nullSpace"]]      <- list(value = .doeNullSpace(regressionFit)) # see .doeFitNullSpace
     regressionFitCoded[["nullSpace"]] <- list(value = .doeNullSpace(regressionFitCoded))
+    # rsm::contour.lm and persp.lm get the data from rsm::model.data(), which uses fit$data before it re-runs the call
+    # in the frame of this function, where `dataset` is by then the runs of the last response
+    regressionFit[["data"]]           <- dataset # the plots use the uncoded fit
 
     # coding can alias other columns than in uncoded units, so each fit gets its own notes
     result[["regression"]][["aliasNotes"]]      <- .doeAliasNotes(regressionFit, removedTerms, dataset, multiLevelVars)
@@ -1298,6 +1301,17 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 # contrasts. Covariates are held at their mean. Attribute "estimable": whether the prediction is unique, which fails
 # with aliased columns at settings the data cannot estimate (e.g., a combination of factor levels without runs).
 .doePredictionModelRow <- function(fit, settings, dataset, blocks = NULL, covariates = NULL) {
+  # A level of a discrete predictor without runs in this fit (the response was missing at all its runs) cannot be predicted
+  unseenLevel <- vapply(names(settings), function(predictor) {
+    fitLevels <- fit[["xlevels"]][[predictor]]
+    !is.null(fitLevels) && !all(as.character(unlist(settings[[predictor]])) %in% fitLevels)
+  }, logical(1))
+  if (any(unseenLevel)) {
+    x0 <- matrix(NA_real_, nrow = 1, ncol = sum(!is.na(stats::coef(fit))))
+    attr(x0, "estimable") <- FALSE
+    return(x0)
+  }
+
   blocks      <- unlist(blocks)
   blocks      <- blocks[blocks != ""]
   blockLevels <- if (length(blocks) > 0) fit[["xlevels"]][[blocks]] # NULL when the block term is not in the model
