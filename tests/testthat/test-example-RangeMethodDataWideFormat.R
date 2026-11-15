@@ -10,9 +10,13 @@ test_that("msaTestRetest results match", {
   opts <- jaspTools::analysisOptions(jaspFile)
   dataset <- jaspTools::extractDatasetFromJASPFile(jaspFile)
 
+  # The file stores tolerance = 0, below the QML minimum. JASP Desktop maps it to the default 1 on load
+  # (inst/Upgrades.qml, msaTestRetest 0.98.2 -> 0.98.3); jaspTools does not apply upgrades.
+  opts[["toleranceValue"]] <- 1
+
   # Run analysis
   set.seed(1)
-  results <- jaspTools::runAnalysis("msaTestRetest", dataset, opts)
+  results <- jaspTools::runAnalysis("msaTestRetest", dataset, opts, view = FALSE)
 
   plotName <- results[["results"]][["ScatterOperatorParts"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
@@ -20,8 +24,8 @@ test_that("msaTestRetest results match", {
 
   table <- results[["results"]][["rAndR2"]][["data"]]
   jaspTools::expect_equal_tables(table,
-    list(0.587716720540699, 0.29385836027035, "<unicode>", 2, 0.7, 1.19105,
-     5, 0))
+    list(0.587716720540699, 0.29385836027035, 3.52630032324419, 2, 0.7, 1.19105,
+     5, 1))
 
   plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
