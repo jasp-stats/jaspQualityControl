@@ -2710,6 +2710,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     variablePairs <- t(utils::combn(variables, 2))
     nPlots <- nrow(variablePairs)
 
+    sliceNote <- .doeContourSliceNote(jaspResults[[dep]][["doeResult"]]$object[["regression"]][["object"]], variables)
+    if (sliceNote != "")
+      jaspResults[[dep]][["contourSurfacePlot"]][["sliceNote"]] <- createJaspHtml(text = sliceNote, elementType = "p")
+
     for (i in seq_len(nPlots)) {
       variablePair <- variablePairs[i, ]
       variablePairString <- paste(variablePair, collapse = gettext(" and "))
@@ -2739,6 +2743,28 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       jaspResults[[dep]][["contourSurfacePlot"]][[plotTitle]] <- plot
     }
   }
+}
+
+# States which slice of the model the plots show. rsm::contour.lm and persp.lm hold the continuous predictors that are not on the
+# axes at their mean (the plots label the values, "Slice at ...") and average the prediction over the levels of the discrete
+# factors (and blocks). A selected variable is also off the axes in the plots of the other pairs.
+.doeContourSliceNote <- function(fit, plotVariables) {
+  data          <- fit[["data"]]
+  predictors    <- all.vars(stats::delete.response(stats::terms(fit)))
+  plotVariables <- intersect(plotVariables, predictors) # variables left out of the model have no plot
+  if (length(plotVariables) < 2)
+    return("")
+  isNumeric  <- vapply(predictors, function(variable) is.numeric(data[[variable]]), logical(1))
+  continuous <- predictors[isNumeric]
+  held       <- if (length(plotVariables) > 2) continuous else setdiff(continuous, plotVariables)
+  discrete   <- predictors[!isNumeric]
+  notes <- c(
+    if (length(held) > 0)
+      gettext("Continuous predictors that are not on the axes of a plot are held at their mean (see \"Slice at\" in the plot)."),
+    if (length(discrete) > 0)
+      gettextf("The prediction is averaged over the levels of the discrete factors and blocks (%s).", paste(discrete, collapse = ", "))
+  )
+  return(paste(notes, collapse = " "))
 }
 
 .doeContourPlotObject <- function(result, options, dependent, variablePair) {
