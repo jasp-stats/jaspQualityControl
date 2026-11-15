@@ -57,6 +57,9 @@ rareEventCharts(
   variable = list(types = list(), value = "")
 )
 }
+\arguments{
+\item{stage, }{Column that assigns a stage to each subgroup. A new stage starts each time the stage value changes from one row to the next, so a recurring value (e.g., A, B, A) forms separate stages, plotted in row order and each with its own limits and estimates.}
+}
 \description{
 Rare Event Charts
 }
