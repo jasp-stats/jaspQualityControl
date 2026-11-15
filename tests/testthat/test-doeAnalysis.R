@@ -6804,8 +6804,29 @@ test_that("60.7 Fully aliased terms are removed with a footnote", {
   data$C <- data$A * data$B
   set.seed(123)
   results <- runAnalysis("doeAnalysis", data, doeTestOptions("y", c("A", "B", "C"), character(0), list("A", "B", "C", c("A", "B"))))
-  expect_true(any(grepl("^The following aliased terms were removed: A[^,]+B[.]$", doeSummaryFootnotes(results, "y"))))
+  expect_true(any(grepl("^The following aliased terms were removed; their effects are assumed to be zero: A[^,]+B \\(aliased with C\\)[.]$",
+                        doeSummaryFootnotes(results, "y"))))
   expect_false("A:B" %in% doeAnovaSources(results, "y")[["source"]])
+
+  # factors in real units: the partner is still only C (the uncoded columns are also combinations of the intercept and main effects)
+  real <- transform(data, A = 15 + 5 * A, B = 150 + 50 * B, C = 6 + C)
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", real, doeTestOptions("y", c("A", "B", "C"), character(0), list("A", "B", "C", c("A", "B"))))
+  expect_true(any(grepl("zero: A[^,]+B \\(aliased with C\\)[.]$", doeSummaryFootnotes(results, "y"))))
+
+  # a squared term of a two-level factor is aliased with the intercept
+  twoLevel <- lm(y ~ A + I(A^2), data = data.frame(A = c(-1, 1, -1, 1), y = c(1, 3, 1.2, 2.9)))
+  expect_identical(jaspQualityControl:::.doeAliasedWith(twoLevel, "I(A^2)"), "the intercept")
+
+  # 2^(4-1) with D = A x B x C and all two-factor interactions: three of them are aliased with another
+  fraction   <- expand.grid(A = c(-1, 1), B = c(-1, 1), C = c(-1, 1))
+  fraction$D <- fraction$A * fraction$B * fraction$C
+  fraction$y <- c(8.9, 12.1, 9.7, 14.2, 7.4, 10.6, 9.1, 15.0)
+  twoFactor  <- combn(c("A", "B", "C", "D"), 2, simplify = FALSE)
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", fraction, doeTestOptions("y", c("A", "B", "C", "D"), character(0), c(as.list(c("A", "B", "C", "D")), twoFactor)))
+  expect_true(any(grepl("their effects are assumed to be zero: B[^,]+C \\(aliased with A[^,]+D\\), B[^,]+D \\(aliased with A[^,]+C\\), C[^,]+D \\(aliased with A[^,]+B\\)[.]$",
+                        doeSummaryFootnotes(results, "y"))))
 })
 
 ## Response optimizer and predictions with aliased contrasts ####

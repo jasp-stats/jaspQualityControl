@@ -24,6 +24,7 @@
 * DOE Analysis, response optimizer: optional table with the predicted responses at the optimal solution (and at manually set factor levels), with standard error, confidence interval for the mean response and prediction interval for a single new run ([Issue #4640](https://github.com/jasp-stats/jasp-issues/issues/4640)).
 
 ## Changed
+* DOE Analysis: the note on aliased terms that were removed from the model now says that their effects are assumed to be zero, and names the terms each of them is aliased with ([INTERNAL-jasp#3396](https://github.com/jasp-stats/INTERNAL-jasp/issues/3396)).
 * DOE Analysis, Factorial Design and Response Surface Design: help moved from markdown files into the QML `info` properties.
 * DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
