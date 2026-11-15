@@ -14,7 +14,7 @@ Data can be in the form of all observations in one column ("Single column") or a
 - Measurements: the observations/data collected from a certain process parameter
 - Subgroups ("Column" option): the subgroup that each observation is assigned to, if all observations are in the same column.
 - Timestamp ("Row" option): optinal subgroup names for each row of observations, that are used as x-axis labels. 
-- Stages: a column to split the analysis into multiple parts by assigning a stage to each subgroup. In "row" format, only one stage per subgroup is possible. In "column" format, only the first specified stage for each subgroup is considered.
+- Stages: a column to split the analysis into multiple parts by assigning a stage to each subgroup. A new stage starts each time the stage value changes from one row (subgroup) to the next, so a recurring value (e.g., A, B, A) forms separate stages, shown in row order and each with its own limits and estimates; moving ranges do not span a stage change. In "row" format, only one stage per subgroup is possible. In "column" format, only the first specified stage for each subgroup is considered.
 
 ### Specifying Subgroups in "Column" Format
 -------
@@ -34,7 +34,7 @@ The size of the subgroups is relevant for the calculation of the process varianc
 #### Data transformation
 - Transform data before any analysis.
   - **None**: The data is analysed as-is
-  - **Box-Cox**: The data is transformed using the equation $y = (x+\text{shift})^\lambda$ if $\lambda > 0$, $y = -(x+\text{shift})^\lambda$ if $\lambda < 0$ (the sign keeps the order of the data and specification limits), otherwise $y = \ln(x + \text{shift})$.
+  - **Box-Cox**: The data is transformed using the equation $y = (x+\text{shift})^\lambda$ if $\lambda > 0$, $y = -(x+\text{shift})^\lambda$ if $\lambda < 0$ (the sign keeps the order of the data and specification limits), otherwise $y = \ln(x + \text{shift})$. All measurements must satisfy $x + \text{shift} > 0$; otherwise the analysis stops (increase the shift or use the Yeo-Johnson or Johnson transformation).
   - **Box-Cox (auto)**: The data is transformed using the Box-Cox transformation, but with the $\lambda$ parameter automatically estimated using one of the methods specified (see 'Method').
   - **Yeo-Johnson**: The data is transformed using the Yeo-Johnson transform as described in Yeo & Johnson (2000). It can be used for unbounded data.
   - **Yeo-Johnson (auto)**: The data is transformed using the Yeo-Johnson transform, but with the $\lambda$ parameter automatically estimated using the profile likelihood of a normal distribution. This procedure allows only process performance results (no process capability).
@@ -42,7 +42,7 @@ The size of the subgroups is relevant for the calculation of the process varianc
 
 - **Shift** numerical value of the shift parameter used for transforms that accept bounded data. This option is disabled for unbounded transforms (Yeo-Johnson, Johnson)
 - **Lambda** numerical value of the $\lambda$ parameter of the transforms. This option is disabled for transforms which automatically estimate their parameter(s).
-- **Method** method for selecting the best $\lambda$ value. 'Log-Lik' maximizes the normal-likelihood of the transformed variable. 'SD' minimizes the sums of squares of the power-transformed variable. 'Average moving range' minimizes the estimate of variabiliy based on the average moving range of the power-transformed variable. 'Log-Lik' and 'Sd' are appropriate for grouped data, 'Average moving range' is appropriate for individual's data.
+- **Method** method for selecting the best $\lambda$ value. 'Log-Lik' maximizes the normal-likelihood of the transformed variable. 'SD' minimizes the sums of squares of the power-transformed variable. 'Average moving range' minimizes the estimate of variabiliy based on the average moving range of the power-transformed variable. 'Log-Lik' and 'SD' are appropriate for grouped data: they use the variation within subgroups (with subgroup size 1, the overall variation). 'Average moving range' is appropriate for individual's data.
 - **Continuity Adjustment** if enabled, the Box-Cox transform includes the adjustment term $y = \frac{(x+\text{shift})^\lambda-1}{\lambda}$.
 
 #### Type of data distribution

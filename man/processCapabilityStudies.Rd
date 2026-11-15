@@ -127,6 +127,10 @@ processCapabilityStudies(
 \arguments{
 \item{processCapabilityTableZBench, }{Sigma level based on total defect probability across both specification limits, as opposed to Z (ST)/Z (LT) which equal 3·Cpk/3·Ppk (distance to the nearest bound).
 Defaults to \code{FALSE}.}
+
+\item{stagesLongFormat, }{Column that assigns a stage to each subgroup. A new stage starts each time the stage value changes from one row to the next, so a recurring value (e.g., A, B, A) forms separate stages, plotted in row order and each with its own limits and estimates.}
+
+\item{stagesWideFormat, }{Column that assigns a stage to each subgroup. A new stage starts each time the stage value changes from one row to the next, so a recurring value (e.g., A, B, A) forms separate stages, plotted in row order and each with its own limits and estimates.}
 }
 \description{
 Process Capability Study

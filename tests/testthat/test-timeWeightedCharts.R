@@ -788,8 +788,9 @@ test_that("MR10 Removed observations are noted below the charts", {
                "Removed 1 observation(s) that were not assigned to any stage.", fixed = TRUE)
 })
 
-### CUSUM with interleaved stages: test results use each flagged row's timestamp (jasp-issues#4672) ####
-# Stages alternate by row; the chart shows all A rows, then all B rows. B shifts up from D8 on.
+### CUSUM with a recurring stage (A, B, A): test results use each flagged row's timestamp (jasp-issues#4672) ####
+# A new stage starts at each change of the stage value: A (D1-D4), B (D5-D9), A (D10-D12), each with its own cusum.
+# The process shifts up at D8, D10 and D12.
 options <- analysisOptions("timeWeightedCharts")
 options$measurementLongFormat <- "Measurement"
 options$stagesLongFormat <- "Stage"
@@ -800,14 +801,15 @@ options$cumulativeSumChartSdSource <- "historical"
 options$cumulativeSumChartSdValue <- 1
 interleavedStagesDataset <- data.frame(
   Measurement = c(10, 10, 10, 10, 10, 10, 10, 20, 10, 20, 10, 20),
-  Stage       = rep(c("A", "B"), 6),
+  Stage       = rep(c("A", "B", "A"), c(4, 5, 3)),
   Day         = paste0("D", 1:12)
 )
 results <- runAnalysis("timeWeightedCharts", interleavedStagesDataset, options)
 
-test_that("LF interleaved stages - Cumulative sum chart test results use each flagged row's timestamp", {
+test_that("LF recurring stage - Cumulative sum chart test results use each flagged row's timestamp", {
   table <- results[["results"]][["CusumChart"]][["collection"]][["CusumChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("B", "Point 10 - upper (D8)", "", "Point 11 - upper (D10)", "",
+                                 list("B", "Point 8 - upper (D8)", "", "Point 9 - upper (D9)", "A",
+                                      "Point 10 - upper (D10)", "", "Point 11 - upper (D11)", "",
                                       "Point 12 - upper (D12)"))
 })

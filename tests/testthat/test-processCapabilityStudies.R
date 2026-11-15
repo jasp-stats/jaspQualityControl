@@ -4407,8 +4407,9 @@ test_that("BoxCox (Auto) works", {
                          "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
 
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
-  jaspTools::expect_equal_tables(table, list(1, 2.69160828615533, 100, 0.298231720046251,
-                                             0.284621111299297, 2.53, 3.399))
+  # lambda = car::powerTransform(Diameter + 1 ~ Time) = 0.505 (by subgroup)
+  jaspTools::expect_equal_tables(table, list(1, 2.85324632792781, 100, 0.334400897906984,
+                                             0.31910839319546, 2.671, 3.652))
 })
 
 test_that("Yeo-Johnson works", {
@@ -4489,8 +4490,9 @@ test_that("Box-Cox with negative lambda keeps specification limits in order", {
   # LSL = -1^-1, target = -2^-1, USL = -4^-1; mean = -mean(1/x)
   jaspTools::expect_equal_tables(tables[["summary"]],
                                  list(-1, -0.475, 4, 0.14497764834111, 0.0985027580772262, -0.5, -0.25))
+  # CIs use the moving range df = 3: Cp CI = Cp * sqrt(qchisq(c(0.05, 0.95), 3) / 3), Cpk CI = Cpk +- z * sqrt(1 / (9 * 4) + Cpk^2 / (2 * 3))
   jaspTools::expect_equal_tables(tables[["within"]],
-                                 list(1.269, 0.761, 0.157, 1.366, 1.777, 0.396, 0.761, 2.085))
+                                 list(1.269, 0.761, 0.181, 1.342, 1.777, 0.435, 0.761, 2.048))
   jaspTools::expect_equal_tables(tables[["overall"]],
                                  list(0.651, 0.275, 1.002, 0.862, 0.517, 0.075, 0.96, 1.207, 0.295, 0.517, 1.392))
   jaspTools::expect_equal_tables(tables[["performance"]],
@@ -4515,7 +4517,7 @@ test_that("Box-Cox with negative lambda and only a lower specification limit", {
 
   # all observations conform to LSL = 1
   jaspTools::expect_equal_tables(tables[["overall"]], list(1.207, 0.351, 2.063, 1.207))
-  jaspTools::expect_equal_tables(tables[["within"]], list(1.777, 0.49, 3.064, 1.777))
+  jaspTools::expect_equal_tables(tables[["within"]], list(1.777, 0.553, 3.001, 1.777))
   jaspTools::expect_equal_tables(tables[["performance"]],
                                  list(146.593, 0.049, 0, "ppm &lt; LSL", "*", "*", "*", "ppm &gt; USL",
                                       146.593, 0.049, 0, "ppm total"))
@@ -4530,13 +4532,14 @@ test_that("Box-Cox (auto) with negative estimated lambda keeps specification lim
   tables  <- .boxCoxNegativeLambdaTables(results)
 
   lambda <- results[["results"]][["dataTransformationContainer"]][["collection"]][["dataTransformationContainer_table"]][["data"]][[1]][["value"]]
-  expect_equal(lambda, -1.10421797241949)
+  # lambda by subgroup (row) = car::powerTransform / MASS::boxcox = -1.408
+  expect_equal(lambda, -1.40817809818093)
   jaspTools::expect_equal_tables(tables[["summary"]],
-                                 list(-1, -0.568432072972538, 10, 0.232657470563089, 0.0737364718667231, -0.169))
-  jaspTools::expect_equal_tables(tables[["overall"]], list(0.595, 0.572, 0.291, 0.854, 0.618, 0.362, 0.572, 0.816))
+                                 list(-1, -0.500177210010711, 10, 0.248728228973728, 0.0777554521491026, -0.104))
+  jaspTools::expect_equal_tables(tables[["overall"]], list(0.601, 0.531, 0.262, 0.801, 0.67, 0.365, 0.531, 0.823))
   jaspTools::expect_equal_tables(tables[["performance"]],
-                                 list(31801.698, 0.002, 0, "ppm &lt; LSL", 43051.203, 0.031, 0, "ppm &gt; USL",
-                                      74852.901, 0.033, 0, "ppm total"))
+                                 list(22241.34, 0, 0, "ppm &lt; LSL", 55460.332, 0.171, 0, "ppm &gt; USL",
+                                      77701.673, 0.171, 0, "ppm total"))
 
   optionsAdjusted <- options
   optionsAdjusted$dataTransformationContinuityAdjustment <- TRUE
@@ -4558,7 +4561,7 @@ test_that("Box-Cox with negative lambda, shift and only an upper specification l
   jaspTools::expect_equal_tables(tables[["summary"]],
                                  list(-0.317261904761905, 4, 0.0648672986944061, 0.0443262411347518, -0.222))
   jaspTools::expect_equal_tables(tables[["overall"]], list(0.488, 0.061, 0.916, 0.488))
-  jaspTools::expect_equal_tables(tables[["within"]], list(0.715, 0.139, 1.29, 0.715))
+  jaspTools::expect_equal_tables(tables[["within"]], list(0.715, 0.162, 1.267, 0.715))
   jaspTools::expect_equal_tables(tables[["performance"]],
                                  list("*", "*", "*", "ppm &lt; LSL", 71441.345, 16012.628, 0, "ppm &gt; USL",
                                       71441.345, 16012.628, 0, "ppm total"))
@@ -4828,10 +4831,11 @@ for (farTailCase in farTailCases) {
   })
 }
 
-# Interleaved stages: test results use the label of the flagged subgroup (jasp-issues#4672) ####
-# Stages alternate by row; the chart shows all A subgroups, then all B subgroups. Row 4 (R4) is out of control.
+# Recurring stage (A, B, A): test results use the label of the flagged subgroup (jasp-issues#4672) ####
+# A new stage starts at each change of the stage value, so the chart shows the rows in their order: A (R1-R3),
+# B (R4-R9), A (R10-R12). In stage B, R4 is above and R5, R7-R9 are below the limits.
 interleavedStagesDataset <- data.frame(
-  Stage = rep(c("A", "B"), 6),
+  Stage = rep(c("A", "B", "A"), c(3, 6, 3)),
   Label = paste0("R", 1:12),
   M1    = c(10, 8, 10, 40, 10, 9, 10, 8, 10, 9, 10, 8),
   M2    = c(11, 13, 11, 41, 11, 14, 11, 13, 11, 14, 11, 13)
@@ -4859,7 +4863,8 @@ options$rule8 <- FALSE
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", interleavedStagesDataset, options)
 
-test_that("WF interleaved stages - x-bar chart test results use the flagged subgroup's label", {
+test_that("WF recurring stage - x-bar chart test results use the flagged subgroup's label", {
   table <- results[["results"]][["xBar"]][["collection"]][["xBar_tableXBar"]][["data"]]
-  jaspTools::expect_equal_tables(table, list("B", "Point 8 (R4)"))
+  jaspTools::expect_equal_tables(table, list("B", "Point 4 (R4)", "", "Point 5 (R5)", "", "Point 7 (R7)", "",
+                                        "Point 8 (R8)", "", "Point 9 (R9)"))
 })

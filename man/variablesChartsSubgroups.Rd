@@ -66,6 +66,11 @@ variablesChartsSubgroups(
   xBarAndSUnbiasingConstant = TRUE
 )
 }
+\arguments{
+\item{stagesLongFormat, }{Column that assigns a stage to each subgroup. A new stage starts each time the stage value changes from one row to the next, so a recurring value (e.g., A, B, A) forms separate stages, plotted in row order and each with its own limits and estimates.}
+
+\item{stagesWideFormat, }{Column that assigns a stage to each subgroup. A new stage starts each time the stage value changes from one row to the next, so a recurring value (e.g., A, B, A) forms separate stages, plotted in row order and each with its own limits and estimates.}
+}
 \description{
 Variables Charts for Subgroups
 }

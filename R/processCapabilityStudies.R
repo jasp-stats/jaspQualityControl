@@ -592,6 +592,17 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   # return state if available
   if (!is.null(jaspResults[["dataTransformationState"]])) return(jaspResults[["dataTransformationState"]]$object)
 
+  # Box-Cox is only defined for x + shift > 0; stop instead of silently dropping the other values
+  if (options[["dataTransformation"]] %in% c("boxCox", "boxCoxAuto")) {
+    shift <- options[["dataTransformationShift"]]
+    nOutside <- sum(unlist(dataset[measurements]) + shift <= 0, na.rm = TRUE)
+    if (nOutside > 0)
+      .quitAnalysis(sprintf(ngettext(nOutside,
+        "The Box-Cox transformation requires measurement + shift > 0, but %1$i measurement is smaller than or equal to -shift (%2$s). Increase the shift or use the Yeo-Johnson or Johnson transformation.",
+        "The Box-Cox transformation requires measurement + shift > 0, but %1$i measurements are smaller than or equal to -shift (%2$s). Increase the shift or use the Yeo-Johnson or Johnson transformation."),
+        nOutside, format(-shift)))
+  }
+
   # transform data and return parameters of the transform
   result <- try(.qcTransformData(dataset = dataset, measurements = measurements, options = options))
 
@@ -636,7 +647,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     dataset[["stage"]] <- 1
     stages <- "stage"
   } else if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
+    nStages <- .qcNumberOfStages(dataset[[stages]])
   }
   table <- createJaspTable(title = gettext("Process summary"))
   footnotes <- c()
@@ -673,8 +684,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
   colnames(tableDf) <- tableColNames
   for (i in seq_len(nStages)) {
-    stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stage <- .qcStageValue(dataset[[stages]], i)
+    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
 
     ## ----- Std. dev. calculation ----------
     if (options[["historicalStdDev"]]) {
@@ -780,7 +791,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   if (identical(stages, "")) {
     nStages <- 1
   } else if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
+    nStages <- .qcNumberOfStages(dataset[[stages]])
   }
   # making this explicit in case we want to change it at some point
   nCol <- 1
@@ -806,7 +817,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                            sum(!is.na(dataset[measurements]))))
     return()
   }
-  if (nStages > 1 && (length(unique(dataset[[stages]][rowSums(!is.na(dataset[measurements])) > 0])) < nStages)) {
+  if (nStages > 1 && .qcAnyStageWithoutMeasurements(dataset, stages, measurements)) {
     plot$setError(gettext("At least one of the stages contains no valid measurements."))
     return()
   }
@@ -1184,12 +1195,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     dataset[["stage"]] <- 1
     stages <- "stage"
   } else if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
+    nStages <- .qcNumberOfStages(dataset[[stages]])
   }
   plotList <- list()
   for (i in seq_len(nStages)) {
-    stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stage <- .qcStageValue(dataset[[stages]], i)
+    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
       sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .qcCapabilityMovingRangeSd(dataCurrentStage[measurements], k)
@@ -1677,7 +1688,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     dataset[["stage"]] <- 1
     stages <- "stage"
   } else if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
+    nStages <- .qcNumberOfStages(dataset[[stages]])
   }
   table <- createJaspTable(title = gettext("Process capability (within)"))
   sourceVector <- c()
@@ -1747,8 +1758,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
   colnames(tableDf) <- tableColNames
   for (i in seq_len(nStages)) {
-    stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stage <- .qcStageValue(dataset[[stages]], i)
+    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
 
     if (length(measurements) < 2) {
       sdType <- "movingRange"
@@ -1916,7 +1927,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     dataset[["stage"]] <- 1
     stages <- "stage"
   } else if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
+    nStages <- .qcNumberOfStages(dataset[[stages]])
   }
   table <- createJaspTable(title = gettext("Process performance (total)"))
   sourceVector1 <- c()
@@ -1994,8 +2005,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
   colnames(tableDf) <- tableColNames
   for (i in seq_len(nStages)) {
-    stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stage <- .qcStageValue(dataset[[stages]], i)
+    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
 
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
@@ -2188,12 +2199,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   tableNCols <- if (nStages > 1) 5 else 4
   tableDf2 <- data.frame(matrix(nrow = 0, ncol = tableNCols))
   for (i in seq_len(nStages)) {
-    stage <- unique(dataset[[stages]])[i]
+    stage <- .qcStageValue(dataset[[stages]], i)
     stageTitle <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
     colOvertitle <- if (nStages == 1) "" else stageTitle
-    observedColName <- paste0("observed", stage)
-    expOverallColName <- paste0("expOverall", stage)
-    expWithinColName <- paste0("expWithin", stage)
+    observedColName <- paste0("observed", i) # by stage number: stages can share a label
+    expOverallColName <- paste0("expOverall", i)
+    expWithinColName <- paste0("expWithin", i)
     table2$addColumnInfo(name = observedColName, type = "integer", title = "Observed", overtitle = colOvertitle)
     table2$addColumnInfo(name = expOverallColName, type = "integer", title = "Expected total", overtitle = colOvertitle)
     if (.qcWithinProcessValid(options))
@@ -2202,17 +2213,17 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     # Table columns for comparison
     if (i > 1) {
       colOvertitle2 <- gettextf("Change (%s vs. BL)", stage)
-      observedComparisonColName <- paste0("observedComparison", stage)
-      expOverallComparisonColName <- paste0("expOverallComparison", stage)
-      expWithinComparisonColName <- paste0("expWithinComparison", stage)
+      observedComparisonColName <- paste0("observedComparison", i)
+      expOverallComparisonColName <- paste0("expOverallComparison", i)
+      expWithinComparisonColName <- paste0("expWithinComparison", i)
       table2$addColumnInfo(name = observedComparisonColName, type = "integer", title = "Observed", overtitle = colOvertitle2)
       table2$addColumnInfo(name = expOverallComparisonColName, type = "integer", title = "Expected total", overtitle = colOvertitle2)
       table2$addColumnInfo(name = expWithinComparisonColName, type = "integer", title = "Expected within", overtitle = colOvertitle2)
     }
 
     # Calculate performance
-    stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stage <- .qcStageValue(dataset[[stages]], i)
+    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
     n <- length(allData)
     allDataVector <- as.vector(allData)
@@ -2353,7 +2364,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     dataset[["stage"]] <- 1
     stages <- "stage"
   } else if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
+    nStages <- .qcNumberOfStages(dataset[[stages]])
   }
   table <- createJaspTable(title = gettextf("Process summary"))
   footnotes <- c()
@@ -2424,8 +2435,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   ## estimate parameters
   distParameters <- list()
   for (i in seq_len(nStages)) {
-    stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stage <- .qcStageValue(dataset[[stages]], i)
+    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
 
 
@@ -2447,8 +2458,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   target <- options[["targetValue"]]
 
   for (i in seq_len(nStages)) {
-    stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stage <- .qcStageValue(dataset[[stages]], i)
+    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
     n <- length(allData)
     sd <- sd(allData)
@@ -2555,8 +2566,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     # Kept unrounded until the change vs. baseline is computed, so that change is the rounded difference of the
     # exact values instead of the difference of rounded values (which can be off in the last decimal)
     tableDfCurrentStage2 <- data.frame(matrix(ncol = 0, nrow = 1))
-    stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stage <- .qcStageValue(dataset[[stages]], i)
+    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
     beta <- distParameters[[i]]$beta
     theta <- distParameters[[i]]$theta
@@ -2892,26 +2903,26 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   tableNCols <- if (nStages > 1) 4 else 3
   tableDf3 <- data.frame(matrix(nrow = 0, ncol = tableNCols))
   for (i in seq_len(nStages)) {
-    stage <- unique(dataset[[stages]])[i]
+    stage <- .qcStageValue(dataset[[stages]], i)
     stageTitle <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
     colOvertitle <- if (nStages == 1) "" else stageTitle
-    observedColName <- paste0("observed", stage)
-    expOverallColName <- paste0("expOverall", stage)
+    observedColName <- paste0("observed", i) # by stage number: stages can share a label
+    expOverallColName <- paste0("expOverall", i)
     table3$addColumnInfo(name = observedColName, type = "integer", title = "Observed", overtitle = colOvertitle)
     table3$addColumnInfo(name = expOverallColName, type = "integer", title = "Expected total", overtitle = colOvertitle)
 
     # Table columns for comparison
     if (i > 1) {
       colOvertitle <- gettextf("Change (%s vs. BL)", stage)
-      observedComparisonColName <- paste0("observedComparison", stage)
-      expOverallComparisonColName <- paste0("expOverallComparison", stage)
+      observedComparisonColName <- paste0("observedComparison", i)
+      expOverallComparisonColName <- paste0("expOverallComparison", i)
       table3$addColumnInfo(name = observedComparisonColName, type = "integer", title = "Observed", overtitle = colOvertitle)
       table3$addColumnInfo(name = expOverallComparisonColName, type = "integer", title = "Expected total", overtitle = colOvertitle)
     }
 
     #Calculate performance
-    stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stage <- .qcStageValue(dataset[[stages]], i)
+    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
     n <- length(allData)
     allDataVector <- as.vector(allData)
@@ -3174,7 +3185,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   if (identical(stages, "")) {
     nStages <- 1
   } else if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
+    nStages <- .qcNumberOfStages(dataset[[stages]])
   }
   if (options[["nullDistribution"]] %in% c("gamma", "exponential", "logistic", "loglogistic", "3ParameterWeibull", "3ParameterLognormal")) {
     plot <- createJaspPlot(width = 400, height = 400,
@@ -3192,7 +3203,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                            sum(!is.na(dataset[measurements]))))
     return()
   }
-  if (nStages > 1 && (length(unique(dataset[[stages]][rowSums(!is.na(dataset[measurements])) > 0])) < nStages)) {
+  if (nStages > 1 && .qcAnyStageWithoutMeasurements(dataset, stages, measurements)) {
     plot <- createJaspPlot(width = 400, height = 400,
                            title = gettext("Probability plot"))
     container[["plot"]] <- plot
@@ -3217,7 +3228,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     dataset[["stage"]] <- 1
     stages <- "stage"
   } else if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
+    nStages <- .qcNumberOfStages(dataset[[stages]])
   }
   table <- createJaspTable(title = gettextf("Summary of test against the %1$s distribution", distributionTitle))
   table$position <- 1
@@ -3255,8 +3266,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
   colnames(tableDf) <- tableColNames
   for (i in seq_len(nStages)) {
-    stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stage <- .qcStageValue(dataset[[stages]], i)
+    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
     values <- as.vector(na.omit(unlist(dataCurrentStage[measurements]))) # distribution fitting function complains if this is not explicitly a vector
 
     if (options[["nullDistribution"]] == "normal") {
@@ -3330,7 +3341,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   if (identical(stages, "")) {
     nStages <- 1
   } else if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
+    nStages <- .qcNumberOfStages(dataset[[stages]])
   }
   nCol <- if (nStages > 1) 2 else 1
   nRow <- ceiling(nStages/2)
@@ -3350,9 +3361,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plot$setError(plotList[1])
     return(plot)
   }
-  # if number of plots is odd, add an empty plot at the end
+  # Preserve the empty grid cell for both static and interactive plots.
   if (nStages > 1 && nStages %% 2 != 0)
-    plotList[[nStages + 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
+    plotList[nStages + 1] <- list(NULL)
   plotMat <- matrix(plotList, ncol = nCol, nrow = nRow, byrow = TRUE)
   plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
   return(plot)
@@ -3391,18 +3402,50 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   list(varcov = varcov)
 }
 
+# Inverse observed information of the Weibull log-likelihood at (shape, scale), in closed form. A finite-difference
+# Hessian needs steps that are small relative to the width of the likelihood; in the scale that width is about
+# scale / (shape * sqrt(n)), so data that vary little relative to their location (high shape) need steps no fixed
+# size provides.
+.qcWeibullObservedVarcov <- function(data, shape, scale) {
+  n      <- length(data)
+  z      <- data / scale
+  zShape <- z^shape
+  logZ   <- log(z)
+  crossInformation <- (n - sum(zShape) - shape * sum(zShape * logZ)) / scale
+  information <- matrix(c(n / shape^2 + sum(zShape * logZ^2), crossInformation,
+                          crossInformation, shape * ((shape + 1) * sum(zShape) - n) / scale / scale), nrow = 2)
+
+  invalidMessage <- gettext("Could not compute variance-covariance matrix: Hessian contains invalid values.")
+  if (!all(is.finite(information)) || any(diag(information) <= 0))
+    stop(invalidMessage, call. = FALSE)
+
+  # The scale and shape entries differ by a factor of about shape^4 / scale^2, which makes solve() report a singular
+  # matrix for small units or a high shape (from a shape of about 1e4 for a scale of 1); inverting the correlation
+  # form depends only on the correlation of the estimates.
+  inverseSd <- 1 / sqrt(diag(information))
+  scaling <- outer(inverseSd, inverseSd)
+  correlation <- information * scaling
+  if (abs(correlation[1, 2]) >= 1) # not positive definite, so there are no valid variances
+    stop(invalidMessage, call. = FALSE)
+
+  varcov <- solve(correlation) * scaling
+  dimnames(varcov) <- list(c("shape", "scale"), c("shape", "scale"))
+
+  list(varcov = varcov)
+}
+
 .qcProbabilityPlotObject <- function(options, dataset, measurements, stages) {
   if (identical(stages, "")) {
     nStages <- 1
     dataset[["stage"]] <- 1
     stages <- "stage"
   } else if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
+    nStages <- .qcNumberOfStages(dataset[[stages]])
   }
   plotList <- list()
   for (i in seq_len(nStages)) {
-    stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stage <- .qcStageValue(dataset[[stages]], i)
+    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
     dataCurrentStage <- as.vector(na.omit(unlist(dataCurrentStage[measurements])))
     dataCurrentStage <- dataCurrentStage[order(dataCurrentStage)]
     label_x <- dataCurrentStage
@@ -3514,12 +3557,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       }
       shape <- as.numeric(fit_Weibull[["beta"]])
       scale <- as.numeric(fit_Weibull[["theta"]])
-      lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x/scale)^shape)
-      # Hessian on the rescaled data (see .qcFitdistUnitFree), so the finite-difference steps are the same in any unit;
-      # the scale (co)variances are mapped back below
-      unitScale <- .qcUnitScale(dataCurrentStage)
-      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage / unitScale, parms = c("shape", "scale"),
-                                     mle = c("shape" = shape, "scale" = scale / unitScale), stepScale = c(shape, scale / unitScale)))
+      matrix <- try(.qcWeibullObservedVarcov(dataCurrentStage, shape, scale))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
@@ -3528,8 +3566,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         covarSS <- NA
       } else {
         varShape <- matrix$varcov[1,1]
-        varScale <- matrix$varcov[2,2] * unitScale^2
-        covarSS <- matrix$varcov[1,2] * unitScale
+        varScale <- matrix$varcov[2,2]
+        covarSS <- matrix$varcov[1,2]
       }
       zp <- log(-1*log(1-pSeq))
       zalpha <- qnorm(0.975) # normal critical value for log percentile (delta method), not the Weibull axis transform
@@ -3675,7 +3713,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   if (identical(stages, "")) {
     nStages <- 1
   } else if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
+    nStages <- .qcNumberOfStages(dataset[[stages]])
   }
   nCol <- if (nStages > 1) 2 else 1
   nRow <- ceiling(nStages/2)
@@ -3705,7 +3743,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plot$setError(gettext("Dataset contains negative numbers. Could not overlay the selected distribution."))
     return()
   }
-  if (nStages > 1 && (length(unique(dataset[[stages]][rowSums(!is.na(dataset[measurements])) > 0])) < nStages)) {
+  if (nStages > 1 && .qcAnyStageWithoutMeasurements(dataset, stages, measurements)) {
     plot$setError(gettext("At least one of the stages contains no valid measurements."))
     return()
   }
@@ -3714,9 +3752,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plot$setError(.extractErrorMessage(plotList))
     return()
   }
-  # if number of plots is odd, add an empty plot at the end
+  # Preserve the empty grid cell for both static and interactive plots.
   if (nStages > 1 && nStages %% 2 != 0)
-    plotList[[nStages + 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
+    plotList[nStages + 1] <- list(NULL)
   plotMat <- matrix(plotList, ncol = nCol, nrow = nRow, byrow = TRUE)
   plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
 }
@@ -3727,12 +3765,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     dataset[["stage"]] <- 1
     stages <- "stage"
   } else if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
+    nStages <- .qcNumberOfStages(dataset[[stages]])
   }
   plotList <- list()
   for (i in seq_len(nStages)) {
-    stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    stage <- .qcStageValue(dataset[[stages]], i)
+    dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
     dataCurrentStage <- as.vector(na.omit(unlist(dataCurrentStage[, measurements]))) # the distribution fitting functions complain if this is not explicitly a vector
     nBins <- options[["histogramBinNumber"]]
     n <- length(dataCurrentStage)
@@ -3863,7 +3901,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   dataset <- tidyr::pivot_longer(dataset, tidyr::all_of(measurements))
 
   x <- dataset[["value"]]
-  group <- dataset[["name"]]
+  # each row is one subgroup: Box-Cox (auto) pools the variation within subgroups;
+  # with subgroup size 1 (individuals) there is no grouping, so the overall variation is used
+  group <- if (length(measurements) > 1) as.factor(dataset[["id"]]) else NULL
   lambda <- options[["dataTransformationLambda"]]
   shift <- options[["dataTransformationShift"]]
   method <- options[["dataTransformationMethod"]]
@@ -3873,7 +3913,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     options[["dataTransformation"]],
     boxCox = .qcBoxCoxKeepOrder(jaspBase::BoxCox(x, lambda=lambda, shift=shift, continuityAdjustment=ca), lambda=lambda, continuityAdjustment=ca),
     boxCoxAuto = {
-      y <- jaspBase::BoxCoxAuto(x, predictor=as.factor(group), shift=shift, method=method, continuityAdjustment=ca)
+      y <- jaspBase::BoxCoxAuto(x, predictor=group, shift=shift, method=method, continuityAdjustment=ca)
       .qcBoxCoxKeepOrder(y, lambda=attr(y, "lambda"), continuityAdjustment=ca)
     },
     yeoJohnson = jaspBase::YeoJohnson(x, lambda=lambda),

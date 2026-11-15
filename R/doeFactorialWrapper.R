@@ -68,6 +68,7 @@ doeFactorial <- function(
           numberOfCategorical = 3,
           plotHeight = 320,
           plotWidth = 480,
+          randomSeed = 40525,
           replications = 1,
           runOrder = "runOrderRandom",
           seed = 1,
