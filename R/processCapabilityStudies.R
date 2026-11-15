@@ -806,7 +806,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                            sum(!is.na(dataset[measurements]))))
     return()
   }
-  if (nStages > 1 && (length(unique(na.omit(dataset)[[stages]])) < nStages)) {
+  if (nStages > 1 && (length(unique(dataset[[stages]][rowSums(!is.na(dataset[measurements])) > 0])) < nStages)) {
     plot$setError(gettext("At least one of the stages contains no valid measurements."))
     return()
   }
@@ -3192,7 +3192,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                            sum(!is.na(dataset[measurements]))))
     return()
   }
-  if (nStages > 1 && (length(unique(na.omit(dataset)[[stages]])) < nStages)) {
+  if (nStages > 1 && (length(unique(dataset[[stages]][rowSums(!is.na(dataset[measurements])) > 0])) < nStages)) {
     plot <- createJaspPlot(width = 400, height = 400,
                            title = gettext("Probability plot"))
     container[["plot"]] <- plot
@@ -3705,7 +3705,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plot$setError(gettext("Dataset contains negative numbers. Could not overlay the selected distribution."))
     return()
   }
-  if (nStages > 1 && (length(unique(na.omit(dataset)[[stages]])) < nStages)) {
+  if (nStages > 1 && (length(unique(dataset[[stages]][rowSums(!is.na(dataset[measurements])) > 0])) < nStages)) {
     plot$setError(gettext("At least one of the stages contains no valid measurements."))
     return()
   }
