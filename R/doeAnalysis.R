@@ -2225,15 +2225,19 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   return(plotData)
 }
 
-# Alias legend under the Pareto and normal effect plots, decoded here like the term labels (see .doeEffectPlotData)
-.doeAddAliasCaption <- function(p, result, options) {
+# Set the effect plot and reserve extra height for its alias legend, decoded like the term labels (see .doeEffectPlotData).
+.doeSetEffectPlot <- function(plot, p, result, options) {
   legend <- if (options[["tableAlias"]]) .doeAliasLegend(result[["factorAliases"]], decode = TRUE)
-  if (is.null(legend))
-    return(p)
-  # wrap between the entries only: the spaces around "=" are non-breaking while wrapping
-  caption <- gsub("\u00A0", " ", paste(strwrap(gsub(" = ", "\u00A0=\u00A0", legend), width = 55), collapse = "\n"))
-  p + ggplot2::labs(caption = caption) +
-    ggplot2::theme(plot.caption = ggplot2::element_text(hjust = 0, size = 13))
+  if (!is.null(legend)) {
+    # wrap between the entries only: the spaces around "=" are non-breaking while wrapping
+    captionLines <- strwrap(gsub(" = ", "\u00A0=\u00A0", legend), width = 55)
+    caption <- gsub("\u00A0", " ", paste(captionLines, collapse = "\n"))
+    # Allow 24 pixels per 13-point caption line, including spacing, to preserve the plotting area.
+    plot$height <- plot$height + 24 * length(captionLines)
+    p <- p + ggplot2::labs(caption = caption) +
+      ggplot2::theme(plot.caption = ggplot2::element_text(hjust = 0, size = 13))
+  }
+  plot$plotObject <- p
 }
 
 # Lenth's (1989) pseudo standard error (PSE) and margin of error (ME) of the effects of an unreplicated two-level design,
@@ -2321,7 +2325,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       ggplot2::coord_flip() +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()
-    plot$plotObject <- .doeAddAliasCaption(p, result, options)
+    .doeSetEffectPlot(plot, p, result, options)
   }
 }
 
@@ -2392,7 +2396,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       jaspGraphs::geom_rangeframe() +
       ggplot2::theme(legend.position = "right")
 
-    plot$plotObject <- .doeAddAliasCaption(p, result, options)
+    .doeSetEffectPlot(plot, p, result, options)
   }
 }
 

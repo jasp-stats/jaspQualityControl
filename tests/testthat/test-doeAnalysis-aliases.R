@@ -12,7 +12,7 @@ context("[Quality Control] DoE Analysis - alias names")
   d
 }
 
-.aliasTestRun <- function(dataset, discrete, continuous, terms, highestOrder = FALSE) {
+.aliasTestRun <- function(dataset, discrete, continuous, terms, highestOrder = FALSE, aliases = TRUE) {
   options <- analysisOptions("doeAnalysis")
   options$dependentFactorial         <- "Rate"
   options$fixedFactorsFactorial      <- discrete
@@ -20,7 +20,7 @@ context("[Quality Control] DoE Analysis - alias names")
   options$codeFactors                <- TRUE
   options$codeFactorsMethod          <- "automatic"
   options$tableEquation              <- TRUE
-  options$tableAlias                 <- TRUE
+  options$tableAlias                 <- aliases
   options$plotPareto                 <- TRUE
   options$normalEffectsPlot          <- TRUE
   options$highestOrder               <- highestOrder
@@ -99,4 +99,35 @@ test_that("No factor gets a letter that is the name of another factor", {
   expect_equal(out$alias, c("(Intercept)", "C", "D", "A", "B", "CA"))
   expect_equal(out$coef, c(70.0625, 10.8125, 1.5625, 4.9375, 7.3125, -9.0625))
   expect_equal(out$paretoCaption, "Aliases: A = Temp, B = Press.")
+})
+
+test_that("Long alias legends get extra height without consuming the effect plotting area", {
+  withr::local_pdf(NULL)
+  set.seed(591)
+  factorNames <- paste0("Process_temperature_setting_number_", seq_len(16))
+  dataset <- as.data.frame(matrix(rnorm(64 * 16), nrow = 64))
+  names(dataset) <- factorNames
+  dataset$Rate <- 3 * dataset[[1]] + 2 * dataset[[2]] + rnorm(64)
+  baseHeights <- c(Rate_plotPareto = 400, Rate_normalEffectsPlot = 600)
+
+  heights <- list()
+  for (nFactors in c(4, 16)) {
+    # Only two factors enter the model; the legend still lists every assigned factor.
+    results <- .aliasTestRun(dataset, character(0), factorNames[seq_len(nFactors)], as.list(factorNames[1:2]))
+    collection <- results[["results"]][["Rate"]][["collection"]]
+    heights[[as.character(nFactors)]] <- vapply(names(baseHeights), function(name) collection[[name]][["height"]], numeric(1))
+    for (name in names(baseHeights)) {
+      plotResult <- collection[[name]]
+      p <- results[["state"]][["figures"]][[plotResult[["data"]]]][["obj"]]
+      grobs <- ggplot2::ggplotGrob(p)
+      caption <- grobs$grobs[[which(grobs$layout$name == "caption")]]
+      captionHeight <- grid::convertHeight(grid::grobHeight(caption), "inches", valueOnly = TRUE) * 96
+      expect_gte(plotResult[["height"]] - captionHeight, baseHeights[[name]])
+    }
+  }
+  expect_true(all(heights[["16"]] > heights[["4"]]))
+
+  results <- .aliasTestRun(dataset, character(0), factorNames, as.list(factorNames[1:2]), aliases = FALSE)
+  collection <- results[["results"]][["Rate"]][["collection"]]
+  expect_equal(vapply(names(baseHeights), function(name) collection[[name]][["height"]], numeric(1)), baseHeights)
 })
