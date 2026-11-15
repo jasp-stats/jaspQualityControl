@@ -28,6 +28,7 @@
 * DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
 ## Fixed
+* DOE Analysis: with "Use alias names", each factor now keeps the same letter (in the order of the factor lists, discrete factors first), whatever the model terms; before, the equation, coefficients table and Pareto and normal effect plots could label effects with another factor's letter when both factor lists were used or the model was reduced. A factor named by a single letter keeps it, no factor gets the name of another column as its letter, and the tables and effect plots show an alias legend.
 * Process Capability: missing timestamps and partially observed subgroups no longer suppress plots when every stage has measurements. Histograms and probability plots with an odd number of stages now support interactive display.
 * Control charts and Process Capability with stages: a recurring stage value (e.g., A, B, A) now forms separate stages in row order, each with its own limits and estimates, and moving ranges no longer span another stage; before, all rows with the same value were pooled into one stage and plotted out of time order. Gauge R&R charts by operator are unchanged.
 * Gauge r&R: the traffic light chart now updates when "Alpha interaction removal" changes; it kept the %Study variation / %Tolerance of the previous model (with or without the Part x Operator interaction).
