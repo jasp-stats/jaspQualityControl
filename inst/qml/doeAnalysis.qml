@@ -20,8 +20,8 @@ Form
 				+ "- **" + qsTr("Linear terms, Squared terms, Interaction terms, Covariates") + "**: " + qsTr("Joint test of all terms in the group, e.g. whether all linear effects are zero. The group is treated as one term and adjusted according to the selected sums of squares type.") + "\n"
 				+ "- **" + qsTr("Single terms") + "**: " + qsTr("Test of one term (listed below its group), adjusted according to the selected sums of squares type.") + "\n"
 				+ "- **" + qsTr("Block") + "**: " + qsTr("Test of the differences between blocks.") + "\n"
-				+ "- **" + qsTr("Error") + "**: " + qsTr("Variation the model does not explain. Its mean square estimates the noise variance and is the denominator of all F-tests.") + "\n"
-				+ "- **" + qsTr("Lack of fit, Pure error") + "**: " + qsTr("Shown below Error when the design has replicated runs, e.g. center points. Pure error is the variation between replicates. Lack of fit tests whether the model misses systematic variation such as curvature; a small p-value indicates a poor fit.") + "\n"
+				+ "- **" + qsTr("Error") + "**: " + qsTr("Variation the model does not explain. Its mean square estimates the noise variance if the model is adequate and is the denominator of model and term F-tests. The lack-of-fit test uses the Pure error mean square instead.") + "\n"
+				+ "- **" + qsTr("Lack of fit, Pure error") + "**: " + qsTr("Shown below Error when the design has replicated runs, e.g. center points. Pure error is the variation between replicates. Lack of fit tests departures from the fitted form over the retained predictors; its denominator is the Pure error mean square. Runs differing only in omitted predictors are treated as replicates, assuming those predictors have no effect. Center-point curvature is not modeled automatically. In multifactor designs, center points do not identify the separate quadratic effects.") + "\n"
 				+ "- **" + qsTr("Total") + "**: " + qsTr("Total variation of the response around its mean, with df equal to the number of runs minus 1. Model plus Error equals Total.") + "\n\n"
 				+ qsTr("With type I sums of squares, and in balanced (orthogonal) designs, the term rows add up to their group row, and the group rows and Block add up to Model. With type II or III sums of squares in unbalanced designs this is generally not the case: when terms are correlated, part of the variation can be explained by several terms, and this shared part is not attributed to any single term.") + "\n\n"
 				+ "---\n"
@@ -76,7 +76,7 @@ Form
 		{
 			name: "stepwiseMethodFactorial"
 			label: qsTr("Method")
-			info: qsTr("Specify the order in which the predictors are entered into the model. A block of one or more predictors represents one step in the hierarchy. Note that the present release does not allow for more than one block. The backward and forward method are based on model AIC.")
+			info: qsTr("Enter fits all specified terms. Backward, Forward and Stepwise select terms by AIC in coded units, independently of the coefficient display. Required linear terms are retained with squared terms. The reported tests and intervals do not account for model selection.")
 			values: [
 				{ label: qsTr("Enter"),	info: qsTr("All predictors are entered into the model simultaneously.")	,value: "enter"},
 				{ label: qsTr("Backward"), info: qsTr("Starting with the full model, predictors are removed sequentially based on AIC."), value: "backward"},
@@ -149,7 +149,7 @@ Form
 		{
 			name: "stepwiseMethodResponseSurface"
 			label: qsTr("Method")
-			info: qsTr("Specify the order in which the predictors are entered into the model. A block of one or more predictors represents one step in the hierarchy. Note that the present release does not allow for more than one block.")
+			info: qsTr("Enter fits all specified terms. Backward, Forward and Stepwise select terms by AIC in coded units, independently of the coefficient display. Required linear terms are retained with squared terms. The reported tests and intervals do not account for model selection.")
 			values: [
 				{ label: qsTr("Enter"),	info: qsTr("All predictors are entered into the model simultaneously.")	,value: "enter"},
 				{ label: qsTr("Backward"), info: qsTr("Starting with the full model, predictors are removed sequentially based on AIC."), value: "backward"},
@@ -207,7 +207,7 @@ Form
 				{
 					name: 				"automatic"
 					label: 				qsTr("Automatically detect low/high")
-					info:				qsTr("Attempts to automatically detect the low and high levels by taking the minimum and maximum for continuous factors, and by ordering discrete factors alphabetically. For response surface designs, this might recognize alpha values as low/high levels. In this case, manual specification is needed.")
+					info:				qsTr("Attempts to automatically detect the low and high levels by taking the minimum and maximum for continuous factors, and by ordering discrete factors alphabetically. For response surface designs, this might recognize alpha values as low/high levels. In this case, specify the cube levels manually. The Factor Coding table reports any non-identity coding used.")
 					checked: 			true
 				}
 
@@ -305,15 +305,15 @@ Form
 			{
 				name:								"codeFactors"
 				checked:							true
-				label:								qsTr("Display results in coded units")
-				info:								qsTr("Display the results in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. For factorial designs, the ANOVA table is calculated in coded units, so it does not change with this option, unless coding changes the model (an interaction or squared term without its main effects).")
+				label:								qsTr("Display coefficients in coded units")
+				info:								qsTr("Display the coefficients and equation in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. ANOVA, effect plots and model selection use coded units independently of this display option. Models must include the linear term for each square and all lower-order terms for each interaction.")
 			}
 
 			CheckBox
 			{
 				name:								"tableCoefficientsCi"
 				label:								qsTr("Confidence intervals")
-				info:								qsTr("Add confidence intervals for the effects and the coefficients to the coefficients table, based on the t-distribution with the error degrees of freedom. The interval for an effect is twice the interval for its coefficient (in coded units).")
+				info:								qsTr("Add confidence intervals for the effects and the coefficients to the coefficients table, based on the t-distribution with the error degrees of freedom. The interval for an effect is twice the interval for its coefficient in coded units. Standard error, t and p refer to the displayed coefficient, which can test a different hypothesis in uncoded units.")
 				childrenOnSameRow:					true
 
 				CIField
@@ -481,14 +481,14 @@ Form
 			{
 				name:									"plotPareto"
 				label:									qsTr("Pareto plot of effects")
-				info:									qsTr("Show a Pareto plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the absolute effects with the margin of error based on Lenth's (1989) pseudo standard error; other saturated models give an error.")
+				info:									qsTr("Show a Pareto plot of the standardized effects. The cutoff uses α = .05 independently of coefficient confidence intervals. For a saturated model (no error degrees of freedom) with orthogonal two-level effects of equal precision, the plot shows the absolute effects with the margin of error based on Lenth's (1989) approximate pseudo standard error; other saturated models give an error.")
 			}
 
 			CheckBox
 			{
 				name:									"normalEffectsPlot"
 				label:									qsTr("Normal plot of effects")
-				info:									qsTr("Show a normal probability plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the effects with a reference line based on Lenth's (1989) pseudo standard error, and effects larger than its margin of error are marked significant; other saturated models give an error.")
+				info:									qsTr("Show a normal probability plot of the standardized effects. The cutoff uses α = .05 independently of coefficient confidence intervals. For a saturated model (no error degrees of freedom) with orthogonal two-level effects of equal precision, the plot shows the effects with a reference line based on Lenth's (1989) approximate pseudo standard error, and effects larger than its margin of error are marked significant; other saturated models give an error.")
 			}
 		}
 
@@ -594,7 +594,7 @@ Form
 	{
 		title: qsTr("Response optimizer")
 		columns: 2
-		info: qsTr("Finds the factor settings that maximize the composite desirability of the included responses, based on the fitted model of each response. Continuous factors are searched within their observed range; all combinations of discrete factor levels are tried.")
+		info: qsTr("Searches for factor settings with high composite desirability. Continuous factors are searched within their observed ranges; all combinations of discrete levels are tried. The numerical search does not guarantee a global optimum. Combinations within the factor ranges can lie outside the sampled design region.")
 
 		VariablesForm
 		{
@@ -712,8 +712,8 @@ Form
 			CheckBox
 			{
 				name:						"optimizationSolutionTable"
-				label:						qsTr("Show optimal solution")
-				info:						qsTr("Show the optimizer settings per response and the optimal solution: the factor levels with the highest composite desirability, that desirability, and the predicted (fitted) responses at these levels.")
+				label:						qsTr("Show best solution found")
+				info:						qsTr("Show the optimizer settings per response and the best solution found: the factor levels with the highest composite desirability found, that desirability, and the predicted (fitted) responses at these levels.")
 				checked:					true
 			}
 
@@ -721,7 +721,7 @@ Form
 			{
 				name:						"optimizationIntervals"
 				label:						qsTr("Confidence and prediction intervals")
-				info:						qsTr("Predicted response at the optimal (or manually set) factor levels, with the confidence interval for the mean response and the prediction interval for a single new run. Blocks are averaged out; covariates are held at their mean.")
+				info:						qsTr("Predicted response at the selected (or manually set) factor levels, with the confidence interval for the mean response and the prediction interval for a single new run. Blocks are averaged out; covariates are held at their mean.")
 				childrenOnSameRow:			true
 
 				CIField
@@ -735,7 +735,7 @@ Form
 			{
 				name:						"optimizationPlot"
 				label:						qsTr("Show optimization plot")
-				info:						qsTr("Show a matrix of plots with one column per factor. The top row shows the composite desirability, the other rows one per response. Each plot varies one factor while the other factors are held at the optimal (or manually set) levels, which are marked in red.")
+				info:						qsTr("Show a matrix of plots with one column per factor. The top row shows the composite desirability, the other rows one per response. Each plot varies one factor while the other factors are held at the selected (or manually set) levels, which are marked in red.")
 				checked:					true
 
 				DropDown
@@ -756,7 +756,7 @@ Form
 					name:						"optimizationPlotCustomParameters"
 					id:							optimizationPlotCustomParameters
 					label:						qsTr("Set input parameters manually")
-					info:						qsTr("Draw the optimization plot at manually entered factor levels instead of the optimal solution. Enter a value for every factor; discrete factors need one of their observed levels.")
+					info:						qsTr("Draw the optimization plot at manually entered factor levels instead of the best solution found. Enter a value for every factor; discrete factors need one of their observed levels.")
 					checked:					false
 				}
 
@@ -855,8 +855,8 @@ Form
 			{
 				name:						"squaredTermsCoded"
 				label:						qsTr("Use coded data to calculate squared terms")
-				info:						qsTr("Calculate the ANOVA table from the factors in coded units (-1 to 1), so that squared terms are calculated from coded values. Only has an effect when the results are not displayed in coded units. It can change the type II and III sums of squares of the linear terms.")
-				visible:					designType.currentValue == "responseSurfaceDesign"
+				info:						qsTr("Deprecated: ANOVA tests always use coded units. This option is retained for compatibility with saved analyses and has no effect.")
+				visible:					false // retired option, retained for saved analyses
 			}
 	}
 }

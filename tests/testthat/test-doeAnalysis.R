@@ -3210,29 +3210,18 @@ options$sumOfSquaresType <- "type3"
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4contCCD_uncoded.csv", options)
 
-test_that("31.1 Uncoded Squared Terms ANOVA table results match", {
+test_that("31.1 Uncoded display uses coded ANOVA term tests", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list(59.6130495368235, 476.904396294588, 8, 0.81723614093627, 0.59604175449412,
-                                      "Model", 29.9619948990851, 119.84797959634, 4, 0.410749412692858,
-                                      0.798868376431317, "<unicode> Linear terms", 63.1077346389266,
-                                      63.1077346389266, 1, 0.865144828527668, 0.362872709933773, "<unicode> <unicode> A",
-                                      17.1646601195775, 17.1646601195775, 1, 0.2353105688368, 0.632635670262945,
-                                      "<unicode> <unicode> B", 34.037306875782, 34.037306875782, 1,
-                                      0.466617922336705, 0.502014598205835, "<unicode> <unicode> C",
-                                      5.53827796205383, 5.53827796205383, 1, 0.0759243310702544, 0.785591679264418,
-                                      "<unicode> <unicode> D", 84.1808488704951, 336.723395481981,
-                                      4, 1.15403645017635, 0.359027985564792, "<unicode> Squared terms",
-                                      65.4319337921556, 65.4319337921556, 1, 0.897007307657829, 0.35435731472199,
-                                      "<unicode> <unicode> A^2", 2.0294343542887, 2.0294343542887,
-                                      1, 0.0278215443240813, 0.869124697680983, "<unicode> <unicode> B^2",
-                                      19.6252348513958, 19.6252348513958, 1, 0.269042622706554, 0.609397684905525,
-                                      "<unicode> <unicode> C^2", 201.539843694872, 201.539843694872,
-                                      1, 2.76291257343506, 0.111328352752227, "<unicode> <unicode> D^2",
-                                      72.9447053926513, 1531.83881324568, 21, "", "", "Error",
-                                      72.162972374947, 1154.60755799915, 16, 0.9564818844052, 0.574682905038344, "<unicode> Lack of fit",
-                                      75.446251049305, 377.231255246525, 5, "", "", "<unicode> Pure error", "",
-                                      2008.74320954026, 29, "", "", "Total"))
+  data <- read.csv("datasets/doeAnalysis/RSM4contCCD_uncoded.csv")
+  data$B <- (data$B - 15) / 15 # the manual low/high levels are 0 and 30; A, C and D already use -1/+1
+  fit <- stats::lm(Result ~ A + B + C + D + I(A^2) + I(B^2) + I(C^2) + I(D^2), data)
+  ref <- car::Anova(fit, type = 3)[-1, ]
+  sources <- vapply(table, function(x) trimws(gsub("\u00a0", "", x$terms)), character(1))
+  labels <- c("A", "B", "C", "D", "A^2", "B^2", "C^2", "D^2", "Error")
+  rows <- table[match(labels, sources)]
+  expect_equal(vapply(rows, function(x) x$adjss, numeric(1)), unname(ref[["Sum Sq"]]), tolerance = 1e-9)
+  expect_equal(vapply(rows[1:8], function(x) x$pval, numeric(1)), unname(ref[["Pr(>F)"]][1:8]), tolerance = 1e-9)
+  expect_equal(table[[which(sources == "Model")]]$adjss, sum((data$Result - mean(data$Result))^2) - sum(resid(fit)^2))
 })
 
 test_that("31.2 Uncoded Squared Terms Coded Coefficients table results match", {
@@ -5606,7 +5595,8 @@ test_that("Response optimizer leaves a flat desirability region around the first
   # the first run predicts 21.5, far below the lower bound; a single start there stalled at desirability 0
   table <- .doeTestOptimizerSolution(lowerBound = 36.8, target = 37.8)
   jaspTools::expect_equal_tables(table[["data"]], list(150, 100, "Formula2", 37.798, 0.998364696249993))
-  expect_length(table[["footnotes"]], 0)
+  notes <- vapply(table[["footnotes"]], function(note) note[["text"]], character(1))
+  expect_false(any(grepl("desirability above 0|optimization runs failed", notes)))
 })
 
 test_that("Response optimizer flags a solution with desirability 0", {
@@ -6012,7 +6002,7 @@ test_that("Lack of fit in factorial designs does not depend on the coding", {
   expect_equal(ref[["Df"]][2], 6)
 })
 
-test_that("Effects are not shown when the coded fit they come from is another model", {
+test_that("Squared terms without their linear terms are rejected", {
   # Uncoded, the effects come from a fit on coded continuous predictors. Here the coded A^2 and B^2 coincide, so that
   # fit has one coefficient less and one more error df than the uncoded fit: it is another model, so no effects.
   set.seed(3)
@@ -6033,14 +6023,9 @@ test_that("Effects are not shown when the coded fit they come from is another mo
   options$tableCoefficientsCiLevel         <- 0.95
   set.seed(123)
   results <- runAnalysis("doeAnalysis", sqData, options)
-  table   <- results[["results"]][["y"]][["collection"]][["y_tableCoefficients"]]
-
-  codedData <- transform(sqData, A = A - 1, B = B - 11) # automatic coding: -1/0/+1
-  codedFit  <- stats::lm(y ~ C + I(A^2) + I(B^2), data = codedData)
-  expect_equal(codedFit[["df.residual"]], 7)
-  expect_equal(stats::lm(y ~ C + I(A^2) + I(B^2), data = sqData)[["df.residual"]], 6)
-  expect_true(all(is.na(c(doeTableColumn(table, "effects"), doeTableColumn(table, "effectsLower"), doeTableColumn(table, "effectsUpper")))))
-  expect_true(any(startsWith(vapply(table[["footnotes"]], function(f) f[["text"]], character(1)), "Effects are not shown: coding the continuous predictors changes this model")))
+  summary <- results[["results"]][["y"]][["collection"]][["y_tableSummary"]]
+  expect_match(summary[["error"]][["errorMessage"]], "omits lower-order terms")
+  expect_length(summary[["data"]], 0)
 })
 
 etchOptimizerOptions <- function(...) {
@@ -6327,7 +6312,7 @@ test_that("Prediction table at manual values outside the design space notes the 
   newdata    <- data.frame(Gap = 1.1, Pressure = 420, Flow = 150, Power = 350)
   expect_equal(doePredictionRow(prediction), doePredictionReference(etchFitUncoded, newdata, 0.9))
   notes <- vapply(prediction[["footnotes"]], function(note) note[["text"]], character(1))
-  expect_true(any(grepl("outside of the design space", notes, fixed = TRUE)))
+  expect_true(any(grepl("outside the observed factor ranges", notes, fixed = TRUE)))
 })
 
 ### Discrete factor with 3 levels, coded units (verified against lm) ####
@@ -6733,13 +6718,11 @@ test_that("60.1 Coefficients that depend on the order of the factor levels are n
     expect_length(equation[["data"]], 0)
     expect_true(any(grepl("the coefficients of the equation are not unique", doeFootnotes(equation), fixed = TRUE)))
   }
-  # a coefficient of an aliased fit that does not depend on the left-out column is still shown: with A:F only, A is 0 in
-  # the run at level c, so only the all-zero column A:Fc is aliased
+  # Interaction-only specifications are now rejected, even if individual coefficients were previously estimable.
   data <- data.frame(A = c(0, 2, 2, 0, 0, 2, 2, 0), F = c("a", "a", "b", "c", "a", "a", "b", "c"), y = c(10, 12, 15, 17, 10.3, 11.8, 15.1, 16.6))
   set.seed(123)
   results <- runAnalysis("doeAnalysis", data, doeTestOptions("y", "A", "F", list(c("A", "F"))))
-  ref     <- stats::coef(stats::lm(y ~ A:F, data = transform(data, F = factor(F))))
-  expect_equal(doeTableColumn(doeTable(results, "y", "tableCoefficients"), "coef"), unname(ref[!is.na(ref)]))
+  expect_match(doeTable(results, "y", "tableSummary")[["error"]][["errorMessage"]], "omits lower-order terms")
 })
 
 test_that("60.2 Partial aliasing with Type I sums of squares", {
@@ -6753,38 +6736,28 @@ test_that("60.2 Partial aliasing with Type I sums of squares", {
   expect_equal(anova[["df"]][anova[["source"]] %in% c("Model", "Error")], c(11, 8))
 })
 
-test_that("60.3 Model with an interaction but no main effects: the ANOVA follows the fit of the coefficients shown", {
-  # in coded units A:F has 3 estimable columns (saturated); in uncoded units A is 0 in the run at level c, so only 2
+test_that("60.3 Interaction-only models are rejected in both display units", {
   data <- data.frame(A = c(0, 2, 2, 0), F = c("a", "a", "b", "c"), y = c(10, 12, 15, 17))
   for (coded in c(FALSE, TRUE)) {
-    set.seed(123)
     results <- runAnalysis("doeAnalysis", data, doeTestOptions("y", "A", "F", list(c("A", "F")), coded = coded, ssType = "type1"))
-    expect_identical(results[["status"]], "complete")
-    fit   <- stats::lm(y ~ A:F, data = if (coded) transform(data, A = A - 1) else data)
-    anova <- doeAnovaSources(results, "y")
-    expect_equal(anova[["df"]][anova[["source"]] %in% c("Model", "Error")], c(fit$rank - 1, fit$df.residual), label = paste("coded:", coded))
+    expect_match(doeTable(results, "y", "tableSummary")[["error"]][["errorMessage"]], "omits lower-order terms")
+    expect_length(doeTable(results, "y", "tableAnova")[["data"]], 0)
   }
 })
 
-test_that("60.4 Uncoded ANOVA of a model that coding changes agrees with the Model Summary", {
-  # Gap + Gap:Power without Power: centering Power changes the model, so the uncoded ANOVA cannot use the coded fit
-  set.seed(123)
+test_that("60.4 An interaction missing one main effect gives an explanatory error", {
   results <- runAnalysis("doeAnalysis", etchDataUncoded, doeTestOptions("EtchRate", c("Gap", "Power"), character(0), list("Gap", c("Gap", "Power")), ssType = "type3"))
-  anova   <- doeAnovaSources(results, "EtchRate")
-  rsq     <- doeTable(results, "EtchRate", "tableSummary")[["data"]][[1]][["rsq"]]
-  ref     <- summary(stats::lm(EtchRate ~ Gap + Gap:Power, data = etchDataUncoded))
-  expect_equal(anova[["ss"]][anova[["source"]] == "Model"] / anova[["ss"]][anova[["source"]] == "Total"], ref$r.squared)
-  expect_equal(rsq, ref$r.squared)
+  expect_match(doeTable(results, "EtchRate", "tableSummary")[["error"]][["errorMessage"]], "omits lower-order terms: Power", fixed = TRUE)
+  expect_length(doeTable(results, "EtchRate", "tableAnova")[["data"]], 0)
 })
 
-test_that("60.5 Alias footnotes follow the fit shown: coded units can alias other columns than uncoded units", {
+test_that("60.5 Changing units cannot expose a different aliased interaction-only fit", {
   data <- data.frame(A = c(0, 2, 2, 0, 0, 2, 2, 0), F = c("a", "a", "b", "c", "a", "a", "b", "c"), y = c(10, 12, 15, 17, 10.3, 11.8, 15.1, 16.6))
-  notes <- lapply(c(uncoded = FALSE, coded = TRUE), function(coded) {
-    set.seed(123)
-    doeSummaryFootnotes(runAnalysis("doeAnalysis", data, doeTestOptions("y", "A", "F", list(c("A", "F")), coded = coded)), "y")
-  })
-  expect_true(any(grepl("Some contrasts of the following terms are aliased", notes[["uncoded"]])))
-  expect_false(any(grepl("aliased", notes[["coded"]])))
+  for (coded in c(FALSE, TRUE)) {
+    results <- runAnalysis("doeAnalysis", data, doeTestOptions("y", "A", "F", list(c("A", "F")), coded = coded))
+    expect_match(doeTable(results, "y", "tableSummary")[["error"]][["errorMessage"]], "omits lower-order terms")
+    expect_length(doeTable(results, "y", "tableCoefficients")[["data"]], 0)
+  }
 })
 
 test_that("60.6 Saturated model: sequential sums of squares are labelled Type I, also with aliasing and Type III", {
@@ -6804,7 +6777,7 @@ test_that("60.7 Fully aliased terms are removed with a footnote", {
   data$C <- data$A * data$B
   set.seed(123)
   results <- runAnalysis("doeAnalysis", data, doeTestOptions("y", c("A", "B", "C"), character(0), list("A", "B", "C", c("A", "B"))))
-  expect_true(any(grepl("^The following aliased terms were removed: A[^,]+B[.]$", doeSummaryFootnotes(results, "y"))))
+  expect_true(any(grepl("^The following aliased terms were removed: A[^,]+B[.] Their effects are assumed to be zero[.]", doeSummaryFootnotes(results, "y"))))
   expect_false("A:B" %in% doeAnovaSources(results, "y")[["source"]])
 })
 
@@ -6863,19 +6836,11 @@ test_that("60.10 Contour plot with aliased contrasts in its slice gives an error
   expect_match(plots[[1]][["error"]][["errorMessage"]], "some contrasts of the model are aliased")
 })
 
-test_that("60.11 Uncoded ANOVA says which units it uses; effects of a model that coding changes are not shown", {
-  set.seed(123)
-  sameModel <- runAnalysis("doeAnalysis", etchDataUncoded, etchOptions(continuous = etchTerms, coded = FALSE))
-  expect_true(any(startsWith(doeFootnotes(doeTable(sameModel, "EtchRate", "tableAnova")), "Calculated with the continuous predictors in coded")))
-  set.seed(123)
-  otherModel <- runAnalysis("doeAnalysis", etchDataUncoded, doeTestOptions("EtchRate", c("Gap", "Power"), character(0), list("Gap", c("Gap", "Power"))))
-  expect_true(any(startsWith(doeFootnotes(doeTable(otherModel, "EtchRate", "tableAnova")), "Calculated in uncoded units")))
-  coefTable <- doeTable(otherModel, "EtchRate", "tableCoefficients")
-  expect_true(all(is.na(doeTableColumn(coefTable, "effects"))))
-  expect_true(any(startsWith(doeFootnotes(coefTable), "Effects are not shown: coding the continuous predictors changes this model")))
-  set.seed(123)
-  coded <- runAnalysis("doeAnalysis", etchData, etchOptions(continuous = etchTerms, coded = TRUE))
-  expect_false(any(startsWith(doeFootnotes(doeTable(coded, "EtchRate", "tableAnova")), "Calculated")))
+test_that("60.11 ANOVA identifies coded tests in both coefficient displays", {
+  for (coded in c(FALSE, TRUE)) {
+    results <- runAnalysis("doeAnalysis", etchDataUncoded, etchOptions(continuous = etchTerms, coded = coded))
+    expect_true(any(grepl("ANOVA tests use coded units.", doeFootnotes(doeTable(results, "EtchRate", "tableAnova")), fixed = TRUE)))
+  }
 })
 
 test_that("60.12 Coded and uncoded fits are compared as models, not by their fit to the response", {
@@ -7056,14 +7021,14 @@ results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExampleS
 
 test_that("61.1 Saturated design - Pareto Chart of Effects matches", {
   plot <- results[["results"]][["Response"]][["collection"]][["Response_plotPareto"]]
-  expect_equal(plot[["title"]], "Pareto Chart of Effects")
+  expect_equal(plot[["title"]], "Pareto Chart of Effects (Lenth screening, \u03b1 = .05)")
   testPlot <- results[["state"]][["figures"]][[plot[["data"]]]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "pareto-chart-of-effects61")
 })
 
 test_that("61.2 Saturated design - Normal Plot of Effects matches", {
   plot <- results[["results"]][["Response"]][["collection"]][["Response_normalEffectsPlot"]]
-  expect_equal(plot[["title"]], "Normal Plot of Effects")
+  expect_equal(plot[["title"]], "Normal Plot of Effects (Lenth screening, \u03b1 = .05)")
   testPlot <- results[["state"]][["figures"]][[plot[["data"]]]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "normal-plot-of-effects61")
 })
@@ -7206,24 +7171,20 @@ test_that("62.6 Saturated full quadratic response surface model gives a plot err
   expect_identical(errors, rep("The model is saturated (no error degrees of freedom). Lenth's method for assessing its effects applies to two-level factorial terms only, but the model has squared terms or terms of discrete factors with more than two levels.", 2))
 })
 
-test_that("62.7 Saturated non-orthogonal two-level design uses Lenth's method as in Minitab (no orthogonality check)", {
-  # three runs of a 2^2 design (correlated effects): y = 4.5 + 2 A + 0.5 B, so effects A = 4, B = 1;
-  # s0 = 1.5 * 2.5 = 3.75, both effects are below 2.5 * s0, so PSE = 3.75 with 2 / 3 df
+test_that("62.7 Saturated non-orthogonal designs do not use Lenth's method", {
   options <- saturatedFactorialOptions("y", c("A", "B"), terms = list("A", "B"))
-  options$plotPareto <- TRUE
-  set.seed(123)
-  results <- runAnalysis("doeAnalysis", data.frame(A = c(-1, 1, -1), B = c(-1, -1, 1), y = c(3, 7, 4)), options)
-  plotName <- results[["results"]][["y"]][["collection"]][["y_plotPareto"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  expect_equal(sort(testPlot[["data"]][["t"]]), c(1, 4))
-  expect_equal(ggplot2::layer_data(testPlot, 2)[["yintercept"]], qt(0.975, 2 / 3) * 3.75)
+  errors <- saturatedPlotErrors(data.frame(A = c(-1, 1, -1), B = c(-1, -1, 1), y = c(3, 7, 4)), options, "y")
+  expect_identical(errors, rep("Lenth's method requires orthogonal two-level effects with equal precision.", 2))
 })
 
-test_that("62.8 Saturated model whose effects are not available in uncoded units gives a plot error", {
-  # interaction without its main effects: coding changes the model, so there are no uncoded effects
-  errors <- saturatedPlotErrors(data.frame(A = c(1, 2), B = c(3, 5), y = c(1, 4)),
-                                saturatedFactorialOptions("y", c("A", "B"), terms = list(c("A", "B")), codeFactors = FALSE), "y")
-  expect_identical(errors, rep("The model is saturated (no error degrees of freedom) and its effects are not available in uncoded units, because coding changes the model.", 2))
+test_that("62.8 Saturated interaction-only models are rejected before effect plots", {
+  options <- saturatedFactorialOptions("y", c("A", "B"), terms = list(c("A", "B")), codeFactors = FALSE)
+  options$plotPareto <- TRUE
+  options$normalEffectsPlot <- TRUE
+  results <- runAnalysis("doeAnalysis", data.frame(A = c(1, 2), B = c(3, 5), y = c(1, 4)), options)
+  expect_match(doeTable(results, "y", "tableSummary")[["error"]][["errorMessage"]], "omits lower-order terms")
+  expect_identical(doeTable(results, "y", "plotPareto")[["status"]], "error")
+  expect_identical(doeTable(results, "y", "normalEffectsPlot")[["status"]], "error")
 })
 
 test_that("62.9 Saturated model with only one nonzero effect gives a plot error (PSE = 0)", {
@@ -7315,8 +7276,8 @@ test_that("62.15 Saturated model without unique effects: the effect plots are ti
     set.seed(123)
     results    <- runAnalysis("doeAnalysis", data, options)
     collection <- results[["results"]][["y"]][["collection"]]
-    expect_identical(collection[["y_plotPareto"]][["title"]], "Pareto Chart of Effects")
-    expect_identical(collection[["y_normalEffectsPlot"]][["title"]], "Normal Plot of Effects")
+    expect_identical(collection[["y_plotPareto"]][["title"]], "Pareto Chart of Effects (Lenth screening, \u03b1 = .05)")
+    expect_identical(collection[["y_normalEffectsPlot"]][["title"]], "Normal Plot of Effects (Lenth screening, \u03b1 = .05)")
     expect_match(collection[["y_plotPareto"]][["error"]][["errorMessage"]], "No effects to plot")
   }
 })

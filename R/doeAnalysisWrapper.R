@@ -23,12 +23,12 @@
 #'
 #' @param blocksFactorial, The column corresponding to the blocks in the design. The difference between a block variable and a discrete factor is that the blocks will not be analysed for interaction effects and are excluded from effect plots.
 #' @param blocksResponseSurface, The column corresponding to the blocks in the design. The difference between a block variable and a discrete factor is that the blocks will not be analysed for interaction effects and are excluded from effect plots.
-#' @param codeFactors, Display the results in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. For factorial designs, the ANOVA table is calculated in coded units, so it does not change with this option, unless coding changes the model (an interaction or squared term without its main effects).
+#' @param codeFactors, Display the coefficients and equation in coded units. This means that the levels of continuous factors and of discrete factors with two levels are rescaled to lie between -1 and 1. Discrete factors with more than two levels are not rescaled: a factor with k levels enters the model with k-1 terms (sum-to-zero contrasts), as in uncoded units, and their low/high levels are not used. ANOVA, effect plots and model selection use coded units independently of this display option. Models must include the linear term for each square and all lower-order terms for each interaction.
 #'    Defaults to \code{TRUE}.
 #' @param codeFactorsManualTable, Enter the low and high level of each factor. Blocks and discrete factors with more than two levels are not rescaled to -1/1, so they have no low and high level ("Not available").
 #' @param codeFactorsMethod, For the ordering of contrasts and to identify the alpha points in a response surface design, the low and high levels of all factors need to be specified. There are two options to handle this.
 #' \itemize{
-#'   \item \code{"automatic"}: Attempts to automatically detect the low and high levels by taking the minimum and maximum for continuous factors, and by ordering discrete factors alphabetically. For response surface designs, this might recognize alpha values as low/high levels. In this case, manual specification is needed.
+#'   \item \code{"automatic"}: Attempts to automatically detect the low and high levels by taking the minimum and maximum for continuous factors, and by ordering discrete factors alphabetically. For response surface designs, this might recognize alpha values as low/high levels. In this case, specify the cube levels manually. The Factor Coding table reports any non-identity coding used.
 #'   \item \code{"manual"}: Shows all factors in the analysis to allow for manual specification of the low and high levels.
 #' }
 #' @param continuousFactorsFactorial, The columns corresponding to the continuous factors in the design.
@@ -52,17 +52,17 @@
 #' @param histogramBinWidthType, Select the method used to calculate the bin widths of the residual histogram, or specify a manual number of bins.
 #' @param histogramManualNumberOfBins, Number of bins when the bin width type is set to manual.
 #' @param modelTerms, Allows manually defining the main effects and interactions in the model.
-#' @param normalEffectsPlot, Show a normal probability plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the effects with a reference line based on Lenth's (1989) pseudo standard error, and effects larger than its margin of error are marked significant; other saturated models give an error.
+#' @param normalEffectsPlot, Show a normal probability plot of the standardized effects. The cutoff uses α = .05 independently of coefficient confidence intervals. For a saturated model (no error degrees of freedom) with orthogonal two-level effects of equal precision, the plot shows the effects with a reference line based on Lenth's (1989) approximate pseudo standard error, and effects larger than its margin of error are marked significant; other saturated models give an error.
 #'    Defaults to \code{FALSE}.
-#' @param optimizationIntervals, Predicted response at the optimal (or manually set) factor levels, with the confidence interval for the mean response and the prediction interval for a single new run. Blocks are averaged out; covariates are held at their mean.
+#' @param optimizationIntervals, Predicted response at the selected (or manually set) factor levels, with the confidence interval for the mean response and the prediction interval for a single new run. Blocks are averaged out; covariates are held at their mean.
 #'    Defaults to \code{FALSE}.
 #' @param optimizationIntervalsLevel, Confidence level of the intervals.
-#' @param optimizationPlot, Show a matrix of plots with one column per factor. The top row shows the composite desirability, the other rows one per response. Each plot varies one factor while the other factors are held at the optimal (or manually set) levels, which are marked in red.
+#' @param optimizationPlot, Show a matrix of plots with one column per factor. The top row shows the composite desirability, the other rows one per response. Each plot varies one factor while the other factors are held at the selected (or manually set) levels, which are marked in red.
 #'    Defaults to \code{TRUE}.
-#' @param optimizationPlotCustomParameters, Draw the optimization plot at manually entered factor levels instead of the optimal solution. Enter a value for every factor; discrete factors need one of their observed levels.
+#' @param optimizationPlotCustomParameters, Draw the optimization plot at manually entered factor levels instead of the best solution found. Enter a value for every factor; discrete factors need one of their observed levels.
 #'    Defaults to \code{FALSE}.
 #' @param optimizationPlotPredictionType, What the response rows of the optimization plot show: the predicted response or its individual desirability.
-#' @param optimizationSolutionTable, Show the optimizer settings per response and the optimal solution: the factor levels with the highest composite desirability, that desirability, and the predicted (fitted) responses at these levels.
+#' @param optimizationSolutionTable, Show the optimizer settings per response and the best solution found: the factor levels with the highest composite desirability found, that desirability, and the predicted (fitted) responses at these levels.
 #'    Defaults to \code{TRUE}.
 #' @param order, The highest order of the interactions to include. For example, 2 includes all two-way interactions.
 #' @param plotFitted, Show a plot of the residuals per fitted value.
@@ -71,7 +71,7 @@
 #'    Defaults to \code{FALSE}.
 #' @param plotNorm, Show a normal probability plot of the residuals.
 #'    Defaults to \code{FALSE}.
-#' @param plotPareto, Show a Pareto plot of the standardized effects. For a saturated model (no error degrees of freedom) of two-level factorial terms, the plot shows the absolute effects with the margin of error based on Lenth's (1989) pseudo standard error; other saturated models give an error.
+#' @param plotPareto, Show a Pareto plot of the standardized effects. The cutoff uses α = .05 independently of coefficient confidence intervals. For a saturated model (no error degrees of freedom) with orthogonal two-level effects of equal precision, the plot shows the absolute effects with the margin of error based on Lenth's (1989) approximate pseudo standard error; other saturated models give an error.
 #'    Defaults to \code{FALSE}.
 #' @param plotRunOrder, Show a plot of the residuals per run order value.
 #'    Defaults to \code{FALSE}.
@@ -88,16 +88,16 @@
 #' - **Linear and squared terms**: Main effects and the squared terms of all continuous factors.
 #' - **Full quadratic**: Main effects, all two-way interactions and the squared terms of all continuous factors.
 #' @param squaredTerms, When analysing response surface designs, the continuous factors whose squared terms are included in the manually defined model.
-#' @param squaredTermsCoded, Calculate the ANOVA table from the factors in coded units (-1 to 1), so that squared terms are calculated from coded values. Only has an effect when the results are not displayed in coded units. It can change the type II and III sums of squares of the linear terms.
+#' @param squaredTermsCoded, Deprecated: ANOVA tests always use coded units. This option is retained for compatibility with saved analyses and has no effect.
 #'    Defaults to \code{FALSE}.
-#' @param stepwiseMethodFactorial, Specify the order in which the predictors are entered into the model. A block of one or more predictors represents one step in the hierarchy. Note that the present release does not allow for more than one block. The backward and forward method are based on model AIC.
+#' @param stepwiseMethodFactorial, Enter fits all specified terms. Backward, Forward and Stepwise select terms by AIC in coded units, independently of the coefficient display. Required linear terms are retained with squared terms. The reported tests and intervals do not account for model selection.
 #' \itemize{
 #'   \item \code{"enter"} (default) : All predictors are entered into the model simultaneously.
 #'   \item \code{"backward"}: Starting with the full model, predictors are removed sequentially based on AIC.
 #'   \item \code{"forward"}: Starting with the intercept-only model, predictors are entered sequentially based on AIC.
 #'   \item \code{"both"}: Starting with the intercept-only model, predictors are entered or removed sequentially based on AIC, combining both forward addition and backward elimination at each step.
 #' }
-#' @param stepwiseMethodResponseSurface, Specify the order in which the predictors are entered into the model. A block of one or more predictors represents one step in the hierarchy. Note that the present release does not allow for more than one block.
+#' @param stepwiseMethodResponseSurface, Enter fits all specified terms. Backward, Forward and Stepwise select terms by AIC in coded units, independently of the coefficient display. Required linear terms are retained with squared terms. The reported tests and intervals do not account for model selection.
 #' \itemize{
 #'   \item \code{"enter"} (default) : All predictors are entered into the model simultaneously.
 #'   \item \code{"backward"}: Starting with the full model, predictors are removed sequentially based on AIC.
