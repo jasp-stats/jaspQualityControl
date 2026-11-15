@@ -148,6 +148,7 @@ test_that("nonuniform paired differences remain aligned after long-row reorderin
     # Absolute paired differences are 1, 4, 5, 2, 5, independently of row order.
     expect_equal(result$results$rAndR2$data[[1]]$Rbar, 3.4)
     expect_equal(result$results$rAndR2$data[[1]]$GRR, 3.4 / 1.19105)
-    expect_length(result$state$figures, 4L)
+    # Traffic light needs a process SD or tolerance (none ticked here), so 3 figures.
+    expect_length(result$state$figures, 3L)
   }
 })

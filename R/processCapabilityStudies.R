@@ -588,6 +588,17 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   # return state if available
   if (!is.null(jaspResults[["dataTransformationState"]])) return(jaspResults[["dataTransformationState"]]$object)
 
+  # Box-Cox is only defined for x + shift > 0; stop instead of silently dropping the other values
+  if (options[["dataTransformation"]] %in% c("boxCox", "boxCoxAuto")) {
+    shift <- options[["dataTransformationShift"]]
+    nOutside <- sum(unlist(dataset[measurements]) + shift <= 0, na.rm = TRUE)
+    if (nOutside > 0)
+      .quitAnalysis(sprintf(ngettext(nOutside,
+        "The Box-Cox transformation requires measurement + shift > 0, but %1$i measurement is smaller than or equal to -shift (%2$s). Increase the shift or use the Yeo-Johnson or Johnson transformation.",
+        "The Box-Cox transformation requires measurement + shift > 0, but %1$i measurements are smaller than or equal to -shift (%2$s). Increase the shift or use the Yeo-Johnson or Johnson transformation."),
+        nOutside, format(-shift)))
+  }
+
   # transform data and return parameters of the transform
   result <- try(.qcTransformData(dataset = dataset, measurements = measurements, options = options))
 
@@ -3387,6 +3398,38 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   list(varcov = varcov)
 }
 
+# Inverse observed information of the Weibull log-likelihood at (shape, scale), in closed form. A finite-difference
+# Hessian needs steps that are small relative to the width of the likelihood; in the scale that width is about
+# scale / (shape * sqrt(n)), so data that vary little relative to their location (high shape) need steps no fixed
+# size provides.
+.qcWeibullObservedVarcov <- function(data, shape, scale) {
+  n      <- length(data)
+  z      <- data / scale
+  zShape <- z^shape
+  logZ   <- log(z)
+  crossInformation <- (n - sum(zShape) - shape * sum(zShape * logZ)) / scale
+  information <- matrix(c(n / shape^2 + sum(zShape * logZ^2), crossInformation,
+                          crossInformation, shape * ((shape + 1) * sum(zShape) - n) / scale / scale), nrow = 2)
+
+  invalidMessage <- gettext("Could not compute variance-covariance matrix: Hessian contains invalid values.")
+  if (!all(is.finite(information)) || any(diag(information) <= 0))
+    stop(invalidMessage, call. = FALSE)
+
+  # The scale and shape entries differ by a factor of about shape^4 / scale^2, which makes solve() report a singular
+  # matrix for small units or a high shape (from a shape of about 1e4 for a scale of 1); inverting the correlation
+  # form depends only on the correlation of the estimates.
+  inverseSd <- 1 / sqrt(diag(information))
+  scaling <- outer(inverseSd, inverseSd)
+  correlation <- information * scaling
+  if (abs(correlation[1, 2]) >= 1) # not positive definite, so there are no valid variances
+    stop(invalidMessage, call. = FALSE)
+
+  varcov <- solve(correlation) * scaling
+  dimnames(varcov) <- list(c("shape", "scale"), c("shape", "scale"))
+
+  list(varcov = varcov)
+}
+
 .qcProbabilityPlotObject <- function(options, dataset, measurements, stages) {
   if (identical(stages, "")) {
     nStages <- 1
@@ -3510,12 +3553,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       }
       shape <- as.numeric(fit_Weibull[["beta"]])
       scale <- as.numeric(fit_Weibull[["theta"]])
-      lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x/scale)^shape)
-      # Hessian on the rescaled data (see .qcFitdistUnitFree), so the finite-difference steps are the same in any unit;
-      # the scale (co)variances are mapped back below
-      unitScale <- .qcUnitScale(dataCurrentStage)
-      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage / unitScale, parms = c("shape", "scale"),
-                                     mle = c("shape" = shape, "scale" = scale / unitScale), stepScale = c(shape, scale / unitScale)))
+      matrix <- try(.qcWeibullObservedVarcov(dataCurrentStage, shape, scale))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
@@ -3524,8 +3562,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         covarSS <- NA
       } else {
         varShape <- matrix$varcov[1,1]
-        varScale <- matrix$varcov[2,2] * unitScale^2
-        covarSS <- matrix$varcov[1,2] * unitScale
+        varScale <- matrix$varcov[2,2]
+        covarSS <- matrix$varcov[1,2]
       }
       zp <- log(-1*log(1-pSeq))
       zalpha <- qnorm(0.975) # normal critical value for log percentile (delta method), not the Weibull axis transform
@@ -3859,7 +3897,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   dataset <- tidyr::pivot_longer(dataset, tidyr::all_of(measurements))
 
   x <- dataset[["value"]]
-  group <- dataset[["name"]]
+  # each row is one subgroup: Box-Cox (auto) pools the variation within subgroups;
+  # with subgroup size 1 (individuals) there is no grouping, so the overall variation is used
+  group <- if (length(measurements) > 1) as.factor(dataset[["id"]]) else NULL
   lambda <- options[["dataTransformationLambda"]]
   shift <- options[["dataTransformationShift"]]
   method <- options[["dataTransformationMethod"]]
@@ -3869,7 +3909,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     options[["dataTransformation"]],
     boxCox = .qcBoxCoxKeepOrder(jaspBase::BoxCox(x, lambda=lambda, shift=shift, continuityAdjustment=ca), lambda=lambda, continuityAdjustment=ca),
     boxCoxAuto = {
-      y <- jaspBase::BoxCoxAuto(x, predictor=as.factor(group), shift=shift, method=method, continuityAdjustment=ca)
+      y <- jaspBase::BoxCoxAuto(x, predictor=group, shift=shift, method=method, continuityAdjustment=ca)
       .qcBoxCoxKeepOrder(y, lambda=attr(y, "lambda"), continuityAdjustment=ca)
     },
     yeoJohnson = jaspBase::YeoJohnson(x, lambda=lambda),

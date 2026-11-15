@@ -258,11 +258,10 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     }
 
     # R chart by operator
-    if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
+    if (options[["rChart"]] && !options[["type3"]] && is.null(jaspResults[["rChart"]])) {
       jaspResults[["rChart"]] <- createJaspContainer(gettext("Range chart by operator"))
       jaspResults[["rChart"]]$position <- 3
-      jaspResults[["rChart"]]$dependOn(c("rChart", "gaugeRRmethod", "anovaGaugeReport", "measurementLongFormat",
-                                         "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
+      jaspResults[["rChart"]]$dependOn(.msaGaugeRRChartByOperatorDependencies("rChart"))
       jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
       if (ready) {
         rChart <- .controlChart(dataset = dataset[c(measurements, operators)], plotType = "R", ruleList = ruleList2,
@@ -275,11 +274,10 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     }
 
     # Xbar chart by operator
-    if (options[["xBarChart"]] && is.null(jaspResults[["xBarChart"]])) {
+    if (options[["xBarChart"]] && !options[["type3"]] && is.null(jaspResults[["xBarChart"]])) {
       jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Xbar chart by operator"))
       jaspResults[["xBarChart"]]$position <- 4
-      jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "gaugeRRmethod", "anovaGaugeReport", "measurementLongFormat",
-                                            "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
+      jaspResults[["xBarChart"]]$dependOn(.msaGaugeRRChartByOperatorDependencies("xBarChart"))
       jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
       if (ready) {
         xBarChart <- .controlChart(dataset = dataset[c(measurements, operators)], ruleList = ruleList1,
@@ -334,11 +332,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     if(options[["trafficLightChart"]] & is.null(jaspResults[["trafficPlot"]] )) {
       jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light chart"))
       jaspResults[["trafficPlot"]]$position <- 9
-      jaspResults[["trafficPlot"]]$dependOn(c("trafficLightChart", "toleranceValue", "tolerance", "gaugeRRmethod",
-                        "processVariationReference", "historicalSdValue", "studyVarianceMultiplierType",
-                        "studyVarianceMultiplierValue", "measurementLongFormat", "operatorLongFormat",
-                        "partLongFormat", "measurementsWideFormat", "operatorWideFormat",
-                        "partWideFormat", "dataFormat", "type3", "report"))
+      jaspResults[["trafficPlot"]]$dependOn(.gaugeRRTrafficLightDependencies())
       trafficContainer <- jaspResults[["trafficPlot"]]
 
       valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, returnTrafficValues = TRUE, Type3 = Type3)
@@ -348,6 +342,15 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
   }
 
   return()
+}
+
+# options that change the traffic light chart's %Study variation / %Tolerance
+.gaugeRRTrafficLightDependencies <- function() {
+  c("trafficLightChart", "toleranceValue", "tolerance", "gaugeRRmethod",
+    "processVariationReference", "historicalSdValue", "studyVarianceMultiplierType",
+    "studyVarianceMultiplierValue", "anovaAlphaForInteractionRemoval", "measurementLongFormat",
+    "operatorLongFormat", "partLongFormat", "measurementsWideFormat", "operatorWideFormat",
+    "partWideFormat", "dataFormat", "type3", "report")
 }
 
 .gaugeANOVA <- function(dataset, measurements, parts, operators, options, ready, returnPlotOnly = FALSE, returnTrafficValues = FALSE,
@@ -1089,13 +1092,14 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     return(if (ggPlot) plotObject else Plot)
   }
 
-  if (StudyVar >= 100) {StudyVar = 100}
-  if (ToleranceVar >= 100) {ToleranceVar = 100}
+  # cap only the marker position at the axis end, label shows the real value
+  studyVarPos <- min(StudyVar, 100)
+  toleranceVarPos <- min(ToleranceVar, 100)
 
   p1 <- ggplot2::ggplot(mat[c(1:3),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::scale_fill_manual(values= rev(c('#008450','#EFB700', '#B81D13'))) +
-    ggplot2::geom_vline(xintercept = StudyVar) +
+    ggplot2::geom_vline(xintercept = studyVarPos) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15)) +
     ggplot2::scale_y_discrete(name = NULL) +
@@ -1104,7 +1108,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
                    axis.ticks.y = ggplot2::element_blank(),
                    axis.title.y = ggplot2::element_blank()) +
     ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent measurement system variation of the process variation") +
-    ggplot2::annotate("text", x = StudyVar + 5, y = 1.52, size = 5, label = paste0(gettextf("%.2f", StudyVar), "%"))
+    ggplot2::annotate("text", x = studyVarPos + 5, y = 1.52, size = 5, label = paste0(gettextf("%.2f", StudyVar), "%"))
 
   if (Xlab.StudySD != "")
     p1 <- p1 + ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = gettext(Xlab.StudySD))
@@ -1114,7 +1118,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     p2 <- ggplot2::ggplot(mat[c(4:6),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
       ggplot2::geom_bar(stat = "identity") +
       ggplot2::scale_fill_manual(values= rev(c('#008450','#EFB700', '#B81D13')))+
-      ggplot2::geom_vline(xintercept = ToleranceVar) +
+      ggplot2::geom_vline(xintercept = toleranceVarPos) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15)) +
       ggplot2::theme(legend.position="none",
@@ -1122,7 +1126,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
                      axis.ticks.y = ggplot2::element_blank(),
                      axis.title.y = ggplot2::element_blank()) +
       ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent measurement system variation of the tolerance") +
-      ggplot2::annotate("text", x = ToleranceVar + 5, y = 1.52, size = 5, label = paste0(gettextf("%.2f", ToleranceVar), "%"))
+      ggplot2::annotate("text", x = toleranceVarPos + 5, y = 1.52, size = 5, label = paste0(gettextf("%.2f", ToleranceVar), "%"))
 
     if (Xlab.Tol != "")
       p2 <- p2 + ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = gettext(Xlab.Tol))
@@ -1143,4 +1147,13 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     else
       return(p1)
   }
+}
+
+# Dependencies of the range/average chart by operator containers: the chart's own checkbox,
+# the data assignment (both formats), Type 3, report mode and the control chart rules.
+.msaGaugeRRChartByOperatorDependencies <- function(chartOption) {
+  c(chartOption, "dataFormat", "type3", "report",
+    "measurementLongFormat", "operatorLongFormat", "partLongFormat",
+    "measurementsWideFormat", "operatorWideFormat", "partWideFormat",
+    .getDependenciesControlChartRules())
 }

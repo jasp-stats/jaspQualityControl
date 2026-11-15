@@ -18,7 +18,8 @@ Data can be in the form of all observations in one column ("Single column") or a
 #### Kappa Studies (Binary Data)
 - Cohen's kappa (interrater kappa): compute Cohen's kappa per operator. 
 - Fleiss's kappa (multirater kappa): compute Fleiss's kappa per operator. 
-- Positive reference: the positive reference used for the rating classifications (for example, "Yes", "fit", "Good").
+- Positive reference: the positive reference used for the rating classifications, as written in the results (for example, "Yes", "Go", "Good").
+- Positive reference is the: whether the positive reference is the accept (good) category or the reject (defect) category. The miss rate and false alarm rate of the study effectiveness summary are computed relative to the accept category, so this choice matters for them; the kappas and the effectiveness do not depend on it.
 
 #### Tau Studies (Ordinal Data)
 - Kendall's tau: compute Kendall's tau-b between the operators and, if a standard is given, between each operator and the standard. Requires numeric ratings with more than two distinct values.
@@ -26,7 +27,7 @@ Data can be in the form of all observations in one column ("Single column") or a
 ## Output 
 -------
 ### Tables 
-- Study effectiveness summary: Effectiveness, Miss rate, and False alarm rate per operator with an evaluation of acceptance.
+- Study effectiveness summary: Effectiveness, Miss rate, and False alarm rate per operator with an evaluation of acceptance. Miss rate: percentage of ratings of bad parts (standard = reject category) rated as the accept category (bad part accepted). False alarm rate: percentage of ratings of good parts (standard = accept category) rated as the reject category (good part rejected). A footnote names the accept category used.
 - Within Appraisers: matching between the inspected items and operators, with a 95% confidence interval. 
 - Each Appraiser vs Standard: matching between the known standard and inspected items per operator, with a 95% confidence interval.    
 - Between Appraisers: matching between the different operators, with a 95% confidence interval.  
