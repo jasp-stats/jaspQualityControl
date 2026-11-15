@@ -77,6 +77,7 @@ Form
 			id:									stagesLongFormat
 			name:								"stagesLongFormat"
 			title:								qsTr("Stages")
+			info:									qsTr("Column that assigns a stage to each subgroup. A new stage starts each time the stage value changes from one row to the next, so a recurring value (e.g., A, B, A) forms separate stages, plotted in row order and each with its own limits and estimates.")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
 		}
@@ -114,6 +115,7 @@ Form
 			id:									stagesWideFormat
 			name:								"stagesWideFormat"
 			title:								qsTr("Stages")
+			info:									qsTr("Column that assigns a stage to each subgroup. A new stage starts each time the stage value changes from one row to the next, so a recurring value (e.g., A, B, A) forms separate stages, plotted in row order and each with its own limits and estimates.")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
 		}

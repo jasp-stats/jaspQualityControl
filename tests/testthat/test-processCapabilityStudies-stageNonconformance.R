@@ -7,7 +7,9 @@ stageData <- data.frame(measurement = c(smallStage, largeStage), stage = rep(c("
 stageCases <- list(
   forward = stageData,
   reversed = stageData[c(11:30, 1:10), ],
-  missing = rbind(stageData, data.frame(measurement = c(NA_real_, NA_real_, NA_real_), stage = c("A", "A", "B"))),
+  # stages are periods of equal consecutive values, so the missing measurements stay inside their stage
+  missing = rbind(stageData[1:10, ], data.frame(measurement = c(NA_real_, NA_real_), stage = "A"),
+                  stageData[11:30, ], data.frame(measurement = NA_real_, stage = "B")),
   single = stageData[stageData$stage == "A", ],
   equal = data.frame(measurement = rep(smallStage, 2), stage = rep(c("A", "B"), each = 10))
 )
@@ -51,14 +53,14 @@ for (capabilityType in c("normalCapabilityAnalysis", "nonNormalCapabilityAnalysi
       if (caseName == "single") {
         expected <- list(observed1 = c(100000, 100000, 200000))
       } else {
-        expected <- list(observedA = c(100000, 100000, 200000), observedB = c(50000, 50000, 100000))
+        # columns are named by stage number (1 = baseline)
+        expected <- list(observed1 = c(100000, 100000, 200000), observed2 = c(50000, 50000, 100000),
+                         observedComparison2 = c(-50000, -50000, -100000))
         if (caseName == "equal")
-          expected[["observedB"]] <- expected[["observedA"]]
-        if (caseName == "reversed") {
-          expected[["observedComparisonA"]] <- c(50000, 50000, 100000)
-        } else {
-          expected[["observedComparisonB"]] <- if (caseName == "equal") c(0, 0, 0) else c(-50000, -50000, -100000)
-        }
+          expected <- list(observed1 = expected[["observed1"]], observed2 = expected[["observed1"]], observedComparison2 = c(0, 0, 0))
+        if (caseName == "reversed")
+          expected <- list(observed1 = c(50000, 50000, 100000), observed2 = c(100000, 100000, 200000),
+                           observedComparison2 = c(50000, 50000, 100000))
       }
       for (column in names(expected))
         expect_equal(vapply(table, function(row) as.numeric(row[[column]]), numeric(1)), expected[[column]])
