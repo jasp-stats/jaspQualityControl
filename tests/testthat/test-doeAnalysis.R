@@ -6633,9 +6633,19 @@ test_that("58.3 Discrete factors with a shared center level - aliased contrasts 
   expect_false(any(grepl("were removed", notes)))
 })
 
-test_that("58.4 Discrete factors with a shared center level - Type III sums of squares give an error in the ANOVA table only", {
+test_that("58.4 Discrete factors with a shared center level - Type III sums of squares fall back to Type II with a footnote", {
+  anovaFootnotes <- function(results) {
+    table <- results[["results"]][["EtchRate"]][["collection"]][["EtchRate_tableAnova"]]
+    vapply(table[["footnotes"]], function(footnote) footnote[["text"]], character(1))
+  }
   collection <- resultsEtchDiscreteIII[["results"]][["EtchRate"]][["collection"]]
-  expect_match(collection[["EtchRate_tableAnova"]][["error"]][["errorMessage"]], "Type III sums of squares are unavailable for this model")
+  expect_null(collection[["EtchRate_tableAnova"]][["error"]])
+  expect_equal(doeAnovaSources(resultsEtchDiscreteIII, "EtchRate"), doeAnovaSources(resultsEtchDiscrete, "EtchRate"))
+  footnotes <- anovaFootnotes(resultsEtchDiscreteIII)
+  expect_true("Type II sums of squares instead of the selected Type III: Type III sums of squares are not available when some coefficients are aliased." %in% footnotes)
+  expect_false("Type III sums of squares." %in% footnotes)
+  # Type II selected: the usual footnote only
+  expect_true("Type II sums of squares." %in% anovaFootnotes(resultsEtchDiscrete))
   expect_length(collection[["EtchRate_tableCoefficients"]][["data"]], 12)
 })
 
@@ -6785,6 +6795,20 @@ test_that("60.5 Alias footnotes follow the fit shown: coded units can alias othe
   })
   expect_true(any(grepl("Some contrasts of the following terms are aliased", notes[["uncoded"]])))
   expect_false(any(grepl("aliased", notes[["coded"]])))
+})
+
+test_that("Type III sums of squares fall back to Type II for a partially aliased interaction, in coded and uncoded units", {
+  # only one contrast of A x F is aliased (see 58.5); the result is the Type II table, with the footnote
+  for (coded in c(FALSE, TRUE)) {
+    set.seed(123)
+    type3 <- runAnalysis("doeAnalysis", afData, doeTestOptions("y", "A", "F", afTerms, coded = coded, ssType = "type3"))
+    set.seed(123)
+    type2 <- runAnalysis("doeAnalysis", afData, doeTestOptions("y", "A", "F", afTerms, coded = coded, ssType = "type2"))
+    expect_null(doeTable(type3, "y", "tableAnova")[["error"]])
+    expect_equal(doeAnovaSources(type3, "y"), doeAnovaSources(type2, "y"))
+    expect_true(any(startsWith(doeFootnotes(doeTable(type3, "y", "tableAnova")), "Type II sums of squares instead of the selected Type III")))
+    expect_false(any(grepl("instead of the selected", doeFootnotes(doeTable(type2, "y", "tableAnova")))))
+  }
 })
 
 test_that("60.6 Saturated model: sequential sums of squares are labelled Type I, also with aliasing and Type III", {
