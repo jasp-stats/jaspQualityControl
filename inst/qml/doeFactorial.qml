@@ -449,7 +449,9 @@ Form
 		IntegerField { name: "selectedRow"; label: qsTr("debug selected row"); defaultValue: selectedDesign2.rowSelected; negativeValues: true; visible: false }
 		IntegerField { name: "selectedCol"; label: qsTr("debug selected col"); defaultValue: selectedDesign2.colSelected; negativeValues: true; visible: false }
 		CheckBox { name: "showAliasStructure"; label: qsTr("Alias structure"); enabled: factorialTypeDefault.checked; info: qsTr("Check to display the alias structure of the generated design. Only available for two-level factorial designs with the default generator.")}
-		SetSeed{ info: qsTr("Set a seed to reproduce a certain random order.") }
+		SetSeed{ info: qsTr("Set a seed to reproduce a certain random order. Without it, a seed is drawn when the analysis is created and saved with it, so the run order stays the same when the file is reopened. The seed used is shown below the design table.") }
+		// Seed drawn once when the form is created; stored in the options (and the .jasp file) so the run order survives reopening
+		IntegerField { name: "randomSeed"; defaultValue: Math.floor(Math.random() * 999999) + 1; min: 1; max: 999999; visible: false }
 
 	}
 
