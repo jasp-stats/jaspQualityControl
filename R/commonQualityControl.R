@@ -7,6 +7,18 @@
 #############################################################
 ## Common functions for plots ###############################
 #############################################################
+# Long format with manual subgroup size: drop measurements without a stage while keeping the row positions that define the
+# subgroups. Each subgroup gets its first non-missing stage; subgroups without any stage are removed as a whole.
+.removeObservationsWithoutStageManualSubgroups <- function(dataset, measurements, stages, subgroupSize) {
+  subgroupId        <- ceiling(seq_len(nrow(dataset)) / subgroupSize)
+  stageMissing      <- is.na(dataset[[stages]])
+  rowsWithStage     <- which(!stageMissing)
+  firstRowWithStage <- rowsWithStage[!duplicated(subgroupId[rowsWithStage])]
+  dataset[[measurements]][stageMissing] <- NA
+  dataset[[stages]] <- dataset[[stages]][firstRowWithStage[match(subgroupId, subgroupId[firstRowWithStage])]]
+  return(dataset[!is.na(dataset[[stages]]), , drop = FALSE])
+}
+
 .reshapeSubgroupDataLongToWide <- function(dataset,
                                            measurements,
                                            stages = "",
