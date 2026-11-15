@@ -22,6 +22,9 @@ Form
 {
 	columns:								2
 
+	// Bool, so dependent defaults re-evaluate only when it flips, not on every subgroup size edit
+	property bool	individualObservations:	dataFormat.currentValue == "longFormat" && subgroupSizeType.value == "manual" && manualSubgroupSizeValue.value == 1
+
 	DropDown
 	{
 		name: "dataFormat"
@@ -632,25 +635,18 @@ Form
 						name: 					"controlChartType"
 						id: 					controlChartType
 						label: 					""
-						values: dataFormat.currentValue == "longFormat" && subgroupSizeType.value == "manual" &&manualSubgroupSizeValue.value == 1 ?
+						values: individualObservations ?
 						[
 							{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
 							{ label: qsTr("X-bar & s control chart"),			value: "xBarS"},
 							{ label: qsTr("X-mR control chart"),				value: "xmr"}
-						] : dataFormat.currentValue == "longFormat" ?
-						[
-							{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
-							{ label: qsTr("X-bar & s control chart"),			value: "xBarS"},
-							{ label: qsTr("X-bar & mR control chart"),			value: "xBarMR"}
 						] :
 						[
 							{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
 							{ label: qsTr("X-bar & s control chart"),			value: "xBarS"},
 							{ label: qsTr("X-bar & mR control chart"),			value: "xBarMR"}
 						]
-						indexDefaultValue: 
-						(dataFormat.currentValue == "wideFormat" || (dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1)) ? 1 :
-						(dataFormat.currentValue == "longFormat" && subgroupSizeType.value == "manual" &&  manualSubgroupSizeValue.value == 1) ? 2 : 1
+						indexDefaultValue:		individualObservations ? 2 : 1 // alias of currentIndex: must not re-evaluate on other edits
 					}
 				
 
@@ -1016,8 +1012,7 @@ Form
 						{ label: qsTr(" > 1"),		value: "largerThanOne"},
 						{ label: qsTr("= 1"),		value: "equalOne"}
 					]
-						indexDefaultValue:
-						(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value == 1) ? 1 : 0
+						indexDefaultValue:		individualObservations ? 1 : 0
 				}
 
 				DropDown
