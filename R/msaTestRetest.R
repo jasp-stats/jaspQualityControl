@@ -130,10 +130,24 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
     ))
     TrafficContainer <- jaspResults[["trafficPlot"]]
 
-    valuesVec <- .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready, GRRpercent = TRUE)
-    TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec[1], ToleranceUsed = options[["tolerance"]],
-                                               ToleranceVar = valuesVec[2], options = options, ready = ready,
-                                               Xlab.StudySD = "Percent study variation of GRR", Xlab.Tol = "Percent tolerance of GRR")
+    # %GRR panels only for the reference values the user entered (unticked fields keep a hidden value)
+    if (!options[["manualProcessSd"]] && !options[["tolerance"]]) {
+      if (ready) {
+        TrafficContainer[["plot"]] <- createJaspPlot(width = 1000)
+        TrafficContainer[["plot"]]$setError(gettext("Enter a process std. dev. or a tolerance to draw the traffic light chart."))
+      }
+    } else {
+      valuesVec <- .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready, GRRpercent = TRUE)
+      if (options[["manualProcessSd"]]) {
+        TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec[1], ToleranceUsed = options[["tolerance"]],
+                                                   ToleranceVar = valuesVec[2], options = options, ready = ready,
+                                                   Xlab.StudySD = "Percent study variation of GRR", Xlab.Tol = "Percent tolerance of GRR")
+      } else { # tolerance only: single panel with the tolerance value
+        TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec[2], ToleranceUsed = FALSE,
+                                                   ToleranceVar = valuesVec[2], options = options, ready = ready,
+                                                   Xlab.StudySD = "Percent tolerance of GRR")
+      }
+    }
 
   }
   return()

@@ -24,6 +24,7 @@ The assumptions associated with the Autocorrelation chart are:
 -------
 ### Assignment Box 
 - Variables: the observations collected from a process.  
+- Stage: a column to split the chart into multiple parts by assigning a stage to each observation. A new stage starts each time the stage value changes from one row (subgroup) to the next, so a recurring value (e.g., A, B, A) forms separate stages, shown in row order and each with its own limits and estimates; moving ranges do not span a stage change.
 
 ### Options
 - X-mR chart:
