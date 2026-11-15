@@ -3185,6 +3185,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   container$dependOn(c(
     "probabilityPlot", "probabilityPlotRankMethod", "nullDistribution",
     "probabilityPlotGridLines", "report",
+    "capabilityStudyType", "nonNormalDistribution", # decide whether zeros are replaced in the data
     .qcDataOptionNames()
   ))
   container$position <- 3
@@ -3718,6 +3719,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plot$dependOn(c(
       "histogram", "histogramDensityLine", "histogramBinNumber",
       "report", "nullDistribution", "histogramBinBoundaryDirection",
+      "capabilityStudyType", "nonNormalDistribution", # decide whether zeros are replaced in the data
       .qcDataOptionNames()
     ))
     jaspResults[["histogram"]] <- plot
@@ -3738,6 +3740,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   plot$dependOn(c(
     "histogram", "histogramDensityLine", "histogramBinNumber",
     "report", "nullDistribution", "histogramBinBoundaryDirection",
+    "capabilityStudyType", "nonNormalDistribution", # decide whether zeros are replaced in the data
     .qcDataOptionNames()
   ))
   plot$position <- 2
