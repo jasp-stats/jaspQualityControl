@@ -406,17 +406,27 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
           tableDecisions$setError(gettext("Please inseret a vaild positive reference as used in the results variables."))
 
         if (!options[["kendallsTau"]] && !identical(standards, "") && !identical(options[["positiveReference"]], "") && any(options[["positiveReference"]] == dataset[measurements])) {
-          PositiveRef <- options[["positiveReference"]]
+          # Miss = bad part accepted, false alarm = good part rejected, so both are relative to the accept category.
+          # The ratings have exactly two categories (checked above): the positive reference and the other one.
+          positiveRef <- options[["positiveReference"]]
+          otherCategory <- setdiff(unique(as.character(unlist(dataset[measurements]))), positiveRef)
+          if (options[["positiveReferenceCategory"]] == "accept") {
+            goodCategory <- positiveRef
+            badCategory  <- otherCategory
+          } else {
+            goodCategory <- otherCategory
+            badCategory  <- positiveRef
+          }
           Misses <- vector()
           Falses <- vector()
           for (i in 1:length(appraiserVector)) {
             #Miss Rate
-            dat_Neg <- subset(dataset, dataset[operators] == appraiserVector[i] & dataset[standards] != PositiveRef)
-            Misses[i] = sum(as.character(unlist(dat_Neg[measurements])) == PositiveRef) / length(unlist(dat_Neg[measurements])) * 100
+            dat_Neg <- subset(dataset, dataset[operators] == appraiserVector[i] & dataset[standards] != goodCategory)
+            Misses[i] = sum(as.character(unlist(dat_Neg[measurements])) == goodCategory) / length(unlist(dat_Neg[measurements])) * 100
 
             #False Rate
-            dat_Pos <- subset(dataset, dataset[operators] == appraiserVector[i] & dataset[standards] == PositiveRef)
-            Falses[i] = sum(as.character(unlist(dat_Pos[measurements])) != PositiveRef) / length(unlist(dat_Pos[measurements])) * 100
+            dat_Pos <- subset(dataset, dataset[operators] == appraiserVector[i] & dataset[standards] == goodCategory)
+            Falses[i] = sum(as.character(unlist(dat_Pos[measurements])) != goodCategory) / length(unlist(dat_Pos[measurements])) * 100
           }
 
           tableDecisions$setData(list("Appraiser"     = appraiserVector,
@@ -426,6 +436,8 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
           tableDecisions$addFootnote(gettextf("Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false alarm rate)"))
           tableDecisions$addFootnote(gettextf("Marginally acceptable: x >= 80%% (effectiveness), x =< 5%% (miss rate), x =< 10%% (false alarm rate)"))
           tableDecisions$addFootnote(gettextf("Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false alarm rate)"))
+          tableDecisions$addFootnote(gettextf("Accept (good) category: %1$s. Miss rate: percentage of ratings of parts with standard %2$s that are %1$s. False alarm rate: percentage of ratings of parts with standard %1$s that are %2$s.",
+                                              goodCategory, badCategory))
         }
 
         CIWithin <- .AAACI(matchesWithin, rep(numberInspected, length(appraiserVector)))
