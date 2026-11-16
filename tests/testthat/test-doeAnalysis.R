@@ -5283,10 +5283,14 @@ if (jaspTools:::getOS() == "windows") { # randomly fails on linux and mac
 }
 
 test_that("53.2 Response Optimizer Response Surface Change All Options - Optimization Plot Summary table results match", {
-  testthat::skip_on_os(c("mac", "linux")) # optimizer convergence differs on linux and mac (e.g. Cost 122.567 vs 122.565)
-  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list(100, 2, 18.79, 122.565, -37.422, 0.929732546561872))
+  # the location of the optimum is only determined to about 3 digits (Speed 126.884 to 126.895), the desirability to 6
+  row <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]][[1]]
+  expect_equal(row[["Cost fit"]], 100, tolerance = 1e-3)
+  expect_identical(as.character(row[["Nozzle"]]), "2")
+  expect_equal(row[["Pressure"]], 19.219, tolerance = 1e-3)
+  expect_equal(row[["Speed"]], 126.89, tolerance = 1e-3)
+  expect_equal(row[["Syruploss fit"]], -38.968, tolerance = 1e-3)
+  expect_equal(row[["desi"]], 0.933817, tolerance = 1e-5)
 })
 
 test_that("53.3 Response Optimizer Response Surface Change All Options - Response Optimizer Settings table results match", {
@@ -5297,10 +5301,13 @@ test_that("53.3 Response Optimizer Response Surface Change All Options - Respons
 })
 
 test_that("53.4 Response Optimizer Response Surface Change All Options - Response Optimizer Solution table results match", {
-  testthat::skip_on_os(c("mac", "linux")) # optimizer convergence differs on linux and mac (e.g. Cost 122.567 vs 122.565)
-  table <- results[["results"]][["tableRoSolution"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list(100, 2, 18.79, 122.565, -37.422, 0.929732546561872))
+  row <- results[["results"]][["tableRoSolution"]][["data"]][[1]]
+  expect_equal(row[["Cost_fit"]], 100, tolerance = 1e-3)
+  expect_identical(as.character(row[["Nozzle"]]), "2")
+  expect_equal(row[["Pressure"]], 19.219, tolerance = 1e-3)
+  expect_equal(row[["Speed"]], 126.89, tolerance = 1e-3)
+  expect_equal(row[["Syruploss_fit"]], -38.968, tolerance = 1e-3)
+  expect_equal(row[["desi"]], 0.933817, tolerance = 1e-5)
 })
 
 test_that("Stepwise marginality works without explicit data and preserves keep", {
@@ -5596,13 +5603,14 @@ test_that("Response optimizer leaves a flat desirability region around the first
   table <- .doeTestOptimizerSolution(lowerBound = 36.8, target = 37.8)
   jaspTools::expect_equal_tables(table[["data"]], list(150, 100, "Formula2", 37.798, 0.998364696249993))
   notes <- vapply(table[["footnotes"]], function(note) note[["text"]], character(1))
-  expect_false(any(grepl("desirability above 0|optimization runs failed", notes)))
+  expect_false(any(grepl("No acceptable setting was found|optimization runs failed", notes)))
 })
 
 test_that("Response optimizer flags a solution with desirability 0", {
   table <- .doeTestOptimizerSolution(lowerBound = 50, target = 60)
   jaspTools::expect_equal_tables(table[["data"]], list(75, 85, "Formula1", 21.469, 0))
-  expect_match(table[["footnotes"]][[1]][["text"]], "desirability above 0")
+  notes <- vapply(table[["footnotes"]], function(note) note[["text"]], character(1))
+  expect_true(any(grepl("No acceptable setting was found", notes, fixed = TRUE)))
 })
 
 .doeTestOptimizerOneDesign <- function(continuous, discrete, goal, target = 0.5, custom = NULL) {
@@ -6977,7 +6985,7 @@ test_that("60.14 Optimizer falls back to a start point with a unique prediction"
   startPoints <- matrix(c(1, -1), ncol = 1, dimnames = list(NULL, "A"))
   result <- jaspQualityControl:::.doeOptimizeContinuous(startPoints, lower = c(A = -1), upper = c(A = 1), continuousPredictors = "A",
                                                         discretePredictors = "F", currentDiscreteLevels = factor("c", levels = levels(data[["F"]])),
-                                                        models = models, dependent = "y", roOptionsDf = roOptionsDf)
+                                                        models = models, dependent = "y", roOptionsDf = roOptionsDf, responseScale = c(y = 1))
   expect_equal(unname(result[["par"]]), -1)
   expect_equal(result[["value"]], 0)
 })
@@ -7410,3 +7418,122 @@ test_that("62.17 Normal plot of effects draws its reference line only within the
     expect_equal(line[["y"]], stats::qnorm(c(0.0001, 0.9999))) # probit scale: the line ends at the percent limits
   }
 })
+
+# Response optimizer search (jasp-stats/INTERNAL-jasp#3388, #3389): the search starts from the design points. It used to stop at
+# the first run with desirability 0 when no design point reaches the bounds, and it could stop short of the optimum at a kink of
+# the desirability function.
+optimizerSettings <- function(goal, importance, lower, target, upper, weight, variable) {
+  list(responseOptimizerGoal = goal, responseOptimizerImportance = importance, responseOptimizerLowerBound = lower,
+       responseOptimizerTarget = target, responseOptimizerUpperBound = upper, responseOptimizerWeight = weight, variable = variable)
+}
+
+optimizerRun <- function(file, options, responses) {
+  options$responseOptimizerManualBounds <- TRUE
+  options$responseOptimizerManualTarget <- TRUE
+  options$responsesResponseOptimizer <- responses
+  set.seed(123)
+  results  <- runAnalysis("doeAnalysis", file, options)
+  solution <- results[["results"]][["tableRoSolution"]]
+  list(solution = solution[["data"]][[1]], footnotes = vapply(solution[["footnotes"]], function(f) f[["text"]], ""))
+}
+
+strengthOptimizerOptions <- function() {
+  options <- doeTestOptions("Strength", c("InjPress", "InjTemp"), "Material", list("Material", "InjTemp", "InjPress"))
+  options$codeFactors <- FALSE
+  options
+}
+
+responseSurfaceOptimizerOptions <- function() {
+  options <- analysisOptions("doeAnalysis")
+  options$designType <- "responseSurfaceDesign"
+  options$dependentResponseSurface <- c("Syruploss", "Cost")
+  options$fixedFactorsResponseSurface <- "Nozzle"
+  options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+  options$codeFactors <- FALSE
+  options$squaredTermsCoded <- TRUE
+  options$codeFactorsMethod <- "automatic"
+  options$rsmPredefinedModel <- TRUE
+  options$rsmPredefinedTerms <- "linearAndSquared"
+  options
+}
+
+test_that("60.21 Response optimizer finds acceptable settings between the design points", {
+  # none of the 8 design points has a Strength within [29.5, 30.5] (fits 21.5 to 37.8)
+  run <- optimizerRun("datasets/doeAnalysis/doe_realDataExample1.csv", strengthOptimizerOptions(),
+                      list(optimizerSettings("target", 1, 29.5, 30, 30.5, 1, "Strength")))
+  expect_gt(run$solution[["desi"]], 0.9)
+  expect_equal(run$solution[["Strength_fit"]], 30, tolerance = 0.5 / 30)
+  expect_false(any(grepl("No acceptable setting was found", run$footnotes, fixed = TRUE)))
+})
+
+test_that("60.22 Response optimizer finds acceptable settings between the design points with two responses", {
+  # the grid maximum is 0.16, no design point has a composite desirability above 0
+  run <- optimizerRun("datasets/doeAnalysis/doe_realDataExample3.csv", responseSurfaceOptimizerOptions(),
+                      list(optimizerSettings("minimize", 1, 0, -67, -1.508, 1, "Syruploss"),
+                           optimizerSettings("maximize", 1, 103.1, 172, 200, 1, "Cost")))
+  expect_gt(run$solution[["desi"]], 0.15)
+})
+
+test_that("60.23 Response optimizer reaches the optimum at the kink of a target desirability", {
+  # the grid maximum is 0.9325 and a derivative-free search reaches 0.9338, L-BFGS-B alone stops at 0.9297
+  run <- optimizerRun("datasets/doeAnalysis/doe_realDataExample3.csv", responseSurfaceOptimizerOptions(),
+                      list(optimizerSettings("minimize", 1, 0, -67, 50, 1, "Syruploss"),
+                           optimizerSettings("target", 3, 50, 100, 150, 2, "Cost")))
+  expect_gt(run$solution[["desi"]], 0.933)
+})
+
+test_that("60.24 Response optimizer notes that narrow feasible regions may be missed", {
+  run <- optimizerRun("datasets/doeAnalysis/doe_realDataExample1.csv", strengthOptimizerOptions(),
+                      list(optimizerSettings("target", 1, 200, 200.5, 201, 1, "Strength")))
+  expect_equal(run$solution[["desi"]], 0)
+  expect_true("No acceptable setting was found. Very narrow feasible regions may be missed by the numerical search." %in% run$footnotes)
+})
+
+test_that("60.25 Distance of predictions from the acceptable interval", {
+  distance <- jaspQualityControl:::.doeOptimizerDistanceToBounds
+  settings <- data.frame(variable = c("a", "b", "c"), responseOptimizerGoal = c("maximize", "minimize", "target"),
+                         responseOptimizerLowerBound = c(10, NA, 10), responseOptimizerTarget = c(20, 5, 15),
+                         responseOptimizerUpperBound = c(NA, 8, 20), responseOptimizerWeight = 1, responseOptimizerImportance = 1)
+  scale <- c(a = 10, b = 10, c = 10)
+  # inside the intervals, shrunk by 1% of the response range (0.1) at each used bound: distance 0
+  expect_equal(distance(c(a = 15, b = 6, c = 15), settings, scale), 0)
+  # a bound itself is not enough (the desirability is 0 there), it lies within the margin
+  expect_equal(distance(c(a = 10, b = 6, c = 15), settings, scale), (0.1 / 10)^2)
+  # squared gaps in units of the response range: a below 10.1, b above 7.9, c below 10.1
+  expect_equal(distance(c(a = 5, b = 9, c = 5), settings, scale), ((10.1 - 5) / 10)^2 + ((9 - 7.9) / 10)^2 + ((10.1 - 5) / 10)^2)
+  # the margin is a fraction of the response range: smaller, and none at all
+  expect_equal(distance(c(a = 10, b = 6, c = 15), settings, scale, margin = 0.001), (0.01 / 10)^2)
+  expect_equal(distance(c(a = 10, b = 6, c = 15), settings, scale, margin = 0), 0)
+})
+
+# y = x and z = x^2 fitted exactly on x = 0, 0.5, 1. y should be at least 0.9 (maximize) and z at most zUpper (minimize), so
+# the acceptable settings are 0.9 < x < sqrt(zUpper) (composite desirability 0 at the ends)
+narrowRegionOptimum <- function(zUpper, yLower = 0.9) {
+  x <- c(0, 0.5, 1)
+  data <- data.frame(x = x, y = x, z = x^2)
+  models <- list(fits = list(y = stats::lm(y ~ x, data = data), z = stats::lm(z ~ x + I(x^2), data = data)),
+                 dataset = data, blocks = "", covariates = "")
+  roOptionsDf <- data.frame(variable = c("y", "z"), responseOptimizerGoal = c("maximize", "minimize"),
+                            responseOptimizerLowerBound = c(yLower, NA), responseOptimizerTarget = c(1, 0),
+                            responseOptimizerUpperBound = c(NA, zUpper), responseOptimizerWeight = 1, responseOptimizerImportance = 1)
+  jaspQualityControl:::.doeOptimizeContinuous(matrix(x, ncol = 1, dimnames = list(NULL, "x")), lower = c(x = 0), upper = c(x = 1),
+                                              continuousPredictors = "x", discretePredictors = "", currentDiscreteLevels = NULL,
+                                              models = models, dependent = c("y", "z"), roOptionsDf = roOptionsDf,
+                                              responseScale = c(y = 1, z = 1))
+}
+
+test_that("60.26 Response optimizer finds an acceptable region narrower than the feasibility margin", {
+  # the region 0.9 < x < 0.9001 is narrower than 1% of the response range, which the search first keeps from the bounds
+  result <- narrowRegionOptimum(zUpper = 0.9001^2)
+  expect_lt(result[["value"]], 0) # the value is the negative composite desirability
+  expect_gt(unname(result[["par"]]), 0.9)
+  expect_lt(unname(result[["par"]]), 0.9001)
+})
+
+test_that("60.27 Response optimizer gives up promptly when no setting is acceptable", {
+  # y >= 0.95 needs x > 0.95, z <= 0.8 needs x < 0.894: the retries with smaller margins end without a result
+  elapsed <- system.time(result <- narrowRegionOptimum(zUpper = 0.8, yLower = 0.95))[["elapsed"]]
+  expect_equal(result[["value"]], 0)
+  expect_lt(elapsed, 10)
+})
+

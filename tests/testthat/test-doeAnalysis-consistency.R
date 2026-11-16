@@ -156,6 +156,37 @@ test_that("a failed optimizer start is excluded and reported", {
   expect_equal(as.numeric(solution$data[[1]]$Y_fit), 15, tolerance = 1e-3)
 })
 
+test_that("failed feasibility searches retain the valid zero-desirability solution", {
+  original <- stats::optim
+  testthat::local_mocked_bindings(optim = function(...) {
+    if (!is.null(list(...)$margin)) stop("synthetic feasibility failure")
+    original(...)
+  }, .package = "stats")
+  options <- .doeSearchOptions()
+  options$responsesResponseOptimizer[[1]]$responseOptimizerLowerBound <- 20
+  options$responsesResponseOptimizer[[1]]$responseOptimizerTarget <- 30
+  result <- jaspTools::runAnalysis("doeAnalysis", .doeSearchData, options, view = FALSE)
+  solution <- result$results$tableRoSolution
+  expect_identical(solution$status, "complete")
+  expect_equal(solution$data[[1]]$desi, 0)
+  expect_true(any(grepl("Some optimization runs failed", .doeConsistencyNotes(solution), fixed = TRUE)))
+  expect_true(any(grepl("No acceptable setting was found", .doeConsistencyNotes(solution), fixed = TRUE)))
+})
+
+test_that("non-converged polishing retains the converged solution", {
+  original <- stats::optim
+  testthat::local_mocked_bindings(optim = function(par, method, ...) {
+    if (method == "Brent") return(list(par = c(A = 1), value = -1, convergence = 1L))
+    original(par = par, method = method, ...)
+  }, .package = "stats")
+  result <- jaspTools::runAnalysis("doeAnalysis", .doeSearchData, .doeSearchOptions(), view = FALSE)
+  solution <- result$results$tableRoSolution
+  expect_identical(solution$status, "complete")
+  expect_equal(as.numeric(solution$data[[1]]$A), 5)
+  expect_equal(as.numeric(solution$data[[1]]$Y_fit), 15, tolerance = 1e-3)
+  expect_true(any(grepl("Some optimization runs failed", .doeConsistencyNotes(solution), fixed = TRUE)))
+})
+
 test_that("optimizer warnings remain visible when the solution table is hidden", {
   calls <- 0L
   original <- stats::optim
