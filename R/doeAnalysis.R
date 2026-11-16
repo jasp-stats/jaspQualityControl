@@ -1572,9 +1572,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   startRows     <- unique(c(1, order(startValue)[seq_len(min(nStarts, nrow(startPoints)))])) # order() keeps ties in design order
   best <- NULL
   failed <- FALSE
-  runOptim <- function(...) {
+  # usableCodes: optim() convergence codes whose point is used (anything else counts as a failed run)
+  runOptim <- function(..., usableCodes = 0) {
     result <- try(stats::optim(...), silent = TRUE)
-    if (isTryError(result) || result$convergence != 0 || !is.finite(result$value) || any(!is.finite(result$par))) {
+    if (isTryError(result) || !result$convergence %in% usableCodes || !is.finite(result$value) || any(!is.finite(result$par))) {
       failed <<- TRUE
       return(NULL)
     }
@@ -1598,11 +1599,13 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     }
   }
 
-  # Step 3: derivative-free polish, with the predictors kept inside their observed ranges
+  # Step 3: derivative-free polish, with the predictors kept inside their observed ranges. A polish that stops at maxit
+  # (code 1) still ends at a valid setting and is only kept if it improves the result, so it is not a failed run.
   clampedNegDesirability <- function(par) negDesirability(pmin(pmax(par, lower), upper))
   if (!is.null(best) && best$value < 0) {
     polished <- if (length(best$par) > 1) {
-      runOptim(par = best$par, fn = clampedNegDesirability, method = "Nelder-Mead", control = list(reltol = 1e-10, maxit = 500))
+      runOptim(par = best$par, fn = clampedNegDesirability, method = "Nelder-Mead", control = list(reltol = 1e-10, maxit = 500),
+               usableCodes = c(0, 1))
     } else if (upper > lower) {
       width <- 0.1 * (upper - lower) # one predictor: Brent in a window around the result
       runOptim(par = best$par, fn = clampedNegDesirability, method = "Brent",
