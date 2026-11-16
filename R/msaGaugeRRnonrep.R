@@ -400,7 +400,8 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
       } else {
         percentToleranceForGraph <- NA
       }
-      p <- .gaugeVarCompGraph(percentVarComps[1:4], percentStudyVar[1:4], percentToleranceForGraph)
+      # plotOnly is only used by the report, where the plots are too narrow for the full source names
+      p <- .gaugeVarCompGraph(percentVarComps[1:4], percentStudyVar[1:4], percentToleranceForGraph, abbreviateLabels = plotOnly)
       plot$plotObject <- p
     }
     if (plotOnly)
