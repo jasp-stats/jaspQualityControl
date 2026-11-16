@@ -57,6 +57,7 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
     if (!is.null(balanceError)) {
       plot <- createJaspPlot(title = gettext("Gauge r&R - nested"), width = 700, height = 400)
       jaspResults[["gaugeRRNonRep"]] <- plot
+      plot$dependOn(.msaGaugeRRnonrepDataDependencies())
       plot$setError(balanceError)
       return()
     }
@@ -93,8 +94,7 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
     plotHeight <- ceiling(nElements/2) * 500
     reportPlot <- createJaspPlot(title = gettext("Gauge r&R (non-replicable) report"), width = 1250, height = plotHeight)
     jaspResults[["report"]] <- reportPlot
-    jaspResults[["report"]]$dependOn(c("measurementLongFormat", "operatorLongFormat", "partLongFormat", "measurementsWideFormat",
-                                       "operatorWideFormat", "partWideFormat", "processVariationReference", "historicalSdValue",
+    jaspResults[["report"]]$dependOn(c(.msaGaugeRRnonrepDataDependencies(), "processVariationReference", "historicalSdValue",
                                        "tolerance", "toleranceValue", "studyVarianceMultiplierType", "studyVarianceMultiplierValue",
                                        "scatterPlotFitLine", "report", "reportMetaData", "reportTitle",
                                        "reportTitleText", "reportPartName", "reportPartNameText", "reportGaugeName",
@@ -256,7 +256,7 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
       }
 
       jaspResults[["NRoperatorGraph"]] <- .gaugeByOperatorGraph(dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options = options, ready = ready)
-      jaspResults[["NRoperatorGraph"]]$dependOn(c("NRoperatorGraph", "report"))
+      jaspResults[["NRoperatorGraph"]]$dependOn(c("operatorMeasurementPlot", "report", .msaGaugeRRnonrepDataDependencies()))
     }
 
 
