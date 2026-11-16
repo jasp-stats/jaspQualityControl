@@ -122,7 +122,7 @@ test_that("WF1.6 Default Settings - Traffic chart matches", {
 # Scatterplot axis limits with negative measurements (jasp-stats/INTERNAL-jasp#3436) ####
 # The axis limits must never drop points (the fitted line is refitted to what remains).
 
-.trScatterRun <- function(shift) {
+.trScatterRun <- function(shift, allValues = FALSE) {
   dataset <- data.frame(Part = 1:5,
                         A = c(-10, -8, -6, -4, -2) + shift,
                         B = c(-9.5, -8.4, -6.2, -3.7, -2.2) + shift)
@@ -134,6 +134,7 @@ test_that("WF1.6 Default Settings - Traffic chart matches", {
   options$runChartPart <- FALSE
   options$scatterPlotMeasurement <- TRUE
   options$scatterPlotMeasurementFitLine <- TRUE
+  options$scatterPlotMeasurementAllValues <- allValues
   options$rChart <- FALSE
   options$trafficLightChart <- FALSE
   results <- runAnalysis("msaTestRetest", dataset, options, view = FALSE)
@@ -141,6 +142,7 @@ test_that("WF1.6 Default Settings - Traffic chart matches", {
   built <- ggplot2::ggplot_build(plot)
   smoothLayer <- which(vapply(plot$layers, function(layer) inherits(layer$geom, "GeomSmooth"), logical(1)))
   list(data = dataset,
+       plot = plot,
        xLimits = built$layout$panel_scales_x[[1]]$get_limits(),
        yLimits = built$layout$panel_scales_y[[1]]$get_limits(),
        points = built$data[[1]], # x or y is NA when a point is outside the limits
@@ -166,4 +168,21 @@ test_that("WF2.2 Scatterplot keeps its limits (0.9 x min to 1.1 x max) for non-n
   allValues <- unlist(run$data[c("A", "B")])
   expect_equal(run$xLimits, c(min(allValues) * 0.9, max(allValues) * 1.1))
   expect_equal(run$yLimits, c(min(allValues) * 0.9, max(allValues) * 1.1))
+})
+
+test_that("WF2.3 Scatterplot with all measurements keeps every jittered copy inside the axis limits", {
+  # shift 0: all negative, 6: mixed, 10: minimum exactly 0, 20: all positive
+  for (shift in c(0, 6, 10, 20)) {
+    run <- .trScatterRun(shift, allValues = TRUE)
+    label <- paste("shift", shift)
+    jitterLayer <- which(vapply(run$plot$layers, function(layer) inherits(layer$position, "PositionJitter"), logical(1)))
+    expect_length(jitterLayer, 1)
+    drawn <- vapply(1:20, function(seed) {
+      set.seed(seed)
+      jittered <- suppressWarnings(ggplot2::ggplot_build(run$plot))$data[[jitterLayer]]
+      sum(is.finite(jittered[["x"]]) & is.finite(jittered[["y"]]))
+    }, numeric(1))
+    expect_equal(drawn, rep(5, 20), label = paste(label, "jittered copies drawn per seed"))
+    expect_equal(run$drawnSlope, unname(coef(lm(B ~ A, run$data))[2]), tolerance = 1e-6, label = paste(label, "drawn slope"))
+  }
 })
