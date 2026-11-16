@@ -367,3 +367,27 @@ test_that("KT26 Scale of ordinal levels: merged over the columns, only when thei
   expect_null(jaspQualityControl:::.msaAttributeOrdinalScale(columns(c("a", "b"), c("c", "d"))))  # open
   expect_null(jaspQualityControl:::.msaAttributeOrdinalScale(list(factor(c("a", "b")), factor(c("a", "b")))))  # not ordinal
 })
+
+test_that("KT27 Ratings or standard in text: a footnote gives the order of the levels used for Kendall's tau", {
+  footnotes <- function(results) vapply(results[["results"]][["KendallTau"]][["footnotes"]], `[[`, character(1), "text")
+  orderNote <- function(levels) paste0("Order of the ordinal levels: ", paste(levels, collapse = " < "), ".")
+  dataset <- wide
+  for (trial in c("T1", "T2", "T3", "Ref"))
+    dataset[[trial]] <- asOrdinal(dataset[[trial]])
+  options <- withOrdinalTypes(.kendallOptions("wideFormat", c("T1", "T2", "T3"), "Ref"), "measurementsWideFormat", "standardWideFormat")
+  expect_true(orderNote(ordinalLabels) %in% footnotes(runAnalysis("msaAttribute", dataset, options)))
+  # merged over trial columns that each lack a category
+  dataset <- wide[c("Operator", "Part", "T1", "T2")]
+  dataset$T1 <- asOrdinal(pmin(wide$T1, 4), levels = ordinalLabels[1:4])
+  dataset$T2 <- asOrdinal(pmax(wide$T2, 2), levels = ordinalLabels[2:5])
+  options <- withOrdinalTypes(.kendallOptions("wideFormat", c("T1", "T2"), ""), "measurementsWideFormat")
+  expect_true(orderNote(ordinalLabels) %in% footnotes(runAnalysis("msaAttribute", dataset, options)))
+  # numeric ratings, ordinal text standard: the order of the standard
+  dataset <- wide
+  dataset$Ref <- asOrdinal(dataset$Ref, labels = letters[5:1], levels = letters[5:1])
+  options <- withOrdinalTypes(.kendallOptions("wideFormat", c("T1", "T2", "T3"), "Ref"), "standardWideFormat")
+  expect_true(orderNote(letters[5:1]) %in% footnotes(runAnalysis("msaAttribute", dataset, options)))
+  # numbers: no such footnote
+  expect_false(any(startsWith(footnotes(runAnalysis("msaAttribute", wide, .kendallOptions("wideFormat", c("T1", "T2", "T3"), "Ref"))),
+                              "Order of the ordinal levels")))
+})
