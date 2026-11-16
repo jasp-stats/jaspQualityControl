@@ -4448,6 +4448,33 @@ test_that("Johnson works", {
                                              2.467))
 })
 
+# The overlaid normal curve of the capability plot: the total curve exists for every transformation, the within curve only
+# for transformations with fixed parameters (#3195)
+.capabilityPlotCurves <- function(results) {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  plot <- results[["state"]][["figures"]][[plotName]][["obj"]]$subplots[[1]]
+  lineLayers <- Filter(function(layer) inherits(layer[["geom"]], "GeomLine"), plot[["layers"]])
+  unique(unlist(lapply(lineLayers, function(layer) as.character(layer[["data"]][["curve"]]))))
+}
+
+test_that("Capability plot overlays the normal distribution for every transformation (#3195)", {
+  options$lowerSpecificationLimitValue <- 1
+  options$processCapabilityPlotDistributions <- TRUE
+  for (axisModification in c("none", "compress")) {
+    options$processCapabilityPlotXAxisModification <- axisModification
+    for (transformation in c("none", "yeoJohnson", "yeoJohnsonAuto", "johnson")) {
+      options$dataTransformation <- transformation
+      options$dataTransformationLambda <- 2
+      set.seed(1)
+      results <- runAnalysis("processCapabilityStudies",
+                             "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+      expected <- if (transformation %in% c("yeoJohnsonAuto", "johnson")) "sdoDist" else c("sdoDist", "sdwDist")
+      expect_equal(.capabilityPlotCurves(results), expected,
+                   label = paste("curves:", transformation, axisModification))
+    }
+  }
+})
+
 # Box-Cox with negative lambda: x^lambda is decreasing, so it is negated to keep LSL below USL
 .boxCoxNegativeLambdaOptions <- function(dataset, transformation, continuityAdjustment) {
   options <- analysisOptions("processCapabilityStudies")

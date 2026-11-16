@@ -1280,13 +1280,16 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         densDf <- NULL
         if (distribution == "normal") {
           processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
+          # the total curve is valid for every transformation, the within curve only if .qcWithinProcessValid()
+          densDf <- .qcDensityCurveData(dnorm, list(mean = processMean, sd = sd(allData)), xGrid, "sdoDist")
+          legendColors <- c(legendColors, "dodgerblue")
+          legendLty <- c(legendLty, "solid")
+          legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"))
           if (.qcWithinProcessValid(options)) {
-            densDf <- rbind(.qcDensityCurveData(dnorm, list(mean = processMean, sd = sd(allData)), xGrid, "sdoDist"),
-                            .qcDensityCurveData(dnorm, list(mean = processMean, sd = sdw), xGrid, "sdwDist"))
-            legendColors <- c(legendColors, "dodgerblue", "red")
-            legendLty <- c(legendLty, "solid", "solid")
-            legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"),
-                              gettext("Normal dist.\n(std. dev. within)"))
+            densDf <- rbind(densDf, .qcDensityCurveData(dnorm, list(mean = processMean, sd = sdw), xGrid, "sdwDist"))
+            legendColors <- c(legendColors, "red")
+            legendLty <- c(legendLty, "solid")
+            legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. within)"))
           }
         } else if (distribution == "weibull") {
           distParameters <- .distributionParameters(data = allData, distribution = distribution, fix.arg = fix.arg)
@@ -1479,16 +1482,22 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["processCapabilityPlotDistributions"]]) {
         if (distribution == "normal") {
           processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
+          # the total curve is valid for every transformation, the within curve only if .qcWithinProcessValid()
+          curveDf <- rbind(
+            curveDf,
+            .qcCapabilityCurveData(densityX, dnorm(densityX, mean = processMean, sd = sd(allData)), axisConfig, "sdoDist")
+          )
+          legendColors <- c(legendColors, sdoDist = "dodgerblue")
+          legendLty <- c(legendLty, sdoDist = "solid")
+          legendLabels <- c(legendLabels, sdoDist = gettext("Normal dist.\n(std. dev. total)"))
           if (.qcWithinProcessValid(options)) {
             curveDf <- rbind(
               curveDf,
-              .qcCapabilityCurveData(densityX, dnorm(densityX, mean = processMean, sd = sd(allData)), axisConfig, "sdoDist"),
               .qcCapabilityCurveData(densityX, dnorm(densityX, mean = processMean, sd = sdw), axisConfig, "sdwDist")
             )
-            legendColors <- c(legendColors, sdoDist = "dodgerblue", sdwDist = "red")
-            legendLty <- c(legendLty, sdoDist = "solid", sdwDist = "solid")
-            legendLabels <- c(legendLabels, sdoDist = gettext("Normal dist.\n(std. dev. total)"),
-                              sdwDist = gettext("Normal dist.\n(std. dev. within)"))
+            legendColors <- c(legendColors, sdwDist = "red")
+            legendLty <- c(legendLty, sdwDist = "solid")
+            legendLabels <- c(legendLabels, sdwDist = gettext("Normal dist.\n(std. dev. within)"))
           }
         } else if (distribution == "weibull") {
           distParameters <- .distributionParameters(data = allData, distribution = distribution, fix.arg = fix.arg)
