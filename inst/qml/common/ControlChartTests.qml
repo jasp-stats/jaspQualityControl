@@ -84,16 +84,16 @@ Group
 	{
 		name: 								"rule4"
 		label: 								""
-		checked:							true
+		checked:							testSet.currentValue == "nelsonLaws" | testSet.currentValue == "custom"
 		visible:							testSet.currentValue == "custom"
 		childrenOnSameRow:					true
 
 		IntegerField
 		{
 			name: 								"rule4Value"
-			afterLabel:							qsTr("out of k+1 points > 2 std. dev. from center line (same side) - Test 4: Increasing variation")
+			afterLabel:							qsTr("points in a row, alternating increase and decrease - Test 4: Oscillation")
 			fieldWidth: 						25
-			defaultValue: 						2
+			defaultValue: 						14
 			min:								2
 		}
 	}
@@ -102,16 +102,16 @@ Group
 	{
 		name: 								"rule5"
 		label: 								""
-		checked:							testSet.currentValue == "nelsonLaws" | testSet.currentValue == "custom" | testSet.currentValue == "jaspDefault"
+		checked:							true
 		visible:							testSet.currentValue == "custom"
 		childrenOnSameRow:					true
 
 		IntegerField
 		{
 			name: 								"rule5Value"
-			afterLabel:							qsTr("points in a row < 1 std. dev from center line (either side) - Test 5: Reducing variation")
+			afterLabel:							qsTr("out of k+1 points > 2 std. dev. from center line (same side) - Test 5: Beyond 2 sigma, same side")
 			fieldWidth: 						25
-			defaultValue: 						15
+			defaultValue: 						2
 			min:								2
 		}
 	}
@@ -120,32 +120,14 @@ Group
 	{
 		name: 								"rule6"
 		label: 								""
-		checked:							testSet.currentValue == "nelsonLaws" | testSet.currentValue == "custom" | testSet.currentValue == "jaspDefault"
-		visible:							testSet.currentValue == "custom"
-		childrenOnSameRow:					true
-
-		IntegerField
-		{
-			name: 								"rule6Value"
-			afterLabel:							qsTr("points in a row > 1 std. dev from center line (either side) - Test 6: Bimodal distribution")
-			fieldWidth: 						25
-			defaultValue: 						8
-			min:								2
-		}
-	}
-
-	CheckBox
-	{
-		name: 								"rule7"
-		label: 								""
 		checked:							testSet.currentValue != "jaspDefault"
 		visible:							testSet.currentValue == "custom"
 		childrenOnSameRow:					true
 
 		IntegerField
 		{
-			name: 								"rule7Value"
-			afterLabel:							qsTr("out of k+1 points > 1 std. dev. from center line (same side) - Test 7: Slightly increasing variation")
+			name: 								"rule6Value"
+			afterLabel:							qsTr("out of k+1 points > 1 std. dev. from center line (same side) - Test 6: Beyond 1 sigma, same side")
 			fieldWidth: 						25
 			defaultValue: 						4
 			min:								2
@@ -154,18 +136,36 @@ Group
 
 	CheckBox
 	{
+		name: 								"rule7"
+		label: 								""
+		checked:							testSet.currentValue == "nelsonLaws" | testSet.currentValue == "custom" | testSet.currentValue == "jaspDefault"
+		visible:							testSet.currentValue == "custom"
+		childrenOnSameRow:					true
+
+		IntegerField
+		{
+			name: 								"rule7Value"
+			afterLabel:							qsTr("points in a row < 1 std. dev from center line (either side) - Test 7: Reducing variation")
+			fieldWidth: 						25
+			defaultValue: 						15
+			min:								2
+		}
+	}
+
+	CheckBox
+	{
 		name: 								"rule8"
 		label: 								""
-		checked:							testSet.currentValue == "nelsonLaws" | testSet.currentValue == "custom"
+		checked:							testSet.currentValue == "nelsonLaws" | testSet.currentValue == "custom" | testSet.currentValue == "jaspDefault"
 		visible:							testSet.currentValue == "custom"
 		childrenOnSameRow:					true
 
 		IntegerField
 		{
 			name: 								"rule8Value"
-			afterLabel:							qsTr("points in a row, alternating increase and decrease - Test 8: Oscillation")
+			afterLabel:							qsTr("points in a row > 1 std. dev from center line (either side) - Test 8: Bimodal distribution")
 			fieldWidth: 						25
-			defaultValue: 						14
+			defaultValue: 						8
 			min:								2
 		}
 	}

@@ -1280,13 +1280,16 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         densDf <- NULL
         if (distribution == "normal") {
           processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
+          # the total curve is valid for every transformation, the within curve only if .qcWithinProcessValid()
+          densDf <- .qcDensityCurveData(dnorm, list(mean = processMean, sd = sd(allData)), xGrid, "sdoDist")
+          legendColors <- c(legendColors, "dodgerblue")
+          legendLty <- c(legendLty, "solid")
+          legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"))
           if (.qcWithinProcessValid(options)) {
-            densDf <- rbind(.qcDensityCurveData(dnorm, list(mean = processMean, sd = sd(allData)), xGrid, "sdoDist"),
-                            .qcDensityCurveData(dnorm, list(mean = processMean, sd = sdw), xGrid, "sdwDist"))
-            legendColors <- c(legendColors, "dodgerblue", "red")
-            legendLty <- c(legendLty, "solid", "solid")
-            legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"),
-                              gettext("Normal dist.\n(std. dev. within)"))
+            densDf <- rbind(densDf, .qcDensityCurveData(dnorm, list(mean = processMean, sd = sdw), xGrid, "sdwDist"))
+            legendColors <- c(legendColors, "red")
+            legendLty <- c(legendLty, "solid")
+            legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. within)"))
           }
         } else if (distribution == "weibull") {
           distParameters <- .distributionParameters(data = allData, distribution = distribution, fix.arg = fix.arg)
@@ -1385,19 +1388,19 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         colnames(specLimitsDf) <- c("label", "xIntercept", "lty", "yPosLabel", "color")
         yPosLabel <- max(ggplot2::layer_scales(p)$y$range$range)
         if (options[["target"]]) {
-          specLimitsDf <- rbind(specLimitsDf, data.frame(label = gettextf("Target = %g", round(options[["targetValue"]], .numDecimals)),
+          specLimitsDf <- rbind(specLimitsDf, data.frame(label = gettextf("Target = %s", .controlChartLabelValue(options[["targetValue"]])),
                                                          xIntercept = options[["targetValue"]], lty = "solid", yPosLabel = yPosLabel,
                                                          color = "darkgreen"))
         }
         if (options[["lowerSpecificationLimit"]]) {
           lslLty <- if (options[["lowerSpecificationLimitBoundary"]]) "solid" else "dotted"
-          lslLabel <- if (options[["lowerSpecificationLimitBoundary"]]) gettextf("LB = %g", round(options[["lowerSpecificationLimitValue"]], .numDecimals)) else gettextf("LSL = %g", round(options[["lowerSpecificationLimitValue"]], .numDecimals))
+          lslLabel <- if (options[["lowerSpecificationLimitBoundary"]]) gettextf("LB = %s", .controlChartLabelValue(options[["lowerSpecificationLimitValue"]])) else gettextf("LSL = %s", .controlChartLabelValue(options[["lowerSpecificationLimitValue"]]))
           specLimitsDf <- rbind(specLimitsDf, data.frame(label = lslLabel, xIntercept = options[["lowerSpecificationLimitValue"]],
                                                          lty = lslLty, yPosLabel = yPosLabel, color = "darkred"))
         }
         if (options[["upperSpecificationLimit"]]) {
           uslLty <- if (options[["upperSpecificationLimitBoundary"]]) "solid" else "dotted"
-          uslLabel <- if (options[["upperSpecificationLimitBoundary"]]) gettextf("UB = %g", round(options[["upperSpecificationLimitValue"]], .numDecimals)) else gettextf("USL = %g", round(options[["upperSpecificationLimitValue"]], .numDecimals))
+          uslLabel <- if (options[["upperSpecificationLimitBoundary"]]) gettextf("UB = %s", .controlChartLabelValue(options[["upperSpecificationLimitValue"]])) else gettextf("USL = %s", .controlChartLabelValue(options[["upperSpecificationLimitValue"]]))
           specLimitsDf <- rbind(specLimitsDf, data.frame(label = uslLabel, xIntercept = options[["upperSpecificationLimitValue"]],
                                                          lty = uslLty, yPosLabel = yPosLabel, color = "darkred"))
         }
@@ -1479,16 +1482,22 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       if (options[["processCapabilityPlotDistributions"]]) {
         if (distribution == "normal") {
           processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
+          # the total curve is valid for every transformation, the within curve only if .qcWithinProcessValid()
+          curveDf <- rbind(
+            curveDf,
+            .qcCapabilityCurveData(densityX, dnorm(densityX, mean = processMean, sd = sd(allData)), axisConfig, "sdoDist")
+          )
+          legendColors <- c(legendColors, sdoDist = "dodgerblue")
+          legendLty <- c(legendLty, sdoDist = "solid")
+          legendLabels <- c(legendLabels, sdoDist = gettext("Normal dist.\n(std. dev. total)"))
           if (.qcWithinProcessValid(options)) {
             curveDf <- rbind(
               curveDf,
-              .qcCapabilityCurveData(densityX, dnorm(densityX, mean = processMean, sd = sd(allData)), axisConfig, "sdoDist"),
               .qcCapabilityCurveData(densityX, dnorm(densityX, mean = processMean, sd = sdw), axisConfig, "sdwDist")
             )
-            legendColors <- c(legendColors, sdoDist = "dodgerblue", sdwDist = "red")
-            legendLty <- c(legendLty, sdoDist = "solid", sdwDist = "solid")
-            legendLabels <- c(legendLabels, sdoDist = gettext("Normal dist.\n(std. dev. total)"),
-                              sdwDist = gettext("Normal dist.\n(std. dev. within)"))
+            legendColors <- c(legendColors, sdwDist = "red")
+            legendLty <- c(legendLty, sdwDist = "solid")
+            legendLabels <- c(legendLabels, sdwDist = gettext("Normal dist.\n(std. dev. within)"))
           }
         } else if (distribution == "weibull") {
           distParameters <- .distributionParameters(data = allData, distribution = distribution, fix.arg = fix.arg)
@@ -1609,19 +1618,19 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         colnames(specLimitsDf) <- c("label", "xIntercept", "lty", "yPosLabel", "color", "hjust")
         yPosLabel <- yUpper * 1.03
         if (options[["target"]]) {
-          specLimitsDf <- rbind(specLimitsDf, data.frame(label = gettextf("Target = %g", round(options[["targetValue"]], .numDecimals)),
+          specLimitsDf <- rbind(specLimitsDf, data.frame(label = gettextf("Target = %s", .controlChartLabelValue(options[["targetValue"]])),
                                                          xIntercept = xTransform(options[["targetValue"]]), lty = "solid", yPosLabel = yPosLabel,
                                                          color = "darkgreen", hjust = 0.5))
         }
         if (options[["lowerSpecificationLimit"]]) {
           lslLty <- if (options[["lowerSpecificationLimitBoundary"]]) "solid" else "dotted"
-          lslLabel <- if (options[["lowerSpecificationLimitBoundary"]]) gettextf("LB = %g", round(options[["lowerSpecificationLimitValue"]], .numDecimals)) else gettextf("LSL = %g", round(options[["lowerSpecificationLimitValue"]], .numDecimals))
+          lslLabel <- if (options[["lowerSpecificationLimitBoundary"]]) gettextf("LB = %s", .controlChartLabelValue(options[["lowerSpecificationLimitValue"]])) else gettextf("LSL = %s", .controlChartLabelValue(options[["lowerSpecificationLimitValue"]]))
           specLimitsDf <- rbind(specLimitsDf, data.frame(label = lslLabel, xIntercept = xTransform(options[["lowerSpecificationLimitValue"]]),
                                                          lty = lslLty, yPosLabel = yPosLabel, color = "darkred", hjust = 0))
         }
         if (options[["upperSpecificationLimit"]]) {
           uslLty <- if (options[["upperSpecificationLimitBoundary"]]) "solid" else "dotted"
-          uslLabel <- if (options[["upperSpecificationLimitBoundary"]]) gettextf("UB = %g", round(options[["upperSpecificationLimitValue"]], .numDecimals)) else gettextf("USL = %g", round(options[["upperSpecificationLimitValue"]], .numDecimals))
+          uslLabel <- if (options[["upperSpecificationLimitBoundary"]]) gettextf("UB = %s", .controlChartLabelValue(options[["upperSpecificationLimitValue"]])) else gettextf("USL = %s", .controlChartLabelValue(options[["upperSpecificationLimitValue"]]))
           specLimitsDf <- rbind(specLimitsDf, data.frame(label = uslLabel, xIntercept = xTransform(options[["upperSpecificationLimitValue"]]),
                                                          lty = uslLty, yPosLabel = yPosLabel, color = "darkred", hjust = 1))
         }
@@ -3260,7 +3269,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   }
   table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "integer")
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "pvalue")
-  table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution.", distributionTitle))
+  table$addFootnote(gettextf("The Anderson-Darling statistic (AD) is calculated against the %1$s distribution.", distributionTitle))
   table$addFootnote(gettextf("Red dotted lines in the probability plot below represent a 95%% confidence interval."))
   if (nStages > 1)
     table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
@@ -3308,7 +3317,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     }
     n      <- length(values)
     ad     <- test$statistic
-    p      <- .qcAndersonDarlingPValueNormal(ad, n)
+    p      <- if (options[["nullDistribution"]] == "weibull") .qcAndersonDarlingPValueWeibull(ad, n) else .qcAndersonDarlingPValueNormal(ad, n)
     tableDfCurrentStage <- data.frame(mean = meanx, sd = sdx, n = n, ad = round(ad, .numDecimals), p = round(p, .numDecimals))
     if (i == 1 && nStages > 1)
       baseLineDf <- tableDfCurrentStage
@@ -3346,6 +3355,25 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   } else {
     1 - exp(-13.436 + (101.14 * adStar) - 223.73 * (adStar^2))      #Jaentschi & Bolboaca (2018)
   }
+}
+
+# Anderson-Darling p-value for a Weibull fit with estimated shape and scale. The null distribution of the statistic
+# does not depend on the true parameters; D'Agostino & Stephens (1986, Table 4.17) give the modified statistic
+# A2 * (1 + 0.2 / sqrt(n)), whose distribution hardly depends on n. Its upper-tail points below are the pooled quantiles
+# of a Monte Carlo study (500000 Weibull samples with maximum-likelihood fits for each of n = 10, 20, 40, 100); they agree
+# with the published 0.25 to 0.01 points to within 0.02, but give p < .05 in 5.0 instead of 5.5% of samples.
+# Recipe: x <- rweibull(n, 3, 2); fit shape and scale by maximum likelihood; A2 = -n - mean((2i - 1) * (log(u_i) + log(1 - u_(n+1-i))))
+# with u the sorted pweibull(x, shape, scale); adStar = A2 * (1 + 0.2 / sqrt(n)); points = quantile(adStar, 1 - levels) over the
+# 2e6 pooled values (the null distribution does not depend on the true shape and scale).
+# The p-value is interpolated log-linearly between the points and extrapolated along the first and last segment
+# (an exponential tail, as for the normal case), capped at 1.
+.qcAndersonDarlingPValueWeibull <- function(ad, n) {
+  levels <- c(0.9, 0.75, 0.5, 0.25, 0.10, 0.05, 0.025, 0.01, 0.005, 0.001)
+  points <- c(0.206, 0.265, 0.356, 0.488, 0.651, 0.772, 0.893, 1.053, 1.174, 1.454)
+  adStar <- ad * (1 + 0.2/sqrt(n))
+  segment <- min(max(findInterval(adStar, points), 1), length(points) - 1)
+  slope  <- diff(log(levels))[segment] / diff(points)[segment]
+  min(1, exp(log(levels[segment]) + slope * (adStar - points[segment])))
 }
 
 .qcProbabilityPlot <- function(dataset, options, measurements = NULL, stages) {

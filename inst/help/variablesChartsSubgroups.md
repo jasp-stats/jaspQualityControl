@@ -54,17 +54,17 @@ _Statistical process control handbook page 23:_
 - Test 1: Beyond limit - One point beyond the control limits (sporadic issue).
 - Test 2: Shift - Nine consecutive points above or below the central line (mean shift).
 - Test 3: Trend - A run up or down of six consecutive points (trend).
-- Test 4: Increasing variation - Two out of three consecutive points beyond the warning (two sigma) limits (increasing variation).
-- Test 5: Reducing variation - Hugging the central line, this is indicated when 15 consecutive points are within the one sigma limits (reducing variation).
-- Test 6: Bimodal distribution - Eight consecutive points are beyond the one sigma limits, regardless of which side of the central line (bimodal distribution).
-- Test 7: Slightly increasing variation - Four out of five consecutive points beyond the warning (one sigma) limits (slightly increasing variation).
-- Test 8: Oscillation - Fourteen points in a row are alternating increase and decrease (oscillation).
+- Test 4: Oscillation - Fourteen points in a row are alternating increase and decrease (oscillation).
+- Test 5: Beyond 2 sigma, same side - Two out of three consecutive points beyond the warning (two sigma) limits, on the same side of the central line (shift).
+- Test 6: Beyond 1 sigma, same side - Four out of five consecutive points beyond the warning (one sigma) limits, on the same side of the central line (shift).
+- Test 7: Reducing variation - Hugging the central line, this is indicated when 15 consecutive points are within the one sigma limits (reducing variation).
+- Test 8: Bimodal distribution - Eight consecutive points are beyond the one sigma limits, regardless of which side of the central line (bimodal distribution).
 
 #### Western Electric Rules
 - Test 1: Beyond limit - One point beyond the control limits (sporadic issue).
 - Test 2: Shift - Eight consecutive points above or below the central line (mean shift).
-- Test 4: Increasing variation - Two out of three consecutive points beyond the warning (two sigma) limits (increasing variation).
-- Test 7: Slightly increasing variation - Four out of five consecutive points beyond the warning (one sigma) limits (slightly increasing variation).
+- Test 5: Beyond 2 sigma, same side - Two out of three consecutive points beyond the warning (two sigma) limits, on the same side of the central line (shift).
+- Test 6: Beyond 1 sigma, same side - Four out of five consecutive points beyond the warning (one sigma) limits, on the same side of the central line (shift).
 
 #### Custom Test Selection
 Select manually which tests you want to apply and modify them as desired:
@@ -72,11 +72,11 @@ Select manually which tests you want to apply and modify them as desired:
 - Test 1: Beyond limit - One point beyond the control limits (sporadic issue).
 - Test 2: Shift - N consecutive points above or below the central line (mean shift).
 - Test 3: Trend - A run up or down of N consecutive points (trend).
-- Test 4: Increasing variation - N out of N+1 consecutive points beyond the warning (two sigma) limits (increasing variation).
-- Test 5: Reducing variation - Hugging the central line, this is indicated when N consecutive points are within the one sigma limits (reducing variation).
-- Test 6: Bimodal distribution - N consecutive points are beyond the one sigma limits, regardless of which side of the central line (bimodal distribution).
-- Test 7: Slightly increasing variation - N out of N+1 consecutive points beyond the warning (one sigma) limits (slightly increasing variation).
-- Test 8: Oscillation - N points in a row are alternating increase and decrease (oscillation).
+- Test 4: Oscillation - N points in a row are alternating increase and decrease (oscillation).
+- Test 5: Beyond 2 sigma, same side - N out of N+1 consecutive points beyond the warning (two sigma) limits, on the same side of the central line (shift).
+- Test 6: Beyond 1 sigma, same side - N out of N+1 consecutive points beyond the warning (one sigma) limits, on the same side of the central line (shift).
+- Test 7: Reducing variation - Hugging the central line, this is indicated when N consecutive points are within the one sigma limits (reducing variation).
+- Test 8: Bimodal distribution - N consecutive points are beyond the one sigma limits, regardless of which side of the central line (bimodal distribution).
 
 
 ## References 
