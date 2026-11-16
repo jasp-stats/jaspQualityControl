@@ -44,17 +44,34 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
   }
 
 
+  # Ordinal ratings and standard are read as ordered factors, which keeps the order of their levels.
+  ordinal.vars <- c(measurements[unlist(options[[if (wideFormat) "measurementsWideFormat.types" else "measurementLongFormat.types"]]) == "ordinal"],
+                    standards[unlist(options[[if (wideFormat) "standardWideFormat.types" else "standardLongFormat.types"]]) == "ordinal"])
+
   if (is.null(dataset)) {
-    dataset         <- .readDataSetToEnd(c(numeric.vars, factor.vars))
+    dataset         <- .readDataSetToEnd(columns = setdiff(c(numeric.vars, factor.vars), ordinal.vars), columns.as.ordinal = ordinal.vars)
   }
 
-  # The results lists only accept nominal variables, so numeric ratings arrive as factors:
-  # give them their numbers back, which Kendall's tau and the rating correlations need.
+  # Ordinal ratings (and standard) that are not numbers, e.g. "poor" < "fair" < "good", have no numbers for
+  # Kendall's tau: it uses the order of their levels, which is lost once the columns are plain factors.
+  ordinalRatings  <- dataset[numeric.vars]
+  ordinalStandard <- if (standards != "") dataset[standards]
+
+  # Ratings of nominal or ordinal variables arrive as factors: give them their numbers back, which Kendall's
+  # tau and the rating correlations need.
   for (measurement in numeric.vars)
     dataset[[measurement]] <- .msaAttributeAsNumberIfPossible(dataset[[measurement]])
   # The standard is compared with the ratings, so it needs the same representation (e.g., 1 rather than "1.0").
   if (standards != "")
     dataset[[standards]] <- .msaAttributeAsNumberIfPossible(dataset[[standards]])
+
+  # The scales of Kendall's tau for the ratings and standard that are not numbers. A standard in text shares the
+  # scale of ratings in text, so that its levels cannot run in another order than theirs.
+  ratingsText   <- !all(vapply(dataset[numeric.vars], is.numeric, logical(1)))
+  standardText  <- standards != "" && !is.numeric(dataset[[standards]])
+  sharedScale   <- if (ratingsText && standardText) .msaAttributeOrdinalScale(c(ordinalRatings, ordinalStandard))
+  ratingScale   <- if (!is.null(sharedScale)) sharedScale else .msaAttributeOrdinalScale(ordinalRatings)
+  standardScale <- if (!standardText) NULL else if (ratingsText) sharedScale else .msaAttributeOrdinalScale(ordinalStandard)
 
   # Check for missing values and infinity
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
@@ -148,7 +165,8 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
       jaspResults[["KendallTau"]]$position <- 20
     }
 
-    jaspResults[["KendallTau"]] <- .kendallTau(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards, ready = ready)
+    jaspResults[["KendallTau"]] <- .kendallTau(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards, ready = ready,
+                                              ratingScale = ratingScale, standardScale = standardScale)
 
 
   }
@@ -683,7 +701,8 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
 
 # A factor (or character vector) whose values are all numbers, e.g. ratings 1 to 5, as those numbers;
-# anything else unchanged. as.numeric() on the factor itself would give the level codes instead.
+# anything else as a plain factor or character vector. as.numeric() on the factor itself would give the level
+# codes instead.
 .msaAttributeAsNumberIfPossible <- function(x) {
   if (is.numeric(x))
     return(x)
@@ -694,10 +713,57 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
   if (all(is.na(numbers) == is.na(values)))
     return(numbers)
 
+  if (is.ordered(x))
+    return(factor(x, ordered = FALSE))
+
   return(x)
 }
 
-.kendallTau <- function(dataset, measurements, parts, operators, standards, options, ready) {
+# The levels of ordinal (ordered factor) columns merged into one scale, the scale of Kendall's tau when the
+# ratings are not numbers. Columns may lack some levels (e.g., a trial without every category), but the order of
+# their levels must be consistent and leave only one possible order of all levels. NULL when a column is not
+# ordinal, or the orders conflict or leave the order of some levels open.
+.msaAttributeOrdinalScale <- function(columns) {
+  if (length(columns) == 0 || !all(vapply(columns, is.ordered, logical(1))))
+    return(NULL)
+
+  levelsPerColumn <- lapply(columns, levels)
+  remaining       <- unique(unlist(levelsPerColumn))
+  # level `from` precedes level `to`: consecutive levels of a column
+  from            <- unlist(lapply(levelsPerColumn, utils::head, -1))
+  to              <- unlist(lapply(levelsPerColumn, utils::tail, -1))
+  scale           <- character(0)
+
+  # topological order: exactly one level without a predecessor at every step
+  while (length(remaining) > 0) {
+    first <- remaining[!remaining %in% to]
+    if (length(first) != 1)
+      return(NULL)
+
+    scale     <- c(scale, first)
+    remaining <- setdiff(remaining, first)
+    to        <- to[from != first]
+    from      <- from[from != first]
+  }
+
+  return(scale)
+}
+
+# The values of the columns as numbers for Kendall's tau: the numbers themselves, or the positions of ordinal
+# values in the order of their levels (scale). NULL when the columns are neither numbers nor ordinal.
+.msaAttributeKendallValues <- function(columns, scale) {
+  isNumber <- vapply(columns, is.numeric, logical(1))
+
+  if (all(isNumber))
+    return(columns)
+
+  if (any(isNumber) || is.null(scale))
+    return(NULL)
+
+  return(as.data.frame(lapply(columns, function(x) match(as.character(x), scale))))
+}
+
+.kendallTau <- function(dataset, measurements, parts, operators, standards, options, ready, ratingScale, standardScale) {
 
   operatorVector <- as.character(unique(dataset[[operators]]))
 
@@ -709,11 +775,22 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
   if (!ready & options[["kendallsTau"]])
     return(table)
 
-  if (!all(vapply(dataset[measurements], is.numeric, logical(1)))) {
-    table$setError(gettext("Kendall's tau is only available for numeric measurements."))
-  }  else if (length(unique(unlist(dataset[measurements]))) <= 2) {
+  # Ratings and standard as numbers, or as the positions of their levels when they are ordinal
+  ratingsRanked  <- !all(vapply(dataset[measurements], is.numeric, logical(1)))
+  standardRanked <- standards != "" && !is.numeric(dataset[[standards]])
+  ratingValues   <- .msaAttributeKendallValues(dataset[measurements], ratingScale)
+  standardValues <- if (standards != "") .msaAttributeKendallValues(dataset[standards], standardScale)
+
+  if (is.null(ratingValues)) {
+    table$setError(gettext("Kendall's tau is only available for numeric or ordinal measurements, with the same order of the levels in every column."))
+  } else if (standards != "" && is.null(standardValues)) {
+    table$setError(gettext("Kendall's tau is only available for a numeric standard or an ordinal standard with the same order of the levels as the ratings."))
+  } else if (length(unique(unlist(ratingValues))) <= 2) {
     table$setError(gettext("Kendall's tau is only available for non-binary measurements."))
   } else{
+    dataset[measurements] <- ratingValues
+    if (standards != "")
+      dataset[[standards]] <- standardValues[[1]]
     table$addColumnInfo(name = "Operator",  title = gettext("Operator"), type = "string")
 
     for (operator in operatorVector) {
@@ -731,7 +808,7 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
       as.matrix(dataset[rows[match(partIds, partKey[rows])], measurements, drop = FALSE])
     })
     if (standards != "")
-      reference <- as.numeric(.msaAttributeAsNumberIfPossible(dataset[[standards]]))[match(partIds, partKey)]
+      reference <- dataset[[standards]][match(partIds, partKey)]
 
     standCorrVector <- vector(mode = "numeric")
     tableColumns <- list()
@@ -763,6 +840,10 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
       if (standards != "")
         table$addFootnote(gettext("Appraiser vs standard: Kendall's tau-b of each trial with the standard, averaged over trials."))
     }
+    # Text levels are ranked by their order in the data (the order of the labels in JASP), which need not be the
+    # intended one: show it.
+    if (ratingsRanked || standardRanked)
+      table$addFootnote(gettextf("Order of the ordinal levels: %s.", paste(if (ratingsRanked) ratingScale else standardScale, collapse = " < ")))
   }
 
   return(table)
