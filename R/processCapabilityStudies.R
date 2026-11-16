@@ -3260,7 +3260,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   }
   table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "integer")
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "pvalue")
-  table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution.", distributionTitle))
+  table$addFootnote(gettextf("The Anderson-Darling statistic (AD) is calculated against the %1$s distribution.", distributionTitle))
   table$addFootnote(gettextf("Red dotted lines in the probability plot below represent a 95%% confidence interval."))
   if (nStages > 1)
     table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
@@ -3308,7 +3308,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     }
     n      <- length(values)
     ad     <- test$statistic
-    p      <- .qcAndersonDarlingPValueNormal(ad, n)
+    p      <- if (options[["nullDistribution"]] == "weibull") .qcAndersonDarlingPValueWeibull(ad, n) else .qcAndersonDarlingPValueNormal(ad, n)
     tableDfCurrentStage <- data.frame(mean = meanx, sd = sdx, n = n, ad = round(ad, .numDecimals), p = round(p, .numDecimals))
     if (i == 1 && nStages > 1)
       baseLineDf <- tableDfCurrentStage
@@ -3346,6 +3346,22 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   } else {
     1 - exp(-13.436 + (101.14 * adStar) - 223.73 * (adStar^2))      #Jaentschi & Bolboaca (2018)
   }
+}
+
+# Anderson-Darling p-value for a Weibull fit with estimated shape and scale. The null distribution of the statistic
+# does not depend on the true parameters; D'Agostino & Stephens (1986, Table 4.17) give the modified statistic
+# A2 * (1 + 0.2 / sqrt(n)), whose distribution hardly depends on n. Its upper-tail points below are the pooled quantiles
+# of a Monte Carlo study (500000 Weibull samples with maximum-likelihood fits for each of n = 10, 20, 40, 100); they agree
+# with the published 0.25 to 0.01 points to within 0.02, but give p < .05 in 5.0 instead of 5.5% of samples.
+# The p-value is interpolated log-linearly between the points and extrapolated along the first and last segment
+# (an exponential tail, as for the normal case), capped at 1.
+.qcAndersonDarlingPValueWeibull <- function(ad, n) {
+  levels <- c(0.9, 0.75, 0.5, 0.25, 0.10, 0.05, 0.025, 0.01, 0.005, 0.001)
+  points <- c(0.206, 0.265, 0.356, 0.488, 0.651, 0.772, 0.893, 1.053, 1.174, 1.454)
+  adStar <- ad * (1 + 0.2/sqrt(n))
+  segment <- min(max(findInterval(adStar, points), 1), length(points) - 1)
+  slope  <- diff(log(levels))[segment] / diff(points)[segment]
+  min(1, exp(log(levels[segment]) + slope * (adStar - points[segment])))
 }
 
 .qcProbabilityPlot <- function(dataset, options, measurements = NULL, stages) {
