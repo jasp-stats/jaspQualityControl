@@ -599,3 +599,50 @@ test_that("WF4.2 Reused part labels - Variance components table results match", 
   expect_equal(table[[3]][["Var"]], (11.6033333333333 - 0.265833333333332) / (3 * 2))
   expect_equal(table[[4]][["Var"]], (0.265833333333332 - 0.0233333333333331) / 2)
 })
+
+# Charts by operator depend on the data assignment ####
+# jasp-stats/INTERNAL-jasp#3434: the range/average chart containers are only built when absent, so they
+# must depend on the data format and the variable assignment. jaspTools runs are stateless (no old state
+# is reused), so the dependency vectors are tested directly.
+
+test_that("LF5.1 Range/average charts by operator depend on data assignment, data format and rules", {
+  required <- c("dataFormat", "report",
+                "measurementLongFormat", "operatorLongFormat", "partLongFormat",
+                "measurementsWideFormat", "operatorWideFormat", "partWideFormat",
+                jaspQualityControl:::.getDependenciesControlChartRules())
+  for (chart in c("rChart", "xBarChart")) {
+    deps <- jaspQualityControl:::.msaGaugeRRnonrepChartByOperatorDependencies(chart)
+    expect_true(chart %in% deps)
+    expect_true(all(required %in% deps), info = chart)
+  }
+})
+
+test_that("LF5.2 Chart and data dependency options exist in the QML of the non-replicable analysis", {
+  qml <- paste(readLines(testthat::test_path("..", "..", "inst", "qml", "msaGaugeRRnonrep.qml")), collapse = "\n")
+  deps <- c(jaspQualityControl:::.msaGaugeRRnonrepChartByOperatorDependencies("rChart"),
+            jaspQualityControl:::.msaGaugeRRnonrepChartByOperatorDependencies("xBarChart"))
+  deps <- setdiff(deps, jaspQualityControl:::.getDependenciesControlChartRules()) # defined in common/ControlChartTests.qml
+  for (dep in unique(deps))
+    expect_true(grepl(sprintf("name:\\s*\"%s\"", dep), qml), info = dep)
+})
+
+test_that("LF5.3 Measurements by part x operator plot depends on the data assignment", {
+  calls <- 0
+  testthat::local_mocked_bindings(
+    .msaGaugeRRnonrepDataDependencies = function() {
+      calls <<- calls + 1
+      c("dataFormat", "measurementLongFormat", "operatorLongFormat", "partLongFormat",
+        "measurementsWideFormat", "operatorWideFormat", "partWideFormat")
+    },
+    .package = "jaspQualityControl"
+  )
+  opts <- analysisOptions("msaGaugeRRnonrep")
+  opts$testSet <- "jaspDefault"
+  opts$partLongFormat <- "Batch"
+  opts$operatorLongFormat <- "Operator"
+  opts$measurementLongFormat <- "Result"
+  opts$partMeasurementPlot <- TRUE
+  set.seed(1)
+  runAnalysis("msaGaugeRRnonrep", "datasets/msaGaugeRRNested/msaGaugeRRNested_long.csv", opts, view = FALSE)
+  expect_gt(calls, 0)
+})
