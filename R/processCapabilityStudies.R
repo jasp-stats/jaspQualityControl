@@ -1385,19 +1385,19 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         colnames(specLimitsDf) <- c("label", "xIntercept", "lty", "yPosLabel", "color")
         yPosLabel <- max(ggplot2::layer_scales(p)$y$range$range)
         if (options[["target"]]) {
-          specLimitsDf <- rbind(specLimitsDf, data.frame(label = gettextf("Target = %g", .controlChartLabelValue(options[["targetValue"]])),
+          specLimitsDf <- rbind(specLimitsDf, data.frame(label = gettextf("Target = %s", .controlChartLabelValue(options[["targetValue"]])),
                                                          xIntercept = options[["targetValue"]], lty = "solid", yPosLabel = yPosLabel,
                                                          color = "darkgreen"))
         }
         if (options[["lowerSpecificationLimit"]]) {
           lslLty <- if (options[["lowerSpecificationLimitBoundary"]]) "solid" else "dotted"
-          lslLabel <- if (options[["lowerSpecificationLimitBoundary"]]) gettextf("LB = %g", .controlChartLabelValue(options[["lowerSpecificationLimitValue"]])) else gettextf("LSL = %g", .controlChartLabelValue(options[["lowerSpecificationLimitValue"]]))
+          lslLabel <- if (options[["lowerSpecificationLimitBoundary"]]) gettextf("LB = %s", .controlChartLabelValue(options[["lowerSpecificationLimitValue"]])) else gettextf("LSL = %s", .controlChartLabelValue(options[["lowerSpecificationLimitValue"]]))
           specLimitsDf <- rbind(specLimitsDf, data.frame(label = lslLabel, xIntercept = options[["lowerSpecificationLimitValue"]],
                                                          lty = lslLty, yPosLabel = yPosLabel, color = "darkred"))
         }
         if (options[["upperSpecificationLimit"]]) {
           uslLty <- if (options[["upperSpecificationLimitBoundary"]]) "solid" else "dotted"
-          uslLabel <- if (options[["upperSpecificationLimitBoundary"]]) gettextf("UB = %g", .controlChartLabelValue(options[["upperSpecificationLimitValue"]])) else gettextf("USL = %g", .controlChartLabelValue(options[["upperSpecificationLimitValue"]]))
+          uslLabel <- if (options[["upperSpecificationLimitBoundary"]]) gettextf("UB = %s", .controlChartLabelValue(options[["upperSpecificationLimitValue"]])) else gettextf("USL = %s", .controlChartLabelValue(options[["upperSpecificationLimitValue"]]))
           specLimitsDf <- rbind(specLimitsDf, data.frame(label = uslLabel, xIntercept = options[["upperSpecificationLimitValue"]],
                                                          lty = uslLty, yPosLabel = yPosLabel, color = "darkred"))
         }
@@ -1609,19 +1609,19 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         colnames(specLimitsDf) <- c("label", "xIntercept", "lty", "yPosLabel", "color", "hjust")
         yPosLabel <- yUpper * 1.03
         if (options[["target"]]) {
-          specLimitsDf <- rbind(specLimitsDf, data.frame(label = gettextf("Target = %g", .controlChartLabelValue(options[["targetValue"]])),
+          specLimitsDf <- rbind(specLimitsDf, data.frame(label = gettextf("Target = %s", .controlChartLabelValue(options[["targetValue"]])),
                                                          xIntercept = xTransform(options[["targetValue"]]), lty = "solid", yPosLabel = yPosLabel,
                                                          color = "darkgreen", hjust = 0.5))
         }
         if (options[["lowerSpecificationLimit"]]) {
           lslLty <- if (options[["lowerSpecificationLimitBoundary"]]) "solid" else "dotted"
-          lslLabel <- if (options[["lowerSpecificationLimitBoundary"]]) gettextf("LB = %g", .controlChartLabelValue(options[["lowerSpecificationLimitValue"]])) else gettextf("LSL = %g", .controlChartLabelValue(options[["lowerSpecificationLimitValue"]]))
+          lslLabel <- if (options[["lowerSpecificationLimitBoundary"]]) gettextf("LB = %s", .controlChartLabelValue(options[["lowerSpecificationLimitValue"]])) else gettextf("LSL = %s", .controlChartLabelValue(options[["lowerSpecificationLimitValue"]]))
           specLimitsDf <- rbind(specLimitsDf, data.frame(label = lslLabel, xIntercept = xTransform(options[["lowerSpecificationLimitValue"]]),
                                                          lty = lslLty, yPosLabel = yPosLabel, color = "darkred", hjust = 0))
         }
         if (options[["upperSpecificationLimit"]]) {
           uslLty <- if (options[["upperSpecificationLimitBoundary"]]) "solid" else "dotted"
-          uslLabel <- if (options[["upperSpecificationLimitBoundary"]]) gettextf("UB = %g", .controlChartLabelValue(options[["upperSpecificationLimitValue"]])) else gettextf("USL = %g", .controlChartLabelValue(options[["upperSpecificationLimitValue"]]))
+          uslLabel <- if (options[["upperSpecificationLimitBoundary"]]) gettextf("UB = %s", .controlChartLabelValue(options[["upperSpecificationLimitValue"]])) else gettextf("USL = %s", .controlChartLabelValue(options[["upperSpecificationLimitValue"]]))
           specLimitsDf <- rbind(specLimitsDf, data.frame(label = uslLabel, xIntercept = xTransform(options[["upperSpecificationLimitValue"]]),
                                                          lty = uslLty, yPosLabel = yPosLabel, color = "darkred", hjust = 1))
         }
