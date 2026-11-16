@@ -776,6 +776,8 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
     return(table)
 
   # Ratings and standard as numbers, or as the positions of their levels when they are ordinal
+  ratingsRanked  <- !all(vapply(dataset[measurements], is.numeric, logical(1)))
+  standardRanked <- standards != "" && !is.numeric(dataset[[standards]])
   ratingValues   <- .msaAttributeKendallValues(dataset[measurements], ratingScale)
   standardValues <- if (standards != "") .msaAttributeKendallValues(dataset[standards], standardScale)
 
@@ -838,6 +840,10 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
       if (standards != "")
         table$addFootnote(gettext("Appraiser vs standard: Kendall's tau-b of each trial with the standard, averaged over trials."))
     }
+    # Text levels are ranked by their order in the data (the order of the labels in JASP), which need not be the
+    # intended one: show it.
+    if (ratingsRanked || standardRanked)
+      table$addFootnote(gettextf("Order of the ordinal levels: %s.", paste(if (ratingsRanked) ratingScale else standardScale, collapse = " < ")))
   }
 
   return(table)
