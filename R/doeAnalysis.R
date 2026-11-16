@@ -693,7 +693,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     result[["regression"]][["coefficients"]][["effectsDf"]] <- effectsFit[["df.residual"]] # differs from regressionFit when coding changes the rank
     result[["regression"]][["coefficients"]][["est"]] <- blankNonUnique(coef(regressionFit)[isFitted], uniqueCoefs)
     result[["regression"]][["coefficients"]][["effects"]][1] <- NA
-    result[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFit)[isFitted]
+    result[["regression"]][["coefficients"]][["vif"]] <- blankNonUnique(.getVIF(regressionFit)[isFitted], uniqueCoefs)
 
     resultCoded[["regression"]][["coefficients"]][["unique"]] <- uniqueCoefsCoded
     resultCoded[["regression"]][["coefficients"]][["effects"]] <- blankNonUnique(coefEffectsCoded[isFittedCoded], uniqueCoefsCoded)
@@ -701,7 +701,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["coefficients"]][["effectsDf"]] <- regressionFitCoded[["df.residual"]]
     resultCoded[["regression"]][["coefficients"]][["est"]] <- blankNonUnique(coef(regressionFitCoded)[isFittedCoded], uniqueCoefsCoded)
     resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
-    resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded)[isFittedCoded]
+    resultCoded[["regression"]][["coefficients"]][["vif"]] <- blankNonUnique(.getVIF(regressionFitCoded)[isFittedCoded], uniqueCoefsCoded)
 
     termNamesAliased <- termNames
     termNamesAliasedCoded <- termNamesCoded
@@ -2398,7 +2398,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       tb$addFootnote(.doeNonUniqueCoefficientsNote())
     if (isTRUE(result[["effectsOtherModel"]])) # only set for the uncoded table
       tb$addFootnote(gettext("Effects are not shown: coding the continuous predictors changes this model (e.g., an interaction or squared term without its main effects)."))
-    if (anyNA(stats::coef(resultRegression[["object"]])))
+    if (anyNA(stats::coef(resultRegression[["object"]])) && any(!is.na(result[["vif"]])))
       tb$addFootnote(gettext("VIF is calculated without the aliased coefficients."))
 
     # coded: only discrete factors with more than 2 levels have level-specific terms that need a legend

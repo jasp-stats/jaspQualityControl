@@ -7546,6 +7546,18 @@ test_that("63.1 VIF is one value per coefficient: multi-level factor, squared te
   expect_true(is.na(vifAliased[4]))
   expect_equal(vifAliased[2:3], vifReference(fitAliased)[2:3])
   expect_equal(unname(vifAliased[2:3]), unname(jaspQualityControl:::.getVIF(stats::lm(y ~ X + Z, data = toy))[2:3]))
+
+  # which of X, Z and Zalias lm() leaves out depends on the column order: the VIF of the coefficients in the alias relation
+  # (not unique) changes with it, the VIF of a unique coefficient (W) does not
+  toy$W <- rnorm(24)
+  fitA <- stats::lm(y ~ X + Z + Zalias + W, data = toy)
+  fitB <- stats::lm(y ~ Zalias + X + Z + W, data = toy)
+  expect_equal(unname(jaspQualityControl:::.doeEstimableCoefficients(fitA)), c(TRUE, FALSE, FALSE, FALSE, TRUE))
+  expect_equal(unname(jaspQualityControl:::.doeEstimableCoefficients(fitB)), c(TRUE, FALSE, FALSE, FALSE, TRUE))
+  vifA <- jaspQualityControl:::.getVIF(fitA)
+  vifB <- jaspQualityControl:::.getVIF(fitB)
+  expect_equal(vifA[5], vifB[5])
+  expect_gt(abs(vifA[2] - vifB[3]), 1e-3) # X
 })
 
 test_that("63.2 VIF is not available with a single column", {
@@ -7554,30 +7566,65 @@ test_that("63.2 VIF is not available with a single column", {
   expect_true(all(is.na(jaspQualityControl:::.getVIF(stats::lm(y ~ 1, data = toy)))))
 })
 
-# etch data with the factors as discrete -1/0/1 levels (the center points are the 0 level): 3-level factors with partly
-# aliased interactions, so the VIF column used to be empty (INTERNAL-jasp#3390)
+# etch data with discrete -1/0/1 factors (the center points are the 0 level): interactions are partly aliased. Like the other
+# values of the table, the VIF of a coefficient that is not unique depends on which aliased column lm() leaves out, so it is
+# not shown; the VIF of a unique coefficient does not depend on it (INTERNAL-jasp#3390).
+etchAliasedFootnotes <- function(table) vapply(table[["footnotes"]], function(note) note[["text"]], character(1))
+
+# (a) only Gap is discrete and interacts with Pressure: Gap2:Pressure = (Gap1:Pressure - Pressure) / 2 on the runs, so
+# Pressure and the Gap interaction are not unique, while Gap, Flow and Power are
+etchPartiallyAliased <- function(labels) {
+  data <- etchData
+  data[["Gap"]] <- unname(labels[as.character(data[["Gap"]])])
+  options <- etchOptions(continuous = c("Pressure", "Flow", "Power"), discrete = "Gap", coded = FALSE)
+  options$modelTerms <- list(list(components = "Gap"), list(components = "Pressure"), list(components = "Flow"),
+                             list(components = "Power"), list(components = c("Gap", "Pressure")))
+  set.seed(123)
+  results <- runAnalysis("doeAnalysis", data, options)
+  table   <- results[["results"]][["EtchRate"]][["collection"]][["EtchRate_tableCoefficients"]]
+  data[["Gap"]] <- factor(data[["Gap"]])
+  contrasts(data[["Gap"]]) <- "contr.sum"
+  list(table = table, fit = stats::lm(EtchRate ~ Gap + Pressure + Flow + Power + Gap:Pressure, data = data))
+}
+
+test_that("63.3 VIF is shown for unique coefficients only when some coefficients are aliased", {
+  for (labels in list(c("-1" = "-1", "0" = "0", "1" = "1"), c("-1" = "b", "0" = "a", "1" = "c"))) {
+    partial <- etchPartiallyAliased(labels)
+    fit     <- partial[["fit"]]
+    isUnique <- unname(jaspQualityControl:::.doeEstimableCoefficients(fit))[!is.na(stats::coef(fit))]
+    expect_true(anyNA(stats::coef(fit)))
+    expect_equal(sum(!isUnique), 2) # Pressure and one Gap:Pressure column
+    vif <- doeTableColumn(partial[["table"]], "vif")
+    expect_length(vif, length(isUnique))
+    expect_equal(is.na(vif), c(TRUE, !isUnique[-1])) # intercept and the coefficients that are not unique are empty
+    expect_equal(vif[isUnique & !is.na(vif)], vifReference(fit)[!is.na(stats::coef(fit))][isUnique & !is.na(vif)])
+    expect_true("VIF is calculated without the aliased coefficients." %in% etchAliasedFootnotes(partial[["table"]]))
+  }
+  # the VIF of Flow and Power does not depend on how the levels of Gap are labelled
+  vifs  <- lapply(list(c("-1" = "-1", "0" = "0", "1" = "1"), c("-1" = "b", "0" = "a", "1" = "c")), function(labels) {
+    table <- etchPartiallyAliased(labels)[["table"]]
+    doeTableColumn(table, "vif")[doeTableTerms(table) %in% c("Flow", "Power")]
+  })
+  expect_equal(vifs[[1]], vifs[[2]])
+  expect_false(anyNA(vifs[[1]]))
+})
+
+# (b) all four factors discrete with all two-way interactions: no coefficient is unique, so the VIF column is empty
 etchDataAliased <- etchData
 etchDataAliased[etchTerms] <- lapply(etchDataAliased[etchTerms], function(x) as.character(x))
 set.seed(123)
 resultsEtchAliased <- runAnalysis("doeAnalysis", etchDataAliased, etchOptions(discrete = etchTerms, coded = FALSE))
 tableEtchAliased   <- resultsEtchAliased[["results"]][["EtchRate"]][["collection"]][["EtchRate_tableCoefficients"]]
 
-test_that("63.3 VIF column is filled for the estimated coefficients when some are aliased", {
-  factors <- etchDataAliased
-  factors[etchTerms] <- lapply(factors[etchTerms], function(x) { x <- factor(x); contrasts(x) <- "contr.sum"; x })
-  fit <- stats::lm(EtchRate ~ (Gap + Pressure + Flow + Power)^2, data = factors)
-  expect_true(anyNA(stats::coef(fit)))
-  vif <- doeTableColumn(tableEtchAliased, "vif")
-  expect_length(vif, length(stats::coef(fit)[!is.na(stats::coef(fit))]))
-  expect_equal(vif[-1], vifReference(fit)[!is.na(stats::coef(fit))][-1])
-  expect_true(is.na(vif[1]))
-  expect_true(all(vif[-1] >= 1))
-  footnotes <- vapply(tableEtchAliased[["footnotes"]], function(note) note[["text"]], character(1))
-  expect_true("VIF is calculated without the aliased coefficients." %in% footnotes)
-  expect_false("VIF is not available when some coefficients are aliased." %in% footnotes)
+test_that("63.4 VIF column is empty when no coefficient has a unique estimate", {
+  expect_true(all(is.na(doeTableColumn(tableEtchAliased, "vif"))))
+  expect_true(all(is.na(doeTableColumn(tableEtchAliased, "coef"))[-1]))
+  footnotes <- etchAliasedFootnotes(tableEtchAliased)
+  expect_true(any(startsWith(footnotes, "Some contrasts of the model are aliased. Values left empty")))
+  expect_false(any(grepl("VIF is", footnotes, fixed = TRUE)))
 })
 
-test_that("63.4 VIF of the coded 2^4 design with center points matches the inverse correlation matrix", {
+test_that("63.5 VIF of the coded 2^4 design with center points matches the inverse correlation matrix", {
   vif <- etchTableColumn(resultsEtchCoded, "vif")
   expect_equal(vif, unname(vifReference(etchFitCoded)[-1]))
 })
