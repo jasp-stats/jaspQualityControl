@@ -509,6 +509,16 @@ test_that("LF5. Gauge r&R report plot matches", {
   jaspTools::expect_equal_plots(testPlot, "5_gauge-r-r-report")
 })
 
+test_that("LF5.1 Components of variation plot: abbreviated source labels for the report only", {
+  varCompLabels <- function(...) {
+    p <- jaspQualityControl:::.gaugeVarCompGraph(c(1.4, 1.2, 0.2, 98.6), c(12, 11, 4.6, 99.3), c(24, 22, 9, 198), ...)
+    ggplot2::ggplot_build(p)$layout$panel_params[[1]]$x$get_labels()
+  }
+  expect_equal(varCompLabels(), c("Gauge r&R", "Repeatability", "Reproducibility", "Part-to-part"))
+  expect_equal(varCompLabels(abbreviateLabels = TRUE), c("Gauge r&R", "Repeat", "Reprod", "Part-to-part"))
+  expect_equal(varCompLabels(Type3 = TRUE, abbreviateLabels = TRUE), c("Gauge r&R", "Repeat", "Part-to-part"))
+})
+
 ## Real Data Example 1 (Flooring Issue) ####
 
 ## Standard output ####

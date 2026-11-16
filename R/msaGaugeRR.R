@@ -686,7 +686,9 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
       return(list("gaugeEvalDf" = gaugeEvalDf, "nCategories" = nCategories))
     }
 
-    p <- .gaugeVarCompGraph(percentContributionValues, studyVariationValues, percentToleranceValues, Type3)
+    # returnPlotOnly is only used by the report, where the plots are too narrow for the full source names
+    p <- .gaugeVarCompGraph(percentContributionValues, studyVariationValues, percentToleranceValues, Type3,
+                            abbreviateLabels = returnPlotOnly)
 
     if (returnPlotOnly)
       return(p)
@@ -910,9 +912,11 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
   return(p)
 }
 
-.gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3 = FALSE) {
+.gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3 = FALSE,
+                               abbreviateLabels = FALSE) {
   sourceIds <- c("gaugeRR", "repeatability", "reproducibility", "partToPart")
-  sources   <- gettext(c("Gauge r&R", "Repeatability", "Reproducibility", "Part-to-part"))
+  sources   <- if (abbreviateLabels) gettext(c("Gauge r&R", "Repeat", "Reprod", "Part-to-part"))
+               else gettext(c("Gauge r&R", "Repeatability", "Reproducibility", "Part-to-part"))
   if (!all(is.na(percentToleranceValues))) {
     references <- gettextf(c('%% Contribution', '%% Study variation', '%% Tolerance'))
     values <- c(percentContributionValues, studyVariationValues, percentToleranceValues)

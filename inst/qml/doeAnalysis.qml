@@ -841,7 +841,7 @@ Form
 			info:							qsTr("How the sum of squares of each term in the ANOVA table is calculated. The types differ in which other terms a term is adjusted for. In balanced designs with orthogonal (coded) terms, such as complete two-level factorial designs, all types give the same result. In unbalanced designs, e.g. with missing runs, covariates or squared terms, they can differ. The Model, Error and Total rows are the same for all types. See the description of the ANOVA table below.") + "\n"
 											+ "- **" + qsTr("Type I") + "**: " + qsTr("Sequential sums of squares: each term is adjusted only for the terms entered before it, so the results depend on the order of the terms. The term rows add up to the Model row.") + "\n"
 											+ "- **" + qsTr("Type II") + "**: " + qsTr("Each term is adjusted for all other terms, except for higher-order terms that contain it. For example, A is adjusted for B, but not for A✻B.") + "\n"
-											+ "- **" + qsTr("Type III") + "**: " + qsTr("Each term is adjusted for all other terms in the model, i.e. it measures what the term adds when it is entered last. Results for lower-order terms depend on how the factors are coded. Not available when some coefficients are aliased.")
+											+ "- **" + qsTr("Type III") + "**: " + qsTr("Each term is adjusted for all other terms in the model, i.e. it measures what the term adds when it is entered last. Results for lower-order terms depend on how the factors are coded. When some coefficients are aliased, Type II sums of squares are shown instead.")
 			id: 							sumOfSquaresType
 			indexDefaultValue:				2
 			values: [
