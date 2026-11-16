@@ -767,14 +767,15 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     if (length(Test$Rules$R3) > 0)
       table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
 
-    if (length(Test$Rules$R4) > 0)
-      table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
-
+    # Tests 4 (oscillation) and 6 (4 out of 5 beyond 1 sigma) are not evaluated for these charts
     if (length(Test$Rules$R5) > 0)
-      table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
+      table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Beyond 2 sigma, same side")    , type = "integer")
 
-    if (length(Test$Rules$R6) > 0)
-      table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
+    if (length(Test$Rules$R7) > 0)
+      table$addColumnInfo(name = "test7",              title = gettextf("Test 7: Reducing variation")           , type = "integer")
+
+    if (length(Test$Rules$R8) > 0)
+      table$addColumnInfo(name = "test8",              title = gettextf("Test 8: Bimodal distribution")         , type = "integer")
 
 
 
@@ -782,9 +783,9 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
       "test1" = c(Test$Rules$R1),
       "test2" = c(Test$Rules$R2),
       "test3" = c(Test$Rules$R3),
-      "test4" = c(Test$Rules$R4),
       "test5" = c(Test$Rules$R5),
-      "test6" = c(Test$Rules$R6)
+      "test7" = c(Test$Rules$R7),
+      "test8" = c(Test$Rules$R8)
     ))
 
   }

@@ -101,7 +101,8 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
     } else {
       tb[["centerpoints"]] <- designSpec[["centerpoints"]]
       tb[["baseBlocks"]]  <- designSpec[["blocks"]]
-      tb[["totalBlocks"]] <- designSpec[["blocks"]] * designSpec[["replicates"]]
+      # every replicate has its own blocks, as in the Block column of the design table; unblocked designs have one block
+      tb[["totalBlocks"]] <- if (designSpec[["blocks"]] > 1) designSpec[["blocks"]] * designSpec[["replicates"]] else 1
     }
   }
 
@@ -196,6 +197,7 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
     .doeRsmGenerateBoxBehnkenDesign(
       noContinuous         = options[["numberOfContinuous"]],
       centerPoints         = designSpec[["centerpoints"]],
+      replicates           = designSpec[["replicates"]],
       randomize            = FALSE
     )
   }
@@ -248,7 +250,7 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
   return(design)
 }
 
-.doeRsmGenerateBoxBehnkenDesign <- function(noContinuous, centerPoints, randomize = FALSE) {
+.doeRsmGenerateBoxBehnkenDesign <- function(noContinuous, centerPoints, replicates = 1, randomize = FALSE) {
 
   block <- if (noContinuous == 4 | noContinuous == 5) TRUE else FALSE
 
@@ -264,6 +266,22 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
   if (block) {
     blockIndex <- which(colnames(design) == "Block")
     design <- cbind(design[,-blockIndex], "Block" = design$Block)
+  }
+
+  if (replicates > 1) {
+    # repeat the whole design (incl. centre points) once per replicate. Replicates are not blocks: unblocked designs get no
+    # Block column, blocked designs get their own blocks in each replicate (as in the factorial design)
+    baseBlock <- if (block) as.integer(as.character(design[["Block"]]))
+    design <- do.call(rbind, lapply(seq_len(replicates), function(i) {
+      replicate <- design
+      if (block)
+        replicate[["Block"]] <- baseBlock + (i - 1L) * max(baseBlock)
+      replicate[["Replication"]] <- i
+      replicate
+    }))
+    if (block)
+      design[["Block"]] <- factor(design[["Block"]])
+    rownames(design) <- NULL
   }
 
   return(design)
