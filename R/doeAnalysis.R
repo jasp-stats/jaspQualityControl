@@ -553,12 +553,14 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     ssType          <- if (anovaSaturated) "type1" else options[["sumOfSquaresType"]] # aov gives sequential SS
     anovaFit        <- NULL
 
-    # no type III SS with aliased columns: the test of a term then depends on how its remaining columns are parameterized
-    # (ssType, not the option: a saturated model shows sequential SS whatever type is selected)
-    if (ssType == "type3" && anyNA(stats::coef(anovaFitData))) {
-      result[["anova"]][["error"]] <- resultCoded[["anova"]][["error"]] <-
-        gettext("Type III sums of squares are unavailable for this model, because some of its coefficients are aliased. Use Type I or Type II sums of squares.")
-    } else if (!anovaSaturated) {
+    # no type III SS with aliased columns: the test of a term then depends on how its remaining columns are parameterized,
+    # so type II sums of squares are shown instead, with a footnote (ssType, not the option: a saturated model shows
+    # sequential SS whatever type is selected)
+    ssTypeFallback <- ssType == "type3" && anyNA(stats::coef(anovaFitData))
+    if (ssTypeFallback)
+      ssType <- "type2"
+
+    if (!anovaSaturated) {
       if (ssType == "type1") {
         anovaFit <- anova(anovaFitData)
       } else if (ssType == "type2") {
@@ -583,6 +585,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
     if (!is.null(anovaFit)) {
       result[["anova"]][["ssType"]]    <- resultCoded[["anova"]][["ssType"]]    <- ssType
+      result[["anova"]][["ssTypeFallback"]] <- resultCoded[["anova"]][["ssTypeFallback"]] <- ssTypeFallback
       result[["anova"]][["saturated"]] <- resultCoded[["anova"]][["saturated"]] <- anovaSaturated
       result[["anova"]][["object"]] <- anovaFit
       result[["anova"]][["terms"]] <- gsubInteractionSymbol(rownames(anovaFit))
@@ -2273,10 +2276,6 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       next
     }
     result <- if (coded) jaspResults[[dep]][["doeResultCoded"]]$object[["anova"]] else jaspResults[[dep]][["doeResult"]]$object[["anova"]]
-    if (!is.null(result[["error"]])) {
-      tb$setError(result[["error"]])
-      next
-    }
     rows <- data.frame(
       terms = result[["terms"]], adjss = result[["adjss"]], df = result[["df"]],
       adjms = result[["adjms"]], fval = result[["F"]], pval = result[["p"]]
@@ -2285,6 +2284,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
     ssFootnote <- if (result[["saturated"]]) {
       gettext("Type I (sequential) sums of squares, whatever type is selected: the model has no degrees of freedom for error, so there are no F-tests.")
+    } else if (result[["ssTypeFallback"]]) {
+      gettext("Type II sums of squares instead of the selected Type III: Type III sums of squares are not available when some coefficients are aliased.")
     } else {
       switch (result[["ssType"]],
               "type1" = gettext("Type I sums of squares."),
