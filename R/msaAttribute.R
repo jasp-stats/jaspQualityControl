@@ -54,8 +54,8 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
   # Ordinal ratings (and standard) that are not numbers, e.g. "poor" < "fair" < "good", have no numbers for
   # Kendall's tau: it uses the order of their levels, which is lost once the columns are plain factors.
-  ratingScale   <- .msaAttributeOrdinalScale(dataset[numeric.vars])
-  standardScale <- if (standards != "") .msaAttributeOrdinalScale(dataset[standards])
+  ordinalRatings  <- dataset[numeric.vars]
+  ordinalStandard <- if (standards != "") dataset[standards]
 
   # Ratings of nominal or ordinal variables arrive as factors: give them their numbers back, which Kendall's
   # tau and the rating correlations need.
@@ -64,6 +64,14 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
   # The standard is compared with the ratings, so it needs the same representation (e.g., 1 rather than "1.0").
   if (standards != "")
     dataset[[standards]] <- .msaAttributeAsNumberIfPossible(dataset[[standards]])
+
+  # The scales of Kendall's tau for the ratings and standard that are not numbers. A standard in text shares the
+  # scale of ratings in text, so that its levels cannot run in another order than theirs.
+  ratingsText   <- !all(vapply(dataset[numeric.vars], is.numeric, logical(1)))
+  standardText  <- standards != "" && !is.numeric(dataset[[standards]])
+  sharedScale   <- if (ratingsText && standardText) .msaAttributeOrdinalScale(c(ordinalRatings, ordinalStandard))
+  ratingScale   <- if (!is.null(sharedScale)) sharedScale else .msaAttributeOrdinalScale(ordinalRatings)
+  standardScale <- if (!standardText) NULL else if (ratingsText) sharedScale else .msaAttributeOrdinalScale(ordinalStandard)
 
   # Check for missing values and infinity
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
@@ -711,18 +719,32 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
   return(x)
 }
 
-# The levels of ordinal (ordered factor) columns in their order, the scale of Kendall's tau when the ratings are
-# not numbers. Columns that lack some levels (e.g., a trial without every category) must keep the order of the
-# column with the most levels. NULL when a column is not ordinal or the orders differ.
+# The levels of ordinal (ordered factor) columns merged into one scale, the scale of Kendall's tau when the
+# ratings are not numbers. Columns may lack some levels (e.g., a trial without every category), but the order of
+# their levels must be consistent and leave only one possible order of all levels. NULL when a column is not
+# ordinal, or the orders conflict or leave the order of some levels open.
 .msaAttributeOrdinalScale <- function(columns) {
   if (length(columns) == 0 || !all(vapply(columns, is.ordered, logical(1))))
     return(NULL)
 
   levelsPerColumn <- lapply(columns, levels)
-  scale           <- levelsPerColumn[[which.max(lengths(levelsPerColumn))]]
+  remaining       <- unique(unlist(levelsPerColumn))
+  # level `from` precedes level `to`: consecutive levels of a column
+  from            <- unlist(lapply(levelsPerColumn, utils::head, -1))
+  to              <- unlist(lapply(levelsPerColumn, utils::tail, -1))
+  scale           <- character(0)
 
-  if (!all(vapply(levelsPerColumn, function(x) all(x %in% scale) && !is.unsorted(match(x, scale)), logical(1))))
-    return(NULL)
+  # topological order: exactly one level without a predecessor at every step
+  while (length(remaining) > 0) {
+    first <- remaining[!remaining %in% to]
+    if (length(first) != 1)
+      return(NULL)
+
+    scale     <- c(scale, first)
+    remaining <- setdiff(remaining, first)
+    to        <- to[from != first]
+    from      <- from[from != first]
+  }
 
   return(scale)
 }
@@ -760,7 +782,7 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
   if (is.null(ratingValues)) {
     table$setError(gettext("Kendall's tau is only available for numeric or ordinal measurements, with the same order of the levels in every column."))
   } else if (standards != "" && is.null(standardValues)) {
-    table$setError(gettext("Kendall's tau is only available for a numeric or ordinal standard."))
+    table$setError(gettext("Kendall's tau is only available for a numeric standard or an ordinal standard with the same order of the levels as the ratings."))
   } else if (length(unique(unlist(ratingValues))) <= 2) {
     table$setError(gettext("Kendall's tau is only available for non-binary measurements."))
   } else{
