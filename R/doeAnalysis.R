@@ -1480,7 +1480,9 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 #    stall there.
 # 2. If the best result has desirability 0, no start reached the acceptable region: first minimize how far the predictions are
 #    from their acceptable intervals (.doeOptimizerDistanceToBounds, from the design points closest to them), then maximize the
-#    desirability from the point reached.
+#    desirability from the point reached. The distance keeps a margin from the bounds, so that the point reached has a
+#    desirability above 0. When the acceptable region is so narrow that the margin leaves nothing of it, this is repeated with a
+#    smaller margin (down to none), until a setting with a desirability above 0 is found.
 # 3. Polish the best result with a derivative-free search, because the desirability has kinks (e.g. where a prediction equals
 #    its target) at which L-BFGS-B can stop short of the optimum.
 # A result is only replaced by a better one, so settings where step 1 already succeeded keep their result unless step 3 improves it.
@@ -1494,9 +1496,9 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     value <- rawNegDesirability(par)
     if (is.na(value)) 0 else value
   }
-  distanceToBounds <- function(par) {
+  distanceToBounds <- function(par, margin) {
     outcome <- .doePredictResponses(par, continuousPredictors, discretePredictors, currentDiscreteLevels, models, dependent)
-    if (anyNA(outcome)) 1e3 else .doeOptimizerDistanceToBounds(outcome, roOptionsDf, responseScale)
+    if (anyNA(outcome)) 1e3 else .doeOptimizerDistanceToBounds(outcome, roOptionsDf, responseScale, margin)
   }
   rawStartValue <- vapply(seq_len(nrow(startPoints)), function(s) rawNegDesirability(startPoints[s, ]), numeric(1))
   startValue    <- ifelse(is.na(rawStartValue), 0, rawStartValue)
@@ -1509,11 +1511,12 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
   # Step 2: nothing acceptable reached from the design points. All desirabilities are 0 there, so the design points closest to
   # the acceptable region are the starts. From the point each start reaches, the desirability is maximized (little cost while it
-  # is still 0, and the result can only get better).
-  if (best$value >= 0) {
-    startDistance <- vapply(seq_len(nrow(startPoints)), function(s) distanceToBounds(startPoints[s, ]), numeric(1))
+  # is still 0, and the result can only get better). A smaller margin is only tried while the desirability is still 0.
+  for (margin in c(0.01, 0.001, 0.0001, 0)) {
+    if (best$value < 0) break
+    startDistance <- vapply(seq_len(nrow(startPoints)), function(s) distanceToBounds(startPoints[s, ], margin), numeric(1))
     for (s in order(startDistance)[seq_len(min(nStarts, nrow(startPoints)))]) { # order() keeps ties in design order
-      nearest <- optim(par = startPoints[s, ], fn = distanceToBounds, method = "L-BFGS-B", lower = lower, upper = upper)
+      nearest <- optim(par = startPoints[s, ], fn = distanceToBounds, margin = margin, method = "L-BFGS-B", lower = lower, upper = upper)
       best    <- keepBetter(optim(par = nearest$par, fn = negDesirability, method = "L-BFGS-B", lower = lower, upper = upper))
     }
   }
@@ -1548,20 +1551,20 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
 # Squared distance of the predicted responses from their acceptable intervals (lower bound and/or upper bound, depending on the
 # goal), 0 when all are within, in units of the observed range of the response and summed over the responses. Squared, so that
-# the optimizer does not stall at a kink. The interval is shrunk by a small margin, so a distance of 0 means every desirability is
-# above 0 (it is 0 on the bound itself).
-.doeOptimizerDistanceToBounds <- function(outcome, roOptionsDf, responseScale) {
+# the optimizer does not stall at a kink. The interval is shrunk by a margin (a fraction of the observed range of the response),
+# so a distance of 0 means every desirability is above 0 (it is 0 on the bound itself).
+.doeOptimizerDistanceToBounds <- function(outcome, roOptionsDf, responseScale, margin = 0.01) {
   distance <- 0
   for (response in names(outcome)) {
     row    <- roOptionsDf[roOptionsDf$variable == response, ]
     value  <- unname(outcome[response])
-    margin <- 0.01 * responseScale[[response]]
+    shrink <- margin * responseScale[[response]]
     lower  <- row$responseOptimizerLowerBound
     upper  <- row$responseOptimizerUpperBound
     target <- row$responseOptimizerTarget
-    # bounds a goal does not use are NA; the margin never reaches beyond the middle between bound and target
-    innerLower <- if (is.na(lower)) -Inf else lower + max(0, min(margin, (target - lower) / 2))
-    innerUpper <- if (is.na(upper))  Inf else upper - max(0, min(margin, (upper - target) / 2))
+    # bounds a goal does not use are NA; the shrinking never reaches beyond the middle between bound and target
+    innerLower <- if (is.na(lower)) -Inf else lower + max(0, min(shrink, (target - lower) / 2))
+    innerUpper <- if (is.na(upper))  Inf else upper - max(0, min(shrink, (upper - target) / 2))
     distance   <- distance + (max(0, innerLower - value, value - innerUpper) / responseScale[[response]])^2
   }
   return(distance)
