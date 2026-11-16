@@ -200,19 +200,21 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
     )
   }
 
-  # fix run.order and std.order
+  design[["std.order"]] <- seq_len(nrow(design))
+
+  # expand over the discrete factors first, so that the run order is randomised over the whole design
+  if (options[["numberOfCategorical"]] > 0L)
+    design <- .doeRsmReplicateDesignForCategoricalVariables(design, .doeRsmCategorical2df(options[["categoricalVariables"]]))
+
+  # fix run.order
   if (options[["setSeed"]]) {
     jaspBase::.setSeedJASP(options)
   } else {
     set.seed(123)
   }
   design[["run.order"]] <- sample(seq_len(nrow(design)))
-  design[["std.order"]] <- seq_len(nrow(design))
 
   design <- .doeResponseSurfaceSetDisplayOrder(options, design)
-
-  if (options[["numberOfCategorical"]] > 0L)
-    design <- .doeRsmReplicateDesignForCategoricalVariables(design, .doeRsmCategorical2df(options[["categoricalVariables"]]))
 
   if (!options[["codedOutput"]])
     design <- .doeRsmDecodeDesign(design, options)
@@ -292,7 +294,6 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
 
   for (i in 2L:nrow(categoricalCombinations)) {
     toAdd <- cbind(design, unrowname(categoricalCombinations[rep(i, nrow(design)), , drop = FALSE]))
-    toAdd[["run.order"]] <- toAdd[["run.order"]] + nr * (i - 1L)
     toAdd[["std.order"]] <- toAdd[["std.order"]] + nr * (i - 1L)
 
     designCombined <- rbind(designCombined, toAdd)
