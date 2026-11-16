@@ -6677,11 +6677,12 @@ test_that("58.4 Discrete factors with a shared center level - Type III sums of s
   collection <- resultsEtchDiscreteIII[["results"]][["EtchRate"]][["collection"]]
   expect_null(collection[["EtchRate_tableAnova"]][["error"]])
   expect_equal(doeAnovaSources(resultsEtchDiscreteIII, "EtchRate"), doeAnovaSources(resultsEtchDiscrete, "EtchRate"))
+  # the sums of squares footnote is followed by the note on the units of the ANOVA
   footnotes <- anovaFootnotes(resultsEtchDiscreteIII)
-  expect_true("Type II sums of squares instead of the selected Type III: Type III sums of squares are not available when some coefficients are aliased." %in% footnotes)
-  expect_false("Type III sums of squares." %in% footnotes)
+  expect_true(any(startsWith(footnotes, "Type II sums of squares instead of the selected Type III: Type III sums of squares are not available when some coefficients are aliased.")))
+  expect_false(any(startsWith(footnotes, "Type III sums of squares.")))
   # Type II selected: the usual footnote only
-  expect_true("Type II sums of squares." %in% anovaFootnotes(resultsEtchDiscrete))
+  expect_true(any(startsWith(anovaFootnotes(resultsEtchDiscrete), "Type II sums of squares.")))
   expect_length(collection[["EtchRate_tableCoefficients"]][["data"]], 12)
 })
 
