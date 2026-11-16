@@ -110,9 +110,9 @@
 #' - **Type III**: Each term is adjusted for all other terms in the model, i.e. it measures what the term adds when it is entered last. Results for lower-order terms depend on how the factors are coded. Not available when some coefficients are aliased.
 #' @param surfacePlotHorizontalRotation, Rotation of the surface plot in the horizontal plane, in degrees.
 #' @param surfacePlotVerticalRotation, Rotation of the surface plot in the vertical plane, in degrees.
-#' @param tableAlias, Assign alias names to the factors. Useful when factors have long names.
+#' @param tableAlias, Assign alias letters to the factors. Useful when factors have long names. The letters follow the order of the factors in the discrete and continuous factor lists, whatever the model terms. A factor named by a single capital letter keeps it, and no factor gets a letter that is the name of another column. The tables and effect plots list the aliases.
 #'    Defaults to \code{TRUE}.
-#' @param tableCoefficientsCi, Add confidence intervals for the effects and the coefficients to the coefficients table, based on the t-distribution with the error degrees of freedom. The interval for an effect is twice the interval for its coefficient (in coded units).
+#' @param tableCoefficientsCi, Add confidence intervals for the effects and the coefficients to the coefficients table, based on the t-distribution with the error degrees of freedom. The interval for an effect is twice the interval for its coefficient in coded units. Standard error, t and p refer to the displayed coefficient, which can test a different hypothesis in uncoded units.
 #'    Defaults to \code{FALSE}.
 #' @param tableCoefficientsCiLevel, Confidence level of the intervals.
 #' @param tableEquation, Display the regression coefficients as an equation predicting the response.
