@@ -200,7 +200,7 @@ Defaults to \code{FALSE}.}
 \itemize{
 \item \strong{Type I}: Sequential sums of squares: each term is adjusted only for the terms entered before it, so the results depend on the order of the terms. The term rows add up to the Model row.
 \item \strong{Type II}: Each term is adjusted for all other terms, except for higher-order terms that contain it. For example, A is adjusted for B, but not for A✻B.
-\item \strong{Type III}: Each term is adjusted for all other terms in the model, i.e. it measures what the term adds when it is entered last. Results for lower-order terms depend on how the factors are coded. Not available when some coefficients are aliased.
+\item \strong{Type III}: Each term is adjusted for all other terms in the model, i.e. it measures what the term adds when it is entered last. Results for lower-order terms depend on how the factors are coded. When some coefficients are aliased, Type II sums of squares are shown instead.
 }}
 
 \item{surfacePlotHorizontalRotation, }{Rotation of the surface plot in the horizontal plane, in degrees.}

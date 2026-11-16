@@ -24,7 +24,7 @@ doeFactorial(
   numberOfCategorical = 3,
   plotHeight = 320,
   plotWidth = 480,
-  randomSeed = 965838,
+  randomSeed = 470292,
   replications = 1,
   runOrder = "runOrderRandom",
   seed = 1,

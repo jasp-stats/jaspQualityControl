@@ -6677,9 +6677,20 @@ test_that("58.3 Discrete factors with a shared center level - aliased contrasts 
   expect_false(any(grepl("were removed", notes)))
 })
 
-test_that("58.4 Discrete factors with a shared center level - Type III sums of squares give an error in the ANOVA table only", {
+test_that("58.4 Discrete factors with a shared center level - Type III sums of squares fall back to Type II with a footnote", {
+  anovaFootnotes <- function(results) {
+    table <- results[["results"]][["EtchRate"]][["collection"]][["EtchRate_tableAnova"]]
+    vapply(table[["footnotes"]], function(footnote) footnote[["text"]], character(1))
+  }
   collection <- resultsEtchDiscreteIII[["results"]][["EtchRate"]][["collection"]]
-  expect_match(collection[["EtchRate_tableAnova"]][["error"]][["errorMessage"]], "Type III sums of squares are unavailable for this model")
+  expect_null(collection[["EtchRate_tableAnova"]][["error"]])
+  expect_equal(doeAnovaSources(resultsEtchDiscreteIII, "EtchRate"), doeAnovaSources(resultsEtchDiscrete, "EtchRate"))
+  # the sums of squares footnote is followed by the note on the units of the ANOVA
+  footnotes <- anovaFootnotes(resultsEtchDiscreteIII)
+  expect_true(any(startsWith(footnotes, "Type II sums of squares instead of the selected Type III: Type III sums of squares are not available when some coefficients are aliased.")))
+  expect_false(any(startsWith(footnotes, "Type III sums of squares.")))
+  # Type II selected: the usual footnote only
+  expect_true(any(startsWith(anovaFootnotes(resultsEtchDiscrete), "Type II sums of squares.")))
   expect_length(collection[["EtchRate_tableCoefficients"]][["data"]], 12)
 })
 
@@ -6816,6 +6827,20 @@ test_that("60.5 Changing units cannot expose a different aliased interaction-onl
     results <- runAnalysis("doeAnalysis", data, doeTestOptions("y", "A", "F", list(c("A", "F")), coded = coded))
     expect_match(doeTable(results, "y", "tableSummary")[["error"]][["errorMessage"]], "omits lower-order terms")
     expect_length(doeTable(results, "y", "tableCoefficients")[["data"]], 0)
+  }
+})
+
+test_that("60.28 Type III sums of squares fall back to Type II for a partially aliased interaction, in coded and uncoded units", {
+  # only one contrast of A x F is aliased (see 58.5); the result is the Type II table, with the footnote
+  for (coded in c(FALSE, TRUE)) {
+    set.seed(123)
+    type3 <- runAnalysis("doeAnalysis", afData, doeTestOptions("y", "A", "F", afTerms, coded = coded, ssType = "type3"))
+    set.seed(123)
+    type2 <- runAnalysis("doeAnalysis", afData, doeTestOptions("y", "A", "F", afTerms, coded = coded, ssType = "type2"))
+    expect_null(doeTable(type3, "y", "tableAnova")[["error"]])
+    expect_equal(doeAnovaSources(type3, "y"), doeAnovaSources(type2, "y"))
+    expect_true(any(startsWith(doeFootnotes(doeTable(type3, "y", "tableAnova")), "Type II sums of squares instead of the selected Type III")))
+    expect_false(any(grepl("instead of the selected", doeFootnotes(doeTable(type2, "y", "tableAnova")))))
   }
 })
 
