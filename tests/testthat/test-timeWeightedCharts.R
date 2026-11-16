@@ -788,6 +788,21 @@ test_that("MR10 Removed observations are noted below the charts", {
                "Removed 1 observation(s) that were not assigned to any stage.", fixed = TRUE)
 })
 
+## Missing first observation: no limit at the first sample, as in the EWMA chart (jasp-issues#4674) ####
+options <- .twStageOptions("individual")
+options$stagesLongFormat <- ""
+results <- runAnalysis("timeWeightedCharts", data.frame(Measurement = c(NA, 1.2, 2.3, 1.8, 2.9, 2.1, 1.7, 2.4)), options)
+
+test_that("MR11 Cumulative sum limits are missing, not 0, at a missing first observation", {
+  cusum <- .twControlLimits(results, .twCusumPlot(results))
+  ewma  <- .twControlLimits(results, .twEwmaPlot(results))
+  # center line, upper and lower limit; the lower half of the chart starts at index 9
+  expect_identical(which(is.na(cusum[[2]])), c(1L, 9L))
+  expect_equal(cusum[[3]], -cusum[[2]])
+  expect_true(all(cusum[[2]][!is.na(cusum[[2]])] > 2.7))
+  expect_identical(which(is.na(ewma[[2]])), 1L)
+})
+
 ### CUSUM with a recurring stage (A, B, A): test results use each flagged row's timestamp (jasp-issues#4672) ####
 # A new stage starts at each change of the stage value: A (D1-D4), B (D5-D9), A (D10-D12), each with its own cusum.
 # The process shifts up at D8, D10 and D12.

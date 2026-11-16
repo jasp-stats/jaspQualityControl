@@ -109,3 +109,21 @@ test_that("X-mR chart shows the individuals chart alone if only the moving range
   expect_false(is.null(chart[["xmr_tableIndividual"]]))
   expect_match(chart[["xmr_plotNote"]][["text"]], "Moving range chart not shown. Cannot estimate the standard deviation from moving ranges of length 3: the data have fewer than 3 consecutive non-missing observations.", fixed = TRUE)
 })
+
+# jasp-issues#4673: rows without observations carry the previous limits of the X-bar chart instead of getting infinite limits
+options <- .pcMovingRangeOptions()
+options$controlChartType <- "xBarR"
+results <- runAnalysis("processCapabilityStudies",
+                       data.frame(First = c(1.1, NA, 3.2, NA, 5.3, NA), Second = c(2.1, NA, 4.2, NA, 6.3, NA)), options)
+
+test_that("X-bar chart: rows without observations keep finite limits", {
+  chart    <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]]
+  plotObj  <- results[["state"]][["figures"]][[chart[["data"]]]][["obj"]]
+  xBarPlot <- plotObj$subplots[[1]]
+  isStep   <- vapply(xBarPlot$layers, function(layer) inherits(layer$geom, "GeomStep"), logical(1))
+  limits   <- lapply(which(isStep), function(i) ggplot2::layer_data(xBarPlot, i)[["y"]])
+  expect_identical(chart[["status"]], "complete")
+  expect_true(all(is.finite(unlist(limits))))
+  expect_true(all(c("CL = 3.7", "LCL = 1.819", "UCL = 5.581") %in% .pcPlotLabels(xBarPlot)))
+  expect_false(any(grepl("Inf", .pcPlotLabels(plotObj))))
+})
