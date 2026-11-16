@@ -527,3 +527,19 @@ test_that("LB4 Specification limit labels of small values do not read 0", {
   labels <- unlist(lapply(chart$plotObject$layers, function(l) if (is.data.frame(l$data) && "label" %in% names(l$data)) as.character(l$data$label)))
   expect_true(all(c("LSL = 0.0001", "Tar. = 0.0002", "USL = 0.0003") %in% labels))
 })
+
+# jasp-issues#4675: stage C has a single observation, so the X-mR chart shows its error, but the autocorrelation plot does not need moving ranges
+data <- data.frame(Measurement = c(10.2, 9.8, 10.5, 10.1, 9.7, 10.3, 10.0, 9.9), Stage = rep(c("A", "B", "C"), c(4, 3, 1)))
+options <- .imrOptions(stage = "Stage", movingRangeLength = 2)
+options$autocorrelationPlot <- TRUE
+results <- runAnalysis("variablesChartsIndividuals", data, options)
+
+test_that("MR4 Autocorrelation plot is drawn when the X-mR chart shows an error", {
+  chart       <- results[["results"]][["Ichart"]][["collection"]][["Ichart_plot"]]
+  correlation <- results[["results"]][["autocorrelationPlot"]][["collection"]][["autocorrelationPlot_Measurement"]]
+  expect_identical(results[["status"]], "complete")
+  expect_identical(chart[["status"]], "error")
+  expect_match(chart[["error"]][["errorMessage"]], "stage 'C' has fewer than 2 consecutive non-missing observations.", fixed = TRUE)
+  expect_identical(correlation[["status"]], "complete")
+  expect_true(ggplot2::is_ggplot(results[["state"]][["figures"]][[correlation[["data"]]]][["obj"]]))
+})

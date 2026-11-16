@@ -944,9 +944,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       # the qcc package just returns the values instead of the ranges when there is only one column
       plotStatistic <- if (ncol(dataCurrentStage) == 1) rep(0, nrow(dataCurrentStage)) else qccObject$statistics
       limits <- .controlLimits(mu, sigma, n = n, type = "r", k = nSigmasControlLimits)
-      center <- mu
-      UCL <- limits$UCL
-      LCL <- limits$LCL
+      center <- .carryLimitsOverMissingSubgroups(mu, n)
+      UCL <- .carryLimitsOverMissingSubgroups(limits$UCL, n)
+      LCL <- .carryLimitsOverMissingSubgroups(limits$LCL, n)
       ###
       ### Calculations for X-bar chart
       ###
@@ -969,16 +969,16 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else rowSums(!is.na(dataCurrentStage)) # returns the number of non NA values per row
       limits <- .controlLimits(mu, sigma, n = n, type = "xbar", k = nSigmasControlLimits)
       center <- mu
-      UCL <- limits$UCL
-      LCL <- limits$LCL
+      UCL <- .carryLimitsOverMissingSubgroups(limits$UCL, n)
+      LCL <- .carryLimitsOverMissingSubgroups(limits$LCL, n)
 
       # upper and lower warning limits at 1 sd and 2 sd
       WL1 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 1)
       WL2 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 2)
-      UWL1 <- WL1$UCL
-      LWL1 <- WL1$LCL
-      UWL2 <- WL2$UCL
-      LWL2 <- WL2$LCL
+      UWL1 <- .carryLimitsOverMissingSubgroups(WL1$UCL, n)
+      LWL1 <- .carryLimitsOverMissingSubgroups(WL1$LCL, n)
+      UWL2 <- .carryLimitsOverMissingSubgroups(WL2$UCL, n)
+      LWL2 <- .carryLimitsOverMissingSubgroups(WL2$LCL, n)
       ###
       ### Calculations for S chart
       ###
@@ -1001,8 +1001,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       } else {
         center <- sigma
       }
-      UCL <- limits$UCL
-      LCL <- limits$LCL
+      center <- .carryLimitsOverMissingSubgroups(center, n)
+      UCL <- .carryLimitsOverMissingSubgroups(limits$UCL, n)
+      LCL <- .carryLimitsOverMissingSubgroups(limits$LCL, n)
       ###
       ### Calculations for cusum chart
       ###
@@ -1022,7 +1023,6 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       plotStatisticLower <- .cusumPoints(dataCurrentStage, sigma, n, cusumTarget, cusumShiftSize, cuType = "lower")
       plotStatistic <- c(plotStatisticUpper, plotStatisticLower)
       UCL <- .carryLimitsOverMissingSubgroups(nSigmasControlLimits*sigma/sqrt(n), n)
-      UCL[is.infinite(UCL)] <- 0  # looks better in the plot to display CLs at 0 if calculation fails
       LCL <- -UCL
       center <- 0 # not to be confused with the target, even if target != 0, the center line of the plot should be at 0
       ###
@@ -1499,8 +1499,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(ewmaPointSigmas)
 }
 
-# a missing subgroup (n = 0) keeps the control limit of the previous subgroup
+# a missing subgroup (n = 0) keeps the control limit of the previous subgroup, or has none when it comes first
 .carryLimitsOverMissingSubgroups <- function(limits, n) {
+  if (length(limits) != length(n)) # one limit for all subgroups
+    return(limits)
+  limits[n == 0] <- NA_real_
   for (i in seq_along(limits)[-1])
     if (n[i] == 0)
       limits[i] <- limits[i - 1]

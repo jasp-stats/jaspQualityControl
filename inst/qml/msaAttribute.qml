@@ -50,7 +50,7 @@ Form
 			title:								qsTr("Results")
 			id:									measurementLongFormat
 			singleVariable:						true
-			allowedColumns:						["nominal"]
+			allowedColumns:						["ordinal", "nominal"]
 		}
 
 		AssignedVariablesList
@@ -74,7 +74,7 @@ Form
 			name:								"standardLongFormat"
 			title:								qsTr("Standard")
 			singleVariable:						true
-			allowedColumns:						["nominal"]
+			allowedColumns:						["ordinal", "nominal"]
 		}
 	}
 
@@ -93,7 +93,7 @@ Form
 			name:								"measurementsWideFormat"
 			title:								qsTr("Results")
 			id:									measurementsWideFormat
-			allowedColumns:						["nominal"]
+			allowedColumns:						["ordinal", "nominal"]
 		}
 
 		AssignedVariablesList
@@ -117,7 +117,7 @@ Form
 			name:								"standardWideFormat"
 			title:								qsTr("Standard")
 			singleVariable:						true
-			allowedColumns:						["nominal"]
+			allowedColumns:						["ordinal", "nominal"]
 		}
 
 	}
