@@ -646,3 +646,55 @@ test_that("LF5.3 Measurements by part x operator plot depends on the data assign
   runAnalysis("msaGaugeRRnonrep", "datasets/msaGaugeRRNested/msaGaugeRRNested_long.csv", opts, view = FALSE)
   expect_gt(calls, 0)
 })
+
+# Other outputs that are not rebuilt in every run also depend on the data assignment ####
+# The measurements by operator plot and the report are skipped when the design is unbalanced, and the
+# unbalanced-design error plot is only replaced when the ANOVA is ticked, so they must depend on the
+# data format and the variables. Counted as in LF5.3: the helper is called when the element gets its deps.
+
+.countDataDependencyCalls <- function(dataset, ...) {
+  calls <- 0
+  testthat::with_mocked_bindings(
+    {
+      opts <- analysisOptions("msaGaugeRRnonrep")
+      opts$testSet <- "jaspDefault"
+      opts$partLongFormat <- "Batch"
+      opts$operatorLongFormat <- "Operator"
+      opts$measurementLongFormat <- "Result"
+      opts$anova <- FALSE
+      extra <- list(...)
+      for (name in names(extra))
+        opts[[name]] <- extra[[name]]
+      set.seed(1)
+      res <- runAnalysis("msaGaugeRRnonrep", dataset, opts, view = FALSE)
+    },
+    .msaGaugeRRnonrepDataDependencies = function() {
+      calls <<- calls + 1
+      c("dataFormat", "measurementLongFormat", "operatorLongFormat", "partLongFormat",
+        "measurementsWideFormat", "operatorWideFormat", "partWideFormat")
+    },
+    .package = "jaspQualityControl"
+  )
+  list(calls = calls, results = res)
+}
+
+nestedLong <- read.csv(testthat::test_path("datasets", "msaGaugeRRNested", "msaGaugeRRNested_long.csv"))
+
+test_that("LF5.4 Measurements by operator plot depends on the data assignment", {
+  out <- .countDataDependencyCalls(nestedLong, operatorMeasurementPlot = TRUE)
+  expect_false(is.null(out$results[["results"]][["NRoperatorGraph"]]))
+  expect_gt(out$calls, 0)
+})
+
+test_that("LF5.5 Unbalanced-design error depends on the data assignment", {
+  out <- .countDataDependencyCalls(nestedLong[-1, ], operatorMeasurementPlot = TRUE)
+  expect_identical(out$results[["results"]][["gaugeRRNonRep"]][["error"]][["errorMessage"]],
+                   "Unbalanced design. Some parts have more repeated measurements than others.")
+  expect_gt(out$calls, 0)
+})
+
+test_that("LF5.6 Report depends on the data format", {
+  out <- .countDataDependencyCalls(nestedLong, report = TRUE)
+  expect_false(is.null(out$results[["results"]][["report"]]))
+  expect_gt(out$calls, 0)
+})
