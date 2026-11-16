@@ -354,8 +354,11 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
       seed = seed
     )
   }
-  # FrF2 needs 20-35 seconds to find out that, for 8 or more factors in 64 runs and 8 blocks, a 2-factor interaction is unavoidable
-  noSearch <- designSpec[["blocks"]] == 8 && designSpec[["runs"]] == 64 && designSpec[["factors"]] >= 8
+  # FrF2 needs 20-35 seconds to find out that, for 8 or more factors in 64 runs and 8 blocks, a 2-factor interaction is unavoidable,
+  # and 4-18 seconds for screening designs with more than 12 factors in 4 or 8 blocks (or more than 20 factors), so there the old
+  # setting is used right away
+  noSearch <- (designSpec[["blocks"]] == 8 && designSpec[["runs"]] == 64 && designSpec[["factors"]] >= 8) ||
+    (designSpec[["blocks"]] > 2 && designSpec[["factors"]] > 12) || designSpec[["factors"]] > 20
   clearDesign <- NULL
   if (designSpec[["blocks"]] > 1 && !noSearch) {
     clearDesign <- try(generateDesign(FALSE), silent = TRUE)
