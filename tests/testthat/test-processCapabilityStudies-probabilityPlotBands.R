@@ -89,3 +89,49 @@ test_that("Anderson-Darling p-value stays a small probability for very large sta
   expect_equal(adPValue(850, 5000), 3.7e-24)
   expect_equal(adPValue(Inf, 2000), 3.7e-24)
 })
+
+pWeibull <- function(ad, n) jaspQualityControl:::.qcAndersonDarlingPValueWeibull(ad, n)
+
+test_that("Weibull Anderson-Darling p-value follows the Weibull null distribution, not the normal one", {
+  # for a Weibull fit with estimated shape and scale, p < .05 occurred in 6.1% (n = 10) of Weibull samples with the normal approximation
+  levels <- c(0.25, 0.10, 0.05, 0.025, 0.01)
+  points <- c(0.488, 0.651, 0.772, 0.893, 1.053) # upper-tail points of A2 * (1 + 0.2 / sqrt(n))
+  for (n in c(10, 40, 100)) {
+    ad <- points / (1 + 0.2 / sqrt(n))
+    expect_equal(vapply(ad, pWeibull, numeric(1), n = n), levels, info = paste("n =", n))
+    expect_lt(adPValue(ad[3], n), 0.049) # the normal approximation is too small at the 5% point
+  }
+  # monotone, a probability, and the limits
+  ads <- seq(0, 5, by = 0.01)
+  p   <- vapply(ads, pWeibull, numeric(1), n = 20)
+  expect_true(all(diff(p) <= 0))
+  expect_true(all(p >= 0 & p <= 1))
+  expect_equal(pWeibull(0, 20), 1)
+  expect_equal(pWeibull(Inf, 20), 0)
+})
+
+test_that("The probability table uses the Weibull p-value for the Weibull null distribution and a plain AD footnote", {
+  options <- jaspTools::analysisOptions("processCapabilityStudies")
+  options[["measurementLongFormat"]]  <- "Diameter"
+  options[["capabilityStudyType"]]    <- "nonNormalCapabilityAnalysis"
+  options[["nonNormalDistribution"]]  <- "weibull"
+  options[["nullDistribution"]]       <- "weibull"
+  options[["lowerSpecificationLimit"]] <- TRUE
+  options[["upperSpecificationLimit"]] <- TRUE
+  options[["lowerSpecificationLimitValue"]] <- 0
+  options[["upperSpecificationLimitValue"]] <- 12
+  file <- "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv"
+  set.seed(1)
+  results <- jaspTools::runAnalysis("processCapabilityStudies", file, options, view = FALSE)
+  table   <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]]
+
+  values <- na.omit(read.csv(file)[["Diameter"]])
+  fit    <- jaspQualityControl:::.distributionParameters(values, distribution = "weibull")
+  ad     <- goftest::ad.test(values, "pweibull", shape = fit[["beta"]], scale = fit[["theta"]])$statistic
+  expect_equal(table[["data"]][[1]][["p"]], round(pWeibull(ad, length(values)), 3))
+  expect_false(isTRUE(all.equal(table[["data"]][[1]][["p"]], round(adPValue(ad, length(values)), 3)))) # not the normal approximation
+
+  notes <- vapply(table[["footnotes"]], function(note) note[["text"]], character(1))
+  expect_true("The Anderson-Darling statistic (AD) is calculated against the Weibull distribution." %in% notes)
+  expect_false(any(grepl("<i>", notes[grepl("Anderson-Darling", notes)], fixed = TRUE)))
+})
