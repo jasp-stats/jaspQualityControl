@@ -361,9 +361,9 @@ test_that("KT25 Ordinal text ratings with a nominal text standard give a table e
 
 test_that("KT26 Scale of ordinal levels: merged over the columns, only when their order is settled", {
   columns <- function(...) lapply(list(...), function(x) factor(x, levels = x, ordered = TRUE))
-  expect_identical(.msaAttributeOrdinalScale(columns(c("z", "c"), c("b", "c"), c("z", "b"))), c("z", "b", "c"))
-  expect_identical(.msaAttributeOrdinalScale(columns(c("a", "b", "c"), c("b", "c", "d"))), c("a", "b", "c", "d"))
-  expect_null(.msaAttributeOrdinalScale(columns(c("a", "b"), c("b", "a"))))  # conflict
-  expect_null(.msaAttributeOrdinalScale(columns(c("a", "b"), c("c", "d"))))  # open
-  expect_null(.msaAttributeOrdinalScale(list(factor(c("a", "b")), factor(c("a", "b")))))  # not ordinal
+  expect_identical(jaspQualityControl:::.msaAttributeOrdinalScale(columns(c("z", "c"), c("b", "c"), c("z", "b"))), c("z", "b", "c"))
+  expect_identical(jaspQualityControl:::.msaAttributeOrdinalScale(columns(c("a", "b", "c"), c("b", "c", "d"))), c("a", "b", "c", "d"))
+  expect_null(jaspQualityControl:::.msaAttributeOrdinalScale(columns(c("a", "b"), c("b", "a"))))  # conflict
+  expect_null(jaspQualityControl:::.msaAttributeOrdinalScale(columns(c("a", "b"), c("c", "d"))))  # open
+  expect_null(jaspQualityControl:::.msaAttributeOrdinalScale(list(factor(c("a", "b")), factor(c("a", "b")))))  # not ordinal
 })
