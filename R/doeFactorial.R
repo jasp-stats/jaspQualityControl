@@ -129,7 +129,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     tb[["centerpoints"]] <- designSpec[["centerpoints"]]
     runs <- (designSpec[["runs"]] * designSpec[["replications"]]) + (designSpec[["blocks"]] * designSpec[["centerpoints"]] * designSpec[["replications"]]) + designSpec[["repetitions"]]
     tb[["totalRuns"]] <- runs
-    tb[["totalBlocks"]] <- designSpec[["blocks"]]
+    # every replicate has its own blocks, as in the Block column of the design table
+    tb[["totalBlocks"]] <- if (designSpec[["blocks"]] > 1) designSpec[["blocks"]] * designSpec[["replications"]] else 1
   } else {
     df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
     nLevels <- apply(df, 1, function(x) length(which(x[-1] != "")))
@@ -482,25 +483,19 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   runOrderInfo <- DoE.base::run.order(design)
   standardOrder <- as.numeric(runOrderInfo[["run.no.in.std.order"]])
   dfDesign <- as.data.frame(design)
-  blockLabels <- as.character(dfDesign[["Blocks"]]) # before the numeric conversion below
   if (!twoLevelDesign) {
     dfDesign <- as.data.frame(apply(dfDesign, 2, as.numeric))
   }
 
-  outDesign <- if (options[["factorialType"]] == "factorialTypeDefault" && designSpec[["blocks"]] > 1) dfDesign[2:(nrow(df)+1)] else dfDesign[1:nrow(df)]
+  blocked <- options[["factorialType"]] == "factorialTypeDefault" && designSpec[["blocks"]] > 1
+  outDesign <- if (blocked) dfDesign[2:(nrow(df)+1)] else dfDesign[1:nrow(df)]
   colnames(outDesign) <- df[["name"]]
   display <- cbind(ro = runOrder, sro = standardOrder, outDesign)
 
   if (!is.null(dfDesign[["Blocks"]])) {
-    # with replications the labels read "<block>.<replication>" (no block label without blocking), and the
-    # replication is shown in its own column, so the block is only the part before the dot
-    block <- if (designSpec[["replications"]] > 1) {
-      blockOfReplication <- sub("\\..*$", "", blockLabels)
-      blockOfReplication[is.na(blockOfReplication) | blockOfReplication == ""] <- "1"
-      as.numeric(blockOfReplication)
-    } else {
-      as.numeric(dfDesign[["Blocks"]])
-    }
+    # with replications every replicate gets its own blocks ("<block>.<replication>"), which are randomized separately,
+    # so they keep their own number; without blocking the labels are only the replication, shown in its own column
+    block <- if (blocked) as.numeric(dfDesign[["Blocks"]]) else rep(1, nrow(dfDesign))
     display <- cbind(display, Block = block)
   }
   if (twoLevelDesign) {
