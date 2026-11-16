@@ -457,6 +457,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     # factor with a level that only occurs in the runs of a level of another factor) keeps its estimable columns:
     # lm() gives the aliased columns NA coefficients and fits the model without them.
     removedTerms <- .doeAliasedTerms(regressionFit)[["full"]]
+    # the partners are named in coded units: in real units an aliased column is also a combination of the intercept and lower-order terms
+    removedTermsAliasedWith <- if (length(removedTerms) > 0) .doeAliasedWith(stats::lm(formula, data = datasetCoded), removedTerms) else character(0)
     if (length(removedTerms) > 0) {
       formula       <- as.formula(paste(paste(deparse(formula), collapse = ""), paste(removedTerms, collapse = " - "), sep = " - "))
       regressionFit <- lm(formula, data = dataset)
@@ -472,8 +474,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     regressionFit[["data"]]           <- dataset # the plots use the uncoded fit
 
     # coding can alias other columns than in uncoded units, so each fit gets its own notes
-    result[["regression"]][["aliasNotes"]]      <- .doeAliasNotes(regressionFit, removedTerms, dataset, multiLevelVars)
-    resultCoded[["regression"]][["aliasNotes"]] <- .doeAliasNotes(regressionFitCoded, removedTerms, dataset, multiLevelVars)
+    result[["regression"]][["aliasNotes"]]      <- .doeAliasNotes(regressionFit, removedTerms, dataset, multiLevelVars, removedTermsAliasedWith)
+    resultCoded[["regression"]][["aliasNotes"]] <- .doeAliasNotes(regressionFitCoded, removedTerms, dataset, multiLevelVars, removedTermsAliasedWith)
 
     names(regressionFit$coefficients) <-  unname(sapply(c(names(regressionFit$coefficients)), .gsubIdentityFunction)) # remove potential identity function around squared terms
     rownames(regressionSummary$coefficients) <- unname(sapply(c(rownames(regressionSummary$coefficients)), .gsubIdentityFunction))
@@ -1901,6 +1903,24 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
        partial = termLabels[nAliased > 0 & nAliased < nColumns])
 }
 
+# For each removed term, the other terms of the model its columns are aliased with (linear combinations of their columns; the
+# intercept counts as "the intercept"), as a text ("" if none is found). Needs the fit of the full model, in coded units, so that
+# the columns of the removed terms are not also combinations of the lower-order terms through the factor locations.
+.doeAliasedWith <- function(fit, removedTerms) {
+  if (length(removedTerms) == 0)
+    return(character(0))
+  complete <- tryCatch(stats::alias(fit)[["Complete"]], error = function(e) NULL)
+  if (is.null(complete))
+    return(rep("", length(removedTerms)))
+  termOfCoefficient <- stats::setNames(c(NA, attr(stats::terms(fit), "term.labels"))[fit[["assign"]] + 1], names(stats::coef(fit))) # intercept: NA
+  vapply(removedTerms, function(term) {
+    rows         <- intersect(names(termOfCoefficient)[which(termOfCoefficient == term)], rownames(complete))
+    partners     <- colnames(complete)[colSums(complete[rows, , drop = FALSE] != 0) > 0] # alias() already sets rounding noise to 0
+    partnerTerms <- unique(termOfCoefficient[partners])
+    paste(c(.doeFormatTermLabels(partnerTerms[!is.na(partnerTerms)]), if (anyNA(partnerTerms)) gettext("the intercept")), collapse = ", ")
+  }, character(1), USE.NAMES = FALSE)
+}
+
 .doeFormatTermLabels <- function(termLabels) {
   if (length(termLabels) == 0)
     return(character(0))
@@ -1924,14 +1944,15 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 # Alias notes of a fit for the table footnotes: terms removed from the model (all their columns aliased), terms of
 # the fit with all or some columns aliased (possible in coded units only, or after removal), and discrete factors of
 # the model whose levels share runs.
-.doeAliasNotes <- function(fit, removedTerms, dataset, multiLevelVars) {
+.doeAliasNotes <- function(fit, removedTerms, dataset, multiLevelVars, removedTermsAliasedWith) {
   aliased   <- .doeAliasedTerms(fit)
   modelVars <- all.vars(stats::delete.response(stats::terms(fit)))
   list(
-    removedTerms          = .doeFormatTermLabels(removedTerms),
-    notEstimatedTerms     = .doeFormatTermLabels(aliased[["full"]]),
-    partiallyAliasedTerms = .doeFormatTermLabels(aliased[["partial"]]),
-    sharedLevelFactors    = if (length(aliased[["partial"]]) > 0) .doeFactorsWithSharedLevels(dataset, intersect(multiLevelVars, modelVars))
+    removedTerms            = .doeFormatTermLabels(removedTerms),
+    removedTermsAliasedWith = removedTermsAliasedWith,
+    notEstimatedTerms       = .doeFormatTermLabels(aliased[["full"]]),
+    partiallyAliasedTerms   = .doeFormatTermLabels(aliased[["partial"]]),
+    sharedLevelFactors      = if (length(aliased[["partial"]]) > 0) .doeFactorsWithSharedLevels(dataset, intersect(multiLevelVars, modelVars))
   )
 }
 
@@ -2138,8 +2159,12 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 }
 
 .doeAddAliasFootnotes <- function(table, aliasNotes) {
-  if (length(aliasNotes[["removedTerms"]]) > 0)
-    table$addFootnote(gettextf("The following aliased terms were removed: %s.", paste(aliasNotes[["removedTerms"]], collapse = ", ")))
+  if (length(aliasNotes[["removedTerms"]]) > 0) {
+    removed <- ifelse(aliasNotes[["removedTermsAliasedWith"]] == "", aliasNotes[["removedTerms"]],
+                      vapply(seq_along(aliasNotes[["removedTerms"]]), function(i)
+                        gettextf("%1$s (aliased with %2$s)", aliasNotes[["removedTerms"]][i], aliasNotes[["removedTermsAliasedWith"]][i]), ""))
+    table$addFootnote(gettextf("The following aliased terms were removed; their effects are assumed to be zero: %s.", paste(removed, collapse = ", ")))
+  }
   if (length(aliasNotes[["notEstimatedTerms"]]) > 0)
     table$addFootnote(gettextf("The following terms are aliased and were not estimated: %s.", paste(aliasNotes[["notEstimatedTerms"]], collapse = ", ")))
   if (length(aliasNotes[["partiallyAliasedTerms"]]) > 0)
@@ -2752,6 +2777,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     variablePairs <- t(utils::combn(variables, 2))
     nPlots <- nrow(variablePairs)
 
+    sliceNote <- .doeContourSliceNote(jaspResults[[dep]][["doeResult"]]$object[["regression"]][["object"]], variables)
+    if (sliceNote != "")
+      jaspResults[[dep]][["contourSurfacePlot"]][["sliceNote"]] <- createJaspHtml(text = sliceNote, elementType = "p")
+
     for (i in seq_len(nPlots)) {
       variablePair <- variablePairs[i, ]
       variablePairString <- paste(variablePair, collapse = gettext(" and "))
@@ -2781,6 +2810,28 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       jaspResults[[dep]][["contourSurfacePlot"]][[plotTitle]] <- plot
     }
   }
+}
+
+# States which slice of the model the plots show. rsm::contour.lm and persp.lm hold the continuous predictors that are not on the
+# axes at their mean (the plots label the values, "Slice at ...") and average the prediction over the levels of the discrete
+# factors (and blocks). A selected variable is also off the axes in the plots of the other pairs.
+.doeContourSliceNote <- function(fit, plotVariables) {
+  data          <- fit[["data"]]
+  predictors    <- all.vars(stats::delete.response(stats::terms(fit)))
+  plotVariables <- intersect(plotVariables, predictors) # variables left out of the model have no plot
+  if (length(plotVariables) < 2)
+    return("")
+  isNumeric  <- vapply(predictors, function(variable) is.numeric(data[[variable]]), logical(1))
+  continuous <- predictors[isNumeric]
+  held       <- if (length(plotVariables) > 2) continuous else setdiff(continuous, plotVariables)
+  discrete   <- predictors[!isNumeric]
+  notes <- c(
+    if (length(held) > 0)
+      gettext("Continuous predictors that are not on the axes of a plot are held at their mean (see \"Slice at\" in the plot)."),
+    if (length(discrete) > 0)
+      gettextf("The prediction is averaged over the levels of the discrete factors and blocks (%s).", paste(discrete, collapse = ", "))
+  )
+  return(paste(notes, collapse = " "))
 }
 
 .doeContourPlotObject <- function(result, options, dependent, variablePair) {
