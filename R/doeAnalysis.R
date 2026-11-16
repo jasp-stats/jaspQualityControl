@@ -696,7 +696,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     result[["regression"]][["coefficients"]][["effectsDf"]] <- effectsFit[["df.residual"]] # differs from regressionFit when coding changes the rank
     result[["regression"]][["coefficients"]][["est"]] <- blankNonUnique(coef(regressionFit)[isFitted], uniqueCoefs)
     result[["regression"]][["coefficients"]][["effects"]][1] <- NA
-    result[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFit)[isFitted]
+    result[["regression"]][["coefficients"]][["vif"]] <- blankNonUnique(.getVIF(regressionFit)[isFitted], uniqueCoefs)
 
     resultCoded[["regression"]][["coefficients"]][["unique"]] <- uniqueCoefsCoded
     resultCoded[["regression"]][["coefficients"]][["effects"]] <- blankNonUnique(coefEffectsCoded[isFittedCoded], uniqueCoefsCoded)
@@ -704,7 +704,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["coefficients"]][["effectsDf"]] <- regressionFitCoded[["df.residual"]]
     resultCoded[["regression"]][["coefficients"]][["est"]] <- blankNonUnique(coef(regressionFitCoded)[isFittedCoded], uniqueCoefsCoded)
     resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
-    resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded)[isFittedCoded]
+    resultCoded[["regression"]][["coefficients"]][["vif"]] <- blankNonUnique(.getVIF(regressionFitCoded)[isFittedCoded], uniqueCoefsCoded)
 
     termNamesAliased <- termNames
     termNamesAliasedCoded <- termNamesCoded
@@ -859,18 +859,21 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   gettextf("Aliases: %s.", paste(aliases[isAlias], "=", factorNames[isAlias], collapse = ", "))
 }
 
-# VIF of each coefficient: car::vif() gives one (generalized) VIF per model term, so each coefficient gets the VIF of
-# the term it belongs to (lm's "assign"; 0 = intercept, no VIF). For terms with more than 1 df this is the GVIF.
+# VIF of each estimated coefficient: 1 / (1 - R^2) of its model-matrix column regressed on the other estimated columns
+# (intercept partialled out), i.e. the diagonal of the inverse correlation matrix of those columns. Aliased (NA)
+# coefficients are left out. NA for the intercept, for models without intercept and when there is no other column.
 .getVIF <- function(regressionFit) {
-  nCoefficients <- length(regressionFit$coefficients)
-  if (ncol(regressionFit$model) < 3)
-    return(rep(NA, nCoefficients))
-  VIF <- try(car::vif(regressionFit), silent = TRUE) # fails with aliased coefficients (footnote in the table)
-  if (jaspBase::isTryError(VIF))
-    return(rep(NA, nCoefficients))
-  VIF <- if (is.vector(VIF)) VIF else VIF[, 1]
-  termLabels <- attr(stats::terms(regressionFit), "term.labels")
-  return(unname(c(NA, VIF[termLabels])[regressionFit$assign + 1]))
+  coefficients <- stats::coef(regressionFit)
+  VIF          <- rep(NA_real_, length(coefficients))
+  estimated    <- which(!is.na(coefficients) & names(coefficients) != "(Intercept)")
+  if (length(estimated) < 2 || !"(Intercept)" %in% names(coefficients))
+    return(VIF)
+  correlations <- suppressWarnings(stats::cor(stats::model.matrix(regressionFit)[, estimated, drop = FALSE]))
+  inverse      <- try(solve(correlations), silent = TRUE)
+  if (jaspBase::isTryError(inverse))
+    return(VIF)
+  VIF[estimated] <- diag(inverse)
+  return(VIF)
 }
 
 .doeResponseOptimizerTables <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, blocks, covariates, readyModelPresent) {
@@ -2396,8 +2399,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       tb$addFootnote(.doeNonUniqueCoefficientsNote())
     if (isTRUE(result[["effectsOtherModel"]])) # only set for the uncoded table
       tb$addFootnote(gettext("Effects are not shown: coding the continuous predictors changes this model (e.g., an interaction or squared term without its main effects)."))
-    if (anyNA(stats::coef(resultRegression[["object"]])))
-      tb$addFootnote(gettext("VIF is not available when some coefficients are aliased."))
+    if (anyNA(stats::coef(resultRegression[["object"]])) && any(!is.na(result[["vif"]])))
+      tb$addFootnote(gettext("VIF is calculated without the aliased coefficients."))
 
     # coded: only discrete factors with more than 2 levels have level-specific terms that need a legend
     result2 <- if (coded) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]][["factorLevels"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]][["factorLevels"]]
