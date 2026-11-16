@@ -1052,15 +1052,17 @@ options <- replicatedDesignOptions(blocks = "2", replications = 2)
 set.seed(1)
 results <- runAnalysis("doeFactorial", "debug.csv", options)
 
-test_that("18.2 Replicated blocked two-level design: blocks 1 and 2 in every replicate", {
+test_that("18.2 Replicated blocked two-level design: every replicate has its own blocks", {
   design <- replicatedDesignTable(results)
   expect_equal(tail(design$columns, 2), c("Block", "Replication"))
   expect_equal(nrow(design$data), 16)
-  expect_equal(sort(unique(design$data[["Block"]])), 1:2)
+  expect_equal(sort(unique(design$data[["Block"]])), 1:4)
   expect_equal(sort(unique(design$data[["Replication"]])), 1:2)
-  expect_true(all(table(design$data[["Block"]], design$data[["Replication"]]) == 4))
+  runsPerBlock <- table(design$data[["Block"]], design$data[["Replication"]])
+  expect_true(all(rowSums(runsPerBlock > 0) == 1)) # a block lies in one replicate
+  expect_true(all(runsPerBlock[runsPerBlock > 0] == 4))
   summary <- replicatedDesignSummary(results)
-  expect_equal(c(summary[["replications"]], summary[["baseBlocks"]], summary[["totalBlocks"]], summary[["totalRuns"]]), c(2, 2, 2, 16))
+  expect_equal(c(summary[["replications"]], summary[["baseBlocks"]], summary[["totalBlocks"]], summary[["totalRuns"]]), c(2, 2, 4, 16))
 })
 
 options <- replicatedDesignOptions(blocks = "1", replications = 2, centerpoints = 2)
@@ -1145,4 +1147,23 @@ test_that("18.6 Replicated split-plot design has a Replication column and no blo
   expect_equal(nrow(design$data), 8)
   expect_equal(sort(unique(design$data[["Replication"]])), 1:2)
   expect_true(all(table(design$data[["Replication"]]) == 4))
+})
+
+options <- replicatedDesignOptions(blocks = "2", replications = 2, centerpoints = 2)
+options$runOrder <- "runOrderRandom"
+set.seed(1)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
+
+test_that("18.7 Replicated blocked design in run order: Block and Replication match the FrF2 blocks", {
+  # FrF2 randomizes each block of each replicate separately and labels them "<block>.<replication>"
+  reference <- FrF2::FrF2(nfactors = 3, nruns = 8, ncenter = 2, replications = 2, blocks = 2,
+                          alias.block.2fis = TRUE, seed = options$seed)
+  labels <- as.character(as.data.frame(reference)[["Blocks"]])
+  design <- replicatedDesignTable(results)
+  expect_equal(design$data[["ro"]], seq_along(labels))
+  expect_equal(design$data[["Block"]], match(labels, unique(labels)))
+  expect_equal(design$data[["Replication"]], as.numeric(sub("^.*\\.", "", labels)))
+  expect_equal(as.vector(table(design$data[["Block"]])), rep(6, 4)) # 4 factorial runs and 2 centre points per block
+  summary <- replicatedDesignSummary(results)
+  expect_equal(c(summary[["baseBlocks"]], summary[["totalBlocks"]], summary[["totalRuns"]]), c(2, 4, 24))
 })
