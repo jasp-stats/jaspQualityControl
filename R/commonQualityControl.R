@@ -1145,7 +1145,6 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
     plotData <- rbind(plotData, stagePlotData)
     clData <- rbind(clData, stageClData)
-    decimals <- .numDecimals
     # even if there are multiple different centers, LCL and UCL within a stage, only the last one is shown on the label
     lastCenter <- center[length(center)]
     lastLCL <- LCL[length(LCL)]
@@ -1154,15 +1153,15 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       labelXPos <- max(subgroups) * 1.06
       labelText <- c(
         # %s + as.character: %g keeps only 6 significant digits, which drops decimals of values >= 1000 and rounds twice
-        gettextf("CL = %s",  as.character(round(lastCenter, decimals))),
-        gettextf("LCL = %s", as.character(round(lastLCL, decimals))),
-        gettextf("UCL = %s", as.character(round(lastUCL, decimals))))
+        gettextf("CL = %s",  as.character(.controlChartLabelValue(lastCenter))),
+        gettextf("LCL = %s", as.character(.controlChartLabelValue(lastLCL))),
+        gettextf("UCL = %s", as.character(.controlChartLabelValue(lastUCL))))
     } else {
       labelXPos <- max(subgroups) + .5
       labelText <- c(
-        round(lastCenter, decimals),
-        round(lastLCL, decimals),
-        round(lastUCL, decimals))
+        .controlChartLabelValue(lastCenter),
+        .controlChartLabelValue(lastLCL),
+        .controlChartLabelValue(lastUCL))
     }
     if (stagesSeparateCalculation || (!stagesSeparateCalculation && i == nStages))
       dfLimitLabel <- rbind(dfLimitLabel, data.frame(x = labelXPos,
@@ -1202,6 +1201,13 @@ KnownControlStats.RS <- function(N, sigma = 3) {
               "violationTable" = tableList,
               "sd"             = sigma
   ))
+}
+
+# Value of a limit label: rounded to the set number of decimals, but with 3 significant digits for small values that the
+# decimals alone would show with fewer than 2 significant digits (0 or e.g. 0.002 instead of 0.000198)
+.controlChartLabelValue <- function(x, decimals = .numDecimals) {
+  small <- !is.na(x) & x != 0 & abs(x) < 10^(1 - decimals)
+  ifelse(small, signif(x, 3), round(x, decimals))
 }
 
 .controlChart_table <- function(tableList,
@@ -1368,7 +1374,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     yLimits <- range(c(yLimits, lslYPos, targetYPos, uslYPos), na.rm = TRUE)
     if (!is.na(lslYPos)) {
       lslLineDf <- data.frame(xPos = xRange, yPos = rep(lslYPos, each = 2))
-      lslLabelDf <- data.frame(xPos = xPosLabel, yPos = lslYPos, label = gettextf("LSL = %g", round(lslYPos, .numDecimals)))
+      lslLabelDf <- data.frame(xPos = xPosLabel, yPos = lslYPos, label = gettextf("LSL = %g", .controlChartLabelValue(lslYPos)))
       plotObject <- plotObject + ggplot2::geom_line(data = lslLineDf, mapping = ggplot2::aes(x = xPos, y = yPos),
                                                     inherit.aes = FALSE, linewidth = 1.5, col = "darkred", na.rm = TRUE) +
         ggplot2::geom_label(data = lslLabelDf, mapping = ggplot2::aes(x = xPos, y = yPos, label = label),
@@ -1376,7 +1382,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     }
     if (!is.na(targetYPos)) {
       targetLineDf <- data.frame(xPos = xRange, yPos = rep(targetYPos, each = 2))
-      targetLabelDf <- data.frame(xPos = xPosLabel, yPos = targetYPos, label = gettextf("Tar. = %g", round(targetYPos, .numDecimals)))
+      targetLabelDf <- data.frame(xPos = xPosLabel, yPos = targetYPos, label = gettextf("Tar. = %g", .controlChartLabelValue(targetYPos)))
       plotObject <- plotObject + ggplot2::geom_line(data = targetLineDf, mapping = ggplot2::aes(x = xPos, y = yPos),
                                                     inherit.aes = FALSE, linewidth = 1.5, col = "darkgreen", na.rm = TRUE) +
         ggplot2::geom_label(data = targetLabelDf, mapping = ggplot2::aes(x = xPos, y = yPos, label = label),
@@ -1384,7 +1390,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     }
     if (!is.na(uslYPos)) {
       uslLineDf <- data.frame(xPos = xRange, yPos = rep(uslYPos, each = 2))
-      uslLabelDf <- data.frame(xPos = xPosLabel, yPos = uslYPos, label = gettextf("USL = %g", round(uslYPos, .numDecimals)))
+      uslLabelDf <- data.frame(xPos = xPosLabel, yPos = uslYPos, label = gettextf("USL = %g", .controlChartLabelValue(uslYPos)))
       plotObject <- plotObject + ggplot2::geom_line(data = uslLineDf, mapping = ggplot2::aes(x = xPos, y = yPos),
                                                     inherit.aes = FALSE, linewidth = 1.5, col = "darkred", na.rm = TRUE) +
         ggplot2::geom_label(data = uslLabelDf, mapping = ggplot2::aes(x = xPos, y = yPos, label = label),
