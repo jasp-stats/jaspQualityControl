@@ -115,3 +115,51 @@ test_that("2.6 Missing values test - Regression equation table results match", {
   jaspTools::expect_equal_tables(table,
                                  list("Bias = 0.76 - 0.13 * Reference value"))
 })
+
+# Bias plot axis limits (jasp-stats/INTERNAL-jasp#3435) ####
+# The y limits must never drop data (the fitted line is refitted to what remains) and must contain the zero line.
+
+.linBiasPlotRun <- function(shift) {
+  dataset <- read.csv(testthat::test_path("datasets", "msaLinearityStudy", "msaLinearity.csv"))[c("Part", "Reference", "Measurement")]
+  dataset[["Part"]] <- factor(dataset[["Part"]])
+  dataset[["Measurement"]] <- dataset[["Measurement"]] + shift
+  options <- analysisOptions("msaGaugeLinearity")
+  options$part <- "Part"
+  options$measurement <- "Measurement"
+  options$standard <- "Reference"
+  options$linearityAndBiasPlot <- TRUE
+  options$manualProcessVariation <- FALSE
+  options$percentProcessVariationPlot <- FALSE
+  set.seed(1)
+  results <- runAnalysis("msaGaugeLinearity", dataset, options, view = FALSE)
+  plotName <- results[["results"]][["LB"]][["collection"]][["LB_plotBias"]][["data"]]
+  built <- ggplot2::ggplot_build(results[["state"]][["figures"]][[plotName]][["obj"]])
+  smoothData <- built$data[[2]]
+  list(biases = dataset[["Measurement"]] - dataset[["Reference"]],
+       limits = built$layout$panel_scales_y[[1]]$get_limits(),
+       zeroLine = built$data[[1]][["yintercept"]], # NA when the zero line is outside the limits
+       rawPoints = built$data[[3]][["y"]],         # NA when a point is outside the limits
+       meanPoints = built$data[[4]][["y"]],
+       drawnSlope = unname(coef(lm(y ~ x, smoothData))[2]),
+       tableSlope = results[["results"]][["LB"]][["collection"]][["LB_tableRegression"]][["data"]][[2]][["coefficient"]])
+}
+
+test_that("3.1 Bias plot shows all data, the zero line and the table's regression line for all-negative, all-positive and mixed biases", {
+  for (shift in c(-2, 5, 0)) {
+    run <- .linBiasPlotRun(shift)
+    label <- paste("shift", shift)
+    expect_true(all(is.finite(run$rawPoints)), label = paste(label, "raw biases drawn"))
+    expect_length(run$rawPoints, 60)
+    expect_true(all(is.finite(run$meanPoints)), label = paste(label, "mean biases drawn"))
+    expect_length(run$meanPoints, 5)
+    expect_true(is.finite(run$zeroLine), label = paste(label, "zero line drawn"))
+    expect_lte(run$limits[1], min(run$biases, 0))
+    expect_gte(run$limits[2], max(run$biases, 0))
+    expect_equal(run$drawnSlope, run$tableSlope, tolerance = 1e-6, label = paste(label, "drawn slope"))
+  }
+})
+
+test_that("3.2 Bias plot keeps its limits (min bias to 2 x max bias) when the biases straddle zero", {
+  run <- .linBiasPlotRun(0)
+  expect_equal(run$limits, c(min(run$biases), max(run$biases) * 2))
+})

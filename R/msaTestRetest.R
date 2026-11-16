@@ -241,10 +241,19 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
 
   if (ready) {
 
+    # padding by a factor (0.9 / 1.1) cuts off data when the minimum is negative: then use pretty breaks over the data
+    allValues <- unlist(dataset[measurements])
+    axisBreaks <- ggplot2::waiver()
+    axisLimits <- c(min(allValues) * 0.9, max(allValues) * 1.1)
+    if (min(allValues) < 0) {
+      axisBreaks <- jaspGraphs::getPrettyAxisBreaks(allValues)
+      axisLimits <- range(axisBreaks)
+    }
+
     p <- ggplot2::ggplot() +
       jaspGraphs::geom_point(data = dataset, ggplot2::aes(x = .data[[measurements[1]]], y = .data[[measurements[2]]])) +
-      ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
-      ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
+      ggplot2::scale_x_continuous(breaks = axisBreaks, limits = axisLimits) +
+      ggplot2::scale_y_continuous(breaks = axisBreaks, limits = axisLimits) +
       ggplot2::geom_abline(col = "gray", linetype = "dashed") +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()

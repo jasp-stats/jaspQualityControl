@@ -177,13 +177,23 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
   plusOrMin <- if (regressionFitSlope > 0) "+" else "-"
   regressionEquation <- gettextf("Bias = %1$.2f %2$s %3$.2f * Reference value", regressionFitConstant, plusOrMin, abs(regressionFitSlope))
 
+  # the upper limit (2 x max bias) lies below the data when all biases are negative and the zero line is cut off
+  # when all are positive: then use pretty breaks over the biases, zero and the confidence band of the fitted line
+  yBreaks <- ggplot2::waiver()
+  yLimits <- c(min(biasPlotDf$Bias, na.rm = TRUE), max(biasPlotDf$Bias, na.rm = TRUE) * 2)
+  if (min(biasPlotDf$Bias, na.rm = TRUE) > 0 || max(biasPlotDf$Bias, na.rm = TRUE) < 0) {
+    fitBand <- predict(regressionFitRaw, data.frame("Ref" = range(biasPlotDf$Ref)), interval = "confidence")
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, biasPlotDf$Bias, fitBand))
+    yLimits <- range(yBreaks)
+  }
+
   plotBiasPlotObject <- ggplot2::ggplot() +
     ggplot2::geom_hline(yintercept = 0, lty = 2, color = "grey") +
     ggplot2::geom_smooth(data = biasPlotDf, mapping = ggplot2::aes(x = Ref, y = Bias), method = "lm", color = "red") +
     ggplot2::scale_x_continuous(name = gettext("Reference")) +
     ggplot2::geom_point(data = biasPlotDf, mapping = ggplot2::aes(x = Ref, y = Bias), size = 4, shape = "X") +
     ggplot2::geom_point(data = biasPlotMeanDf, mapping = ggplot2::aes(x = Ref, y = meanBias), fill = "red", shape = 21, col = "black", size = 4) +
-    ggplot2::scale_y_continuous(limits = c(min(biasPlotDf$Bias, na.rm = TRUE), max(biasPlotDf$Bias, na.rm = TRUE) * 2)) +
+    ggplot2::scale_y_continuous(breaks = yBreaks, limits = yLimits) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
