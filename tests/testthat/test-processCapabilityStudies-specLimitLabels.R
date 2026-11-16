@@ -4,22 +4,22 @@ context("[Quality Control] Process Capability Study - specification limit labels
 # (jasp-issues #4681). The labels are read from the layers of the histogram, without a snapshot.
 smallData <- data.frame(Measurement = c(0.00016058, 0.00020555, 0.00020832, 0.00016342, 0.00026613, 0.00021752, 0.00014323, 0.00022483, 0.00018467, 0.00020527))
 
-.histogramLabels <- function(axisModification, boundary = FALSE) {
+.histogramLabels <- function(axisModification, boundary = FALSE, data = smallData, limits = c(0.0001, 0.0002, 0.0004)) {
   options <- analysisOptions("processCapabilityStudies")
   options$measurementLongFormat <- "Measurement"
   options$subgroupSizeType <- "manual"
   options$manualSubgroupSizeValue <- 1
   options$lowerSpecificationLimit <- TRUE
-  options$lowerSpecificationLimitValue <- 0.0001
+  options$lowerSpecificationLimitValue <- limits[1]
   options$lowerSpecificationLimitBoundary <- boundary
   options$upperSpecificationLimit <- TRUE
-  options$upperSpecificationLimitValue <- 0.0004
+  options$upperSpecificationLimitValue <- limits[3]
   options$upperSpecificationLimitBoundary <- boundary
   options$target <- TRUE
-  options$targetValue <- 0.0002
+  options$targetValue <- limits[2]
   options$processCapabilityPlotSpecificationLimits <- TRUE
   options$processCapabilityPlotXAxisModification <- axisModification
-  plot <- jaspQualityControl:::.qcProcessCapabilityPlotObject(options, smallData, "Measurement", "", distribution = "normal")[[1]]
+  plot <- jaspQualityControl:::.qcProcessCapabilityPlotObject(options, data, "Measurement", "", distribution = "normal")[[1]]
   unlist(lapply(plot$layers, function(l) if (is.data.frame(l$data) && "label" %in% names(l$data)) as.character(l$data$label)))
 }
 
@@ -39,5 +39,14 @@ test_that("SL3 Capability histogram labels small boundaries", {
   for (axisModification in c("none", "compress")) {
     labels <- .histogramLabels(axisModification, boundary = TRUE)
     expect_true(all(c("LB = 0.0001", "UB = 0.0004") %in% labels), info = axisModification)
+  }
+})
+
+test_that("SL4 Capability histogram labels of large specification limits keep their decimals", {
+  # %g wrote 6 significant digits: "LSL = 100000" for 100000.5
+  largeData <- data.frame(Measurement = 100000 + smallData$Measurement * 10000)
+  for (axisModification in c("none", "compress")) {
+    labels <- .histogramLabels(axisModification, data = largeData, limits = c(99999.5, 100002.25, 100004.75))
+    expect_true(all(c("Target = 100002.25", "LSL = 99999.5", "USL = 100004.75") %in% labels), info = axisModification)
   }
 })
