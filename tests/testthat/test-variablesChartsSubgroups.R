@@ -1428,3 +1428,36 @@ test_that("WF recurring stage - x-bar chart test results use the flagged subgrou
   jaspTools::expect_equal_tables(table, list("B", "Point 4 (R4)", "", "Point 5 (R5)", "", "Point 7 (R7)", "",
                                         "Point 8 (R8)", "", "Point 9 (R9)"))
 })
+
+### Rows without observations carry the previous limits, they do not get infinite limits (jasp-issues#4673) ####
+.emptyRowsData <- data.frame(First  = c(1.1, NA, 3.2, NA, 5.3, NA),
+                             Second = c(2.1, NA, 4.2, NA, 6.3, NA))
+
+# y values of the center line and the control limits, and the labels, of one chart of a drawn plot
+.emptyRowsChart <- function(results, subplot) {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  plotObj  <- results[["state"]][["figures"]][[plotName]][["obj"]]$subplots[[subplot]]
+  isStep   <- vapply(plotObj$layers, function(layer) inherits(layer$geom, "GeomStep"), logical(1))
+  list(lines  = lapply(which(isStep), function(i) ggplot2::layer_data(plotObj, i)[["y"]]),
+       labels = unlist(lapply(seq_along(plotObj$layers), function(i) as.character(ggplot2::layer_data(plotObj, i)[["label"]]))))
+}
+
+for (chartType in c("xBarAndR", "xBarAndS", "xBarAndSNoUnbiasing")) {
+  options <- analysisOptions("variablesChartsSubgroups")
+  options$dataFormat <- "wideFormat"
+  options$measurementsWideFormat <- list("First", "Second")
+  options$chartType <- sub("NoUnbiasing", "", chartType)
+  options$xBarAndSUnbiasingConstant <- chartType != "xBarAndSNoUnbiasing" # the s chart center is then a single value
+  results <- runAnalysis("variablesChartsSubgroups", .emptyRowsData, options)
+
+  test_that(sprintf("WF30 %s chart: rows without observations keep finite limits", chartType), {
+    xBar <- .emptyRowsChart(results, 1)
+    # the six rows (and the closing point of the step line) all have the limits of the rows with observations
+    expect_true(all(vapply(xBar$lines, function(y) length(y) == 7 && length(unique(y)) == 1 && is.finite(y[1]), logical(1))))
+    expect_true("CL = 3.7" %in% xBar$labels)
+    expect_true(any(startsWith(xBar$labels, "LCL = ")) && any(startsWith(xBar$labels, "UCL = ")))
+    secondChart <- .emptyRowsChart(results, 2)
+    expect_true(all(is.finite(unlist(secondChart$lines))))
+    expect_false(any(grepl("Inf|NaN|NA", c(xBar$labels, secondChart$labels))))
+  })
+}
