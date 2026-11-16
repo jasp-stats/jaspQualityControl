@@ -201,15 +201,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       controlCharts <- list()
       # X-bar and second chart OR ImR Chart
       if (options[["controlChartType"]] == "xmr") {
-        ruleList1 <- .getRuleListIndividualCharts(options, type = "I")
-        ruleList2 <- .getRuleListIndividualCharts(options, type = "MR")
-        controlCharts[[1]] <- .qcCapabilityControlChart(dataset = dataset[measurements], plotType = "I",
-                                            nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                                            xAxisLabels = seq_along(unlist(dataset[measurements])), ruleList = ruleList1)$plotObject
-        controlCharts[[2]] <- .qcCapabilityControlChart(dataset = dataset[measurements], plotType = "MR",
-                                            xAxisLabels = seq_along(unlist(dataset[measurements])),
-                                            nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                                            movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList2)$plotObject
+        xmrCharts <- .qcCapabilityXmrCharts(options, dataset, measurements, stages)
+        controlCharts[[1]] <- xmrCharts[["individualChart"]]$plotObject
+        controlCharts[[2]] <- xmrCharts[["mrChart"]]$plotObject
       } else {
         secondPlotType <- switch(options[["controlChartType"]],
                                  "xBarR" = "R",
@@ -384,30 +378,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
-        columnsToPass <- c(measurements, stages)
-        columnsToPass <- columnsToPass[columnsToPass != ""]
-        if (options[["xmrChartSpecificationLimits"]]) {
-          specificationLimitsControlChart <- c()
-          specificationLimitsControlChart <- if (options[["lowerSpecificationLimit"]]) c(specificationLimitsControlChart,
-                                                                                         options[["lowerSpecificationLimitValue"]]) else c(specificationLimitsControlChart, NA)
-          specificationLimitsControlChart <- if (options[["target"]]) c(specificationLimitsControlChart,
-                                                                        options[["targetValue"]]) else c(specificationLimitsControlChart, NA)
-          specificationLimitsControlChart <- if (options[["upperSpecificationLimit"]]) c(specificationLimitsControlChart,
-                                                                                         options[["upperSpecificationLimitValue"]]) else c(specificationLimitsControlChart, NA)
-        } else {
-          specificationLimitsControlChart <- NA
-        }
-        ruleList1 <- .getRuleListIndividualCharts(options, type = "I")
-        ruleList2 <- .getRuleListIndividualCharts(options, type = "MR")
-        # the axis labels are chart positions, the same numbers as in the test results tables
-        individualChart <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "I",
-                                         nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
-                                         xAxisLabels = seq_along(unlist(dataset[measurements])), labelsInDataOrder = FALSE,
-                                         specificationLimits = specificationLimitsControlChart, ruleList = ruleList1)
-        mrChart <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "MR",
-                                 nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
-                                 xAxisLabels = seq_along(unlist(dataset[measurements])), labelsInDataOrder = FALSE,
-                                 movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList2)
+        xmrCharts <- .qcCapabilityXmrCharts(options, dataset, measurements, stages)
+        individualChart <- xmrCharts[["individualChart"]]
+        mrChart <- xmrCharts[["mrChart"]]
         .qcCapabilityControlChartPlot(jaspResults[["xmr"]], upperChart = individualChart, lowerChart = mrChart, plotNotes = plotNotes)
         jaspResults[["xmr"]][["tableIndividual"]] <- individualChart$table
         jaspResults[["xmr"]][["tableMR"]] <- mrChart$table
@@ -423,6 +396,32 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     # Perform capability analysis
     .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements, stages, datasetAsEntered)
   }
+}
+
+# The individuals and moving range chart of the X-mR control chart, used by the control chart output and the report
+.qcCapabilityXmrCharts <- function(options, dataset, measurements, stages) {
+  columnsToPass <- c(measurements, stages)
+  columnsToPass <- columnsToPass[columnsToPass != ""]
+  if (options[["xmrChartSpecificationLimits"]]) {
+    specificationLimitsControlChart <- c(if (options[["lowerSpecificationLimit"]]) options[["lowerSpecificationLimitValue"]] else NA,
+                                         if (options[["target"]]) options[["targetValue"]] else NA,
+                                         if (options[["upperSpecificationLimit"]]) options[["upperSpecificationLimitValue"]] else NA)
+  } else {
+    specificationLimitsControlChart <- NA
+  }
+  ruleList1 <- .getRuleListIndividualCharts(options, type = "I")
+  ruleList2 <- .getRuleListIndividualCharts(options, type = "MR")
+  # the axis labels are chart positions, the same numbers as in the test results tables
+  individualChart <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "I",
+                                               nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
+                                               xAxisLabels = seq_along(unlist(dataset[measurements])), labelsInDataOrder = FALSE,
+                                               specificationLimits = specificationLimitsControlChart,
+                                               movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList1)
+  mrChart <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "MR",
+                                       nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
+                                       xAxisLabels = seq_along(unlist(dataset[measurements])), labelsInDataOrder = FALSE,
+                                       movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList2)
+  return(list(individualChart = individualChart, mrChart = mrChart))
 }
 
 # Keep a missing moving range local to its chart. On a report, the chart becomes an error panel; elsewhere,
