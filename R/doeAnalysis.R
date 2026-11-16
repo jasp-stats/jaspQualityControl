@@ -954,7 +954,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   }
   tb2$addRows(rows2)
   if (desi <= 0)
-    tb2$addFootnote(gettext("The optimizer found no factor setting within the observed factor ranges with a composite desirability above 0."))
+    tb2$addFootnote(gettext("No acceptable setting was found. Very narrow feasible regions may be missed by the numerical search."))
   .doeAddPredictionSettingsFootnotes(tb2, blocks, covariates)
   if (.doeOptimizerModelsAliased(models))
     tb2$addFootnote(.doeAliasedOptimizerNote())

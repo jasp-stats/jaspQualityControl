@@ -5619,7 +5619,7 @@ test_that("Response optimizer leaves a flat desirability region around the first
 test_that("Response optimizer flags a solution with desirability 0", {
   table <- .doeTestOptimizerSolution(lowerBound = 50, target = 60)
   jaspTools::expect_equal_tables(table[["data"]], list(75, 85, "Formula1", 21.469, 0))
-  expect_match(table[["footnotes"]][[1]][["text"]], "desirability above 0")
+  expect_match(table[["footnotes"]][[1]][["text"]], "No acceptable setting was found", fixed = TRUE)
 })
 
 .doeTestOptimizerOneDesign <- function(continuous, discrete, goal, target = 0.5, custom = NULL) {
@@ -7476,7 +7476,7 @@ test_that("60.21 Response optimizer finds acceptable settings between the design
                       list(optimizerSettings("target", 1, 29.5, 30, 30.5, 1, "Strength")))
   expect_gt(run$solution[["desi"]], 0.9)
   expect_equal(run$solution[["Strength_fit"]], 30, tolerance = 0.5 / 30)
-  expect_false(any(grepl("above 0", run$footnotes)))
+  expect_false(any(grepl("No acceptable setting was found", run$footnotes, fixed = TRUE)))
 })
 
 test_that("60.22 Response optimizer finds acceptable settings between the design points with two responses", {
@@ -7495,11 +7495,11 @@ test_that("60.23 Response optimizer reaches the optimum at the kink of a target 
   expect_gt(run$solution[["desi"]], 0.933)
 })
 
-test_that("60.24 Response optimizer states that it found no acceptable setting within the observed ranges", {
+test_that("60.24 Response optimizer notes that narrow feasible regions may be missed", {
   run <- optimizerRun("datasets/doeAnalysis/doe_realDataExample1.csv", strengthOptimizerOptions(),
                       list(optimizerSettings("target", 1, 200, 200.5, 201, 1, "Strength")))
   expect_equal(run$solution[["desi"]], 0)
-  expect_true("The optimizer found no factor setting within the observed factor ranges with a composite desirability above 0." %in% run$footnotes)
+  expect_true("No acceptable setting was found. Very narrow feasible regions may be missed by the numerical search." %in% run$footnotes)
 })
 
 test_that("60.25 Distance of predictions from the acceptable interval", {
