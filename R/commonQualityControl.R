@@ -1,7 +1,8 @@
 
 # imports from packages
 #' @importFrom jaspBase createJaspContainer createJaspPlot createJaspState createJaspTable createJaspHtml
-#' .extractErrorMessage .hasErrors isTryError .readDataSetToEnd
+#' createJaspColumn .extractErrorMessage .hasErrors isTryError .readDataSetToEnd .quitAnalysis gsubInteractionSymbol mathExpression
+#' %setOrRetrieve%
 
 
 #############################################################
@@ -1744,6 +1745,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       if (!is.null(fix.arg)) {
         lnorm3Pars[names(fix.arg)] <- fix.arg
       }
+      # A threshold (also a fixed one) at or above the smallest observation gives a likelihood of zero.
+      if (lnorm3Pars[["threshold"]] >= min(data))
+        stop(estimationErrorMessage, call. = FALSE)
       beta  <- lnorm3Pars[["meanlog"]] # shape / logmean
       theta <- lnorm3Pars[["sdlog"]] # scale / log std. dev.
       threshold <- lnorm3Pars[["threshold"]] # threshold
@@ -1759,14 +1763,17 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     } else {
       # Set starting values that match other software packages more closely (on the rescaled data, see .qcFitdistUnitFree)
       unitScale <- .qcUnitScale(data)
-      weibull3start <- try(MASS::fitdistr(data / unitScale, function(x, shape, scale, thres)
-        dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = 0)))
+      # The starting threshold has to lie below all observations: 0 does for positive data, but not when the data contain a zero
+      dataScaled <- data / unitScale
+      weibull3startThresInitial <- if (min(dataScaled) > 0) 0 else min(dataScaled) - 0.1 * diff(range(dataScaled))
+      weibull3start <- try(MASS::fitdistr(dataScaled, function(x, shape, scale, thres)
+        dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = weibull3startThresInitial)))
 
       # If estimation of starting values fails, try with fixed starting values
       if (jaspBase::isTryError(weibull3start)) {
         weibull3startShape <- 0.1
         weibull3startScale <- 1
-        weibull3startThres <- 0
+        weibull3startThres <- weibull3startThresInitial
       } else {
       weibull3start <- weibull3start$estimate
       weibull3startShape <- weibull3start[[1]]
@@ -1804,7 +1811,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       # With a free threshold and shape <= 1 the likelihood increases (for shape < 1 without bound) as the threshold
       # approaches the smallest observation, so there is no MLE and the estimate is wherever the optimizer stopped.
-      if (!"thres" %in% names(fix.arg) && (weibull3Pars[["shape"]] <= 1 || weibull3Pars[["thres"]] >= min(data)))
+      # At a fixed threshold equal to the smallest observation, a fixed shape of one gives a valid shifted exponential fit.
+      if ((!"thres" %in% names(fix.arg) && weibull3Pars[["shape"]] <= 1) ||
+          weibull3Pars[["thres"]] > min(data) ||
+          (weibull3Pars[["thres"]] == min(data) && !isTRUE(fix.arg[["shape"]] == 1)))
         stop(estimationErrorMessage, call. = FALSE)
 
       beta  <- weibull3Pars[["shape"]] # shape

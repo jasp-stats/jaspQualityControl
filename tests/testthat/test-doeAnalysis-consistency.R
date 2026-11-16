@@ -237,7 +237,7 @@ test_that("removed alias assumptions are stated beside the optimizer and predict
     expect_true(any(grepl("removed aliased terms", .doeConsistencyNotes(result$results[[name]]), fixed = TRUE)))
 })
 
-test_that("contour output explains its slice and keeps the plot available", {
+test_that("contour output without a slice to explain keeps the plot available", {
   options <- .doeConsistencyOptions()
   options$contourSurfacePlot <- TRUE
   options$contourSurfacePlotVariables <- c("A", "B")
@@ -246,7 +246,7 @@ test_that("contour output explains its slice and keeps the plot available", {
   expect_identical(.doeConsistencyTable(result, "tableAnova")$status, "complete")
   plots <- .doeConsistencyTable(result, "contourSurfacePlot")$collection
   expect_identical(plots[[1]]$status, "complete")
-  expect_match(plots[[length(plots)]]$rawtext, "held at their means", fixed = TRUE)
+  expect_null(plots[["Y_contourSurfacePlot_sliceNote"]]) # nothing held at a mean or averaged over
 })
 
 test_that("the slice note follows all contour and surface plots in display order", {
