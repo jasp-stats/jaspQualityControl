@@ -11,8 +11,8 @@ Data can be in the form of all observations in one column ("Single column") or a
 ### Assignment Box
 - Operators: the operators in the measurement system. 
 - Parts: the parts of the measurement system.
-- Result: The ratings made by the operators. 
-- Standard (optional): the ratings by the known standard. 
+- Result: The ratings made by the operators (nominal or ordinal columns). 
+- Standard (optional): the ratings by the known standard (nominal or ordinal column). 
 
 ### Options
 #### Kappa Studies (Binary Data)
@@ -22,7 +22,7 @@ Data can be in the form of all observations in one column ("Single column") or a
 - Positive reference is the: whether the positive reference is the accept (good) category or the reject (defect) category. The miss rate and false alarm rate of the study effectiveness summary are computed relative to the accept category, so this choice matters for them; the kappas and the effectiveness do not depend on it.
 
 #### Tau Studies (Ordinal Data)
-- Kendall's tau: compute Kendall's tau-b between the operators and, if a standard is given, between each operator and the standard. Requires numeric ratings with more than two distinct values.
+- Kendall's tau: compute Kendall's tau-b between the operators and, if a standard is given, between each operator and the standard. Requires numeric or ordinal ratings with more than two distinct values. Ordinal ratings in text (e.g. poor < fair < good) are ranked by the order of their labels in the data, shown below the table; in the "Across rows" format the trial columns must have their labels in the same order. A standard in text must be ordinal, with its labels in the same order as text ratings.
 
 ## Output 
 -------
