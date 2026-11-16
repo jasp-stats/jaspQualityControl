@@ -1297,3 +1297,29 @@ test_that("19.6 Blocks with replications and centre points are confounded in eve
   expect_setequal(confoundedWithBlocks(results), c("AD", "ABC", "BCD"))
   expect_equal(aliasStructureRows(results), "Blocks = AD, ABC, BCD")
 })
+
+test_that("19.7 Blocks are confounded with 2-factor interactions when the other effects would be more aliased otherwise", {
+  # 7 factors in 32 runs in 4 blocks: with no 2-factor interaction confounded with blocks, seven 2-factor interactions are aliased with each other
+  results <- blockedDesignResults(nFactors = 7, row = 2, blocks = "4")
+  expect_equal(length(aliasStructureRows(results)), 1)
+  expect_true(any(nchar(confoundedWithBlocks(results)) == 2))
+  expect_equal(aliasStructureFootnotes(results), noAliasingExceptBlocksNote)
+
+  moreAliased <- jaspQualityControl:::.doeFactorialMoreAliased # A3, A4, A5 of the treatment effects
+  expect_true(moreAliased(c(0, 3, 0), c(0, 1, 2)))
+  expect_true(moreAliased(c(1, 0, 0), c(0, 5, 5)))
+  expect_false(moreAliased(c(0, 1, 2), c(0, 3, 0)))
+  expect_false(moreAliased(c(0, 1, 2), c(0, 1, 2)))
+})
+
+test_that("19.8 The effects confounded with blocks are found quickly with many factors", {
+  design <- FrF2::FrF2(nfactors = 20, nruns = 64, blocks = 2, alias.block.2fis = TRUE, seed = 1)
+  elapsed <- system.time(confounded <- jaspQualityControl:::.doeFactorialBlockConfounding(design))[["elapsed"]]
+  expect_lt(elapsed, 2)
+  expect_equal(length(confounded), 1)
+  data <- as.data.frame(design)
+  for (effect in strsplit(confounded, "=")[[1]]) { # aliased effects, each is constant within the blocks
+    contrast <- Reduce(`*`, lapply(strsplit(effect, "")[[1]], function(factor) as.numeric(as.character(data[[factor]]))))
+    expect_true(all(tapply(contrast, data[["Blocks"]], function(values) length(unique(values)) == 1)))
+  }
+})

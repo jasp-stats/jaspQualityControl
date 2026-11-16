@@ -340,8 +340,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
 }
 
 # Blocks are confounded with the highest-order interactions (the default of FrF2 and of Minitab). Only when FrF2 cannot do that
-# (a 2-factor interaction is unavoidable, e.g. 2^4 in 4 blocks) or when the design would have a lower resolution than the one
-# shown in the design table, the blocks may be confounded with 2-factor interactions.
+# (a 2-factor interaction is unavoidable, e.g. 2^4 in 4 blocks) or when the treatment effects of that design are more aliased than
+# with blocks confounded with 2-factor interactions (e.g. a lower resolution), the blocks may be confounded with 2-factor interactions.
 .doeFactorialDefaultFrF2 <- function(designSpec, seed) {
   generateDesign <- function(aliasBlock2fis) {
     FrF2::FrF2(
@@ -356,27 +356,42 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   }
   # FrF2 needs 20-35 seconds to find out that, for 8 or more factors in 64 runs and 8 blocks, a 2-factor interaction is unavoidable
   noSearch <- designSpec[["blocks"]] == 8 && designSpec[["runs"]] == 64 && designSpec[["factors"]] >= 8
+  clearDesign <- NULL
   if (designSpec[["blocks"]] > 1 && !noSearch) {
-    design <- try(generateDesign(FALSE), silent = TRUE)
-    if (!isTryError(design) && !.doeFactorialResolutionBelow(DoE.base::design.info(design)[["aliased"]], designSpec[["resolution"]])) {
-      return(design)
-    }
+    clearDesign <- try(generateDesign(FALSE), silent = TRUE)
   }
-  return(generateDesign(TRUE))
+  design <- generateDesign(TRUE)
+  if (!is.null(clearDesign) && !isTryError(clearDesign) &&
+      !.doeFactorialMoreAliased(.doeFactorialTreatmentWordlengths(clearDesign), .doeFactorialTreatmentWordlengths(design))) {
+    return(clearDesign)
+  }
+  return(design)
 }
 
-# "aliased" of design.info() lists the main effects aliased with 2-factor interactions (resolution III) and the 2-factor
-# interactions aliased with each other (resolution IV); the label is "III", "IV" or higher ("V", "VI", ..., "Full")
-.doeFactorialResolutionBelow <- function(aliases, label) {
-  actual <- if (length(aliases[["main"]]) > 0) 3 else if (length(aliases[["fi2"]]) > 0) 4 else 5
-  required <- if (label == "III") 3 else if (label == "IV") 4 else 5
-  return(actual < required)
+# The generalized word length pattern A3, A4 and A5 of the treatment effects only, without blocks, centre points and replications.
+# The smaller the A3, then A4, then A5, the less the main effects and the 2-factor interactions are aliased.
+.doeFactorialTreatmentWordlengths <- function(design) {
+  dfDesign <- as.data.frame(design)
+  x <- dfDesign[setdiff(colnames(dfDesign), "Blocks")]
+  x[] <- lapply(x, function(column) as.numeric(as.character(column)))
+  x <- unique(x[rowSums(x == 0) == 0, , drop = FALSE])
+  x[] <- lapply(x, factor)
+  wordlengths <- DoE.base::GWLP(x, kmax = min(5, ncol(x)))
+  return(c(wordlengths, rep(0, 6 - length(wordlengths)))[4:6]) # the first is A0
+}
+
+.doeFactorialMoreAliased <- function(wordlengths, reference) {
+  difference <- round(wordlengths - reference, 6)
+  difference <- difference[difference != 0]
+  return(length(difference) > 0 && difference[1] > 0)
 }
 
 # The effects that are confounded with the blocks: all effects whose contrast is constant within every block, but not
-# within the whole design. Returns one string per group of aliased effects, the lowest-order effects of the group
-# joined by "=", ordered by their order, e.g. "ABCDE" or c("ABCD", "ABEF", "CDEF").
-.doeFactorialBlockConfounding <- function(design) {
+# within the whole design. Effects are tried by increasing order (until the contrasts of all blocks are found, or the number of
+# effects tried reaches maxEffects), as only the lowest-order effects of an aliased group are shown. Returns one string per
+# group of aliased effects, the lowest-order effects of the group joined by "=", ordered by their order, e.g. "ABCDE" or
+# c("ABCD", "ABEF", "CDEF").
+.doeFactorialBlockConfounding <- function(design, maxEffects = 2e5) {
   dfDesign <- as.data.frame(design)
   factors <- setdiff(colnames(dfDesign), "Blocks")
   x <- vapply(dfDesign[factors], function(column) as.numeric(as.character(column)), numeric(nrow(dfDesign)))
@@ -385,29 +400,43 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   keep <- rowSums(x == 0) == 0 & !duplicated(data.frame(block, x)) # no centre points
   x <- x[keep, , drop = FALSE]
   block <- block[keep]
+  blockSizes <- as.vector(table(block))
+  nContrasts <- length(blockSizes) - 1 # contrasts between the blocks
+  nFactors <- length(factors)
 
-  nEffects <- 2^length(factors) - 1
-  effects <- matrix(1, nrow(x), nEffects) # column i is the effect whose factors are the set bits of i
-  for (i in seq_len(nEffects)) {
-    lowestBit <- bitwAnd(i, -i)
-    effects[, i] <- x[, log2(lowestBit) + 1] * (if (i == lowestBit) 1 else effects[, i - lowestBit])
+  groups <- list() # effects with the same contrast (up to the sign) of the lowest order
+  groupOrders <- numeric(0)
+  tried <- 0
+  for (order in seq_len(nFactors)) {
+    tried <- tried + choose(nFactors, order)
+    if (tried > maxEffects || length(groups) == nContrasts) {
+      break
+    }
+    combinations <- utils::combn(nFactors, order)
+    for (first in seq(1, ncol(combinations), by = 5000)) {
+      chunk <- combinations[, first:min(first + 4999, ncol(combinations)), drop = FALSE]
+      effects <- x[, chunk[1, ], drop = FALSE]
+      for (i in seq_len(order)[-1]) {
+        effects <- effects * x[, chunk[i, ], drop = FALSE]
+      }
+      constantWithinBlocks <- colSums(abs(rowsum(effects, block)) == blockSizes) == length(blockSizes)
+      for (i in which(constantWithinBlocks & abs(colSums(effects)) < nrow(x))) {
+        key <- paste(effects[, i] * effects[1, i], collapse = "")
+        if (is.null(groups[[key]])) {
+          groupOrders[key] <- order
+          groups[[key]] <- character(0)
+        }
+        if (groupOrders[[key]] == order) {
+          groups[[key]] <- c(groups[[key]], paste(factors[chunk[, i]], collapse = ""))
+        }
+      }
+    }
   }
-  blockSizes <- table(block)
-  sumPerBlock <- rowsum(effects, block)
-  constantWithinBlocks <- colSums(abs(sumPerBlock) == as.vector(blockSizes[rownames(sumPerBlock)])) == nrow(sumPerBlock)
-  confounded <- which(constantWithinBlocks & abs(colSums(effects)) < nrow(x))
-  if (length(confounded) == 0) {
+  if (length(groups) == 0) {
     return(character(0))
   }
-
-  effectNames <- vapply(confounded, function(i) paste(factors[bitwAnd(i, 2^(seq_along(factors) - 1)) > 0], collapse = ""), character(1))
-  # effects that are aliased have the same contrast, up to the sign
-  contrasts <- vapply(confounded, function(i) paste(effects[, i] * effects[1, i], collapse = ""), character(1))
-  groups <- lapply(split(effectNames, contrasts), function(group) {
-    group <- group[order(nchar(group), group)]
-    group[nchar(group) == nchar(group[1])]
-  })
-  groups <- groups[order(vapply(groups, function(group) nchar(group[1]), numeric(1)), vapply(groups, `[`, character(1), 1))]
+  groups <- lapply(groups, sort)
+  groups <- groups[order(groupOrders[names(groups)], vapply(groups, `[`, character(1), 1))]
   return(unname(vapply(groups, paste, character(1), collapse = "=")))
 }
 
