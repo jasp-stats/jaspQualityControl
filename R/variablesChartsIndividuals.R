@@ -84,7 +84,7 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
                       movingRangeLength = options[["xmrChartMovingRangeLength"]]),
         qcDataError = identity
       )
-      if (inherits(individualChart, "qcDataError")) { # in report mode, the error replaces the X-mR chart on the report
+      if (inherits(individualChart, "qcDataError")) {
         jaspResults[["Ichart"]][["plot"]]$setError(conditionMessage(individualChart))
       } else {
         mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
