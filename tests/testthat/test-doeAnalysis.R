@@ -6830,7 +6830,7 @@ test_that("60.5 Changing units cannot expose a different aliased interaction-onl
   }
 })
 
-test_that("Type III sums of squares fall back to Type II for a partially aliased interaction, in coded and uncoded units", {
+test_that("60.28 Type III sums of squares fall back to Type II for a partially aliased interaction, in coded and uncoded units", {
   # only one contrast of A x F is aliased (see 58.5); the result is the Type II table, with the footnote
   for (coded in c(FALSE, TRUE)) {
     set.seed(123)
