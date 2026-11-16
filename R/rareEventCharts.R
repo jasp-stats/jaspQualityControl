@@ -285,11 +285,11 @@ rareEventChartsInternal <- function(jaspResults, dataset, options) {
     ruleList <- list("rule1" = list("enabled" = options[["rule1"]]),
                      "rule2" = list("enabled" = options[["rule2"]], "k" = options[["rule2Value"]]),
                      "rule3" = list("enabled" = options[["rule3"]], "k" = options[["rule3Value"]]),
-                     "rule4" = NULL,
+                     "rule4" = list("enabled" = options[["rule4"]], "k" = options[["rule4Value"]]),
                      "rule5" = NULL,
                      "rule6" = NULL,
                      "rule7" = NULL,
-                     "rule8" = list("enabled" = options[["rule8"]], "k" = options[["rule8Value"]]),
+                     "rule8" = NULL,
                      "rule9" = list("enabled" = options[["rule9"]], "k" = options[["rule9Value"]])
     )
   }

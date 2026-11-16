@@ -292,22 +292,23 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     warnings[["Rule1"]] <- as.numeric((data$statistics > data$limits[, 2] | data$statistics < data$limits[, 1]) %in% TRUE)
   }
 
+  # the names R1-R8 follow the test numbers (Nelson's numbering, as in Rspc): only tests 1, 2, 3, 5, 7 and 8 are evaluated
   if (allsix) {
     if (length(xLabels) == 0) {
       Rules <- list(R1 = which(warnings[,2] == 1),
                     R2 = which(warnings[,3] == 1),
                     R3 = which(warnings[,4] == 1),
-                    R4 = which(warnings[,5] == 1),
-                    R5 = which(warnings[,6] == 1),
-                    R6 = which(warnings[,7] == 1))
+                    R5 = which(warnings[,5] == 1),
+                    R7 = which(warnings[,6] == 1),
+                    R8 = which(warnings[,7] == 1))
     }
     else {
       Rules <- list(R1 = xLabels[which(warnings[,2] == 1)],
                     R2 = xLabels[which(warnings[,3] == 1)],
                     R3 = xLabels[which(warnings[,4] == 1)],
-                    R4 = xLabels[which(warnings[,5] == 1)],
-                    R5 = xLabels[which(warnings[,6] == 1)],
-                    R6 = xLabels[which(warnings[,7] == 1)])
+                    R5 = xLabels[which(warnings[,5] == 1)],
+                    R7 = xLabels[which(warnings[,6] == 1)],
+                    R8 = xLabels[which(warnings[,7] == 1)])
     }
     red_points = apply(warnings[,-1], 1, sum) > 0
   }
@@ -459,87 +460,85 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
 
 
-  # Rule 4: k out of k+1 points > 2 std. dev. from center line (same side)
+  # Rule 4: k points in a row, alternating increase and decrease
   if (!is.null(ruleList[["rule4"]]) && ruleList[["rule4"]][["enabled"]] == TRUE) {
     k4 <- ruleList[["rule4"]][["k"]]
     r4 <- c()
-
-    aboveBolVector <- plotStatistics > twoSigmaUpper
-    belowBolVector <- plotStatistics < twoSigmaLower
-    r4above <- which(sapply(seq_along(aboveBolVector), .checkPreviousK, vec = aboveBolVector, k = k4))
-    r4below <- which(sapply(seq_along(belowBolVector), .checkPreviousK, vec = belowBolVector, k = k4))
-    r4 <- sort(c(r4, r4above, r4below))
-    redPoints <- c(redPoints, r4)
-    violationList[["test4"]] <- if (length(r4) > 0) r4 else numeric()
-  }
-
-
-
-  # Rule 5: k points in a row within 1 std. dev from center line (either side)
-  if (!is.null(ruleList[["rule5"]]) && ruleList[["rule5"]][["enabled"]] == TRUE) {
-    k5 <- ruleList[["rule5"]][["k"]]
-    r5 <- c()
-
-    withinBolVector <- plotStatistics < oneSigmaUpper & plotStatistics > oneSigmaLower
-
-    # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
-    withinSeqVector <- ave(withinBolVector, cumsum(!withinBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
-    r5 <- c(r5, which(withinSeqVector > k5))
-    redPoints <- c(redPoints, r5)
-    violationList[["test5"]] <- if (length(r5) > 0) r5 else numeric()
-  }
-
-  # Rule 6: k points in a row > 1 std. dev. from center line (either side)
-  if (!is.null(ruleList[["rule6"]]) && ruleList[["rule6"]][["enabled"]] == TRUE) {
-    k6 <- ruleList[["rule6"]][["k"]]
-    r6 <- c()
-
-    outsideBolVector <- plotStatistics > oneSigmaUpper | plotStatistics < oneSigmaLower
-    outsideSeqVector <- .countConsecutiveTrues(outsideBolVector)
-
-    r6 <- c(r6, which(outsideSeqVector >= k6))
-    redPoints <- c(redPoints, r6)
-    violationList[["test6"]] <- if (length(r6) > 0) r6 else numeric()
-  }
-
-  # Rule 7: k out of k+1 points > 1 std. dev. from center line (same side)
-  if (!is.null(ruleList[["rule7"]]) && ruleList[["rule7"]][["enabled"]] == TRUE) {
-    k7 <- ruleList[["rule7"]][["k"]]
-    r7 <- c()
-
-    aboveBolVector <-  plotStatistics > oneSigmaUpper
-    belowBolVector <- plotStatistics < oneSigmaLower
-    r7above <- which(sapply(seq_along(aboveBolVector), .checkPreviousK, vec = aboveBolVector, k = k7))
-    r7below <- which(sapply(seq_along(belowBolVector), .checkPreviousK, vec = belowBolVector, k = k7))
-    r7 <- sort(c(r7, r7above, r7below))
-
-    redPoints <- c(redPoints, r7)
-    violationList[["test7"]] <- if (length(r7) > 0) r7 else numeric()
-  }
-
-  # Rule 8: k points in a row, alternating increase and decrease
-  if (!is.null(ruleList[["rule8"]]) && ruleList[["rule8"]][["enabled"]] == TRUE) {
-    k8 <- ruleList[["rule8"]][["k"]]
-    r8 <- c()
 
     # Calculate differences between consecutive points
     differences <- diff(plotStatistics)
 
 
-    if (k8 <= length(differences)) { # only need to calculate if the number of plot statistics is shorter than the minimum seq
-      for (i in 1:(length(differences)-(k8-1))) {
-        currentSequence <- differences[i:(i+k8-1)]
+    if (k4 <= length(differences)) { # only need to calculate if the number of plot statistics is shorter than the minimum seq
+      for (i in 1:(length(differences)-(k4-1))) {
+        currentSequence <- differences[i:(i+k4-1)]
         sequenceCount <- 1
-        for (j in 1:(k8-1)) {
+        for (j in 1:(k4-1)) {
           if (!is.na(currentSequence[j]) && !is.na(currentSequence[j + 1]) && .patternAlternates(currentSequence[j], currentSequence[j + 1])) {
             sequenceCount <- sequenceCount + 1
           }
         }
-        if (sequenceCount >= k8) {
-          r8 <- c(r8, k8 + i)
+        if (sequenceCount >= k4) {
+          r4 <- c(r4, k4 + i)
         }
       }
     }
+    redPoints <- c(redPoints, r4)
+    violationList[["test4"]] <- if (length(r4) > 0) r4 else numeric()
+  }
+
+  # Rule 5: k out of k+1 points > 2 std. dev. from center line (same side)
+  if (!is.null(ruleList[["rule5"]]) && ruleList[["rule5"]][["enabled"]] == TRUE) {
+    k5 <- ruleList[["rule5"]][["k"]]
+    r5 <- c()
+
+    aboveBolVector <- plotStatistics > twoSigmaUpper
+    belowBolVector <- plotStatistics < twoSigmaLower
+    r5above <- which(sapply(seq_along(aboveBolVector), .checkPreviousK, vec = aboveBolVector, k = k5))
+    r5below <- which(sapply(seq_along(belowBolVector), .checkPreviousK, vec = belowBolVector, k = k5))
+    r5 <- sort(c(r5, r5above, r5below))
+    redPoints <- c(redPoints, r5)
+    violationList[["test5"]] <- if (length(r5) > 0) r5 else numeric()
+  }
+
+  # Rule 6: k out of k+1 points > 1 std. dev. from center line (same side)
+  if (!is.null(ruleList[["rule6"]]) && ruleList[["rule6"]][["enabled"]] == TRUE) {
+    k6 <- ruleList[["rule6"]][["k"]]
+    r6 <- c()
+
+    aboveBolVector <-  plotStatistics > oneSigmaUpper
+    belowBolVector <- plotStatistics < oneSigmaLower
+    r6above <- which(sapply(seq_along(aboveBolVector), .checkPreviousK, vec = aboveBolVector, k = k6))
+    r6below <- which(sapply(seq_along(belowBolVector), .checkPreviousK, vec = belowBolVector, k = k6))
+    r6 <- sort(c(r6, r6above, r6below))
+
+    redPoints <- c(redPoints, r6)
+    violationList[["test6"]] <- if (length(r6) > 0) r6 else numeric()
+  }
+
+  # Rule 7: k points in a row within 1 std. dev from center line (either side)
+  if (!is.null(ruleList[["rule7"]]) && ruleList[["rule7"]][["enabled"]] == TRUE) {
+    k7 <- ruleList[["rule7"]][["k"]]
+    r7 <- c()
+
+    withinBolVector <- plotStatistics < oneSigmaUpper & plotStatistics > oneSigmaLower
+
+    # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
+    withinSeqVector <- ave(withinBolVector, cumsum(!withinBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
+    r7 <- c(r7, which(withinSeqVector > k7))
+    redPoints <- c(redPoints, r7)
+    violationList[["test7"]] <- if (length(r7) > 0) r7 else numeric()
+  }
+
+  # Rule 8: k points in a row > 1 std. dev. from center line (either side)
+  if (!is.null(ruleList[["rule8"]]) && ruleList[["rule8"]][["enabled"]] == TRUE) {
+    k8 <- ruleList[["rule8"]][["k"]]
+    r8 <- c()
+
+    outsideBolVector <- plotStatistics > oneSigmaUpper | plotStatistics < oneSigmaLower
+    outsideSeqVector <- .countConsecutiveTrues(outsideBolVector)
+
+    r8 <- c(r8, which(outsideSeqVector >= k8))
     redPoints <- c(redPoints, r8)
     violationList[["test8"]] <- if (length(r8) > 0) r8 else numeric()
   }
@@ -1277,23 +1276,23 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       tableData[["test3"]] <- tableListCombined[["test3"]]
     }
     if (!is.null(tableListCombined[["test4"]]) && length(tableListCombined[["test4"]][!is.na(tableListCombined[["test4"]])]) > 0) {
-      table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation"),   type = "string")
+      table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Oscillation"),            type = "string")
       tableData[["test4"]] <- tableListCombined[["test4"]]
     }
     if (!is.null(tableListCombined[["test5"]]) && length(tableListCombined[["test5"]][!is.na(tableListCombined[["test5"]])]) > 0) {
-      table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation"),     type = "string")
+      table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Beyond 2 sigma, same side"), type = "string")
       tableData[["test5"]] <- tableListCombined[["test5"]]
     }
     if (!is.null(tableListCombined[["test6"]]) && length(tableListCombined[["test6"]][!is.na(tableListCombined[["test6"]])]) > 0) {
-      table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution"),   type = "string")
+      table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Beyond 1 sigma, same side"), type = "string")
       tableData[["test6"]] <- tableListCombined[["test6"]]
     }
     if (!is.null(tableListCombined[["test7"]]) && length(tableListCombined[["test7"]][!is.na(tableListCombined[["test7"]])]) > 0) {
-      table$addColumnInfo(name = "test7",              title = gettextf("Test 7: Slightly increasing variation"),   type = "string")
+      table$addColumnInfo(name = "test7",              title = gettextf("Test 7: Reducing variation"),     type = "string")
       tableData[["test7"]] <- tableListCombined[["test7"]]
     }
     if (!is.null(tableListCombined[["test8"]]) && length(tableListCombined[["test8"]][!is.na(tableListCombined[["test8"]])]) > 0) {
-      table$addColumnInfo(name = "test8",              title = gettextf("Test 8: Oscillation"),   type = "string")
+      table$addColumnInfo(name = "test8",              title = gettextf("Test 8: Bimodal distribution"),   type = "string")
       tableData[["test8"]] <- tableListCombined[["test8"]]
     }
     if (!is.null(tableListCombined[["test9"]]) && length(tableListCombined[["test9"]][!is.na(tableListCombined[["test9"]])]) > 0) {
@@ -1958,11 +1957,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     ruleList <- list("rule1" = list("enabled" = TRUE),
                      "rule2" = list("enabled" = TRUE, "k" = 9),
                      "rule3" = list("enabled" = TRUE, "k" = 6),
-                     "rule4" = list("enabled" = TRUE, "k" = 2),
-                     "rule5" = list("enabled" = TRUE, "k" = 15),
-                     "rule6" = list("enabled" = TRUE, "k" = 8),
-                     "rule7" = list("enabled" = TRUE, "k" = 4),
-                     "rule8" = list("enabled" = TRUE, "k" = 14),
+                     "rule4" = list("enabled" = TRUE, "k" = 14),
+                     "rule5" = list("enabled" = TRUE, "k" = 2),
+                     "rule6" = list("enabled" = TRUE, "k" = 4),
+                     "rule7" = list("enabled" = TRUE, "k" = 15),
+                     "rule8" = list("enabled" = TRUE, "k" = 8),
                      "rule9" = NULL
     )
 
@@ -1970,10 +1969,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     ruleList <- list("rule1" = list("enabled" = TRUE),
                      "rule2" = list("enabled" = TRUE, "k" = 8),
                      "rule3" = NULL,
-                     "rule4" = list("enabled" = TRUE, "k" = 2),
-                     "rule5" = NULL,
-                     "rule6" = NULL,
-                     "rule7" = list("enabled" = TRUE, "k" = 4),
+                     "rule4" = NULL,
+                     "rule5" = list("enabled" = TRUE, "k" = 2),
+                     "rule6" = list("enabled" = TRUE, "k" = 4),
+                     "rule7" = NULL,
                      "rule8" = NULL,
                      "rule9" = NULL
     )
@@ -1990,11 +1989,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     )
   }
 
-  if (type != "xBar") { # never apply rules other than 1,2,3 or 8 to s or R chart
-    ruleList[["rule4"]] <- NULL
+  if (type != "xBar") { # never apply rules other than 1,2,3 or 4 to s or R chart
     ruleList[["rule5"]] <- NULL
     ruleList[["rule6"]] <- NULL
     ruleList[["rule7"]] <- NULL
+    ruleList[["rule8"]] <- NULL
     ruleList[["rule9"]] <- NULL
   }
   return(ruleList)
@@ -2006,22 +2005,22 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     ruleList <- list("rule1" = list("enabled" = TRUE),
                      "rule2" = list("enabled" = TRUE, "k" = 7),
                      "rule3" = list("enabled" = TRUE, "k" = 7),
-                     "rule4" = list("enabled" = TRUE, "k" = 2),
-                     "rule5" = list("enabled" = TRUE, "k" = 15),
-                     "rule6" = list("enabled" = TRUE, "k" = 8),
-                     "rule7" = NULL,
-                     "rule8" = NULL,
+                     "rule4" = NULL,
+                     "rule5" = list("enabled" = TRUE, "k" = 2),
+                     "rule6" = NULL,
+                     "rule7" = list("enabled" = TRUE, "k" = 15),
+                     "rule8" = list("enabled" = TRUE, "k" = 8),
                      "rule9" = NULL
     )
   } else if (ruleSet == "nelsonLaws") {
     ruleList <- list("rule1" = list("enabled" = TRUE),
                      "rule2" = list("enabled" = TRUE, "k" = 9),
                      "rule3" = list("enabled" = TRUE, "k" = 6),
-                     "rule4" = list("enabled" = TRUE, "k" = 2),
-                     "rule5" = list("enabled" = TRUE, "k" = 15),
-                     "rule6" = list("enabled" = TRUE, "k" = 8),
-                     "rule7" = list("enabled" = TRUE, "k" = 4),
-                     "rule8" = list("enabled" = TRUE, "k" = 14),
+                     "rule4" = list("enabled" = TRUE, "k" = 14),
+                     "rule5" = list("enabled" = TRUE, "k" = 2),
+                     "rule6" = list("enabled" = TRUE, "k" = 4),
+                     "rule7" = list("enabled" = TRUE, "k" = 15),
+                     "rule8" = list("enabled" = TRUE, "k" = 8),
                      "rule9" = NULL
     )
 
@@ -2029,10 +2028,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     ruleList <- list("rule1" = list("enabled" = TRUE),
                      "rule2" = list("enabled" = TRUE, "k" = 8),
                      "rule3" = NULL,
-                     "rule4" = list("enabled" = TRUE, "k" = 2),
-                     "rule5" = NULL,
-                     "rule6" = NULL,
-                     "rule7" = list("enabled" = TRUE, "k" = 4),
+                     "rule4" = NULL,
+                     "rule5" = list("enabled" = TRUE, "k" = 2),
+                     "rule6" = list("enabled" = TRUE, "k" = 4),
+                     "rule7" = NULL,
                      "rule8" = NULL,
                      "rule9" = NULL
     )
@@ -2049,11 +2048,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     )
   }
 
-  if (type == "MR") { # never apply rules other than 1,2,3 or 8 to MR chart
-    ruleList[["rule4"]] <- NULL
+  if (type == "MR") { # never apply rules other than 1,2,3 or 4 to MR chart
     ruleList[["rule5"]] <- NULL
     ruleList[["rule6"]] <- NULL
     ruleList[["rule7"]] <- NULL
+    ruleList[["rule8"]] <- NULL
     ruleList[["rule9"]] <- NULL
   }
   return(ruleList)

@@ -1266,15 +1266,15 @@ options$rule2Value <- 7
 options$rule3 <- TRUE
 options$rule3Value <- 7
 options$rule4 <- TRUE
-options$rule4Value <- 2
+options$rule4Value <- 14
 options$rule5 <- TRUE
-options$rule5Value <- 15
+options$rule5Value <- 2
 options$rule6 <- TRUE
-options$rule6Value <- 8
+options$rule6Value <- 4
 options$rule7 <- TRUE
-options$rule7Value <- 4
+options$rule7Value <- 15
 options$rule8 <- TRUE
-options$rule8Value <- 14
+options$rule8Value <- 8
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/controlChartRules/violatingAllSubgroupRules.csv",
                        options)
@@ -1365,15 +1365,15 @@ options$rule2Value <- 9
 options$rule3 <- TRUE
 options$rule3Value <- 6
 options$rule4 <- TRUE
-options$rule4Value <- 2
+options$rule4Value <- 14
 options$rule5 <- TRUE
-options$rule5Value <- 15
+options$rule5Value <- 2
 options$rule6 <- TRUE
-options$rule6Value <- 8
+options$rule6Value <- 4
 options$rule7 <- TRUE
-options$rule7Value <- 4
+options$rule7Value <- 15
 options$rule8 <- TRUE
-options$rule8Value <- 14
+options$rule8Value <- 8
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/controlChartRules/controlChartRulesRealDataExample1.csv",
                        options)
