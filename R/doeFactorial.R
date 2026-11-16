@@ -339,6 +339,85 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   return(design)
 }
 
+# Blocks are confounded with the highest-order interactions (the default of FrF2 and of Minitab). Only when FrF2 cannot do that
+# (a 2-factor interaction is unavoidable, e.g. 2^4 in 4 blocks) or when the design would have a lower resolution than the one
+# shown in the design table, the blocks may be confounded with 2-factor interactions.
+.doeFactorialDefaultFrF2 <- function(designSpec, seed) {
+  generateDesign <- function(aliasBlock2fis) {
+    FrF2::FrF2(
+      nfactors = designSpec[["factors"]],
+      nruns = designSpec[["runs"]],
+      ncenter = designSpec[["centerpoints"]],
+      replications = designSpec[["replications"]],
+      blocks = designSpec[["blocks"]],
+      alias.block.2fis = aliasBlock2fis,
+      seed = seed
+    )
+  }
+  # FrF2 needs 20-35 seconds to find out that, for 8 or more factors in 64 runs and 8 blocks, a 2-factor interaction is unavoidable
+  noSearch <- designSpec[["blocks"]] == 8 && designSpec[["runs"]] == 64 && designSpec[["factors"]] >= 8
+  if (designSpec[["blocks"]] > 1 && !noSearch) {
+    design <- try(generateDesign(FALSE), silent = TRUE)
+    if (!isTryError(design) && !.doeFactorialResolutionBelow(DoE.base::design.info(design)[["aliased"]], designSpec[["resolution"]])) {
+      return(design)
+    }
+  }
+  return(generateDesign(TRUE))
+}
+
+# "aliased" of design.info() lists the main effects aliased with 2-factor interactions (resolution III) and the 2-factor
+# interactions aliased with each other (resolution IV); the label is "III", "IV" or higher ("V", "VI", ..., "Full")
+.doeFactorialResolutionBelow <- function(aliases, label) {
+  actual <- if (length(aliases[["main"]]) > 0) 3 else if (length(aliases[["fi2"]]) > 0) 4 else 5
+  required <- if (label == "III") 3 else if (label == "IV") 4 else 5
+  return(actual < required)
+}
+
+# The effects that are confounded with the blocks: all effects whose contrast is constant within every block, but not
+# within the whole design. Returns one string per group of aliased effects, the lowest-order effects of the group
+# joined by "=", ordered by their order, e.g. "ABCDE" or c("ABCD", "ABEF", "CDEF").
+.doeFactorialBlockConfounding <- function(design) {
+  dfDesign <- as.data.frame(design)
+  factors <- setdiff(colnames(dfDesign), "Blocks")
+  x <- vapply(dfDesign[factors], function(column) as.numeric(as.character(column)), numeric(nrow(dfDesign)))
+  # blocks are labelled "<block>.<replication>" with replications and every replicate has the same blocks
+  block <- sub("\\..*$", "", as.character(dfDesign[["Blocks"]]))
+  keep <- rowSums(x == 0) == 0 & !duplicated(data.frame(block, x)) # no centre points
+  x <- x[keep, , drop = FALSE]
+  block <- block[keep]
+
+  nEffects <- 2^length(factors) - 1
+  effects <- matrix(1, nrow(x), nEffects) # column i is the effect whose factors are the set bits of i
+  for (i in seq_len(nEffects)) {
+    lowestBit <- bitwAnd(i, -i)
+    effects[, i] <- x[, log2(lowestBit) + 1] * (if (i == lowestBit) 1 else effects[, i - lowestBit])
+  }
+  blockSizes <- table(block)
+  sumPerBlock <- rowsum(effects, block)
+  constantWithinBlocks <- colSums(abs(sumPerBlock) == as.vector(blockSizes[rownames(sumPerBlock)])) == nrow(sumPerBlock)
+  confounded <- which(constantWithinBlocks & abs(colSums(effects)) < nrow(x))
+  if (length(confounded) == 0) {
+    return(character(0))
+  }
+
+  effectNames <- vapply(confounded, function(i) paste(factors[bitwAnd(i, 2^(seq_along(factors) - 1)) > 0], collapse = ""), character(1))
+  # effects that are aliased have the same contrast, up to the sign
+  contrasts <- vapply(confounded, function(i) paste(effects[, i] * effects[1, i], collapse = ""), character(1))
+  groups <- lapply(split(effectNames, contrasts), function(group) {
+    group <- group[order(nchar(group), group)]
+    group[nchar(group) == nchar(group[1])]
+  })
+  groups <- groups[order(vapply(groups, function(group) nchar(group[1]), numeric(1)), vapply(groups, `[`, character(1), 1))]
+  return(unname(vapply(groups, paste, character(1), collapse = "=")))
+}
+
+.doeFactorialBlockAliasRow <- function(blockEffects) {
+  if (length(blockEffects) == 0) {
+    return(character(0))
+  }
+  return(gettextf("Blocks = %s", paste(blockEffects, collapse = ", ")))
+}
+
 .doeFactorialGenerateDesign <- function(jaspResults, options) {
   seed <- .doeGetSeed(options)
   twoLevelDesign <- options[["factorialType"]] != "generalFullFactorial"
@@ -352,15 +431,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   }
   if (twoLevelDesign) {
     if (options[["factorialType"]] == "factorialTypeDefault") {
-      design <- FrF2::FrF2(
-        nfactors = designSpec[["factors"]],
-        nruns = designSpec[["runs"]],
-        ncenter = designSpec[["centerpoints"]],
-        replications = designSpec[["replications"]],
-        blocks = designSpec[["blocks"]],
-        alias.block.2fis = TRUE,
-        seed = seed
-      )
+      design <- .doeFactorialDefaultFrF2(designSpec, seed)
     } else if (options[["factorialType"]] == "factorialTypeSpecify") {
       entries <- unlist(strsplit(options[["factorialTypeSpecifyGenerators"]], "[,; \t\n\r]+"))
       entries <- trimws(entries)
@@ -473,10 +544,19 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   result[["design"]] <- design
   if (twoLevelDesign) {
     aliases <- FrF2::aliasprint(design)
+    aliasRows <- c(aliases[["main"]], aliases[["fi2"]])
+    blockEffects <- character(0)
+    if (options[["factorialType"]] == "factorialTypeDefault" && designSpec[["blocks"]] > 1) {
+      blockEffects <- .doeFactorialBlockConfounding(design)
+    }
     result[["aliases"]] <- list()
-    result[["aliases"]]$data <- data.frame(Aliases = c(aliases[["main"]], aliases[["fi2"]]))
-    if (nrow(result[["aliases"]]$data) == 0) {
-      result[["aliases"]]$note <- gettext("No aliasing among main effects and 2-factor interactions.")
+    result[["aliases"]]$data <- data.frame(Aliases = c(.doeFactorialBlockAliasRow(blockEffects), aliasRows))
+    if (length(aliasRows) == 0) {
+      result[["aliases"]]$note <- if (any(nchar(sub("=.*$", "", blockEffects)) <= 2)) { # block effects of order 1 or 2
+        gettext("No aliasing among main effects and 2-factor interactions, except the confounding with blocks.")
+      } else {
+        gettext("No aliasing among main effects and 2-factor interactions.")
+      }
     }
   }
   runOrder <- 1:nrow(design)

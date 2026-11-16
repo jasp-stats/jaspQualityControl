@@ -1167,3 +1167,133 @@ test_that("18.7 Replicated blocked design in run order: Block and Replication ma
   summary <- replicatedDesignSummary(results)
   expect_equal(c(summary[["baseBlocks"]], summary[["totalBlocks"]], summary[["totalRuns"]]), c(2, 4, 24))
 })
+
+## Blocks and aliasing ####
+# Blocks are confounded with the highest-order interactions, only when a 2-factor interaction is unavoidable (or the resolution
+# of the selected design would drop) they are confounded with 2-factor interactions (INTERNAL-jasp#3432)
+
+blockedDesignOptions <- function(nFactors, row, blocks, replications = 1, centerpoints = 0) {
+  options <- analysisOptions("doeFactorial")
+  options$actualExporter <- FALSE
+  options$numberOfCategorical <- nFactors
+  rowNames <- paste("Row", seq_len(nFactors) - 1)
+  options$categoricalVariables <- list(
+    list(levels = rowNames, name = "data 1", values = LETTERS[seq_len(nFactors)]),
+    list(levels = rowNames, name = "data 2", values = rep("a", nFactors)),
+    list(levels = rowNames, name = "data 3", values = rep("b", nFactors)))
+  options$codedOutput <- TRUE
+  options$displayDesign <- TRUE
+  options$showAliasStructure <- TRUE
+  options$exportDesignFile <- ""
+  options$factorialType <- "factorialTypeDefault"
+  options$runOrder <- "runOrderStandard"
+  options$selectedRow <- row # row in the design table of the number of factors
+  options$blocks <- blocks
+  options$replications <- replications
+  options$centerpoints <- centerpoints
+  options$setSeed <- TRUE
+  return(options)
+}
+
+blockedDesignResults <- function(...) {
+  set.seed(1)
+  return(runAnalysis("doeFactorial", "debug.csv", blockedDesignOptions(...), view = FALSE))
+}
+
+# all effects (e.g. "ABC") whose contrast is constant within each block of the design table, but not in the whole design
+confoundedWithBlocks <- function(results) {
+  design <- replicatedDesignTable(results)
+  factors <- setdiff(design$columns, c("ro", "sro", "Block", "Replication"))
+  data <- design$data[rowSums(design$data[factors] == 0) == 0, ] # without the centre points
+  effects <- unlist(lapply(seq_along(factors), function(k) combn(factors, k, paste, collapse = "", simplify = FALSE)))
+  isConfounded <- vapply(effects, function(effect) {
+    contrast <- apply(data[strsplit(effect, "")[[1]]], 1, prod)
+    all(tapply(contrast, data[["Block"]], function(values) length(unique(values)) == 1)) && length(unique(contrast)) > 1
+  }, logical(1))
+  return(effects[isConfounded])
+}
+
+aliasStructureRows <- function(results) {
+  vapply(results[["results"]][["showAliasStructure"]][["data"]], function(row) row[["Aliases"]], character(1))
+}
+
+aliasStructureFootnotes <- function(results) {
+  vapply(results[["results"]][["showAliasStructure"]][["footnotes"]], function(footnote) footnote[["text"]], character(1))
+}
+
+noAliasingNote <- "No aliasing among main effects and 2-factor interactions."
+noAliasingExceptBlocksNote <- "No aliasing among main effects and 2-factor interactions, except the confounding with blocks."
+
+test_that("19.1 Two blocks are confounded with the highest-order interaction", {
+  for (case in list(list(4, 1, "ABCD"), list(5, 2, "ABCDE"), list(6, 3, "ABCDEF"))) {
+    results <- blockedDesignResults(nFactors = case[[1]], row = case[[2]], blocks = "2")
+    expect_equal(confoundedWithBlocks(results), case[[3]])
+    expect_equal(aliasStructureRows(results), paste("Blocks =", case[[3]]))
+    expect_equal(aliasStructureFootnotes(results), noAliasingNote)
+  }
+})
+
+test_that("19.2 Two blocks of 8 runs with 3 factors are still confounded with ABC", {
+  results <- blockedDesignResults(nFactors = 3, row = 1, blocks = "2")
+  expect_equal(confoundedWithBlocks(results), "ABC")
+  expect_equal(aliasStructureRows(results), "Blocks = ABC")
+  expect_equal(aliasStructureFootnotes(results), noAliasingNote)
+})
+
+test_that("19.3 Four and eight blocks are confounded with interactions of order 3 and 4 when possible", {
+  results <- blockedDesignResults(nFactors = 6, row = 3, blocks = "4")
+  expect_setequal(confoundedWithBlocks(results), c("ABCD", "ABEF", "CDEF"))
+  expect_equal(aliasStructureRows(results), "Blocks = ABCD, ABEF, CDEF")
+  expect_equal(aliasStructureFootnotes(results), noAliasingNote)
+
+  results <- blockedDesignResults(nFactors = 7, row = 4, blocks = "8")
+  confounded <- confoundedWithBlocks(results)
+  expect_equal(length(confounded), 7)
+  expect_true(all(nchar(confounded) == 4))
+  expect_equal(aliasStructureRows(results), paste("Blocks =", paste(confounded, collapse = ", ")))
+})
+
+test_that("19.4 When a 2-factor interaction is unavoidable the blocks are confounded with it and the Alias Structure says so", {
+  results <- blockedDesignResults(nFactors = 4, row = 1, blocks = "4")
+  expect_setequal(confoundedWithBlocks(results), c("AD", "ABC", "BCD"))
+  expect_equal(aliasStructureRows(results), "Blocks = AD, ABC, BCD")
+  expect_equal(aliasStructureFootnotes(results), noAliasingExceptBlocksNote)
+
+  results <- blockedDesignResults(nFactors = 5, row = 2, blocks = "8")
+  confounded <- confoundedWithBlocks(results)
+  expect_setequal(confounded, c("AD", "BE", "ABC", "ACE", "BCD", "CDE", "ABDE"))
+  expect_equal(aliasStructureRows(results), paste("Blocks =", paste(confounded, collapse = ", ")))
+  expect_equal(aliasStructureFootnotes(results), noAliasingExceptBlocksNote)
+})
+
+test_that("19.5 Fractional designs keep the resolution of the design table when blocks are added", {
+  # 5 factors in 16 runs (V): a blocked design without 2-factor interactions confounded with blocks would have resolution IV
+  results <- blockedDesignResults(nFactors = 5, row = 1, blocks = "2")
+  expect_true("DE" %in% confoundedWithBlocks(results))
+  expect_equal(aliasStructureRows(results), "Blocks = DE")
+  expect_equal(aliasStructureFootnotes(results), noAliasingExceptBlocksNote)
+
+  # 6 factors in 32 runs (VI) in 4 blocks: no 2-factor interactions aliased with each other
+  results <- blockedDesignResults(nFactors = 6, row = 2, blocks = "4")
+  expect_equal(length(aliasStructureRows(results)), 1)
+  expect_match(aliasStructureRows(results), "^Blocks = AF, ")
+  expect_equal(aliasStructureFootnotes(results), noAliasingExceptBlocksNote)
+
+  # 6 factors in 16 runs (IV) in 2 blocks: blocks confounded with 3-factor interactions only
+  results <- blockedDesignResults(nFactors = 6, row = 1, blocks = "2")
+  expect_true(all(nchar(confoundedWithBlocks(results)) >= 3))
+  expect_match(aliasStructureRows(results)[1], "^Blocks = ACD=AEF=BCF=BDE$")
+  expect_equal(length(aliasStructureFootnotes(results)), 0) # 2-factor interactions are aliased with each other
+})
+
+test_that("19.6 Blocks with replications and centre points are confounded in every replicate", {
+  results <- blockedDesignResults(nFactors = 4, row = 1, blocks = "2", replications = 2, centerpoints = 2)
+  expect_equal(sort(unique(replicatedDesignTable(results)$data[["Block"]])), 1:4)
+  expect_equal(confoundedWithBlocks(results), "ABCD")
+  expect_equal(aliasStructureRows(results), "Blocks = ABCD")
+
+  results <- blockedDesignResults(nFactors = 4, row = 1, blocks = "4", replications = 2)
+  expect_equal(sort(unique(replicatedDesignTable(results)$data[["Block"]])), 1:8)
+  expect_setequal(confoundedWithBlocks(results), c("AD", "ABC", "BCD"))
+  expect_equal(aliasStructureRows(results), "Blocks = AD, ABC, BCD")
+})
