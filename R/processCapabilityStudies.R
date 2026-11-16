@@ -3353,6 +3353,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 # A2 * (1 + 0.2 / sqrt(n)), whose distribution hardly depends on n. Its upper-tail points below are the pooled quantiles
 # of a Monte Carlo study (500000 Weibull samples with maximum-likelihood fits for each of n = 10, 20, 40, 100); they agree
 # with the published 0.25 to 0.01 points to within 0.02, but give p < .05 in 5.0 instead of 5.5% of samples.
+# Recipe: x <- rweibull(n, 3, 2); fit shape and scale by maximum likelihood; A2 = -n - mean((2i - 1) * (log(u_i) + log(1 - u_(n+1-i))))
+# with u the sorted pweibull(x, shape, scale); adStar = A2 * (1 + 0.2 / sqrt(n)); points = quantile(adStar, 1 - levels) over the
+# 2e6 pooled values (the null distribution does not depend on the true shape and scale).
 # The p-value is interpolated log-linearly between the points and extrapolated along the first and last segment
 # (an exponential tail, as for the normal case), capped at 1.
 .qcAndersonDarlingPValueWeibull <- function(ad, n) {
