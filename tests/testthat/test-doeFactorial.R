@@ -996,3 +996,153 @@ test_that("17.1 Four Factor Six Level General Full Factorial Design Summary tabl
   jaspTools::expect_equal_tables(table,
                                  list(240, 4, 0, 1, "Value", 1, 240))
 })
+
+## Replications ####
+# Block holds the blocks of one replicate, the replicates are in their own column (jasp-issues #2976)
+
+replicatedDesignOptions <- function(blocks = "1", replications = 3, centerpoints = 0) {
+  options <- analysisOptions("doeFactorial")
+  options$actualExporter <- FALSE
+  options$numberOfCategorical <- 3
+  options$categoricalVariables <- list(
+    list(levels = c("Row 0", "Row 1", "Row 2"), name = "data 1", values = c("A", "B", "C")),
+    list(levels = c("Row 0", "Row 1", "Row 2"), name = "data 2", values = c("a", "a", "a")),
+    list(levels = c("Row 0", "Row 1", "Row 2"), name = "data 3", values = c("b", "b", "b")))
+  options$codedOutput <- TRUE
+  options$displayDesign <- TRUE
+  options$exportDesignFile <- ""
+  options$factorialType <- "factorialTypeDefault"
+  options$runOrder <- "runOrderStandard"
+  options$selectedDesign2 <- list(list(levels = c("Row 0", "Row 1"), name = "data 1", values = c(4, 8)),
+                                  list(levels = c("Row 0", "Row 1"), name = "data 2", values = c(0, 0)))
+  options$selectedRow <- 1 # full factorial, 8 runs
+  options$blocks <- blocks
+  options$replications <- replications
+  options$centerpoints <- centerpoints
+  options$setSeed <- TRUE
+  return(options)
+}
+
+replicatedDesignTable <- function(results) {
+  table <- results[["results"]][["displayDesign"]]
+  list(columns = vapply(table[["schema"]][["fields"]], function(field) field[["name"]], character(1)),
+       data = do.call(rbind, lapply(table[["data"]], as.data.frame)))
+}
+
+replicatedDesignSummary <- function(results) {
+  do.call(rbind, lapply(results[["results"]][["doeFactorialDesignSummaryTable"]][["data"]], as.data.frame))
+}
+
+options <- replicatedDesignOptions(blocks = "1", replications = 3)
+set.seed(1)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
+
+test_that("18.1 Replicated two-level design: replications in their own column, one block", {
+  design <- replicatedDesignTable(results)
+  expect_equal(tail(design$columns, 2), c("Block", "Replication"))
+  expect_equal(nrow(design$data), 24)
+  expect_true(all(design$data[["Block"]] == 1))
+  expect_equal(sort(unique(design$data[["Replication"]])), 1:3)
+  expect_true(all(table(design$data[["sro"]], design$data[["Replication"]]) == 1)) # every run once per replicate
+  summary <- replicatedDesignSummary(results)
+  expect_equal(c(summary[["replications"]], summary[["totalBlocks"]], summary[["totalRuns"]]), c(3, 1, 24))
+})
+
+options <- replicatedDesignOptions(blocks = "2", replications = 2)
+set.seed(1)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
+
+test_that("18.2 Replicated blocked two-level design: blocks 1 and 2 in every replicate", {
+  design <- replicatedDesignTable(results)
+  expect_equal(tail(design$columns, 2), c("Block", "Replication"))
+  expect_equal(nrow(design$data), 16)
+  expect_equal(sort(unique(design$data[["Block"]])), 1:2)
+  expect_equal(sort(unique(design$data[["Replication"]])), 1:2)
+  expect_true(all(table(design$data[["Block"]], design$data[["Replication"]]) == 4))
+  summary <- replicatedDesignSummary(results)
+  expect_equal(c(summary[["replications"]], summary[["baseBlocks"]], summary[["totalBlocks"]], summary[["totalRuns"]]), c(2, 2, 2, 16))
+})
+
+options <- replicatedDesignOptions(blocks = "1", replications = 2, centerpoints = 2)
+set.seed(1)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
+
+test_that("18.3 Replicated design with centre points: centre points are in block 1 and in a replicate", {
+  design <- replicatedDesignTable(results)
+  expect_equal(nrow(design$data), 20)
+  expect_false(anyNA(design$data[["Block"]]))
+  expect_false(anyNA(design$data[["Replication"]]))
+  expect_true(all(design$data[["Block"]] == 1))
+  expect_equal(as.vector(table(design$data[["Replication"]])), c(10, 10))
+})
+
+options <- replicatedDesignOptions(blocks = "2", replications = 1)
+set.seed(1)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
+
+test_that("18.4 Without replications there is no Replication column", {
+  design <- replicatedDesignTable(results)
+  expect_equal(tail(design$columns, 1), "Block")
+  expect_false("Replication" %in% design$columns)
+  expect_equal(sort(unique(design$data[["Block"]])), 1:2)
+})
+
+options <- analysisOptions("doeFactorial")
+options$actualExporter <- FALSE
+options$numberOfCategorical <- 3
+options$categoricalNoLevels <- 3
+options$categoricalVariables <- list(
+  list(levels = c("Row 0", "Row 1", "Row 2"), name = "data 1", values = c("A", "B", "C")),
+  list(levels = c("Row 0", "Row 1", "Row 2"), name = "data 2", values = c("a", "a", "a")),
+  list(levels = c("Row 0", "Row 1", "Row 2"), name = "data 3", values = c("b", "b", "b")),
+  list(levels = c("Row 0", "Row 1", "Row 2"), name = "data 4", values = c("c", "c", "c")))
+options$codedOutput <- TRUE
+options$displayDesign <- TRUE
+options$exportDesignFile <- ""
+options$factorialType <- "generalFullFactorial"
+options$runOrder <- "runOrderStandard"
+options$replications <- 2
+options$setSeed <- TRUE
+set.seed(1)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
+
+test_that("18.5 Replicated general full factorial design: one block, replications in their own column", {
+  design <- replicatedDesignTable(results)
+  expect_equal(tail(design$columns, 2), c("Block", "Replication"))
+  expect_equal(nrow(design$data), 54)
+  expect_true(all(design$data[["Block"]] == 1))
+  expect_equal(sort(unique(design$data[["Replication"]])), 1:2)
+  expect_true(all(table(design$data[["sro"]], design$data[["Replication"]]) == 1))
+  summary <- replicatedDesignSummary(results)
+  expect_equal(c(summary[["replications"]], summary[["totalBlocks"]], summary[["totalRuns"]]), c(2, 1, 54))
+})
+
+options <- analysisOptions("doeFactorial")
+options$actualExporter <- FALSE
+options$numberOfCategorical <- 2
+options$factorialDesignTypeSplitPlotNumberHardToChangeFactors <- 1
+options$categoricalVariables <- list(
+  list(levels = c("Row 0", "Row 1"), name = "data 1", values = c("A", "B")),
+  list(levels = c("Row 0", "Row 1"), name = "data 2", values = c("a", "a")),
+  list(levels = c("Row 0", "Row 1"), name = "data 3", values = c("b", "b")))
+options$codedOutput <- TRUE
+options$displayDesign <- TRUE
+options$exportDesignFile <- ""
+options$factorialType <- "factorialTypeSplit"
+options$runOrder <- "runOrderStandard"
+options$selectedDesign2 <- list(list(levels = "Row 0", name = "data 1", values = 4),
+                                list(levels = "Row 0", name = "data 2", values = 0))
+options$selectedRow <- 0
+options$replications <- 2
+options$setSeed <- TRUE
+set.seed(1)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
+
+test_that("18.6 Replicated split-plot design has a Replication column and no blocks", {
+  design <- replicatedDesignTable(results)
+  expect_equal(tail(design$columns, 1), "Replication")
+  expect_false("Block" %in% design$columns)
+  expect_equal(nrow(design$data), 8)
+  expect_equal(sort(unique(design$data[["Replication"]])), 1:2)
+  expect_true(all(table(design$data[["Replication"]]) == 4))
+})

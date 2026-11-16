@@ -129,7 +129,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     tb[["centerpoints"]] <- designSpec[["centerpoints"]]
     runs <- (designSpec[["runs"]] * designSpec[["replications"]]) + (designSpec[["blocks"]] * designSpec[["centerpoints"]] * designSpec[["replications"]]) + designSpec[["repetitions"]]
     tb[["totalRuns"]] <- runs
-    tb[["totalBlocks"]] <- designSpec[["replications"]] * designSpec[["blocks"]]
+    tb[["totalBlocks"]] <- designSpec[["blocks"]]
   } else {
     df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
     nLevels <- apply(df, 1, function(x) length(which(x[-1] != "")))
@@ -137,7 +137,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     runs <- baseRuns * designSpec[["replications"]] + designSpec[["repetitions"]]
     tb[["baseRuns"]] <- baseRuns
     tb[["totalRuns"]] <- runs
-    tb[["totalBlocks"]] <- designSpec[["replications"]]
+    tb[["totalBlocks"]] <- 1
   }
   if (!is.na(runs) && runs > 1e+05) {
     tb$setError(gettext("Cannote create designs with more than 100000 total runs."))
@@ -479,8 +479,10 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     }
   }
   runOrder <- 1:nrow(design)
-  standardOrder <- as.numeric(DoE.base::run.order(design)[["run.no.in.std.order"]])
+  runOrderInfo <- DoE.base::run.order(design)
+  standardOrder <- as.numeric(runOrderInfo[["run.no.in.std.order"]])
   dfDesign <- as.data.frame(design)
+  blockLabels <- as.character(dfDesign[["Blocks"]]) # before the numeric conversion below
   if (!twoLevelDesign) {
     dfDesign <- as.data.frame(apply(dfDesign, 2, as.numeric))
   }
@@ -490,10 +492,22 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   display <- cbind(ro = runOrder, sro = standardOrder, outDesign)
 
   if (!is.null(dfDesign[["Blocks"]])) {
-    display <- cbind(display, Block = as.numeric(dfDesign[["Blocks"]]))
+    # with replications the labels read "<block>.<replication>" (no block label without blocking), and the
+    # replication is shown in its own column, so the block is only the part before the dot
+    block <- if (designSpec[["replications"]] > 1) {
+      blockOfReplication <- sub("\\..*$", "", blockLabels)
+      blockOfReplication[is.na(blockOfReplication) | blockOfReplication == ""] <- "1"
+      as.numeric(blockOfReplication)
+    } else {
+      as.numeric(dfDesign[["Blocks"]])
+    }
+    display <- cbind(display, Block = block)
   }
   if (twoLevelDesign) {
     display <- .doeFactorialAddCenterPoints(options, display)
+  }
+  if (designSpec[["replications"]] > 1) { # the last part of "<standard order>.<replication>"
+    display[["Replication"]] <- as.numeric(sub("^.*\\.", "", as.character(runOrderInfo[["run.no.std.rp"]])))
   }
   display <- .doeFactorialAddRandomRepeats(options, display)
   display <- .doeFactorialSetDisplayOrder(options, display)
@@ -596,6 +610,12 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   tb$addColumnInfo(name = "sro", title = gettext("Standard Order"), type = "integer")
   for (i in 1:options[["numberOfCategorical"]]) {
     tb$addColumnInfo(name = df[["name"]][i], title = df[["name"]][i], type = "string")
+  }
+  if ("Block" %in% colnames(design[["display"]])) {
+    tb$addColumnInfo(name = "Block", title = gettext("Block"), type = "integer")
+  }
+  if ("Replication" %in% colnames(design[["display"]])) {
+    tb$addColumnInfo(name = "Replication", title = gettext("Replication"), type = "integer")
   }
   tb$dependOn(options = c("displayDesign", "codedOutput", "runOrder", .doeFactorialBaseDependencies()))
   if (options[["factorialType"]] == "factorialTypeSplit") {
