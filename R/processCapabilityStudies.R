@@ -2466,7 +2466,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                                                        distribution = options[["nonNormalDistribution"]],
                                                        fix.arg = fix.arg))
     if (jaspBase::isTryError(distParameters[[i]])) {
-      table$setError(distParameters[[i]][1])
+      table$setError(.extractErrorMessage(distParameters[[i]]))
       container[["summaryTableNonNormal"]] <- table
       return()
     }
