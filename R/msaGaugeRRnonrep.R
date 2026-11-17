@@ -404,7 +404,8 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
   gaugeRRNonRepTables[["Table2"]] <- gaugeRRNonRepTable2
   gaugeRRNonRepTables[["Table3"]] <- gaugeRRNonRepTable3
 
-  if (options[["varianceComponentsGraph"]]) {
+  # the report (plotOnly) needs the plot also when "Graph variation components" is unticked
+  if (options[["varianceComponentsGraph"]] || plotOnly) {
     plot <- createJaspPlot(title = gettext("Components of variation"), width = 850, height = 500)
     plot$dependOn(c("varianceComponentsGraph", "report"))
     if (ready){
