@@ -91,7 +91,7 @@ test_that("X-mR chart without a complete moving range shows the error on the plo
   expect_match(chart[["xmr_plot"]][["error"]][["errorMessage"]], "Cannot estimate the standard deviation from moving ranges of length 2: the data have fewer than 2 consecutive non-missing observations.", fixed = TRUE)
 })
 
-# moving ranges of length 2 (individuals chart) but not of length 3 (moving range chart)
+# moving ranges of length 2 but not of length 3: both charts use the set length, so both show the error
 options <- .pcMovingRangeOptions()
 options$dataFormat <- "longFormat"
 options$measurementLongFormat <- "First"
@@ -101,13 +101,11 @@ options$controlChartType <- "xmr"
 options$xmrChartMovingRangeLength <- 3
 results <- runAnalysis("processCapabilityStudies", data.frame(First = c(1.1, 2.3, NA, 3.2, 4.1, NA, 5.3, 2.4, NA, 4.2)), options)
 
-test_that("X-mR chart shows the individuals chart alone if only the moving range chart fails", {
+test_that("X-mR chart with a moving range length without a complete moving range shows the error on the plot", {
   chart <- results[["results"]][["xmr"]][["collection"]]
   expect_identical(results[["status"]], "complete")
-  expect_identical(chart[["xmr_plot"]][["status"]], "complete")
-  expect_true(ggplot2::is_ggplot(results[["state"]][["figures"]][[chart[["xmr_plot"]][["data"]]]][["obj"]]))
-  expect_false(is.null(chart[["xmr_tableIndividual"]]))
-  expect_match(chart[["xmr_plotNote"]][["text"]], "Moving range chart not shown. Cannot estimate the standard deviation from moving ranges of length 3: the data have fewer than 3 consecutive non-missing observations.", fixed = TRUE)
+  expect_identical(chart[["xmr_plot"]][["status"]], "error")
+  expect_match(chart[["xmr_plot"]][["error"]][["errorMessage"]], "Cannot estimate the standard deviation from moving ranges of length 3: the data have fewer than 3 consecutive non-missing observations.", fixed = TRUE)
 })
 
 # jasp-issues#4673: rows without observations carry the previous limits of the X-bar chart instead of getting infinite limits
