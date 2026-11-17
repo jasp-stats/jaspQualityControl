@@ -393,10 +393,12 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
 # within the whole design. Effects are tried by increasing order (until the contrasts of all blocks are found, or the number of
 # effects tried reaches maxEffects), as only the lowest-order effects of an aliased group are shown. Returns one string per
 # group of aliased effects, the lowest-order effects of the group joined by "=", ordered by their order, e.g. "ABCDE" or
-# c("ABCD", "ABEF", "CDEF").
+# c("ABCD", "ABEF", "CDEF"); the attribute "orders" holds the order of each group.
 .doeFactorialBlockConfounding <- function(design, maxEffects = 2e5) {
   dfDesign <- as.data.frame(design)
   factors <- setdiff(colnames(dfDesign), "Blocks")
+  # as in FrF2::aliasprint: "AB", but "F1:F2" for the factor names of designs with more than 50 factors
+  separator <- if (all(nchar(factors) == 1)) "" else ":"
   x <- vapply(dfDesign[factors], function(column) as.numeric(as.character(column)), numeric(nrow(dfDesign)))
   # blocks are labelled "<block>.<replication>" with replications and every replicate has the same blocks
   block <- sub("\\..*$", "", as.character(dfDesign[["Blocks"]]))
@@ -430,7 +432,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
           groups[[key]] <- character(0)
         }
         if (groupOrders[[key]] == order) {
-          groups[[key]] <- c(groups[[key]], paste(factors[chunk[, i]], collapse = ""))
+          groups[[key]] <- c(groups[[key]], paste(factors[chunk[, i]], collapse = separator))
         }
       }
     }
@@ -440,7 +442,9 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   }
   groups <- lapply(groups, sort)
   groups <- groups[order(groupOrders[names(groups)], vapply(groups, `[`, character(1), 1))]
-  return(unname(vapply(groups, paste, character(1), collapse = "=")))
+  result <- unname(vapply(groups, paste, character(1), collapse = "="))
+  attr(result, "orders") <- unname(groupOrders[names(groups)])
+  return(result)
 }
 
 .doeFactorialBlockAliasRow <- function(blockEffects) {
@@ -584,8 +588,9 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     result[["aliases"]] <- list()
     result[["aliases"]]$data <- data.frame(Aliases = c(.doeFactorialBlockAliasRow(blockEffects), aliasRows))
     if (length(aliasRows) == 0) {
-      result[["aliases"]]$note <- if (any(nchar(sub("=.*$", "", blockEffects)) <= 2)) { # block effects of order 1 or 2
-        gettext("No aliasing among main effects and 2-factor interactions, except the confounding with blocks.")
+      # 2-factor interactions confounded with blocks can also be aliased with each other (e.g. "Blocks = AB=CE")
+      result[["aliases"]]$note <- if (any(attr(blockEffects, "orders") <= 2)) {
+        gettext("No aliasing among main effects and 2-factor interactions, except for the 2-factor interactions confounded with blocks.")
       } else {
         gettext("No aliasing among main effects and 2-factor interactions.")
       }
