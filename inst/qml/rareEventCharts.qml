@@ -458,7 +458,7 @@ Form
 
 			CheckBox
 			{
-				name: 								"rule8"
+				name: 								"rule4"
 				label: 								""
 				checked:							testSet.currentValue == "custom"
 				visible:							testSet.currentValue == "custom"
@@ -466,8 +466,8 @@ Form
 
 				IntegerField
 				{
-					name: 								"rule8Value"
-					afterLabel:							qsTr("points in a row, alternating increase and decrease - Test 8: Oscillation")
+					name: 								"rule4Value"
+					afterLabel:							qsTr("points in a row, alternating increase and decrease - Test 4: Oscillation")
 					fieldWidth: 						25
 					defaultValue: 						14
 					min:								2

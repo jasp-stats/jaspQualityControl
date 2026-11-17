@@ -410,8 +410,8 @@ test_that("LF5.6 (Weibull) Basic tests of probability plot against Weibull distr
 test_that("LF5.7 (Weibull) Basic tests of summary of test against the Weibull distribution table with manual subgroups and stages", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.318, 4.04049730144013, 40, 0.525, 7.82187513782923, "1 (BL)",
-                                      0.792, 4.18683491505342, 60, 0.038, 7.76289753922706, 2, "-",
+                                 list(0.318, 4.04049730144013, 40, 0.567, 7.82187513782923, "1 (BL)",
+                                      0.792, 4.18683491505342, 60, 0.04, 7.76289753922706, 2, "-",
                                       0.146094153376669, 20, "-", -0.0584586031029692,
                                       "Change (2 vs. BL)"))
 })
@@ -3505,7 +3505,7 @@ test_that("WF3.6 (Weibull) Basic tests of Probability plot against Weibull distr
 test_that("WF3.7 (Weibull) Basic tests of Summary of test against the Weibull distribution table", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.6, 4.13213439552013, 100, 0.116, 7.78734253885561))
+                                 list(0.6, 4.13213439552013, 100, 0.124, 7.78734253885561))
 })
 
 test_that("WF3.8 (Weibull) Basic tests of X-bar & R control chart", {
@@ -3648,7 +3648,7 @@ test_that("WF5.6 (3-parameter-Weibull) Basic tests of Probability plot against W
 test_that("WF5.7 (3-parameter-Weibull) Basic tests of Summary of test against the Weibull distribution table", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.6, 4.13213439552013, 100, 0.116, 7.78734253885561))
+                                 list(0.6, 4.13213439552013, 100, 0.124, 7.78734253885561))
 })
 
 test_that("WF5.8 (3-parameter-Weibull) Basic tests of X-bar & R control chart", {
@@ -4446,6 +4446,33 @@ test_that("Johnson works", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
   jaspTools::expect_equal_tables(table, list(-6.103, 0.0370948315811945, 100, 0.974770462374867, -0.473,
                                              2.467))
+})
+
+# The overlaid normal curve of the capability plot: the total curve exists for every transformation, the within curve only
+# for transformations with fixed parameters (#3195)
+.capabilityPlotCurves <- function(results) {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  plot <- results[["state"]][["figures"]][[plotName]][["obj"]]$subplots[[1]]
+  lineLayers <- Filter(function(layer) inherits(layer[["geom"]], "GeomLine"), plot[["layers"]])
+  unique(unlist(lapply(lineLayers, function(layer) as.character(layer[["data"]][["curve"]]))))
+}
+
+test_that("Capability plot overlays the normal distribution for every transformation (#3195)", {
+  options$lowerSpecificationLimitValue <- 1
+  options$processCapabilityPlotDistributions <- TRUE
+  for (axisModification in c("none", "compress")) {
+    options$processCapabilityPlotXAxisModification <- axisModification
+    for (transformation in c("none", "yeoJohnson", "yeoJohnsonAuto", "johnson")) {
+      options$dataTransformation <- transformation
+      options$dataTransformationLambda <- 2
+      set.seed(1)
+      results <- runAnalysis("processCapabilityStudies",
+                             "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+      expected <- if (transformation %in% c("yeoJohnsonAuto", "johnson")) "sdoDist" else c("sdoDist", "sdwDist")
+      expect_equal(.capabilityPlotCurves(results), expected,
+                   label = paste("curves:", transformation, axisModification))
+    }
+  }
 })
 
 # Box-Cox with negative lambda: x^lambda is decreasing, so it is negated to keep LSL below USL
