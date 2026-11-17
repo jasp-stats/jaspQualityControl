@@ -724,3 +724,24 @@ test_that("LF6.1 Report is the same with and without Graph variation components"
   expect_true(any(vapply(ticked, is.data.frame, logical(1)))) # the plot data, not only the classes, are compared
   expect_identical(unticked, ticked)
 })
+
+# Plots ticked before the variables are assigned ####
+# Like the other plots, the measurements by part plot is shown empty until all variables are assigned.
+
+test_that("LF7.1 Measurements by part plot is shown empty before the variables are assigned", {
+  assigned <- list("no variables" = c(part = "", operator = "", measurement = ""),
+                   "part missing" = c(part = "", operator = "Operator", measurement = "Result"))
+  for (case in names(assigned)) {
+    opts <- analysisOptions("msaGaugeRRnonrep")
+    opts$testSet <- "jaspDefault"
+    opts$partLongFormat <- assigned[[case]][["part"]]
+    opts$operatorLongFormat <- assigned[[case]][["operator"]]
+    opts$measurementLongFormat <- assigned[[case]][["measurement"]]
+    opts$partMeasurementPlot <- TRUE
+    set.seed(1)
+    results <- runAnalysis("msaGaugeRRnonrep", "datasets/msaGaugeRRNested/msaGaugeRRNested_long.csv", opts, view = FALSE)
+    plots <- results[["results"]][["NRpartOperatorGraph"]][["collection"]]
+    expect_length(plots, 1)
+    expect_identical(plots[[1]][["data"]], "", label = paste("empty plot,", case))
+  }
+})
