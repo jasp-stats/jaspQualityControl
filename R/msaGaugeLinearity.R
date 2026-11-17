@@ -177,13 +177,25 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
   plusOrMin <- if (regressionFitSlope > 0) "+" else "-"
   regressionEquation <- gettextf("Bias = %1$.2f %2$s %3$.2f * Reference value", regressionFitConstant, plusOrMin, abs(regressionFitSlope))
 
+  # y limits: min bias to 2 x max bias. These cut off the biases, the zero line or the confidence band of the fitted line
+  # (the ggplot then refits the line to the remaining points) when e.g. all biases are on one side of zero or the max bias is
+  # (close to) zero: in that case use pretty breaks over the biases, zero and the band. The band is widest at the ends of Ref.
+  fitBand <- predict(regressionFitRaw, data.frame("Ref" = range(biasPlotDf$Ref)), interval = "confidence")
+  yNeeded <- c(0, biasPlotDf$Bias, fitBand)
+  yBreaks <- ggplot2::waiver()
+  yLimits <- c(min(biasPlotDf$Bias, na.rm = TRUE), max(biasPlotDf$Bias, na.rm = TRUE) * 2)
+  if (min(yNeeded, na.rm = TRUE) < yLimits[1] || max(yNeeded, na.rm = TRUE) > yLimits[2]) {
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(yNeeded)
+    yLimits <- range(yBreaks)
+  }
+
   plotBiasPlotObject <- ggplot2::ggplot() +
     ggplot2::geom_hline(yintercept = 0, lty = 2, color = "grey") +
     ggplot2::geom_smooth(data = biasPlotDf, mapping = ggplot2::aes(x = Ref, y = Bias), method = "lm", color = "red") +
     ggplot2::scale_x_continuous(name = gettext("Reference")) +
     ggplot2::geom_point(data = biasPlotDf, mapping = ggplot2::aes(x = Ref, y = Bias), size = 4, shape = "X") +
     ggplot2::geom_point(data = biasPlotMeanDf, mapping = ggplot2::aes(x = Ref, y = meanBias), fill = "red", shape = 21, col = "black", size = 4) +
-    ggplot2::scale_y_continuous(limits = c(min(biasPlotDf$Bias, na.rm = TRUE), max(biasPlotDf$Bias, na.rm = TRUE) * 2)) +
+    ggplot2::scale_y_continuous(breaks = yBreaks, limits = yLimits) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
