@@ -239,12 +239,12 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
     }
 
     #Measurement by part x operator plot
-    if (options[["partMeasurementPlot"]] & ready) {
+    if (options[["partMeasurementPlot"]]) {
       if (is.null(jaspResults[["NRpartOperatorGraph"]])) {
         jaspResults[["NRpartOperatorGraph"]] <- createJaspContainer(gettext("Measurement by part x operator plot"))
         jaspResults[["NRpartOperatorGraph"]]$position <- 4
       }
-      jaspResults[["NRpartOperatorGraph"]] <- .gaugeMeasurmentsByPartXOperator(dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options = options)
+      jaspResults[["NRpartOperatorGraph"]] <- .gaugeMeasurmentsByPartXOperator(dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options = options, ready = ready)
       jaspResults[["NRpartOperatorGraph"]]$dependOn(c("partMeasurementPlot", "partMeasurementPlotAllValues", "report", .msaGaugeRRnonrepDataDependencies()))
     }
 
@@ -577,8 +577,13 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
   return(dataset)
 }
 
-.gaugeMeasurmentsByPartXOperator <- function(dataset, measurements, parts, operators, options) {
+.gaugeMeasurmentsByPartXOperator <- function(dataset, measurements, parts, operators, options, ready) {
   plotContainer <- createJaspContainer(gettext("Measurements by part x operator"))
+  if (!ready) {
+    # empty placeholder until the variables are assigned, like the other plots
+    plotContainer[["plot"]] <- createJaspPlot(title = gettext("Measurements by part x operator"), width = 600, height = 300)
+    return(plotContainer)
+  }
   operatorVector <- unique(dataset[[operators]])
   for (op in operatorVector) {
     dataPerOP <- subset(dataset, dataset[operators] == op)
