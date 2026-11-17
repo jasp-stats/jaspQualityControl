@@ -79,7 +79,7 @@ The size of the subgroups is relevant for the calculation of the process varianc
 ### Control charts:
 - X-bar & R control chart: charts the process average (x-bar) and process range (R = maximum - minimum) over time.
 - X-bar & s control chart: charts the process average (x-bar) and standard deviation (s) over time.
-- X-mR contrl chart: charts the individual measurement and the moving range (mR) of two consecutive measurements over time.
+- X-mR control chart: charts the individual measurement and the moving range (mR) of consecutive measurements over time. Moving range length sets the number of measurements per moving range (2 by default); the limits of both charts use the standard deviation estimated from these moving ranges. Display specification limits adds the specification limits to the individuals chart.
 - X-bar & mR control chart: charts the process average (x-bar) and the moving range (mR) of two consecutive subgroup means over time.
 
 ### Histogram: 
