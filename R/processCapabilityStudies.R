@@ -664,13 +664,13 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   }
   if (options[["lowerSpecificationLimit"]]) {
     lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
-    table$addColumnInfo(name = "lsl", type = "integer", title = lslTitle)
+    table$addColumnInfo(name = "lsl", type = "number", title = lslTitle)
   }
   if (options[["target"]])
-    table$addColumnInfo(name = "target", type = "integer", title = gettext("Target"))
+    table$addColumnInfo(name = "target", type = "number", title = gettext("Target"))
   if (options[["upperSpecificationLimit"]]) {
     uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
-    table$addColumnInfo(name = "usl", type = "integer", title = uslTitle)
+    table$addColumnInfo(name = "usl", type = "number", title = uslTitle)
   }
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
@@ -715,9 +715,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
     processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
 
-    tableDfCurrentStage <- data.frame(lsl = round(options[["lowerSpecificationLimitValue"]], .numDecimals),
-                                      target = round(options[["targetValue"]], .numDecimals),
-                                      usl    = round(options[["upperSpecificationLimitValue"]], .numDecimals),
+    # the limits as entered: the table format shows them, also small ones (rounding here gave 0 for e.g. 0.0001)
+    tableDfCurrentStage <- data.frame(lsl    = options[["lowerSpecificationLimitValue"]],
+                                      target = options[["targetValue"]],
+                                      usl    = options[["upperSpecificationLimitValue"]],
                                       mean   = processMean,
                                       n      = length(allData),
                                       sd     = sd(allData, na.rm = TRUE),
@@ -916,18 +917,21 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 #
 # .qcFormatCapabilityAxisLabels (below): strips trailing zeros (e.g. 1.50 -> 1.5). Used
 #   on the plain uncompressed axis where every break gets a label -- trailing zeros add
-#   visual clutter without aiding readability.
+#   visual clutter without aiding readability. It shows at least the set decimals, more when
+#   the step between the breaks needs them (small units: 0.0001 used to read 0).
 #
 # .qcCapabilityAxisLabelDecimals: computes the minimum decimal places needed so that
-#   adjacent tick values remain distinguishable given their step size.
+#   adjacent tick values remain distinguishable given their step size. The cap (against tiny
+#   gaps between a limit and a break) is relative to the size of the values, so that the
+#   labels of small values keep 3 significant digits.
 #
 # .qcFormatCapabilityAxisLabelsFixed: always shows exactly `decimals` places, no stripping.
 #   Used in thin/compressed mode where only a sparse subset of breaks gets labels. Consistent
 #   precision is required so that e.g. 1.500 and 1.505 don't both render as "1.5", and so
 #   all visible labels share the same visual weight.
 .qcFormatCapabilityAxisLabels <- function(x) {
-  formatted <- formatC(round(x, .numDecimals), format = "f", digits = .numDecimals)
-  sub("([.]?0+)$", "", formatted)
+  decimals <- max(.numDecimals, .qcCapabilityAxisLabelDecimals(x))
+  formatC(round(x, decimals) + 0, format = "f", digits = decimals, drop0trailing = TRUE)
 }
 
 .qcCapabilityAxisLabelDecimals <- function(breaks) {
@@ -939,7 +943,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     return(.numDecimals)
 
   decimals <- ceiling(pmax(0, -log10(step) - 1e-8))
-  min(decimals, .numDecimals + 2)
+  largest <- max(abs(breaks))
+  significantDecimals <- if (largest > 0) 2 - floor(log10(largest)) else 0 # 3 significant digits of the largest value
+  min(decimals, max(.numDecimals, significantDecimals) + 2)
 }
 
 .qcFormatCapabilityAxisLabelsFixed <- function(x, decimals) {
@@ -2411,12 +2417,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
   if (options[["lowerSpecificationLimit"]])
-    table$addColumnInfo(name = "lsl", type = "integer", title = lslTitle)
+    table$addColumnInfo(name = "lsl", type = "number", title = lslTitle)
   if (options[["target"]])
-    table$addColumnInfo(name = "target", type = "integer", title = gettext("Target"))
+    table$addColumnInfo(name = "target", type = "number", title = gettext("Target"))
   uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
   if (options[["upperSpecificationLimit"]])
-    table$addColumnInfo(name = "usl", type = "integer", title = uslTitle)
+    table$addColumnInfo(name = "usl", type = "number", title = uslTitle)
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. dev."))
@@ -2489,9 +2495,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     tableDfCurrentStage <- data.frame("n" = n,
                                       "mean" = processMean,
                                       "sd" = sd,
-                                      "lsl" = round(lsl, .numDecimals),
-                                      "usl" = round(usl, .numDecimals),
-                                      "target" = round(target, .numDecimals),
+                                      "lsl" = lsl,
+                                      "usl" = usl,
+                                      "target" = target,
                                       "beta" = beta,
                                       "theta" = theta)
 
@@ -3637,7 +3643,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     }
     # The outer points of a large sample lie beyond the 0.1% and 99.9% ticks; widen the axis so they are not dropped
     yLimits <- range(yBreaks, y)
-    label_x <- round(label_x, .numDecimals)
+    label_x <- .controlChartLabelValue(label_x) # rounding alone gave 0 for small values
     p <- ggplot2::ggplot() +
       ggplot2::geom_line(data = lineData, ggplot2::aes(y = zp, x = percentileEstimate), na.rm = TRUE) +
       jaspGraphs::geom_point(data = data1, ggplot2::aes(x = x, y = y), na.rm = TRUE)
@@ -3719,7 +3725,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   index <- unique(index[index >= 1 & index <= length(x)])
   labels <- x[index]
   logBreaks <- log(labels)
-  nChar <- nchar(as.character(round(labels, decimals)))
+  nChar <- nchar(.controlChartLabelValue(labels, decimals)) # as the labels are written
   halfLabel <- charWidth * max(nChar[1], nChar[length(nChar)]) / 2 # as a fraction of the axis
   margin <- max(0.03, halfLabel / (1 - 2 * halfLabel))             # as a fraction of the data range
   xLimits <- range(log(x))
