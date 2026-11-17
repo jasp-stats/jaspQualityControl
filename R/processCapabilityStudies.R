@@ -123,7 +123,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   # correction for zero values for non-normal capability. Only for distributions that cannot be fitted to zeros: the exponential,
   # logistic and 3-parameter distributions are defined at 0, so their fit, capability indices and ppm use the data as entered.
-  # The Process summary mean and standard deviation always use the data as entered.
+  # The Process summary mean and standard deviation and the control charts always use the data as entered.
   datasetAsEntered <- dataset
   if (options$capabilityStudyType == "nonNormalCapabilityAnalysis" && ready &&
       !options[["nonNormalDistribution"]] %in% c("exponential", "logistic", "3ParameterLognormal", "3ParameterWeibull")) {
@@ -135,8 +135,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       jaspResults[["zeroWarning"]] <- createJaspHtml(text = gettext("All zero values have been replaced with a value equal to one-half of the smallest data point."), elementType = "p",
                                                      title = "Zero values found in non-normal capability study:",
                                                      position = 1)
-      jaspResults[["zeroWarning"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "capabilityStudyType",
-                                              "nullDistribution", "nonNormalDistribution"))
+      jaspResults[["zeroWarning"]]$dependOn(.qcCapabilityZeroWarningDependencies())
     }
   }
 
@@ -201,7 +200,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       controlCharts <- list()
       # X-bar and second chart OR ImR Chart
       if (options[["controlChartType"]] == "xmr") {
-        xmrCharts <- .qcCapabilityXmrCharts(options, dataset, measurements, stages)
+        xmrCharts <- .qcCapabilityXmrCharts(options, datasetAsEntered, measurements, stages)
         controlCharts[[1]] <- xmrCharts[["individualChart"]]$plotObject
         controlCharts[[2]] <- xmrCharts[["mrChart"]]$plotObject
       } else {
@@ -220,11 +219,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         # Create the rule list for the out-of-control signals
         ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
         ruleList2 <- .getRuleListSubgroupCharts(options, type = secondPlotType)
-        controlCharts[[1]] <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
+        controlCharts[[1]] <- .qcCapabilityControlChart(dataset = datasetAsEntered[columnsToPass], plotType = "xBar", xBarSdType = sdType,
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                             xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
                                             unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList1)$plotObject
-        controlCharts[[2]] <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
+        controlCharts[[2]] <- .qcCapabilityControlChart(dataset = datasetAsEntered[columnsToPass], plotType = secondPlotType,
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
                                             tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
                                             fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList2)$plotObject
@@ -355,11 +354,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         # Create the rule list for the out-of-control signals
         ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
         ruleList2 <- .getRuleListSubgroupCharts(options, type = secondPlotType)
-        xBarChart <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
+        xBarChart <- .qcCapabilityControlChart(dataset = datasetAsEntered[columnsToPass], plotType = "xBar", xBarSdType = sdType,
                                    nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                    xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
                                    unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList1)
-        secondPlot <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
+        secondPlot <- .qcCapabilityControlChart(dataset = datasetAsEntered[columnsToPass], plotType = secondPlotType,
                                     nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
                                     tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
                                     fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList2)
@@ -378,7 +377,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
-        xmrCharts <- .qcCapabilityXmrCharts(options, dataset, measurements, stages)
+        xmrCharts <- .qcCapabilityXmrCharts(options, datasetAsEntered, measurements, stages)
         individualChart <- xmrCharts[["individualChart"]]
         mrChart <- xmrCharts[["mrChart"]]
         .qcCapabilityControlChartPlot(jaspResults[["xmr"]], upperChart = individualChart, lowerChart = mrChart, plotNotes = plotNotes)
@@ -396,6 +395,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     # Perform capability analysis
     .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements, stages, datasetAsEntered)
   }
+}
+
+# The zero values note: whether zeros are replaced depends on the data after stage/subgroup removal and transformation
+.qcCapabilityZeroWarningDependencies <- function() {
+  return(c("capabilityStudyType", "nonNormalDistribution", .qcDataOptionNames()))
 }
 
 # The individuals and moving range chart of the X-mR control chart, used by the control chart output and the report
