@@ -618,7 +618,7 @@ test_that("LF5.1 Range/average charts by operator depend on data assignment, dat
 })
 
 test_that("LF5.2 Chart and data dependency options exist in the QML of the non-replicable analysis", {
-  qml <- paste(readLines(testthat::test_path("..", "..", "inst", "qml", "msaGaugeRRnonrep.qml")), collapse = "\n")
+  qml <- paste(readLines(system.file("qml", "msaGaugeRRnonrep.qml", package = "jaspQualityControl")), collapse = "\n")
   deps <- c(jaspQualityControl:::.msaGaugeRRnonrepChartByOperatorDependencies("rChart"),
             jaspQualityControl:::.msaGaugeRRnonrepChartByOperatorDependencies("xBarChart"))
   deps <- setdiff(deps, jaspQualityControl:::.getDependenciesControlChartRules()) # defined in common/ControlChartTests.qml
