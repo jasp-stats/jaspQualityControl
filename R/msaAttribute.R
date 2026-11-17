@@ -365,10 +365,8 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
       appraiserVector <- as.character(unique(dataset[[operators]]))
       numberInspected <- length(unique(dataset[[parts]]))
 
-      if ((length(unique(unlist(dataset[measurements]))) != 2 | length(unique(dataset[[standards]])) != 2) && !options[["kendallsTau"]] && !identical(options[["positiveReference"]], "")) {
-        table$setError(gettext("Invalid reference and/or results were inserted."))
-        return(table)
-      }
+      # Only the miss and false alarm rates need two categories (accept and reject); the agreement does not.
+      twoCategories <- length(unique(unlist(dataset[measurements]))) == 2 && length(unique(dataset[[standards]])) == 2
 
       for (measurement in measurements) {
         dataset[measurement] <- as.character(dataset[[measurement]])
@@ -422,10 +420,12 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
         if (!any(options[["positiveReference"]] == as.character(unique(unlist(dataset[measurements])))) && !identical(options[["positiveReference"]], "") && !options[["kendallsTau"]])
           tableDecisions$setError(gettext("Please inseret a vaild positive reference as used in the results variables."))
+        else if (!twoCategories && !identical(options[["positiveReference"]], "") && !options[["kendallsTau"]])
+          tableDecisions$setError(gettext("The miss rate and false alarm rate need exactly two categories in the results and the standard."))
 
-        if (!options[["kendallsTau"]] && !identical(standards, "") && !identical(options[["positiveReference"]], "") && any(options[["positiveReference"]] == dataset[measurements])) {
+        if (!options[["kendallsTau"]] && !identical(standards, "") && !identical(options[["positiveReference"]], "") && any(options[["positiveReference"]] == dataset[measurements]) && twoCategories) {
           # Miss = bad part accepted, false alarm = good part rejected, so both are relative to the accept category.
-          # The ratings have exactly two categories (checked above): the positive reference and the other one.
+          # The ratings have exactly two categories (twoCategories): the positive reference and the other one.
           positiveRef <- options[["positiveReference"]]
           otherCategory <- setdiff(unique(as.character(unlist(dataset[measurements]))), positiveRef)
           if (options[["positiveReferenceCategory"]] == "accept") {
