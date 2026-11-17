@@ -339,7 +339,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   return(design)
 }
 
-# Blocks are confounded with the highest-order interactions (the default of FrF2 and of Minitab). Only when FrF2 cannot do that
+# Blocks are confounded with higher-order interactions (the default of FrF2 and of Minitab). Only when FrF2 cannot do that
 # (a 2-factor interaction is unavoidable, e.g. 2^4 in 4 blocks) or when the treatment effects of that design are more aliased than
 # with blocks confounded with 2-factor interactions (e.g. a lower resolution), the blocks may be confounded with 2-factor interactions.
 .doeFactorialDefaultFrF2 <- function(designSpec, seed) {
