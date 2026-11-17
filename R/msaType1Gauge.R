@@ -285,20 +285,31 @@ msaType1GaugeInternal <- function(jaspResults, dataset, options, ...) {
     dataset <- cbind(dataset, Observation = Observation)
 
     plot$dependOn(c("runChart"))
-    datayBreaks <- c(dataset[["Measurement"]], options[["referenceValue"]])
+    observedMean <- mean(dataset[["Measurement"]], na.rm = TRUE)
+    observedsd   <- sd(dataset[["Measurement"]], na.rm = TRUE)
+    nSigma       <- as.numeric(options[["studyVarianceMultiplier"]])/2
+    meanLines    <- c(observedMean + nSigma*observedsd, observedMean - nSigma*observedsd)
+    # all reference lines lie within the y limits, so none of them (or their labels) is dropped
+    datayBreaks  <- c(dataset[["Measurement"]], options[["referenceValue"]], meanLines[is.finite(meanLines)])
+    labelData    <- data.frame(x      = max(Observation) * c(1.15, 1.15, 1.15, 1.05),
+                               y      = c(meanLines, options[["referenceValue"]], observedMean),
+                               l      = c(gettextf("Mean + %is", nSigma), gettextf("Mean - %is", nSigma), gettext("Ref."), gettext("Mean")),
+                               colour = c("red", "red", "darkgreen", "dodgerblue"))
     p <- ggplot2::ggplot()
     if (options[["runChartToleranceLimitLines"]]) {
       percentTolerance <- options[["percentToleranceForCg"]]/100
       percentToleranceOneSided <- percentTolerance/2
       toleranceLines <- c(options[["referenceValue"]] + percentToleranceOneSided * options[["toleranceRange"]], options[["referenceValue"]] - percentToleranceOneSided * options[["toleranceRange"]])
       datayBreaks <- c(datayBreaks, toleranceLines)
+      labelData   <- rbind(data.frame(x      = max(Observation) * 1.15,
+                                      y      = toleranceLines,
+                                      l      = c(gettextf("Ref. + %.2f * tol.", percentToleranceOneSided), gettextf("Ref. - %.2f * tol.", percentToleranceOneSided)),
+                                      colour = "darkred"),
+                           labelData)
       p <- p + ggplot2::geom_hline(yintercept = toleranceLines[1], color = "darkred", linetype = "dashed") +
-        ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.15 , y = toleranceLines[1], l = gettextf("Ref. + %.2f * tol.", percentToleranceOneSided)),
-                                  ggplot2::aes(x = x, y = y, label = l), vjust="top",hjust="inward", color = "darkred", size = 5) +
-        ggplot2::geom_hline(yintercept = toleranceLines[2], color = "darkred", linetype = "dashed") +
-        ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.15, y = toleranceLines[2], l = gettextf("Ref. - %.2f * tol.", percentToleranceOneSided)),
-                                  ggplot2::aes(x = x, y = y, label = l), vjust="bottom",hjust="inward", color = "darkred", size = 5)
+        ggplot2::geom_hline(yintercept = toleranceLines[2], color = "darkred", linetype = "dashed")
     }
+    labelData <- labelData[is.finite(labelData[["y"]]), ]
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(datayBreaks)
     if (max(Observation) <= 15){
       nxBreaks <- max(Observation)
@@ -307,24 +318,17 @@ msaType1GaugeInternal <- function(jaspResults, dataset, options, ...) {
     }
     xBreaks <- jaspGraphs::getPrettyAxisBreaks(x = Observation, n = nxBreaks)
     xBreaks[1] <- 1
-    observedMean <- mean(dataset[["Measurement"]], na.rm = TRUE)
-    observedsd <- sd(dataset[["Measurement"]], na.rm = TRUE)
-    nSigma <- as.numeric(options[["studyVarianceMultiplier"]])/2
 
+    # one label layer, so that ggrepel keeps the labels apart (e.g. Mean and Ref.) and inside the panel;
+    # point.size = NA keeps each label centred on its line
     p <- p + jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = Observation, y = Measurement, group = 1)) +
       ggplot2::geom_hline(yintercept = observedMean + nSigma*observedsd, color = "red", linetype = "dotted") +
       ggplot2::geom_hline(yintercept = observedMean - nSigma*observedsd, color = "red", linetype = "dotted") +
       ggplot2::geom_hline(yintercept = options[["referenceValue"]], color = "darkgreen") +
       ggplot2::geom_hline(yintercept = observedMean, color = "dodgerblue") +
-      ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.15, y = observedMean + nSigma*observedsd, l = gettextf("Mean + %is", nSigma)),
-                                ggplot2::aes(x = x, y = y, label = l), hjust="inward", color = "red", size = 5) +
-      ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.15, y = observedMean - nSigma*observedsd, l = gettextf("Mean - %is", nSigma)),
-                                ggplot2::aes(x = x, y = y, label = l), hjust="inward", color = "red", size = 5) +
-      ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.15, y = options[["referenceValue"]], l = gettext("Ref.")),
-                                ggplot2::aes(x = x, y = y, label = l), hjust="inward", color = "darkgreen", size = 5) +
-      ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.05, y = observedMean, l = gettext("Mean")),
-                                ggplot2::aes(x = x, y = y, label = l), hjust="inward", color = "dodgerblue", size = 5) +
-      ggplot2::scale_x_continuous(name = "Observation", breaks = xBreaks, limits = c(min(xBreaks), max(xBreaks) * 1.2)) +
+      ggrepel::geom_label_repel(data = labelData, ggplot2::aes(x = x, y = y, label = l), color = labelData[["colour"]],
+                                size = 5, point.size = NA) +
+      ggplot2::scale_x_continuous(name = gettext("Observation"), breaks = xBreaks, limits = c(min(xBreaks), max(xBreaks) * 1.2)) +
       ggplot2::scale_y_continuous(name = measurements, breaks = yBreaks, limits = range(yBreaks)) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw() +
