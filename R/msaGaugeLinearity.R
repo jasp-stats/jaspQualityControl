@@ -83,14 +83,20 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
   plotProcessVar <- createJaspPlot(title = gettext("Percentage process variation graph"), width = 500, height = 500)
 
 
+  # The slope of the bias line needs at least 2 different reference values (with one, lm() returns an aliased slope):
+  # then only the bias is reported and the regression table shows an error
+  linearityEstimable <- !ready || length(unique(dataset[[standards]])) > 1
+
   if (options[["biasTable"]])
     tablesAndGraphs[["tableGaugeBias"]] <- tableGaugeBias
 
 
   if (options[["linearityTable"]]) {
     tablesAndGraphs[["tableRegression"]] <- tableRegression
-    tablesAndGraphs[["tableEquation"]] <- tableEquation
-    tablesAndGraphs[["tableGaugeLinearity"]] <- tableGaugeLinearity
+    if (linearityEstimable) {
+      tablesAndGraphs[["tableEquation"]] <- tableEquation
+      tablesAndGraphs[["tableGaugeLinearity"]] <- tableGaugeLinearity
+    }
   }
 
   if (options[["linearityAndBiasPlot"]])
@@ -122,6 +128,8 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
     tableRegression$setError(gettextf("t-test not possible. No variance detected in Part(s) %s.", noVarParts))
     return(tableRegression)
   }
+  if (!linearityEstimable)
+    tableRegression$setError(gettext("Linearity requires at least 2 different reference values."))
 
   partsVec <- c()
   refsVec <- c()
@@ -157,8 +165,6 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
 
   biasPlotDf <- data.frame("Bias" = rawBiases, "Ref" = dataset[[standards]])
   biasPlotMeanDf <- data.frame("meanBias" = biasesVec, "Ref" = refsVec)
-  regressionFitRaw <- lm(Bias ~ Ref, biasPlotDf)
-  regressionFit <- summary(regressionFitRaw)
 
   # t-test of the average bias against the repeatability (pooled within-reference SD), as in AIAG/Minitab;
   # the regression residual SD would also contain lack of fit (e.g. curvature) of the bias line
@@ -166,21 +172,29 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
   pooledSd <- sqrt(sum((nVec - 1) * varVec) / pooledDf)
   totalBiasT <- meanBias / (pooledSd / sqrt(sum(nVec)))
   totalBiasPValue <- 2 * pt(-abs(totalBiasT), pooledDf)
-  regressionFitConstant <- regressionFit$coefficients[1]
-  regressionFitSlope <- regressionFit$coefficients[2]
-  coefficients <- c(regressionFitConstant, regressionFitSlope)
-  coefficientsSE <- regressionFit$coefficients[c(3,4)]
-  regressionFitTvalues <- regressionFit$coefficients[c(5,6)]
-  regressionFitPvalues <- regressionFit$coefficients[c(7,8)]
-  regressionFitSigma <- regressionFit$sigma
-  regressionFitRsq <- regressionFit$r.squared
-  plusOrMin <- if (regressionFitSlope > 0) "+" else "-"
-  regressionEquation <- gettextf("Bias = %1$.2f %2$s %3$.2f * Reference value", regressionFitConstant, plusOrMin, abs(regressionFitSlope))
+
+  fitBand <- NULL
+  if (linearityEstimable) {
+    regressionFitRaw <- lm(Bias ~ Ref, biasPlotDf)
+    regressionFit <- summary(regressionFitRaw)
+    # index by name: summary() drops the rows of aliased coefficients
+    coefficientsMatrix <- regressionFit$coefficients[c("(Intercept)", "Ref"), , drop = FALSE]
+    coefficients <- unname(coefficientsMatrix[, "Estimate"])
+    regressionFitConstant <- coefficients[1]
+    regressionFitSlope <- coefficients[2]
+    coefficientsSE <- unname(coefficientsMatrix[, "Std. Error"])
+    regressionFitTvalues <- unname(coefficientsMatrix[, "t value"])
+    regressionFitPvalues <- unname(coefficientsMatrix[, "Pr(>|t|)"])
+    regressionFitSigma <- regressionFit$sigma
+    regressionFitRsq <- regressionFit$r.squared
+    plusOrMin <- if (regressionFitSlope > 0) "+" else "-"
+    regressionEquation <- gettextf("Bias = %1$.2f %2$s %3$.2f * Reference value", regressionFitConstant, plusOrMin, abs(regressionFitSlope))
+    fitBand <- predict(regressionFitRaw, data.frame("Ref" = range(biasPlotDf$Ref)), interval = "confidence")
+  }
 
   # y limits: min bias to 2 x max bias. These cut off the biases, the zero line or the confidence band of the fitted line
   # (the ggplot then refits the line to the remaining points) when e.g. all biases are on one side of zero or the max bias is
   # (close to) zero: in that case use pretty breaks over the biases, zero and the band. The band is widest at the ends of Ref.
-  fitBand <- predict(regressionFitRaw, data.frame("Ref" = range(biasPlotDf$Ref)), interval = "confidence")
   yNeeded <- c(0, biasPlotDf$Bias, fitBand)
   yBreaks <- ggplot2::waiver()
   yLimits <- c(min(biasPlotDf$Bias, na.rm = TRUE), max(biasPlotDf$Bias, na.rm = TRUE) * 2)
@@ -191,7 +205,7 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
 
   plotBiasPlotObject <- ggplot2::ggplot() +
     ggplot2::geom_hline(yintercept = 0, lty = 2, color = "grey") +
-    ggplot2::geom_smooth(data = biasPlotDf, mapping = ggplot2::aes(x = Ref, y = Bias), method = "lm", color = "red") +
+    (if (linearityEstimable) ggplot2::geom_smooth(data = biasPlotDf, mapping = ggplot2::aes(x = Ref, y = Bias), method = "lm", color = "red")) +
     ggplot2::scale_x_continuous(name = gettext("Reference")) +
     ggplot2::geom_point(data = biasPlotDf, mapping = ggplot2::aes(x = Ref, y = Bias), size = 4, shape = "X") +
     ggplot2::geom_point(data = biasPlotMeanDf, mapping = ggplot2::aes(x = Ref, y = meanBias), fill = "red", shape = 21, col = "black", size = 4) +
@@ -201,23 +215,26 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
 
   plotBias$plotObject <- plotBiasPlotObject
 
-  tableRegression$setData(list(
-    "predictor" = c("Intercept", "Slope"),
-    "coefficient" = coefficients,
-    "Tvalues" = regressionFitTvalues,
-    "SEcoefficient" = coefficientsSE,
-    "pvalue" = regressionFitPvalues))
+  if (linearityEstimable) {
+    tableRegression$setData(list(
+      "predictor" = c("Intercept", "Slope"),
+      "coefficient" = coefficients,
+      "Tvalues" = regressionFitTvalues,
+      "SEcoefficient" = coefficientsSE,
+      "pvalue" = regressionFitPvalues))
 
-  regressionEquationRow <- data.frame(formula = regressionEquation)
-  tableEquation$addRows(regressionEquationRow)
+    regressionEquationRow <- data.frame(formula = regressionEquation)
+    tableEquation$addRows(regressionEquationRow)
+
+    gaugeLinearityDataList <- list("S" = regressionFitSigma,
+                                   "rsq" = regressionFitRsq)
+  }
 
   gaugeBiasDataList <- list("part" = c(biasDf[["Part"]], gettext("Total")),
                             "referenceValue" = biasDf[["Ref"]],
                             "observedMean" = biasDf[["ObservedMean"]],
                             "bias" = c(biasDf[["Bias"]], meanBias),
                             "pvalue" = c(biasDf[["pvalue"]], totalBiasPValue))
-  gaugeLinearityDataList <- list("S" = regressionFitSigma,
-                                 "rsq" = regressionFitRsq)
 
 
   if (options[["manualProcessVariation"]]) {
@@ -225,15 +242,19 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
     percentBiasTotal <- abs(meanBias) / options[["manualProcessVariationValue"]] * 100
     gaugeBiasDataList[["percentBias"]] <- c(percentBiasParts, percentBiasTotal)
 
-    linearity <- abs(regressionFitSlope) * options[["manualProcessVariationValue"]]
-    percentLin <- (linearity / options[["manualProcessVariationValue"]]) * 100
+    plotProcessVarDf <- data.frame("Source" = factor(x = "Bias", levels = c("Linearity", "Bias")),
+                                   "Percent" = percentBiasTotal)
+    if (linearityEstimable) {
+      linearity <- abs(regressionFitSlope) * options[["manualProcessVariationValue"]]
+      percentLin <- (linearity / options[["manualProcessVariationValue"]]) * 100
 
-    gaugeLinearityDataList[["linearity"]] <- linearity
-    gaugeLinearityDataList[["percentLin"]] <- percentLin
+      gaugeLinearityDataList[["linearity"]] <- linearity
+      gaugeLinearityDataList[["percentLin"]] <- percentLin
 
-    plotProcessVarDf <- data.frame("Source" = factor(x = c("Linearity", "Bias"), levels = c("Linearity", "Bias")),
-                                   "Percent" = c(percentLin, percentBiasTotal)
-    )
+      plotProcessVarDf <- data.frame("Source" = factor(x = c("Linearity", "Bias"), levels = c("Linearity", "Bias")),
+                                     "Percent" = c(percentLin, percentBiasTotal)
+      )
+    }
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, plotProcessVarDf[["Percent"]]))
     yLimits <- range(yBreaks)
 
@@ -248,7 +269,8 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
   }
 
   tableGaugeBias$setData(gaugeBiasDataList)
-  tableGaugeLinearity$setData(gaugeLinearityDataList)
+  if (linearityEstimable)
+    tableGaugeLinearity$setData(gaugeLinearityDataList)
 
   return(tablesAndGraphs)
 }
