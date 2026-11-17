@@ -1222,7 +1222,7 @@ aliasStructureFootnotes <- function(results) {
 }
 
 noAliasingNote <- "No aliasing among main effects and 2-factor interactions."
-noAliasingExceptBlocksNote <- "No aliasing among main effects and 2-factor interactions, except the confounding with blocks."
+noAliasingExceptBlocksNote <- "No aliasing among main effects and 2-factor interactions, except for the 2-factor interactions confounded with blocks."
 
 test_that("19.1 Two blocks are confounded with the highest-order interaction", {
   for (case in list(list(4, 1, "ABCD"), list(5, 2, "ABCDE"), list(6, 3, "ABCDEF"))) {
@@ -1321,5 +1321,37 @@ test_that("19.8 The effects confounded with blocks are found quickly with many f
   for (effect in strsplit(confounded, "=")[[1]]) { # aliased effects, each is constant within the blocks
     contrast <- Reduce(`*`, lapply(strsplit(effect, "")[[1]], function(factor) as.numeric(as.character(data[[factor]]))))
     expect_true(all(tapply(contrast, data[["Blocks"]], function(values) length(unique(values)) == 1)))
+  }
+})
+
+test_that("19.9 2-factor interactions aliased with each other and with blocks are covered by the footnote", {
+  # 4 factors in 8 runs (IV) in 4 blocks: all three 2-factor interaction pairs are confounded with blocks, so they are
+  # aliased with each other too and the other rows are empty
+  results <- blockedDesignResults(nFactors = 4, row = 0, blocks = "4")
+  expect_setequal(confoundedWithBlocks(results), c("AB", "AC", "AD", "BC", "BD", "CD"))
+  expect_equal(aliasStructureRows(results), "Blocks = AB=CD, AC=BD, AD=BC")
+  design <- replicatedDesignTable(results)$data
+  expect_equal(design[["A"]] * design[["B"]], design[["C"]] * design[["D"]]) # AB=CD
+  expect_equal(aliasStructureFootnotes(results), noAliasingExceptBlocksNote)
+
+  # 5 factors in 16 runs in 8 blocks: e.g. AB=CE
+  results <- blockedDesignResults(nFactors = 5, row = 1, blocks = "8")
+  expect_equal(aliasStructureRows(results), "Blocks = AB=CE, AC=BE, AD, AE=BC, BD, CD, DE")
+  expect_equal(aliasStructureFootnotes(results), noAliasingExceptBlocksNote)
+})
+
+test_that("19.10 With more than 50 factors the effects confounded with blocks are written as in the other alias rows (F1:F2)", {
+  design <- FrF2::FrF2(nfactors = 51, nruns = 64, blocks = 2, alias.block.2fis = TRUE, seed = 1)
+  confounded <- jaspQualityControl:::.doeFactorialBlockConfounding(design)
+  expect_equal(length(confounded), 1)
+  expect_equal(attr(confounded, "orders"), 2)
+  effects <- strsplit(confounded, "=")[[1]]
+  expect_true(all(grepl("^F[0-9]+:F[0-9]+$", effects)))
+  expect_true(all(grepl("^F[0-9]+(:F[0-9]+)+(=F[0-9]+(:F[0-9]+)+)*$", FrF2::aliasprint(design)[["fi2"]]))) # same style
+  data <- as.data.frame(design)
+  for (effect in effects) { # each effect is constant within the blocks, and not a word of the design
+    contrast <- Reduce(`*`, lapply(strsplit(effect, ":")[[1]], function(factor) as.numeric(as.character(data[[factor]]))))
+    expect_true(all(tapply(contrast, data[["Blocks"]], function(values) length(unique(values)) == 1)))
+    expect_equal(length(unique(contrast)), 2)
   }
 })
