@@ -43,16 +43,16 @@ X-mR chart, which charts the process values (individuals) and moving range (mR) 
 -------
  To indicate special cause variation the following unnatural patterns are used:
 
-- Signal 1: One point beyond the control limits (sporadic issue). One point more than three standard deviations from the central line equivalent to violation of UCL or LCL.
-- Signal 2: Seven consecutive points above or below the central line (mean shift). Seven points in a row on same side of centre line equivalent to a run above or below centre line.
-- Signal 3: A run up or down of seven consecutive points (trend). Seven points  in a row all increasing or all decreasing equivalent to a run downward or upward.
-- Signal 4: Two out of three consecutive points beyond the warning (two sigma) limits (increasing variation).
-- Signal 5:Hugging the central line, this is indicated when 15 consecutive points are within the one sigma limits (reducing variation).
-- Signal 6: Eight consecutive points are beyond the one sigma limits, regardless of which side of the central line (bimodal distribution).
+- Test 1: One point beyond the control limits (sporadic issue). One point more than three standard deviations from the central line equivalent to violation of UCL or LCL.
+- Test 2: Seven consecutive points above or below the central line (mean shift). Seven points in a row on same side of centre line equivalent to a run above or below centre line.
+- Test 3: A run up or down of seven consecutive points (trend). Seven points  in a row all increasing or all decreasing equivalent to a run downward or upward.
+- Test 5: Two out of three consecutive points beyond the warning (two sigma) limits, on the same side of the central line (shift).
+- Test 7: Hugging the central line, this is indicated when 15 consecutive points are within the one sigma limits (reducing variation).
+- Test 8: Eight consecutive points are beyond the one sigma limits, regardless of which side of the central line (bimodal distribution).
 
-The lack of control in both average and variation charts is generally found in the initial stages of setting up of control charts, sometimes called Phase 1 control charts. Using all six signals is only applicable for the average chart during Phase 1 when the control chart is used as an analysis tool. The first three signals are used always, for variables as well as attributes control charts.
+The lack of control in both average and variation charts is generally found in the initial stages of setting up of control charts, sometimes called Phase 1 control charts. Using all six tests is only applicable for the average chart during Phase 1 when the control chart is used as an analysis tool. The first three tests are used always, for variables as well as attributes control charts.
 
-In the case that the data of the individual and moving Range chart (X-mR chart) violate the pre assumption (normality and independently distributed) only signal 1 is applied. Autocorrelation is an indication of that.
+In the case that the data of the individual and moving Range chart (X-mR chart) violate the pre assumption (normality and independently distributed) only Test 1 is applied. Autocorrelation is an indication of that.
 
 
 ## References 

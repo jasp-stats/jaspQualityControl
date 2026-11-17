@@ -377,15 +377,15 @@ options$rule2Value <- 7
 options$rule3 <- TRUE
 options$rule3Value <- 7
 options$rule4 <- TRUE
-options$rule4Value <- 2
+options$rule4Value <- 14
 options$rule5 <- TRUE
-options$rule5Value <- 15
+options$rule5Value <- 2
 options$rule6 <- TRUE
-options$rule6Value <- 8
+options$rule6Value <- 4
 options$rule7 <- TRUE
-options$rule7Value <- 4
+options$rule7Value <- 15
 options$rule8 <- TRUE
-options$rule8Value <- 14
+options$rule8Value <- 8
 results <- runAnalysis("variablesChartsIndividuals", "datasets/controlChartRules/violatingAllindividualRules.csv", options)
 
 test_that("12.1 Test of all rules for x-mr chart", {
@@ -468,6 +468,64 @@ test_that("MR3 Report shows the X-mR chart error and keeps the meta data", {
   labels   <- unlist(lapply(subplots, function(p) lapply(seq_along(p$layers), function(i) as.character(ggplot2::layer_data(p, i)[["label"]]))))
   expect_true(any(grepl("stage 'B' has fewer than 3 consecutive", labels, fixed = TRUE)))
   expect_true(any(grepl("Chart name:", labels, fixed = TRUE)))
+})
+
+# Limit labels keep significant digits for data in small units (jasp-issues #4681) ####
+.limitLabels <- function(results) {
+  plotName <- results[["results"]][["Ichart"]][["collection"]][["Ichart_plot"]][["data"]]
+  subplots <- Filter(ggplot2::is_ggplot, results[["state"]][["figures"]][[plotName]][["obj"]]$subplots)
+  labels   <- unlist(lapply(subplots, function(p) lapply(seq_along(p$layers), function(i) as.character(ggplot2::layer_data(p, i)[["label"]]))))
+  labels[grepl("^(CL|LCL|UCL) = ", labels)]
+}
+
+smallData <- data.frame(Measurement = c(0.00016058, 0.00020555, 0.00020832, 0.00016342, 0.00026613, 0.00021752, 0.00014323, 0.00022483, 0.00018467, 0.00020527))
+
+test_that("LB1 Limit labels of small values do not read 0", {
+  results <- runAnalysis("variablesChartsIndividuals", smallData, .imrOptions(movingRangeLength = 2))
+  expect_identical(results[["status"]], "complete")
+  # I chart first, then the MR chart
+  expect_identical(.limitLabels(results), c("CL = 0.000198", "LCL = 6.18e-05", "UCL = 0.000334", "CL = 5.12e-05", "LCL = 0", "UCL = 0.000167"))
+})
+
+test_that("LB2 Limit labels of data in larger units are unchanged", {
+  results <- runAnalysis("variablesChartsIndividuals", smallData * 10000, .imrOptions(movingRangeLength = 2))
+  expect_identical(results[["status"]], "complete")
+  expect_identical(.limitLabels(results), c("CL = 1.98", "LCL = 0.618", "UCL = 3.341", "CL = 0.512", "LCL = 0", "UCL = 1.672"))
+})
+
+test_that("LB3 .controlChartLabelValue keeps 3 significant digits for small values only", {
+  value <- jaspQualityControl:::.controlChartLabelValue
+  expect_identical(value(c(0.000198, 6.18e-05, 0.000334, -0.000198), decimals = 3), c("0.000198", "6.18e-05", "0.000334", "-0.000198"))
+  expect_identical(value(c(0.00019812345, 6.1801e-05, 0.00987654), decimals = 3), c("0.000198", "6.18e-05", "0.00988"))
+  # values that show at least 2 significant digits with the set decimals are only rounded
+  expect_identical(value(c(0.0258, 0.0987654, 1234.5678, 5.1234, 0.1234, -7.0801, 0), decimals = 3), c("0.026", "0.099", "1234.568", "5.123", "0.123", "-7.08", "0"))
+  expect_identical(value(c(0.0456, 0.1234, 5.123), decimals = 2), c("0.0456", "0.12", "5.12"))
+  expect_identical(value(NA_real_, decimals = 3), "NA")
+})
+
+test_that("LB5 .controlChartLabelValue writes fixed notation, small values as %g does", {
+  value <- jaspQualityControl:::.controlChartLabelValue
+  # as.character() gave 1e+05, 2e+05, 5e-04 and 1e-04; %g gave 100000 for 100000.5; -0 reads 0
+  expect_identical(value(c(100000, 2e5, 100000.5, 0.0005, 1e-04, -0), decimals = 3), c("100000", "200000", "100000.5", "0.0005", "0.0001", "0"))
+  expect_identical(value(c(Inf, NaN), decimals = 3), c("Inf", "NaN"))
+})
+
+test_that("LB6 Limit labels of large round values and specification limits are not in scientific or 6-digit notation", {
+  results <- runAnalysis("variablesChartsIndividuals", data.frame(Measurement = c(99999, 100001, 99998, 100002, 100000, 100000)), .imrOptions(movingRangeLength = 2))
+  expect_identical(results[["status"]], "complete")
+  expect_identical(.limitLabels(results)[1], "CL = 100000")
+  chart  <- jaspQualityControl:::.controlChart(dataset = data.frame(x = c(100000.1, 100000.9, 100000.4, 100001.2, 100000.0)), plotType = "I",
+                                               movingRangeLength = 2, xAxisLabels = as.character(1:5), tableLabels = as.character(1:5),
+                                               specificationLimits = c(99999.5, 100000.5, 100002.25))
+  labels <- unlist(lapply(chart$plotObject$layers, function(l) if (is.data.frame(l$data) && "label" %in% names(l$data)) as.character(l$data$label)))
+  expect_true(all(c("LSL = 99999.5", "Tar. = 100000.5", "USL = 100002.25") %in% labels))
+})
+
+test_that("LB4 Specification limit labels of small values do not read 0", {
+  chart  <- jaspQualityControl:::.controlChart(dataset = smallData, plotType = "I", movingRangeLength = 2, xAxisLabels = as.character(1:10),
+                                               tableLabels = as.character(1:10), specificationLimits = c(0.0001, 0.0002, 0.0003))
+  labels <- unlist(lapply(chart$plotObject$layers, function(l) if (is.data.frame(l$data) && "label" %in% names(l$data)) as.character(l$data$label)))
+  expect_true(all(c("LSL = 0.0001", "Tar. = 0.0002", "USL = 0.0003") %in% labels))
 })
 
 # jasp-issues#4675: stage C has a single observation, so the X-mR chart shows its error, but the autocorrelation plot does not need moving ranges

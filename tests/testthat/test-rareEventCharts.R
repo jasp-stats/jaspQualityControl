@@ -484,7 +484,7 @@ options$testSet <- "custom"
 options$rule1 <- TRUE
 options$rule2 <- TRUE
 options$rule3 <- TRUE
-options$rule8 <- TRUE
+options$rule4 <- TRUE
 options$rule9 <- TRUE
 results <- runAnalysis("rareEventCharts", "datasets/controlChartRules/violatingAllRareEventRules.csv", options)
 

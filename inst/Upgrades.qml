@@ -1476,4 +1476,174 @@ Upgrades
 			}
 		}
 	}
+
+	// Control chart tests renumbered to Nelson's order (jasp-issues #4671): old Test 4, 5, 6, 7, 8 -> new Test 5, 7, 8, 6, 4.
+	// The options are swapped, so they are renamed in two steps via temporary names; renaming rule4 to rule5 directly would
+	// fail or overwrite the old rule5, which is still in use at that moment.
+
+	Upgrade
+	{
+		functionName:	"variablesChartsIndividuals"
+		fromVersion:	"0.98.3"
+		toVersion:		"0.98.4"
+
+		// step 1: old name -> temporary name (named after the new number)
+		ChangeRename { from: "rule4";                 to: "tmpRule5" }
+		ChangeRename { from: "rule4Value";            to: "tmpRule5Value" }
+		ChangeRename { from: "rule5";                 to: "tmpRule7" }
+		ChangeRename { from: "rule5Value";            to: "tmpRule7Value" }
+		ChangeRename { from: "rule6";                 to: "tmpRule8" }
+		ChangeRename { from: "rule6Value";            to: "tmpRule8Value" }
+		ChangeRename { from: "rule7";                 to: "tmpRule6" }
+		ChangeRename { from: "rule7Value";            to: "tmpRule6Value" }
+		ChangeRename { from: "rule8";                 to: "tmpRule4" }
+		ChangeRename { from: "rule8Value";            to: "tmpRule4Value" }
+
+		// step 2: temporary name -> new name
+		ChangeRename { from: "tmpRule5";              to: "rule5" }
+		ChangeRename { from: "tmpRule5Value";         to: "rule5Value" }
+		ChangeRename { from: "tmpRule7";              to: "rule7" }
+		ChangeRename { from: "tmpRule7Value";         to: "rule7Value" }
+		ChangeRename { from: "tmpRule8";              to: "rule8" }
+		ChangeRename { from: "tmpRule8Value";         to: "rule8Value" }
+		ChangeRename { from: "tmpRule6";              to: "rule6" }
+		ChangeRename { from: "tmpRule6Value";         to: "rule6Value" }
+		ChangeRename { from: "tmpRule4";              to: "rule4" }
+		ChangeRename { from: "tmpRule4Value";         to: "rule4Value" }
+	}
+
+	Upgrade
+	{
+		functionName:	"variablesChartsSubgroups"
+		fromVersion:	"0.98.3"
+		toVersion:		"0.98.4"
+
+		// step 1: old name -> temporary name (named after the new number)
+		ChangeRename { from: "rule4";                 to: "tmpRule5" }
+		ChangeRename { from: "rule4Value";            to: "tmpRule5Value" }
+		ChangeRename { from: "rule5";                 to: "tmpRule7" }
+		ChangeRename { from: "rule5Value";            to: "tmpRule7Value" }
+		ChangeRename { from: "rule6";                 to: "tmpRule8" }
+		ChangeRename { from: "rule6Value";            to: "tmpRule8Value" }
+		ChangeRename { from: "rule7";                 to: "tmpRule6" }
+		ChangeRename { from: "rule7Value";            to: "tmpRule6Value" }
+		ChangeRename { from: "rule8";                 to: "tmpRule4" }
+		ChangeRename { from: "rule8Value";            to: "tmpRule4Value" }
+
+		// step 2: temporary name -> new name
+		ChangeRename { from: "tmpRule5";              to: "rule5" }
+		ChangeRename { from: "tmpRule5Value";         to: "rule5Value" }
+		ChangeRename { from: "tmpRule7";              to: "rule7" }
+		ChangeRename { from: "tmpRule7Value";         to: "rule7Value" }
+		ChangeRename { from: "tmpRule8";              to: "rule8" }
+		ChangeRename { from: "tmpRule8Value";         to: "rule8Value" }
+		ChangeRename { from: "tmpRule6";              to: "rule6" }
+		ChangeRename { from: "tmpRule6Value";         to: "rule6Value" }
+		ChangeRename { from: "tmpRule4";              to: "rule4" }
+		ChangeRename { from: "tmpRule4Value";         to: "rule4Value" }
+	}
+
+	Upgrade
+	{
+		functionName:	"processCapabilityStudies"
+		fromVersion:	"0.98.3"
+		toVersion:		"0.98.4"
+
+		// step 1: old name -> temporary name (named after the new number)
+		ChangeRename { from: "rule4";                 to: "tmpRule5" }
+		ChangeRename { from: "rule4Value";            to: "tmpRule5Value" }
+		ChangeRename { from: "rule5";                 to: "tmpRule7" }
+		ChangeRename { from: "rule5Value";            to: "tmpRule7Value" }
+		ChangeRename { from: "rule6";                 to: "tmpRule8" }
+		ChangeRename { from: "rule6Value";            to: "tmpRule8Value" }
+		ChangeRename { from: "rule7";                 to: "tmpRule6" }
+		ChangeRename { from: "rule7Value";            to: "tmpRule6Value" }
+		ChangeRename { from: "rule8";                 to: "tmpRule4" }
+		ChangeRename { from: "rule8Value";            to: "tmpRule4Value" }
+
+		// step 2: temporary name -> new name
+		ChangeRename { from: "tmpRule5";              to: "rule5" }
+		ChangeRename { from: "tmpRule5Value";         to: "rule5Value" }
+		ChangeRename { from: "tmpRule7";              to: "rule7" }
+		ChangeRename { from: "tmpRule7Value";         to: "rule7Value" }
+		ChangeRename { from: "tmpRule8";              to: "rule8" }
+		ChangeRename { from: "tmpRule8Value";         to: "rule8Value" }
+		ChangeRename { from: "tmpRule6";              to: "rule6" }
+		ChangeRename { from: "tmpRule6Value";         to: "rule6Value" }
+		ChangeRename { from: "tmpRule4";              to: "rule4" }
+		ChangeRename { from: "tmpRule4Value";         to: "rule4Value" }
+	}
+
+	Upgrade
+	{
+		functionName:	"msaGaugeRR"
+		fromVersion:	"0.98.3"
+		toVersion:		"0.98.4"
+
+		// step 1: old name -> temporary name (named after the new number)
+		ChangeRename { from: "rule4";                 to: "tmpRule5" }
+		ChangeRename { from: "rule4Value";            to: "tmpRule5Value" }
+		ChangeRename { from: "rule5";                 to: "tmpRule7" }
+		ChangeRename { from: "rule5Value";            to: "tmpRule7Value" }
+		ChangeRename { from: "rule6";                 to: "tmpRule8" }
+		ChangeRename { from: "rule6Value";            to: "tmpRule8Value" }
+		ChangeRename { from: "rule7";                 to: "tmpRule6" }
+		ChangeRename { from: "rule7Value";            to: "tmpRule6Value" }
+		ChangeRename { from: "rule8";                 to: "tmpRule4" }
+		ChangeRename { from: "rule8Value";            to: "tmpRule4Value" }
+
+		// step 2: temporary name -> new name
+		ChangeRename { from: "tmpRule5";              to: "rule5" }
+		ChangeRename { from: "tmpRule5Value";         to: "rule5Value" }
+		ChangeRename { from: "tmpRule7";              to: "rule7" }
+		ChangeRename { from: "tmpRule7Value";         to: "rule7Value" }
+		ChangeRename { from: "tmpRule8";              to: "rule8" }
+		ChangeRename { from: "tmpRule8Value";         to: "rule8Value" }
+		ChangeRename { from: "tmpRule6";              to: "rule6" }
+		ChangeRename { from: "tmpRule6Value";         to: "rule6Value" }
+		ChangeRename { from: "tmpRule4";              to: "rule4" }
+		ChangeRename { from: "tmpRule4Value";         to: "rule4Value" }
+	}
+
+	Upgrade
+	{
+		functionName:	"msaGaugeRRnonrep"
+		fromVersion:	"0.98.3"
+		toVersion:		"0.98.4"
+
+		// step 1: old name -> temporary name (named after the new number)
+		ChangeRename { from: "rule4";                 to: "tmpRule5" }
+		ChangeRename { from: "rule4Value";            to: "tmpRule5Value" }
+		ChangeRename { from: "rule5";                 to: "tmpRule7" }
+		ChangeRename { from: "rule5Value";            to: "tmpRule7Value" }
+		ChangeRename { from: "rule6";                 to: "tmpRule8" }
+		ChangeRename { from: "rule6Value";            to: "tmpRule8Value" }
+		ChangeRename { from: "rule7";                 to: "tmpRule6" }
+		ChangeRename { from: "rule7Value";            to: "tmpRule6Value" }
+		ChangeRename { from: "rule8";                 to: "tmpRule4" }
+		ChangeRename { from: "rule8Value";            to: "tmpRule4Value" }
+
+		// step 2: temporary name -> new name
+		ChangeRename { from: "tmpRule5";              to: "rule5" }
+		ChangeRename { from: "tmpRule5Value";         to: "rule5Value" }
+		ChangeRename { from: "tmpRule7";              to: "rule7" }
+		ChangeRename { from: "tmpRule7Value";         to: "rule7Value" }
+		ChangeRename { from: "tmpRule8";              to: "rule8" }
+		ChangeRename { from: "tmpRule8Value";         to: "rule8Value" }
+		ChangeRename { from: "tmpRule6";              to: "rule6" }
+		ChangeRename { from: "tmpRule6Value";         to: "rule6Value" }
+		ChangeRename { from: "tmpRule4";              to: "rule4" }
+		ChangeRename { from: "tmpRule4Value";         to: "rule4Value" }
+	}
+
+	// Rare event charts only have the oscillation test (old Test 8, now Test 4)
+	Upgrade
+	{
+		functionName:	"rareEventCharts"
+		fromVersion:	"0.98.3"
+		toVersion:		"0.98.4"
+
+		ChangeRename { from: "rule8";       to: "rule4" }
+		ChangeRename { from: "rule8Value";  to: "rule4Value" }
+	}
 }

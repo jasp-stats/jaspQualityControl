@@ -49,15 +49,15 @@ test_that("p, u, np, c and Laney charts colour every point listed in the test ta
 })
 
 test_that("X-mR chart colours every point listed in its test tables", {
-  # alternating then stable proportions: only tests 5 (reducing variation) and 6 (bimodal) fire, not tests 1-3
+  # alternating then stable proportions: only tests 7 (reducing variation) and 8 (bimodal) fire, not tests 1-3
   counts  <- c(8, 2, 9, 3, 8, 2, 9, 3, rep(c(6, 5), 9))
   results <- .redRun("xmr", counts = counts)
   expect_identical(results$status, "complete")
   plot   <- results$state$figures[[results$results$IPlotA$data]]$obj
   tables <- results$results$NelsonTableIMR$collection
   iTable <- tables$NelsonTableIMR_NelsonTableI
-  expect_equal(unlist(lapply(iTable$data, `[[`, "test5")), 23:26)
-  expect_equal(unlist(lapply(iTable$data, `[[`, "test6")), 8)
+  expect_equal(unlist(lapply(iTable$data, `[[`, "test7")), 23:26)
+  expect_equal(unlist(lapply(iTable$data, `[[`, "test8")), 8)
   expect_equal(.redFill(plot$subplots[[1]]), c(8L, 23L, 24L, 25L, 26L))
   expect_equal(.redFill(plot$subplots[[1]]), as.integer(.redFlagged(iTable)))
   expect_equal(.redFill(plot$subplots[[2]]), as.integer(.redFlagged(tables$NelsonTableIMR_NelsonTableMR)))

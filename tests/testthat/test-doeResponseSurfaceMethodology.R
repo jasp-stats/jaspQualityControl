@@ -663,6 +663,109 @@ test_that("10.2 Six Cont. Pred. One Disc. Pred. Box-Behnken Design Summary table
                                  list(1, 54, 1, 6, 6, 1, "Value", 1, 108))
 })
 
+## Box-Behnken replicates ####
+# the design has to contain every replicate, i.e., as many rows as the Design Summary reports as Total runs
+bbdReplicatesRun <- function(k, replicates, runs, blocks, centerpoints, categorical = FALSE, runOrder = "runOrderStandard") {
+  opts <- analysisOptions("doeResponseSurfaceMethodology")
+  opts$actualExporter <- FALSE
+  opts$alphaType <- "default"
+  opts$centerPointType <- "default"
+  opts$codedOutput <- TRUE
+  opts$setSeed <- TRUE
+  opts$seed <- 123
+  opts$designType <- "boxBehnkenDesign"
+  opts$displayDesign <- TRUE
+  opts$exportDesignFile <- ""
+  opts$numberOfContinuous <- k
+  opts$runOrder <- runOrder
+  rows <- paste("Row", seq_len(k) - 1)
+  opts$continuousVariables <- list(
+    list(levels = rows, name = "data 1", values = LETTERS[seq_len(k)]),
+    list(levels = rows, name = "data 2", values = rep(-1, k)),
+    list(levels = rows, name = "data 3", values = rep(1, k))
+  )
+  opts$numberOfCategorical <- as.integer(categorical)
+  if (categorical) {
+    opts$categoricalVariables <- list(
+      list(levels = "Row 0", name = "data 1", values = "G"),
+      list(levels = "Row 0", name = "data 2", values = "a"),
+      list(levels = "Row 0", name = "data 3", values = "b")
+    )
+  }
+  opts$selectedDesign2 <- list(
+    list(levels = "Row 0", name = "data 1", values = runs),
+    list(levels = "Row 0", name = "data 2", values = blocks),
+    list(levels = "Row 0", name = "data 3", values = centerpoints)
+  )
+  opts$selectedRow <- 0
+  opts$replicates <- replicates
+  res <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", opts)
+  design <- do.call(rbind, lapply(res[["results"]][["designTable"]][["data"]], as.data.frame))
+  list(design = design, summary = res[["results"]][["doeRsmDesignSummaryTable"]][["data"]][[1]])
+}
+bbdRunKey <- function(design, k) do.call(paste, design[paste0("x", seq_len(k))])
+
+base3 <- bbdReplicatesRun(3, 1, 15, 1, 3)
+for (reps in c(2, 3)) {
+  res3 <- bbdReplicatesRun(3, reps, 15, 1, 3)
+  test_that(sprintf("11.%d Three Cont. Pred. Box-Behnken Design with %d replicates has Total runs rows", reps - 1, reps), {
+    expect_equal(res3$summary$totalRuns, 15 * reps)
+    expect_equal(nrow(res3$design), res3$summary$totalRuns)
+    expect_equal(sort(res3$design$std.order), seq_len(15 * reps))
+    expect_equal(sort(res3$design$run.order), seq_len(15 * reps))
+    # every base run (incl. each centre point) is repeated once per replicate
+    expect_equal(table(bbdRunKey(res3$design, 3)), table(bbdRunKey(base3$design, 3)) * reps, ignore_attr = TRUE)
+    # replicates are not blocks: no Block column, one block, replicates are identified in their own column
+    expect_false("Block" %in% names(res3$design))
+    expect_equal(res3$summary$totalBlocks, 1)
+    expect_equal(as.integer(table(res3$design$Replication)), rep(15L, reps))
+    expect_equal(sort(unique(res3$design$Replication)), seq_len(reps))
+    expect_equal(res3$design$Replication, (res3$design$std.order - 1L) %/% 15L + 1L)
+    # the first replicate is the unreplicated design
+    expect_equal(res3$design[res3$design$std.order <= 15, c("std.order", "x1", "x2", "x3")],
+                 base3$design[c("std.order", "x1", "x2", "x3")], ignore_attr = TRUE)
+  })
+}
+
+test_that("11.3 Box-Behnken Design with one replicate has no Block and Replication column", {
+  expect_equal(nrow(base3$design), 15)
+  expect_false(any(c("Block", "Replication") %in% names(base3$design)))
+})
+
+base4 <- bbdReplicatesRun(4, 1, 33, 3, 3)
+for (reps in c(2, 3)) {
+  res4 <- bbdReplicatesRun(4, reps, 33, 3, 3)
+  test_that(sprintf("11.%d Four Cont. Pred. Box-Behnken Design with %d replicates has Total runs rows", reps + 2, reps), {
+    expect_equal(res4$summary$totalRuns, 33 * reps)
+    expect_equal(nrow(res4$design), res4$summary$totalRuns)
+    expect_equal(sort(res4$design$std.order), seq_len(33 * reps))
+    expect_equal(table(bbdRunKey(res4$design, 4)), table(bbdRunKey(base4$design, 4)) * reps, ignore_attr = TRUE)
+    # every replicate has its own three blocks: 3 * replicates blocks of 11 runs, each inside one replicate
+    expect_equal(length(unique(res4$design$Block)), res4$summary$totalBlocks)
+    expect_equal(res4$summary$totalBlocks, 3 * reps)
+    expect_equal(as.integer(table(res4$design$Block)), rep(11L, 3 * reps))
+    expect_equal(as.integer(table(res4$design$Replication)), rep(33L, reps))
+    expect_equal(as.integer(rowSums(table(res4$design$Block, res4$design$Replication) > 0)), rep(1L, 3 * reps))
+    # the first replicate has the blocks of the unreplicated design
+    expect_equal(as.integer(res4$design$Block[res4$design$Replication == 1]), as.integer(base4$design$Block))
+  })
+}
+
+test_that("11.6 Box-Behnken Design with replicates and a discrete factor has Total runs rows", {
+  res <- bbdReplicatesRun(3, 2, 15, 1, 3, categorical = TRUE)
+  expect_equal(res$summary$totalRuns, 60)
+  expect_equal(nrow(res$design), 60)
+  expect_equal(sort(res$design$std.order), seq_len(60))
+  expect_equal(as.integer(table(res$design$x_cat1)), c(30L, 30L))
+})
+
+test_that("11.7 Box-Behnken Design with replicates in random run order has Total runs rows", {
+  res <- bbdReplicatesRun(4, 2, 33, 3, 3, runOrder = "runOrderRandom")
+  expect_equal(nrow(res$design), res$summary$totalRuns)
+  expect_equal(sort(res$design$run.order), seq_len(66))
+  expect_equal(sort(res$design$std.order), seq_len(66))
+})
+
 # Axial distance helper ####
 test_that("Orthogonal axial distance uses the fractional core size and all k axial pairs", {
   # expected values equal rsm::ccd(..., alpha = "orthogonal"); half fractions use generator x5 ~ x1*x2*x3*x4
