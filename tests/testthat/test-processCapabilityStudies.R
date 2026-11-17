@@ -4394,7 +4394,8 @@ test_that("BoxCox works", {
                          "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
 
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
-  jaspTools::expect_equal_tables(table, list(0.693, 2.18504961157134, 100, 0.207821225306874,
+  # the summary table shows the transformed limits unrounded: LSL = log(0 + 2)
+  jaspTools::expect_equal_tables(table, list(0.693147180559945, 2.18504961157134, 100, 0.207821225306874,
                                              0.198250378571927, 2.079, 2.639))
 })
 
@@ -4409,7 +4410,7 @@ test_that("BoxCox (Auto) works", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
   # lambda = car::powerTransform(Diameter + 1 ~ Time) = 0.505 (by subgroup)
   jaspTools::expect_equal_tables(table, list(1, 2.85324632792781, 100, 0.334400897906984,
-                                             0.31910839319546, 2.671, 3.652))
+                                             0.31910839319546, 2.67146147569135, 3.652))
 })
 
 test_that("Yeo-Johnson works", {
@@ -4444,7 +4445,7 @@ test_that("Johnson works", {
                          "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
 
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
-  jaspTools::expect_equal_tables(table, list(-6.103, 0.0370948315811945, 100, 0.974770462374867, -0.473,
+  jaspTools::expect_equal_tables(table, list(-6.103, 0.0370948315811945, 100, 0.974770462374867, -0.472522961601607,
                                              2.467))
 })
 
@@ -4562,7 +4563,7 @@ test_that("Box-Cox (auto) with negative estimated lambda keeps specification lim
   # lambda by subgroup (row) = car::powerTransform / MASS::boxcox = -1.408
   expect_equal(lambda, -1.40817809818093)
   jaspTools::expect_equal_tables(tables[["summary"]],
-                                 list(-1, -0.500177210010711, 10, 0.248728228973728, 0.0777554521491026, -0.104))
+                                 list(-1, -0.500177210010711, 10, 0.248728228973728, 0.0777554521491026, -0.103687343676668))
   jaspTools::expect_equal_tables(tables[["overall"]], list(0.601, 0.531, 0.262, 0.801, 0.67, 0.365, 0.531, 0.823))
   jaspTools::expect_equal_tables(tables[["performance"]],
                                  list(22241.34, 0, 0, "ppm &lt; LSL", 55460.332, 0.171, 0, "ppm &gt; USL",
@@ -4586,7 +4587,7 @@ test_that("Box-Cox with negative lambda, shift and only an upper specification l
 
   # USL = -(3.5 + 1)^-1; PpU = (USL - mean) / (3 * sd) with mean = -mean(1 / (x + 1))
   jaspTools::expect_equal_tables(tables[["summary"]],
-                                 list(-0.317261904761905, 4, 0.0648672986944061, 0.0443262411347518, -0.222))
+                                 list(-0.317261904761905, 4, 0.0648672986944061, 0.0443262411347518, -0.222222222222222))
   jaspTools::expect_equal_tables(tables[["overall"]], list(0.488, 0.061, 0.916, 0.488))
   jaspTools::expect_equal_tables(tables[["within"]], list(0.715, 0.162, 1.267, 0.715))
   jaspTools::expect_equal_tables(tables[["performance"]],
