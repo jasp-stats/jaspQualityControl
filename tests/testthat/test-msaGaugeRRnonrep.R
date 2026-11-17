@@ -698,3 +698,29 @@ test_that("LF5.6 Report depends on the data format", {
   expect_false(is.null(out$results[["results"]][["report"]]))
   expect_gt(out$calls, 0)
 })
+
+# Report with "Graph variation components" unticked ####
+# The report builds its own components of variation plot. With the checkbox unticked it used to get the
+# ANOVA tables container instead, and the analysis stopped with "Expecting a single string value".
+
+test_that("LF6.1 Report is the same with and without Graph variation components", {
+  reportLayers <- function(varianceComponentsGraph) {
+    opts <- analysisOptions("msaGaugeRRnonrep")
+    opts$testSet <- "jaspDefault"
+    opts$partLongFormat <- "Batch"
+    opts$operatorLongFormat <- "Operator"
+    opts$measurementLongFormat <- "Result"
+    opts$report <- TRUE
+    opts$varianceComponentsGraph <- varianceComponentsGraph
+    set.seed(1)
+    results <- runAnalysis("msaGaugeRRnonrep", "datasets/msaGaugeRRNested/msaGaugeRRNested_long.csv", opts, view = FALSE)
+    expect_identical(results[["status"]], "complete", label = paste("status with varianceComponentsGraph =", varianceComponentsGraph))
+    reportKey <- results[["results"]][["report"]][["data"]]
+    report <- results[["state"]][["figures"]][[reportKey]][["obj"]]
+    lapply(report$subplots, function(p) if (inherits(p, "ggplot")) ggplot2::layer_data(p, 1) else class(p))
+  }
+  ticked   <- reportLayers(TRUE)
+  unticked <- reportLayers(FALSE)
+  expect_true(any(vapply(ticked, is.data.frame, logical(1)))) # the plot data, not only the classes, are compared
+  expect_identical(unticked, ticked)
+})
