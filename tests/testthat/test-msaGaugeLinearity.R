@@ -115,3 +115,78 @@ test_that("2.6 Missing values test - Regression equation table results match", {
   jaspTools::expect_equal_tables(table,
                                  list("Bias = 0.76 - 0.13 * Reference value"))
 })
+
+# Bias plot axis limits (jasp-stats/INTERNAL-jasp#3435) ####
+# The y limits must never drop data, the zero line or the confidence band of the fitted line
+# (the line is refitted to what remains).
+
+.linBiasPlotRun <- function(dataset) {
+  options <- analysisOptions("msaGaugeLinearity")
+  options$part <- "Part"
+  options$measurement <- "Measurement"
+  options$standard <- "Reference"
+  options$linearityAndBiasPlot <- TRUE
+  options$manualProcessVariation <- FALSE
+  options$percentProcessVariationPlot <- FALSE
+  set.seed(1)
+  results <- runAnalysis("msaGaugeLinearity", dataset, options, view = FALSE)
+  plotName <- results[["results"]][["LB"]][["collection"]][["LB_plotBias"]][["data"]]
+  built <- ggplot2::ggplot_build(results[["state"]][["figures"]][[plotName]][["obj"]])
+  smoothData <- built$data[[2]]
+  list(biases = dataset[["Measurement"]] - dataset[["Reference"]],
+       limits = built$layout$panel_scales_y[[1]]$get_limits(),
+       zeroLine = built$data[[1]][["yintercept"]], # NA when the zero line is outside the limits
+       rawPoints = built$data[[3]][["y"]],         # NA when a point is outside the limits
+       meanPoints = built$data[[4]][["y"]],
+       smoothValues = c(smoothData[["y"]], smoothData[["ymin"]], smoothData[["ymax"]]), # line and band, NA when outside the limits
+       drawnSlope = unname(coef(lm(y ~ x, smoothData))[2]),
+       tableSlope = results[["results"]][["LB"]][["collection"]][["LB_tableRegression"]][["data"]][[2]][["coefficient"]])
+}
+
+.linShiftedData <- function(shift) {
+  dataset <- read.csv(testthat::test_path("datasets", "msaLinearityStudy", "msaLinearity.csv"))[c("Part", "Reference", "Measurement")]
+  dataset[["Part"]] <- factor(dataset[["Part"]])
+  dataset[["Measurement"]] <- dataset[["Measurement"]] + shift
+  dataset
+}
+
+# 5 references x 4 readings; the biases are -0.8 to 0 (the largest is exactly 0, e.g. a gauge with a coarse resolution)
+.linZeroMaxData <- function() {
+  data.frame(Part = factor(rep(1:5, each = 4)),
+             Reference = rep(c(2, 4, 6, 8, 10), each = 4),
+             Measurement = c(2.0, 2.0, 2.0, 1.9, 3.9, 4.0, 3.8, 3.9, 5.7, 5.8, 5.6, 5.7,
+                             7.6, 7.5, 7.4, 7.5, 9.4, 9.3, 9.2, 9.3))
+}
+
+.linExpectBiasPlotComplete <- function(run, label) {
+  expect_true(all(is.finite(run$rawPoints)), label = paste(label, "raw biases drawn"))
+  expect_length(run$rawPoints, length(run$biases))
+  expect_true(all(is.finite(run$meanPoints)), label = paste(label, "mean biases drawn"))
+  expect_length(run$meanPoints, 5)
+  expect_true(is.finite(run$zeroLine), label = paste(label, "zero line drawn"))
+  expect_true(all(is.finite(run$smoothValues)), label = paste(label, "fitted line and band drawn"))
+  expect_lte(run$limits[1], min(run$biases, 0))
+  expect_gte(run$limits[2], max(run$biases, 0))
+  expect_equal(run$drawnSlope, run$tableSlope, tolerance = 1e-6, label = paste(label, "drawn slope"))
+}
+
+test_that("3.1 Bias plot shows all data, the zero line and the table's regression line for all-negative, all-positive and mixed biases", {
+  for (shift in c(-2, 5, 0))
+    .linExpectBiasPlotComplete(.linBiasPlotRun(.linShiftedData(shift)), paste("shift", shift))
+})
+
+test_that("3.2 Bias plot shows the line and its band when the largest bias is exactly zero or only slightly above zero", {
+  zeroMax <- .linZeroMaxData()
+  expect_equal(max(zeroMax[["Measurement"]] - zeroMax[["Reference"]]), 0)
+  .linExpectBiasPlotComplete(.linBiasPlotRun(zeroMax), "max bias 0")
+
+  smallMax <- zeroMax
+  smallMax[["Measurement"]][1] <- 2.02
+  expect_gt(max(smallMax[["Measurement"]] - smallMax[["Reference"]]), 0)
+  .linExpectBiasPlotComplete(.linBiasPlotRun(smallMax), "small positive max bias")
+})
+
+test_that("3.3 Bias plot keeps its limits (min bias to 2 x max bias) when they contain everything", {
+  run <- .linBiasPlotRun(.linShiftedData(0))
+  expect_equal(run$limits, c(min(run$biases), max(run$biases) * 2))
+})

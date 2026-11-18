@@ -57,6 +57,7 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
     if (!is.null(balanceError)) {
       plot <- createJaspPlot(title = gettext("Gauge r&R - nested"), width = 700, height = 400)
       jaspResults[["gaugeRRNonRep"]] <- plot
+      plot$dependOn(.msaGaugeRRnonrepDataDependencies())
       plot$setError(balanceError)
       return()
     }
@@ -93,8 +94,7 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
     plotHeight <- ceiling(nElements/2) * 500
     reportPlot <- createJaspPlot(title = gettext("Gauge r&R (non-replicable) report"), width = 1250, height = plotHeight)
     jaspResults[["report"]] <- reportPlot
-    jaspResults[["report"]]$dependOn(c("measurementLongFormat", "operatorLongFormat", "partLongFormat", "measurementsWideFormat",
-                                       "operatorWideFormat", "partWideFormat", "processVariationReference", "historicalSdValue",
+    jaspResults[["report"]]$dependOn(c(.msaGaugeRRnonrepDataDependencies(), "processVariationReference", "historicalSdValue",
                                        "tolerance", "toleranceValue", "studyVarianceMultiplierType", "studyVarianceMultiplierValue",
                                        "scatterPlotFitLine", "report", "reportMetaData", "reportTitle",
                                        "reportTitleText", "reportPartName", "reportPartNameText", "reportGaugeName",
@@ -208,7 +208,7 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
     if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
       jaspResults[["rChart"]] <- createJaspContainer(gettext("Range chart by operator"))
       jaspResults[["rChart"]]$position <- 2
-      jaspResults[["rChart"]]$dependOn(c("rChart", "measurementLongFormat", "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
+      jaspResults[["rChart"]]$dependOn(.msaGaugeRRnonrepChartByOperatorDependencies("rChart"))
       jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
 
       if (ready) {
@@ -225,7 +225,7 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
     if (options[["xBarChart"]] && is.null(jaspResults[["xBarChart"]])) {
       jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Xbar chart by operator"))
       jaspResults[["xBarChart"]]$position <- 3
-      jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "measurementLongFormat", "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
+      jaspResults[["xBarChart"]]$dependOn(.msaGaugeRRnonrepChartByOperatorDependencies("xBarChart"))
       jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
       if (ready) {
         xBarChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)], ruleList = ruleList1,
@@ -239,13 +239,13 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
     }
 
     #Measurement by part x operator plot
-    if (options[["partMeasurementPlot"]] & ready) {
+    if (options[["partMeasurementPlot"]]) {
       if (is.null(jaspResults[["NRpartOperatorGraph"]])) {
         jaspResults[["NRpartOperatorGraph"]] <- createJaspContainer(gettext("Measurement by part x operator plot"))
         jaspResults[["NRpartOperatorGraph"]]$position <- 4
       }
-      jaspResults[["NRpartOperatorGraph"]] <- .gaugeMeasurmentsByPartXOperator(dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options = options)
-      jaspResults[["NRpartOperatorGraph"]]$dependOn(c("partMeasurementPlot", "partMeasurementPlotAllValues", "report"))
+      jaspResults[["NRpartOperatorGraph"]] <- .gaugeMeasurmentsByPartXOperator(dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options = options, ready = ready)
+      jaspResults[["NRpartOperatorGraph"]]$dependOn(c("partMeasurementPlot", "partMeasurementPlotAllValues", "report", .msaGaugeRRnonrepDataDependencies()))
     }
 
     #Measurement by operator plot
@@ -256,7 +256,7 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
       }
 
       jaspResults[["NRoperatorGraph"]] <- .gaugeByOperatorGraph(dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options = options, ready = ready)
-      jaspResults[["NRoperatorGraph"]]$dependOn(c("NRoperatorGraph", "report"))
+      jaspResults[["NRoperatorGraph"]]$dependOn(c("operatorMeasurementPlot", "report", .msaGaugeRRnonrepDataDependencies()))
     }
 
 
@@ -280,6 +280,19 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
                         "dataFormat"))
     }
   }
+}
+
+# Options that define the data assignment of the non-replicable gauge r&R study.
+.msaGaugeRRnonrepDataDependencies <- function() {
+  c("dataFormat",
+    "measurementLongFormat", "operatorLongFormat", "partLongFormat",
+    "measurementsWideFormat", "operatorWideFormat", "partWideFormat")
+}
+
+# Dependencies of the range/average chart by operator containers: the chart's own checkbox,
+# the data assignment, report mode and the control chart rules.
+.msaGaugeRRnonrepChartByOperatorDependencies <- function(chartOption) {
+  c(chartOption, .msaGaugeRRnonrepDataDependencies(), "report", .getDependenciesControlChartRules())
 }
 
 .gaugeRRNonRep <- function(dataset, measurements, parts, operators, options, ready, plotOnly = FALSE, trafficPlotValuesOnly = FALSE,
@@ -391,7 +404,8 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
   gaugeRRNonRepTables[["Table2"]] <- gaugeRRNonRepTable2
   gaugeRRNonRepTables[["Table3"]] <- gaugeRRNonRepTable3
 
-  if (options[["varianceComponentsGraph"]]) {
+  # the report (plotOnly) needs the plot also when "Graph variation components" is unticked
+  if (options[["varianceComponentsGraph"]] || plotOnly) {
     plot <- createJaspPlot(title = gettext("Components of variation"), width = 850, height = 500)
     plot$dependOn(c("varianceComponentsGraph", "report"))
     if (ready){
@@ -563,8 +577,13 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
   return(dataset)
 }
 
-.gaugeMeasurmentsByPartXOperator <- function(dataset, measurements, parts, operators, options) {
+.gaugeMeasurmentsByPartXOperator <- function(dataset, measurements, parts, operators, options, ready) {
   plotContainer <- createJaspContainer(gettext("Measurements by part x operator"))
+  if (!ready) {
+    # empty placeholder until the variables are assigned, like the other plots
+    plotContainer[["plot"]] <- createJaspPlot(title = gettext("Measurements by part x operator"), width = 600, height = 300)
+    return(plotContainer)
+  }
   operatorVector <- unique(dataset[[operators]])
   for (op in operatorVector) {
     dataPerOP <- subset(dataset, dataset[operators] == op)

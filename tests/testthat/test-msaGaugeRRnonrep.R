@@ -599,3 +599,149 @@ test_that("WF4.2 Reused part labels - Variance components table results match", 
   expect_equal(table[[3]][["Var"]], (11.6033333333333 - 0.265833333333332) / (3 * 2))
   expect_equal(table[[4]][["Var"]], (0.265833333333332 - 0.0233333333333331) / 2)
 })
+
+# Charts by operator depend on the data assignment ####
+# jasp-stats/INTERNAL-jasp#3434: the range/average chart containers are only built when absent, so they
+# must depend on the data format and the variable assignment. jaspTools runs are stateless (no old state
+# is reused), so the dependency vectors are tested directly.
+
+test_that("LF5.1 Range/average charts by operator depend on data assignment, data format and rules", {
+  required <- c("dataFormat", "report",
+                "measurementLongFormat", "operatorLongFormat", "partLongFormat",
+                "measurementsWideFormat", "operatorWideFormat", "partWideFormat",
+                jaspQualityControl:::.getDependenciesControlChartRules())
+  for (chart in c("rChart", "xBarChart")) {
+    deps <- jaspQualityControl:::.msaGaugeRRnonrepChartByOperatorDependencies(chart)
+    expect_true(chart %in% deps)
+    expect_true(all(required %in% deps), info = chart)
+  }
+})
+
+test_that("LF5.2 Chart and data dependency options exist in the QML of the non-replicable analysis", {
+  qml <- paste(readLines(system.file("qml", "msaGaugeRRnonrep.qml", package = "jaspQualityControl")), collapse = "\n")
+  deps <- c(jaspQualityControl:::.msaGaugeRRnonrepChartByOperatorDependencies("rChart"),
+            jaspQualityControl:::.msaGaugeRRnonrepChartByOperatorDependencies("xBarChart"))
+  deps <- setdiff(deps, jaspQualityControl:::.getDependenciesControlChartRules()) # defined in common/ControlChartTests.qml
+  for (dep in unique(deps))
+    expect_true(grepl(sprintf("name:\\s*\"%s\"", dep), qml), info = dep)
+})
+
+test_that("LF5.3 Measurements by part x operator plot depends on the data assignment", {
+  calls <- 0
+  testthat::local_mocked_bindings(
+    .msaGaugeRRnonrepDataDependencies = function() {
+      calls <<- calls + 1
+      c("dataFormat", "measurementLongFormat", "operatorLongFormat", "partLongFormat",
+        "measurementsWideFormat", "operatorWideFormat", "partWideFormat")
+    },
+    .package = "jaspQualityControl"
+  )
+  opts <- analysisOptions("msaGaugeRRnonrep")
+  opts$testSet <- "jaspDefault"
+  opts$partLongFormat <- "Batch"
+  opts$operatorLongFormat <- "Operator"
+  opts$measurementLongFormat <- "Result"
+  opts$partMeasurementPlot <- TRUE
+  set.seed(1)
+  runAnalysis("msaGaugeRRnonrep", "datasets/msaGaugeRRNested/msaGaugeRRNested_long.csv", opts, view = FALSE)
+  expect_gt(calls, 0)
+})
+
+# Other outputs that are not rebuilt in every run also depend on the data assignment ####
+# The measurements by operator plot and the report are skipped when the design is unbalanced, and the
+# unbalanced-design error plot is only replaced when the ANOVA is ticked, so they must depend on the
+# data format and the variables. Counted as in LF5.3: the helper is called when the element gets its deps.
+
+.countDataDependencyCalls <- function(dataset, ...) {
+  calls <- 0
+  testthat::with_mocked_bindings(
+    {
+      opts <- analysisOptions("msaGaugeRRnonrep")
+      opts$testSet <- "jaspDefault"
+      opts$partLongFormat <- "Batch"
+      opts$operatorLongFormat <- "Operator"
+      opts$measurementLongFormat <- "Result"
+      opts$anova <- FALSE
+      extra <- list(...)
+      for (name in names(extra))
+        opts[[name]] <- extra[[name]]
+      set.seed(1)
+      res <- runAnalysis("msaGaugeRRnonrep", dataset, opts, view = FALSE)
+    },
+    .msaGaugeRRnonrepDataDependencies = function() {
+      calls <<- calls + 1
+      c("dataFormat", "measurementLongFormat", "operatorLongFormat", "partLongFormat",
+        "measurementsWideFormat", "operatorWideFormat", "partWideFormat")
+    },
+    .package = "jaspQualityControl"
+  )
+  list(calls = calls, results = res)
+}
+
+nestedLong <- read.csv(testthat::test_path("datasets", "msaGaugeRRNested", "msaGaugeRRNested_long.csv"))
+
+test_that("LF5.4 Measurements by operator plot depends on the data assignment", {
+  out <- .countDataDependencyCalls(nestedLong, operatorMeasurementPlot = TRUE)
+  expect_false(is.null(out$results[["results"]][["NRoperatorGraph"]]))
+  expect_gt(out$calls, 0)
+})
+
+test_that("LF5.5 Unbalanced-design error depends on the data assignment", {
+  out <- .countDataDependencyCalls(nestedLong[-1, ], operatorMeasurementPlot = TRUE)
+  expect_identical(out$results[["results"]][["gaugeRRNonRep"]][["error"]][["errorMessage"]],
+                   "Unbalanced design. Some parts have more repeated measurements than others.")
+  expect_gt(out$calls, 0)
+})
+
+test_that("LF5.6 Report depends on the data format", {
+  out <- .countDataDependencyCalls(nestedLong, report = TRUE)
+  expect_false(is.null(out$results[["results"]][["report"]]))
+  expect_gt(out$calls, 0)
+})
+
+# Report with "Graph variation components" unticked ####
+# The report builds its own components of variation plot. With the checkbox unticked it used to get the
+# ANOVA tables container instead, and the analysis stopped with "Expecting a single string value".
+
+test_that("LF6.1 Report is the same with and without Graph variation components", {
+  reportLayers <- function(varianceComponentsGraph) {
+    opts <- analysisOptions("msaGaugeRRnonrep")
+    opts$testSet <- "jaspDefault"
+    opts$partLongFormat <- "Batch"
+    opts$operatorLongFormat <- "Operator"
+    opts$measurementLongFormat <- "Result"
+    opts$report <- TRUE
+    opts$varianceComponentsGraph <- varianceComponentsGraph
+    set.seed(1)
+    results <- runAnalysis("msaGaugeRRnonrep", "datasets/msaGaugeRRNested/msaGaugeRRNested_long.csv", opts, view = FALSE)
+    expect_identical(results[["status"]], "complete", label = paste("status with varianceComponentsGraph =", varianceComponentsGraph))
+    reportKey <- results[["results"]][["report"]][["data"]]
+    report <- results[["state"]][["figures"]][[reportKey]][["obj"]]
+    lapply(report$subplots, function(p) if (inherits(p, "ggplot")) ggplot2::layer_data(p, 1) else class(p))
+  }
+  ticked   <- reportLayers(TRUE)
+  unticked <- reportLayers(FALSE)
+  expect_true(any(vapply(ticked, is.data.frame, logical(1)))) # the plot data, not only the classes, are compared
+  expect_identical(unticked, ticked)
+})
+
+# Plots ticked before the variables are assigned ####
+# Like the other plots, the measurements by part plot is shown empty until all variables are assigned.
+
+test_that("LF7.1 Measurements by part plot is shown empty before the variables are assigned", {
+  assigned <- list("no variables" = c(part = "", operator = "", measurement = ""),
+                   "part missing" = c(part = "", operator = "Operator", measurement = "Result"))
+  for (case in names(assigned)) {
+    opts <- analysisOptions("msaGaugeRRnonrep")
+    opts$testSet <- "jaspDefault"
+    opts$partLongFormat <- assigned[[case]][["part"]]
+    opts$operatorLongFormat <- assigned[[case]][["operator"]]
+    opts$measurementLongFormat <- assigned[[case]][["measurement"]]
+    opts$partMeasurementPlot <- TRUE
+    set.seed(1)
+    results <- runAnalysis("msaGaugeRRnonrep", "datasets/msaGaugeRRNested/msaGaugeRRNested_long.csv", opts, view = FALSE)
+    plots <- results[["results"]][["NRpartOperatorGraph"]][["collection"]]
+    expect_length(plots, 1)
+    expect_identical(plots[[1]][["data"]], "", label = paste("empty plot,", case))
+  }
+})
