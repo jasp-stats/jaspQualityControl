@@ -241,10 +241,26 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
 
   if (ready) {
 
+    # padding by a factor (0.9 / 1.1) cuts off data when the minimum is negative: then use pretty breaks over the data
+    allValues <- unlist(dataset[measurements])
+    axisBreaks <- ggplot2::waiver()
+    axisLimits <- c(min(allValues) * 0.9, max(allValues) * 1.1)
+    if (min(allValues) < 0) {
+      axisBreaks <- jaspGraphs::getPrettyAxisBreaks(allValues)
+      axisLimits <- range(axisBreaks)
+    }
+    # jittered copies move up to 0.4 x the data resolution (ggplot2's default); widen the limits so none is dropped
+    if (options[["scatterPlotMeasurementAllValues"]]) {
+      jitterWidth  <- 0.4 * ggplot2::resolution(dataset[[measurements[1]]], zero = FALSE)
+      jitterHeight <- 0.4 * ggplot2::resolution(dataset[[measurements[2]]], zero = FALSE)
+      jitterAmount <- max(jitterWidth, jitterHeight)
+      axisLimits <- range(axisLimits, allValues - jitterAmount, allValues + jitterAmount)
+    }
+
     p <- ggplot2::ggplot() +
       jaspGraphs::geom_point(data = dataset, ggplot2::aes(x = .data[[measurements[1]]], y = .data[[measurements[2]]])) +
-      ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
-      ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
+      ggplot2::scale_x_continuous(breaks = axisBreaks, limits = axisLimits) +
+      ggplot2::scale_y_continuous(breaks = axisBreaks, limits = axisLimits) +
       ggplot2::geom_abline(col = "gray", linetype = "dashed") +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()
@@ -253,7 +269,7 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
       p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE, data = dataset, ggplot2::aes(x = .data[[measurements[1]]], y = .data[[measurements[2]]]))
 
     if (options[["scatterPlotMeasurementAllValues"]])
-      p <- p + ggplot2::geom_jitter(size = 2, data = dataset, ggplot2::aes(x = .data[[measurements[1]]], y = .data[[measurements[2]]]))
+      p <- p + ggplot2::geom_jitter(size = 2, width = jitterWidth, height = jitterHeight, data = dataset, ggplot2::aes(x = .data[[measurements[1]]], y = .data[[measurements[2]]]))
 
     plot$plotObject <- p
   }
