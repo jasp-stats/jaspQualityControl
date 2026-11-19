@@ -13,6 +13,7 @@ wideVariables <- list(dataFormat = "wideFormat", measurementsWideFormat = c("Res
 # GUI-equivalent options: QML defaults, traffic light chart ticked, only the given variables assigned
 .trafficLightNotReadyOptions <- function(assigned, ...) {
   options <- analysisOptions("msaGaugeRRnonrep")
+  options$testSet <- "jaspDefault"
   options$trafficLightChart <- TRUE
   for (name in names(assigned))
     options[[name]] <- assigned[[name]]
