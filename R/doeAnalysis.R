@@ -2017,9 +2017,11 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   aliased     <- is.na(stats::coef(fit))
   if (!any(aliased))
     return(NULL)
-  lengths <- sqrt(colSums(modelMatrix^2))
-  lengths[lengths == 0] <- 1
-  scaled  <- sweep(modelMatrix, 2, lengths, "/")
+  # Scale by the largest entry first so squaring cannot overflow or underflow the column norm.
+  columnMaxima <- apply(abs(modelMatrix), 2, max)
+  columnMaxima[columnMaxima == 0] <- 1
+  scaled  <- sweep(modelMatrix, 2, columnMaxima, "/")
+  scaled  <- sweep(scaled, 2, pmax(1, sqrt(colSums(scaled^2))), "/")
   weights <- qr.coef(qr(scaled[, !aliased, drop = FALSE]), scaled[, aliased, drop = FALSE])
   weights[is.na(weights)] <- 0
   t(weights)

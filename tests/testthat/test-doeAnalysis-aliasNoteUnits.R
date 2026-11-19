@@ -37,6 +37,14 @@ test_that("The note names the covariate an aliased term is aliased with, whateve
   }
 })
 
+test_that("An alias partner is found when squaring a covariate would overflow or underflow", {
+  for (scale in c(1e-170, 1e155)) {
+    data <- transform(aliasNoteData, X = scale * (5 + A * B))
+    fit <- lm(y ~ A + B + X + A:B, data = data)
+    expect_identical(jaspQualityControl:::.doeAliasedWith(fit, "A:B"), "X, the intercept")
+  }
+})
+
 test_that("A covariate in tiny or large units that is not aliased is not named as a partner", {
   for (scale in c(1e-7, 1e7)) {
     data <- transform(aliasNoteData, C = A * B, X = scale * c(1, 3, 2, 5, 4, 7, 6, 9))
