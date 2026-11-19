@@ -3497,7 +3497,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
     dataCurrentStage <- as.vector(na.omit(unlist(dataCurrentStage[measurements])))
     dataCurrentStage <- dataCurrentStage[order(dataCurrentStage)]
-    label_x <- dataCurrentStage
     n <- length(dataCurrentStage)
 
     # Method for rank
@@ -3513,11 +3512,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
     DisByUser <- options[["nullDistribution"]]
 
-    y <- y_funs[[DisByUser, 'y']](p)
+    yTransform <- y_funs[[DisByUser, 'y']]
+    y <- yTransform(p)
 
     # Quantities
     pSeq <- seq(0.001, 0.999, 0.001)
-    ticks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
 
     # Initialize variance variables (used for confidence band computation)
     varMu <- varSigma <- covarMuSigma <- NA
@@ -3554,9 +3553,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         percentileLower <- percentileEstimate - zalpha * sqrt(varPercentile)
         percentileUpper <- percentileEstimate + zalpha * sqrt(varPercentile)
       }
-      yBreaks <- qnorm(ticks / 100)
-      xBreaks <- label_x <- jaspGraphs::getPrettyAxisBreaks(dataCurrentStage)
-      xLimits <- range(xBreaks)
     } else if (options[["nullDistribution"]] == "lognormal") {
       fit <- try(EnvStats::elnorm(dataCurrentStage))
       if (jaspBase::isTryError(fit)) {
@@ -3590,15 +3586,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         percentileLower <- exp( log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
         percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
       }
-      yBreaks <- qnorm(ticks / 100)
-      dataCurrentStage <- log(label_x)
+      dataCurrentStage <- log(dataCurrentStage)
       percentileEstimate <- log(percentileEstimate)
       percentileLower <- log(percentileLower)
       percentileUpper <- log(percentileUpper)
-      logAxis <- .qcProbabilityPlotLogAxis(label_x, decimals = .numDecimals)
-      xBreaks <- logAxis$breaks
-      label_x <- logAxis$labels
-      xLimits <- logAxis$limits
     } else if (options[["nullDistribution"]] == "weibull") {
       fit_Weibull <- try(.distributionParameters(dataCurrentStage, distribution = "weibull", fix.arg = NULL))
       if (jaspBase::isTryError(fit_Weibull)) {
@@ -3626,24 +3617,21 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         percentileLower <- exp(log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
         percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
       }
-      yBreaks <- log(-1*log(1-(ticks / 100)))
-      dataCurrentStage <- log(label_x)
+      dataCurrentStage <- log(dataCurrentStage)
       percentileEstimate <- log(percentileEstimate)
       percentileLower <- log(percentileLower)
       percentileUpper <- log(percentileUpper)
-      logAxis <- .qcProbabilityPlotLogAxis(label_x, decimals = .numDecimals)
-      xBreaks <- logAxis$breaks
-      label_x <- logAxis$labels
-      xLimits <- logAxis$limits
     }
     data1 <- data.frame(x = dataCurrentStage, y = y)
     lineData <- data.frame(zp = zp, percentileEstimate = percentileEstimate)
     if (hasConfidenceBands) {
       bandData <- data.frame(zp = zp, percentileLower = percentileLower, percentileUpper = percentileUpper)
     }
-    # The outer points of a large sample lie beyond the 0.1% and 99.9% ticks; widen the axis so they are not dropped
+    xAxis <- .qcProbabilityPlotXAxis(dataCurrentStage, logarithmic = DisByUser != "normal", decimals = .numDecimals)
+    yLabels <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
+    yBreaks <- yTransform(yLabels / 100)
+    # Keep extreme observations even when they fall outside the labelled percentages.
     yLimits <- range(yBreaks, y)
-    label_x <- .controlChartLabelValue(label_x) # rounding alone gave 0 for small values
     p <- ggplot2::ggplot() +
       ggplot2::geom_line(data = lineData, ggplot2::aes(y = zp, x = percentileEstimate), na.rm = TRUE) +
       jaspGraphs::geom_point(data = data1, ggplot2::aes(x = x, y = y), na.rm = TRUE)
@@ -3660,10 +3648,17 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                            linetype = "dashed", na.rm = TRUE)
     }
     p <- p +
-      ggplot2::scale_x_continuous(gettext("Measurement"), breaks = xBreaks, limits = xLimits, labels = label_x) +
-      ggplot2::scale_y_continuous(gettext('Percent'), labels = ticks, breaks = yBreaks, limits = yLimits) +
+      ggplot2::scale_x_continuous(gettext("Measurement"), breaks = xAxis$breaks, limits = range(xAxis$breaks),
+                                  labels = xAxis$labels) +
+      ggplot2::scale_y_continuous(gettext("Percent"), breaks = yBreaks, limits = yLimits, labels = yLabels) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()
+    # The rightmost label is centred at the end of the axis and can extend beyond the panel.
+    lastLabelChars <- nchar(tail(xAxis$labels, 1L))
+    if (lastLabelChars > 6L) {
+      halfLabelWidth <- lastLabelChars * jaspGraphs::getGraphOption("fontsize") / 4
+      p <- p + ggplot2::theme(plot.margin = ggplot2::margin(r = halfLabelWidth))
+    }
     plotList[[i]] <- p
   }
   return(plotList)
@@ -3711,33 +3706,30 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   return(log(-log(1 - p)))
 }
 
-# x-axis for probability plots drawn on the log scale (lognormal, Weibull). The ticks are the sample values at the
-# minimum and at every 20% of the sorted data (as they always were), placed at their log value. The limits are the
-# data range plus a margin: they used to be a multiple of the logged values, which stretched the axis far beyond the
-# data (the points ended up in a thin strip and the tick labels overlapped). The margin leaves room for half of the
-# outer labels, which sit at the ends of the data.
-# A tick is dropped when it is too close to the previous one for both labels to fit: the sample quantiles bunch up
-# where the data are dense and, with decimals, the labels are wide. charWidth is the width of one character as a
-# fraction of the axis.
-.qcProbabilityPlotLogAxis <- function(x, decimals = 3, charWidth = 0.023) {
-  x <- sort(x[is.finite(x) & x > 0])
-  index <- c(1, jaspGraphs::getPrettyAxisBreaks(seq_along(x), 4)[-1])
-  index <- unique(index[index >= 1 & index <= length(x)])
-  labels <- x[index]
-  logBreaks <- log(labels)
-  nChar <- nchar(.controlChartLabelValue(labels, decimals)) # as the labels are written
-  halfLabel <- charWidth * max(nChar[1], nChar[length(nChar)]) / 2 # as a fraction of the axis
-  margin <- max(0.03, halfLabel / (1 - 2 * halfLabel))             # as a fraction of the data range
-  xLimits <- range(log(x))
-  xLimits <- xLimits + c(-1, 1) * margin * diff(xLimits)
-  keep <- 1
-  for (i in seq_along(labels)[-1]) {
-    last <- keep[length(keep)]
-    minGap <- charWidth * ((nChar[i] + nChar[last]) / 2 + 1)
-    if ((logBreaks[i] - logBreaks[last]) / diff(xLimits) >= minGap)
-      keep <- c(keep, i)
+# Keep the usual precision unless distinct tick values would have the same label.
+.qcProbabilityTickLabels <- function(values, decimals) {
+  labels <- .controlChartLabelValue(values, decimals)
+  distinct <- !duplicated(values)
+  if (!anyDuplicated(labels[distinct]))
+    return(labels)
+
+  # Seventeen significant digits distinguish any two finite double-precision values.
+  for (digits in 4:17) {
+    labels <- sprintf("%.*g", digits, values)
+    if (!anyDuplicated(labels[distinct]))
+      break
   }
-  list(breaks = logBreaks[keep], labels = labels[keep], limits = xLimits)
+  return(labels)
+}
+
+.qcProbabilityPlotXAxis <- function(x, logarithmic, decimals) {
+  breaks <- jaspGraphs::getPrettyAxisBreaks(x)
+  labels <- .qcProbabilityTickLabels(if (logarithmic) exp(breaks) else breaks, decimals)
+  if (length(labels) > 4L && any(nchar(labels) > 9L)) {
+    breaks <- jaspGraphs::getPrettyAxisBreaks(x, n = 3)
+    labels <- .qcProbabilityTickLabels(if (logarithmic) exp(breaks) else breaks, decimals)
+  }
+  return(list(breaks = breaks, labels = labels))
 }
 
 # Functions for distribution plot section ####

@@ -4744,23 +4744,18 @@ for (distribution in c("weibull", "lognormal")) {
 }
 
 ##### X-axis of probability plot on the log scale (Weibull, lognormal) ####
-test_that("Log-scale probability plot axis fits the data and has well-spaced breaks", {
+test_that("Log-scale probability plot axis fits the data and has pretty breaks", {
   dataSets <- list(near100 = qnorm(ppoints(100), mean = 100, sd = 5), near10000 = qnorm(ppoints(100), mean = 10000, sd = 20),
                    wide = qweibull(ppoints(100), shape = 2, scale = 50), small = qweibull(ppoints(100), shape = 2, scale = 0.2))
-  charWidth <- formals(jaspQualityControl:::.qcProbabilityPlotLogAxis)$charWidth
   for (x in dataSets) {
-    axis <- jaspQualityControl:::.qcProbabilityPlotLogAxis(x)
+    axis <- jaspQualityControl:::.qcProbabilityPlotXAxis(log(x), logarithmic = TRUE, decimals = 3)
     dataRange <- range(log(x))
-    testthat::expect_lte(axis$limits[1], dataRange[1])
-    testthat::expect_gte(axis$limits[2], dataRange[2])
-    testthat::expect_gt(diff(dataRange) / diff(axis$limits), 0.75) # data fill the axis (was 0-11% before)
-    testthat::expect_true(all(axis$labels %in% x)) # ticks are sample values, so never outside the data
-    halfLabel <- charWidth * max(nchar(as.character(round(axis$labels[c(1, length(axis$labels))], 3)))) / 2
-    testthat::expect_gte(diff(c(dataRange[2], axis$limits[2])) / diff(axis$limits), halfLabel - 1e-8) # room for the last label
-    nChar <- nchar(as.character(round(axis$labels, 3)))
-    minGap <- charWidth * ((head(nChar, -1) + tail(nChar, -1)) / 2 + 1)
-    testthat::expect_true(all(diff(axis$breaks) / diff(axis$limits) >= minGap - 1e-8)) # labels do not overlap
-    testthat::expect_equal(axis$breaks, log(axis$labels))
+    limits <- range(axis$breaks)
+    testthat::expect_lte(limits[1], dataRange[1])
+    testthat::expect_gte(limits[2], dataRange[2])
+    testthat::expect_gt(diff(dataRange) / diff(limits), 0.75)
+    testthat::expect_equal(axis$breaks, jaspGraphs::getPrettyAxisBreaks(log(x)))
+    testthat::expect_identical(axis$labels, jaspQualityControl:::.controlChartLabelValue(exp(axis$breaks), 3))
   }
 })
 

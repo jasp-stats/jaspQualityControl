@@ -65,13 +65,47 @@ test_that("ST3 Probability plot x-axis labels of small values are distinct and n
     expect_gte(length(labels), 3, label = distribution)
     expect_false(anyDuplicated(labels) > 0, info = distribution)
     expect_true(all(values > 0), info = distribution)
-    # the labels are the ticks with 3 significant digits: pretty breaks (normal) or sample values (log axis)
-    ticks <- if (distribution == "normal") jaspGraphs::getPrettyAxisBreaks(smallData$Measurement) else signif(smallData$Measurement, 3)
-    if (distribution == "normal")
-      expect_equal(values, ticks, tolerance = 1e-10, info = distribution)
-    else
-      expect_true(all(values %in% ticks), info = distribution)
+    xScale <- plot$scales$get_scales("x")
+    ticks <- if (distribution == "normal") xScale$breaks else exp(xScale$breaks)
+    expect_equal(values, signif(ticks, 3), tolerance = 1e-10, info = distribution)
   }
+})
+
+test_that("Probability plots distinguish nearby measurements at different scales", {
+  for (scale in c(1, 0.01)) {
+    data <- data.frame(Measurement = scale * seq(0.00020001, by = 0.00000001, length.out = 10))
+    for (distribution in c("normal", "lognormal", "weibull")) {
+      options <- .smallLimitOptions()
+      options$nullDistribution <- distribution
+      plot <- jaspQualityControl:::.qcProbabilityPlotObject(options, data, "Measurement", "")[[1]]
+      labels <- .xAxisLabels(plot)
+      expect_gte(length(labels), 3, label = distribution)
+      expect_identical(anyDuplicated(labels), 0L, info = distribution)
+
+      expect_true(any(vapply(plot$layers, function(layer) inherits(layer$geom, "GeomRangeFrame"), logical(1))),
+                  info = distribution)
+      xScale <- plot$scales$get_scales("x")
+      x <- if (distribution == "normal") data$Measurement else log(data$Measurement)
+      expect_equal(xScale$breaks, jaspGraphs::getPrettyAxisBreaks(x, n = 3), info = distribution)
+      expect_equal(xScale$limits, range(xScale$breaks), info = distribution)
+      expect_true(all(nzchar(xScale$labels)), info = distribution)
+      values <- if (distribution == "normal") xScale$breaks else exp(xScale$breaks)
+      expect_lt(max(abs(as.numeric(xScale$labels) - values)), min(diff(values)) / 2, label = distribution)
+
+      yScale <- plot$scales$get_scales("y")
+      transform <- if (distribution == "weibull") function(p) log(-log1p(-p)) else qnorm
+      percentTicks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
+      expect_identical(yScale$labels, percentTicks, info = distribution)
+      expect_equal(yScale$breaks, transform(percentTicks / 100), info = distribution)
+    }
+  }
+})
+
+test_that("Probability tick labels distinguish adjacent doubles without inventing differences for ties", {
+  labels <- jaspQualityControl:::.qcProbabilityTickLabels(c(1, 1, 1 + .Machine$double.eps), 3)
+  expect_identical(labels[1:2], c("1", "1"))
+  expect_identical(as.numeric(labels[3]), 1 + .Machine$double.eps)
+  expect_false(labels[3] == labels[1])
 })
 
 test_that("ST4 Capability histogram with compressed x-axis labels small values", {
