@@ -1993,19 +1993,38 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 # For each removed term, the other terms of the model its columns are aliased with (linear combinations of their columns; the
 # intercept counts as "the intercept"), as a text ("" if none is found). Needs the fit of the full model, in coded units, so that
 # the columns of the removed terms are not also combinations of the lower-order terms through the factor locations.
+# The weights are computed on the model matrix with columns scaled to unit length, so that a partner is found whatever
+# its units (covariates are not coded); stats::alias() drops weights below 1e-6 in absolute terms.
 .doeAliasedWith <- function(fit, removedTerms) {
   if (length(removedTerms) == 0)
     return(character(0))
-  complete <- tryCatch(stats::alias(fit)[["Complete"]], error = function(e) NULL)
+  complete <- tryCatch(.doeCompleteAliasWeights(fit), error = function(e) NULL)
   if (is.null(complete))
     return(rep("", length(removedTerms)))
   termOfCoefficient <- stats::setNames(c(NA, attr(stats::terms(fit), "term.labels"))[fit[["assign"]] + 1], names(stats::coef(fit))) # intercept: NA
   vapply(removedTerms, function(term) {
     rows         <- intersect(names(termOfCoefficient)[which(termOfCoefficient == term)], rownames(complete))
-    partners     <- colnames(complete)[colSums(complete[rows, , drop = FALSE] != 0) > 0] # alias() already sets rounding noise to 0
+    partners     <- colnames(complete)[colSums(abs(complete[rows, , drop = FALSE]) > 1e-6) > 0] # ignores rounding noise
     partnerTerms <- unique(termOfCoefficient[partners])
     paste(c(.doeFormatTermLabels(partnerTerms[!is.na(partnerTerms)]), if (anyNA(partnerTerms)) gettext("the intercept")), collapse = ", ")
   }, character(1), USE.NAMES = FALSE)
+}
+
+# Weights of the aliased columns (rows) on the estimable columns (columns) of the model matrix, as in stats::alias(fit)$Complete,
+# but with all columns scaled to unit length, so the weights do not depend on the units of the columns.
+.doeCompleteAliasWeights <- function(fit) {
+  modelMatrix <- stats::model.matrix(fit)
+  aliased     <- is.na(stats::coef(fit))
+  if (!any(aliased))
+    return(NULL)
+  # Scale by the largest entry first so squaring cannot overflow or underflow the column norm.
+  columnMaxima <- apply(abs(modelMatrix), 2, max)
+  columnMaxima[columnMaxima == 0] <- 1
+  scaled  <- sweep(modelMatrix, 2, columnMaxima, "/")
+  scaled  <- sweep(scaled, 2, pmax(1, sqrt(colSums(scaled^2))), "/")
+  weights <- qr.coef(qr(scaled[, !aliased, drop = FALSE]), scaled[, aliased, drop = FALSE])
+  weights[is.na(weights)] <- 0
+  t(weights)
 }
 
 .doeFormatTermLabels <- function(termLabels) {
