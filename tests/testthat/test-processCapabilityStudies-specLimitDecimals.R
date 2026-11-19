@@ -39,8 +39,8 @@ test_that("Percentile method: indices and ppm use the exact specification limits
   res <- runNonNormal("percentile")
   meanlog <- res$summary[["beta"]]
   sdlog <- res$summary[["theta"]]
-  # display of the limits unchanged
-  expect_equal(c(res$summary[["lsl"]], res$summary[["usl"]]), c(0.014, 0.027))
+  # the summary table shows the limits as entered (jasp-issues #4700)
+  expect_equal(c(res$summary[["lsl"]], res$summary[["usl"]]), c(lsl, usl))
 
   q <- function(p) qlnorm(p, meanlog, sdlog)
   ppl <- (q(0.5) - lsl) / (q(0.5) - q(0.00135))
