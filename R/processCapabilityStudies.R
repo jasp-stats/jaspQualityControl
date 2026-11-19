@@ -3208,6 +3208,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
 ## Containers ####
 
+.qcProbabilityPlotSupportError <- function(distribution) {
+  if (distribution %in% c("gamma", "exponential", "logistic", "loglogistic", "3ParameterWeibull", "3ParameterLognormal"))
+    return(gettextf("Probability plot and table for %s distribution are not implemented in Quality Control module. Please use the Distributions module.", distribution))
+  return(NULL)
+}
+
 .qcProbabilityPlotContainer <- function(options, dataset, ready, jaspResults, measurements, stages) {
   if (!options[["probabilityPlot"]] || !is.null(jaspResults[["probabilityContainer"]]))
     return()
@@ -3228,11 +3234,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   } else if (!identical(stages, "")) {
     nStages <- .qcNumberOfStages(dataset[[stages]])
   }
-  if (options[["nullDistribution"]] %in% c("gamma", "exponential", "logistic", "loglogistic", "3ParameterWeibull", "3ParameterLognormal")) {
+  supportError <- .qcProbabilityPlotSupportError(options[["nullDistribution"]])
+  if (!is.null(supportError)) {
     plot <- createJaspPlot(width = 400, height = 400,
                            title = gettext("Probability plot"))
     container[["plot"]] <- plot
-    plot$setError(gettextf("Probability plot and table for %s distribution are not implemented in Quality Control module. Please use the Distributions module.", options[["nullDistribution"]]))
+    plot$setError(supportError)
     return()
   }
 
@@ -3500,6 +3507,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 }
 
 .qcProbabilityPlotObject <- function(options, dataset, measurements, stages) {
+  supportError <- .qcProbabilityPlotSupportError(options[["nullDistribution"]])
+  if (!is.null(supportError))
+    stop(supportError, call. = FALSE)
+
   if (identical(stages, "")) {
     nStages <- 1
     dataset[["stage"]] <- 1

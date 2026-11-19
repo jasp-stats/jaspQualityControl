@@ -89,10 +89,15 @@ test_that("Report shows a failed probability plot fit as an error panel", {
   expect_true(length(panelTexts[[probabilityPanel]]) > 1)
 })
 
-test_that("Report with the GUI's probability plot distribution (3-parameter Weibull) does not stop the analysis", {
+test_that("Report explains why the three-parameter Weibull probability plot is unavailable", {
   results <- .reportFitErrorResults(report = TRUE, nullDistribution = "3ParameterWeibull")
   expect_false(identical(results[["status"]], "fatalError"))
   panelTexts <- .reportFitErrorPanelTexts(results)
   expect_length(.reportFitErrorPanelIndex(panelTexts, "Capability of the process"), 1)
   expect_length(.reportFitErrorPanelIndex(panelTexts, "Process capability tables"), 1)
+  probabilityPanel <- .reportFitErrorPanelIndex(panelTexts, "Probability plot")
+  expect_length(probabilityPanel, 1)
+  expect_match(paste(panelTexts[[probabilityPanel]][-1], collapse = " "),
+               "Probability plot and table for 3ParameterWeibull distribution are not implemented in Quality Control module.",
+               fixed = TRUE)
 })
