@@ -943,9 +943,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       # the qcc package just returns the values instead of the ranges when there is only one column
       plotStatistic <- if (ncol(dataCurrentStage) == 1) rep(0, nrow(dataCurrentStage)) else qccObject$statistics
       limits <- .controlLimits(mu, sigma, n = n, type = "r", k = nSigmasControlLimits)
-      center <- .carryLimitsOverMissingSubgroups(mu, n)
-      UCL <- .carryLimitsOverMissingSubgroups(limits$UCL, n)
-      LCL <- .carryLimitsOverMissingSubgroups(limits$LCL, n)
+      # a subgroup with one observation has no range: like an empty subgroup, no point and the limits of the previous subgroup
+      plotStatistic[rowSums(!is.na(dataCurrentStage)) == 1] <- NA
+      nWithSpread <- replace(n, n == 1, 0)
+      center <- .carryLimitsOverMissingSubgroups(mu, nWithSpread)
+      UCL <- .carryLimitsOverMissingSubgroups(limits$UCL, nWithSpread)
+      LCL <- .carryLimitsOverMissingSubgroups(limits$LCL, nWithSpread)
       ###
       ### Calculations for X-bar chart
       ###
@@ -1000,9 +1003,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       } else {
         center <- sigma
       }
-      center <- .carryLimitsOverMissingSubgroups(center, n)
-      UCL <- .carryLimitsOverMissingSubgroups(limits$UCL, n)
-      LCL <- .carryLimitsOverMissingSubgroups(limits$LCL, n)
+      # a subgroup with one observation has no standard deviation: like an empty subgroup, no point and the limits of the previous subgroup
+      plotStatistic[rowSums(!is.na(dataCurrentStage)) == 1] <- NA
+      nWithSpread <- replace(n, n == 1, 0)
+      center <- .carryLimitsOverMissingSubgroups(center, nWithSpread)
+      UCL <- .carryLimitsOverMissingSubgroups(limits$UCL, nWithSpread)
+      LCL <- .carryLimitsOverMissingSubgroups(limits$LCL, nWithSpread)
       ###
       ### Calculations for cusum chart
       ###
@@ -1329,8 +1335,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                    gAndtUnit           = c("days", "hours", "minutes", "opportunities")) {
   plotType <- match.arg(plotType)
   yBreakDeterminants <- c(pointData$plotStatistic, clData$LCL, clData$UCL, clData$center)
-  # if all statistics are 0, pretty will select c(-1, 0). But c(0, 1) is better
-  yBreaks <- if (identical(unique(na.omit(yBreakDeterminants)), 0)) c(0, 1) else jaspGraphs::getPrettyAxisBreaks(yBreakDeterminants)
+  # if all statistics are 0, pretty will select c(-1, 0). But c(0, 1) is better, also when there are none (e.g. R chart without a subgroup of 2+ observations)
+  yBreakValues <- unique(na.omit(yBreakDeterminants))
+  yBreaks <- if (length(yBreakValues) == 0 || identical(yBreakValues, 0)) c(0, 1) else jaspGraphs::getPrettyAxisBreaks(yBreakDeterminants)
   yLimits <- range(yBreaks)
   xBreaks <- unique(as.integer(jaspGraphs::getPrettyAxisBreaks(pointData$subgroup))) # we only want integers on the x-axis
   if (xBreaks[1] == 0)  # never start counting at 0 on x axis
@@ -1646,6 +1653,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                      "loglogistic"),
                                     fix.arg = NULL) {
   estimationErrorMessage <- gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely.")
+  # A fixed (historical) threshold at or above the smallest observation gives a likelihood of zero
+  thresholdErrorMessage <- function(threshold)
+    gettextf("The parameters could not be estimated: the historical threshold (%1$s) must be smaller than the smallest observation (%2$s).",
+             format(threshold), format(min(data)))
   allParametersFixed <- .allParametersFixed(distribution, fix.arg)
     ####################
     #### Lognormal #####
@@ -1717,6 +1728,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fix.arg[["sdlog"]] # scale
       threshold <- fix.arg[["threshold"]] # threshold
     } else {
+      if (!is.null(fix.arg[["threshold"]]) && fix.arg[["threshold"]] >= min(data))
+        stop(thresholdErrorMessage(fix.arg[["threshold"]]), call. = FALSE)
       # Set starting values that match other software packages more closely
       lnorm3start <- try(EnvStats::elnorm3(data))
       if (jaspBase::isTryError(lnorm3start))
@@ -1772,6 +1785,13 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fix.arg[["scale"]] # scale
       threshold <- fix.arg[["thres"]] # threshold
     } else {
+      # At a historical threshold equal to the smallest observation, only a historical shape of one (shifted exponential) is valid
+      if (!is.null(fix.arg[["thres"]]) && (fix.arg[["thres"]] > min(data) || (fix.arg[["thres"]] == min(data) && !isTRUE(fix.arg[["shape"]] == 1)))) {
+        errorMessage <- thresholdErrorMessage(fix.arg[["thres"]])
+        if (fix.arg[["thres"]] == min(data))
+          errorMessage <- paste(errorMessage, gettext("It can only equal the smallest observation with a historical shape of 1 (shifted exponential distribution)."))
+        stop(errorMessage, call. = FALSE)
+      }
       # Set starting values that match other software packages more closely (on the rescaled data, see .qcFitdistUnitFree)
       unitScale <- .qcUnitScale(data)
       # The starting threshold has to lie below all observations: 0 does for positive data, but not when the data contain a zero

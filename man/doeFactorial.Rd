@@ -24,7 +24,7 @@ doeFactorial(
   numberOfCategorical = 3,
   plotHeight = 320,
   plotWidth = 480,
-  randomSeed = 473717,
+  randomSeed = 528422,
   replications = 1,
   runOrder = "runOrderRandom",
   seed = 1,
@@ -41,7 +41,7 @@ doeFactorial(
 \item{actualExporter, }{Check to save the selected design to the specified file.
 Defaults to \code{FALSE}.}
 
-\item{blocks, }{Select the number of blocks in the design. Not available for split-plot and general full factorial designs.}
+\item{blocks, }{Select the number of blocks in the design. Only available for two-level factorial designs with the default generator.}
 
 \item{categoricalNoLevels, }{Set the maximum number of levels for the factors in the design. Only applicable for general full factorial designs, else factors always have two levels. If a factor has fewer levels than the maximum number of levels in the design, leave the remaining level cells empty or add a space.}
 
