@@ -89,3 +89,21 @@ test_that("Two reference values: regression table matches lm()", {
   }
   expect_equal(output[["LB_tableGaugeLinearity"]][["data"]][[1]][["percentLin"]], abs(expected[2, 1]) * 100, tolerance = 1e-8)
 })
+
+test_that("Numerically singular regression with two different reference values still shows the bias", {
+  data <- data.frame(
+    Part = rep(c("1", "2"), each = 3),
+    Reference = rep(c(1e10, 1e10 + 1), each = 3)
+  )
+  data[["Measurement"]] <- data[["Reference"]] + c(0.125, 0.25, 0.5, 0.75, 0.875, 1)
+  bias <- data[["Measurement"]] - data[["Reference"]]
+  expect_equal(lm(bias ~ Reference, data)$rank, 1)
+
+  results <- runAnalysis("msaGaugeLinearity", data, options, view = FALSE)
+  output <- results[["results"]][["LB"]][["collection"]]
+  expect_identical(results[["status"]], "complete")
+  expect_identical(output[["LB_tableRegression"]][["status"]], "error")
+  expect_null(output[["LB_tableEquation"]])
+  expect_null(output[["LB_tableGaugeLinearity"]])
+  expect_equal(output[["LB_tableGaugeBias"]][["data"]][[3]][["bias"]], mean(bias))
+})

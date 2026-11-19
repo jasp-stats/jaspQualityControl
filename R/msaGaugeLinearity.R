@@ -83,9 +83,44 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
   plotProcessVar <- createJaspPlot(title = gettext("Percentage process variation graph"), width = 500, height = 500)
 
 
-  # The slope of the bias line needs at least 2 different reference values (with one, lm() returns an aliased slope):
-  # then only the bias is reported and the regression table shows an error
-  linearityEstimable <- !ready || length(unique(dataset[[standards]])) > 1
+  regressionError <- NULL
+  if (ready) {
+    # Error conditions
+    if (length(dataset[[measurements]]) < 2) {
+      tableRegression$setError(gettextf("t-test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s.", length(dataset[[measurements]]), measurements))
+      return(tableRegression)
+    }
+    nReferences <- length(unique(dataset[[standards]]))
+    if (nReferences != length(unique(dataset[[parts]]))) {
+      tableRegression$setError(gettextf("Every unique part must have one corresponding reference value. %1$i reference values were found for %2$s unique parts.", nReferences, length(unique(dataset[[parts]]))))
+      return(tableRegression)
+    }
+    if (any(table(dataset[[parts]]) < 2)) {
+      singleMeasurementParts <- paste(names(which(table(dataset[[parts]]) < 2)), collapse = ", ")
+      tableRegression$setError(gettextf("t-test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s.", singleMeasurementParts))
+      return(tableRegression)
+    }
+    variancePerPart <- tapply(dataset[[measurements]], dataset[[parts]], var)
+    if (any(variancePerPart == 0)) {
+      noVarParts <- paste(names(which(variancePerPart == 0)), collapse = ", ")
+      tableRegression$setError(gettextf("t-test not possible. No variance detected in Part(s) %s.", noVarParts))
+      return(tableRegression)
+    }
+
+    rawBiases <- dataset[[measurements]] - dataset[[standards]]
+    biasPlotDf <- data.frame("Bias" = rawBiases, "Ref" = dataset[[standards]])
+    if (nReferences < 2) {
+      regressionError <- gettext("Linearity requires at least 2 different reference values.")
+    } else {
+      regressionFitRaw <- lm(Bias ~ Ref, biasPlotDf)
+      if (regressionFitRaw$rank < 2)
+        regressionError <- gettext("The linearity slope could not be estimated from the reference values.")
+    }
+  }
+
+  linearityEstimable <- is.null(regressionError)
+  if (!linearityEstimable)
+    tableRegression$setError(regressionError)
 
   if (options[["biasTable"]])
     tablesAndGraphs[["tableGaugeBias"]] <- tableGaugeBias
@@ -107,29 +142,6 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
 
   if (!ready)
     return(tablesAndGraphs)
-
-  # Error conditions
-  if (length(dataset[[measurements]]) < 2) {
-    tableRegression$setError(gettextf("t-test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s.", length(dataset[[measurements]]), measurements))
-    return(tableRegression)
-  }
-  if (length(unique(dataset[[standards]])) != length(unique(dataset[[parts]]))) {
-    tableRegression$setError(gettextf("Every unique part must have one corresponding reference value. %1$i reference values were found for %2$s unique parts.", length(unique(dataset[[standards]])), length(unique(dataset[[parts]]))))
-    return(tableRegression)
-  }
-  if (any(table(dataset[[parts]]) < 2)) {
-    singleMeasurementParts <- paste(names(which(table(dataset[[parts]]) < 2)), collapse = ", ")
-    tableRegression$setError(gettextf("t-test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s.", singleMeasurementParts))
-    return(tableRegression)
-  }
-  variancePerPart <- tapply(dataset[[measurements]], dataset[[parts]], var)
-  if (any(variancePerPart == 0)) {
-    noVarParts <- paste(names(which(variancePerPart == 0)), collapse = ", ")
-    tableRegression$setError(gettextf("t-test not possible. No variance detected in Part(s) %s.", noVarParts))
-    return(tableRegression)
-  }
-  if (!linearityEstimable)
-    tableRegression$setError(gettext("Linearity requires at least 2 different reference values."))
 
   partsVec <- c()
   refsVec <- c()
@@ -160,10 +172,7 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
                        "Bias" = biasesVec,
                        "pvalue" = pValuesVec)
 
-  rawBiases <- dataset[[measurements]] - dataset[[standards]]
   meanBias <- mean(rawBiases)
-
-  biasPlotDf <- data.frame("Bias" = rawBiases, "Ref" = dataset[[standards]])
   biasPlotMeanDf <- data.frame("meanBias" = biasesVec, "Ref" = refsVec)
 
   # t-test of the average bias against the repeatability (pooled within-reference SD), as in AIAG/Minitab;
@@ -175,7 +184,6 @@ msaGaugeLinearityInternal <- function(jaspResults, dataset, options, ...) {
 
   fitBand <- NULL
   if (linearityEstimable) {
-    regressionFitRaw <- lm(Bias ~ Ref, biasPlotDf)
     regressionFit <- summary(regressionFitRaw)
     # index by name: summary() drops the rows of aliased coefficients
     coefficientsMatrix <- regressionFit$coefficients[c("(Intercept)", "Ref"), , drop = FALSE]
