@@ -260,7 +260,8 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
     }
 
 
-    if (options[["trafficLightChart"]]) {
+    # no chart until all variables are assigned (as in crossed Gauge r&R); its data dependencies remove it when one is unassigned
+    if (options[["trafficLightChart"]] && ready) {
       if (is.null(jaspResults[["trafficLightChart"]])) {
         jaspResults[["trafficLightChart"]] <- createJaspContainer(gettext("Gauge r&R tables"))
         jaspResults[["trafficLightChart"]]$position <- 6
