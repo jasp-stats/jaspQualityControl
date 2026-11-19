@@ -1653,6 +1653,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                      "loglogistic"),
                                     fix.arg = NULL) {
   estimationErrorMessage <- gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely.")
+  # A fixed (historical) threshold at or above the smallest observation gives a likelihood of zero
+  thresholdErrorMessage <- function(threshold)
+    gettextf("The parameters could not be estimated: the historical threshold (%1$s) must be smaller than the smallest observation (%2$s).",
+             format(threshold), format(min(data)))
   allParametersFixed <- .allParametersFixed(distribution, fix.arg)
     ####################
     #### Lognormal #####
@@ -1724,6 +1728,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fix.arg[["sdlog"]] # scale
       threshold <- fix.arg[["threshold"]] # threshold
     } else {
+      if (!is.null(fix.arg[["threshold"]]) && fix.arg[["threshold"]] >= min(data))
+        stop(thresholdErrorMessage(fix.arg[["threshold"]]), call. = FALSE)
       # Set starting values that match other software packages more closely
       lnorm3start <- try(EnvStats::elnorm3(data))
       if (jaspBase::isTryError(lnorm3start))
@@ -1779,6 +1785,13 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fix.arg[["scale"]] # scale
       threshold <- fix.arg[["thres"]] # threshold
     } else {
+      # At a historical threshold equal to the smallest observation, only a historical shape of one (shifted exponential) is valid
+      if (!is.null(fix.arg[["thres"]]) && (fix.arg[["thres"]] > min(data) || (fix.arg[["thres"]] == min(data) && !isTRUE(fix.arg[["shape"]] == 1)))) {
+        errorMessage <- thresholdErrorMessage(fix.arg[["thres"]])
+        if (fix.arg[["thres"]] == min(data))
+          errorMessage <- paste(errorMessage, gettext("It can only equal the smallest observation with a historical shape of 1 (shifted exponential distribution)."))
+        stop(errorMessage, call. = FALSE)
+      }
       # Set starting values that match other software packages more closely (on the rescaled data, see .qcFitdistUnitFree)
       unitScale <- .qcUnitScale(data)
       # The starting threshold has to lie below all observations: 0 does for positive data, but not when the data contain a zero
