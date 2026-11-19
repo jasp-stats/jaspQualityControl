@@ -233,28 +233,30 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     }
     if (options[["reportProcessCapabilityPlot"]]) {
       distribution <- if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis") "normal" else options[["nonNormalDistribution"]]
-      if (identical(stages, "")) {
-        plots[[plotIndexCounter]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution = distribution)[[1]]
+      # a failed fit becomes an error panel, so the other report elements remain
+      processCapabilityPlots <- try(.qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution = distribution),
+                                    silent = TRUE)
+      if (jaspBase::isTryError(processCapabilityPlots))
+        processCapabilityPlots <- list(.qcReportErrorPanel(gettext("Capability of the process"),
+                                                           conditionMessage(attr(processCapabilityPlots, "condition"))))
+      for (i in seq_along(processCapabilityPlots)) {
+        plots[[plotIndexCounter]] <- processCapabilityPlots[[i]]
         plotIndexCounter <- plotIndexCounter + 1
-      } else {
-        processCapabilityPlots <- .qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution = distribution)
-        for (i in seq_along(processCapabilityPlots)) {
-          plots[[plotIndexCounter]] <- processCapabilityPlots[[i]]
-          plotIndexCounter <- plotIndexCounter + 1
-        }
       }
     }
     if (options[["reportProbabilityPlot"]]) {
+      probabilityPlots <- try(.qcProbabilityPlotObject(options, dataset, measurements, stages), silent = TRUE)
+      if (jaspBase::isTryError(probabilityPlots))
+        probabilityPlots <- list(.qcReportErrorPanel(gettext("Probability plot"), conditionMessage(attr(probabilityPlots, "condition"))))
       if (identical(stages, "")) {
-        plots[[plotIndexCounter]] <- .qcProbabilityPlotObject(options, dataset, measurements, stages)[[1]]
+        plots[[plotIndexCounter]] <- probabilityPlots[[1]]
+        plotIndexCounter <- plotIndexCounter + 1
       } else {
-        probabilityPlots <- .qcProbabilityPlotObject(options, dataset, measurements, stages)
         for (j in seq_along(probabilityPlots)) {
           plots[[plotIndexCounter]] <- probabilityPlots[[j]]
           plotIndexCounter <- plotIndexCounter + 1
         }
       }
-      plotIndexCounter <- plotIndexCounter + 1
     }
     if (options[["reportProcessCapabilityTables"]]) {
       if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis") {
@@ -289,6 +291,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
           }
         }
 
+      } else if (!is.null(fitError <- .qcNonNormalFitError(options, dataset, measurements, stages))) {
+        # the tables need the fitted distribution: the error takes their place, so the other report elements remain
+        plots[[plotIndexCounter]] <- .qcReportErrorPanel(gettext("Process capability tables"), fitError)
       } else {
         processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnSummaryDF = TRUE,
                                                             datasetAsEntered = datasetAsEntered)
@@ -437,6 +442,23 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     list(plotObject = .qcReportErrorPanel(chartTitle, conditionMessage(error)), table = NULL,
          chartTitle = chartTitle, errorMessage = conditionMessage(error))
   })
+}
+
+# Message of the first stage whose non-normal distribution cannot be fitted, or NULL if all stages can be fitted
+.qcNonNormalFitError <- function(options, dataset, measurements, stages) {
+  if (identical(stages, "")) {
+    dataset[["stage"]] <- 1
+    stages <- "stage"
+  }
+  fixArg <- .buildFixArg(options[["nonNormalDistribution"]], options)
+  for (i in seq_len(.qcNumberOfStages(dataset[[stages]]))) {
+    stageData <- as.vector(na.omit(unlist(dataset[.qcStageRows(dataset[[stages]], i), measurements])))
+    fit <- try(.distributionParameters(data = stageData, distribution = options[["nonNormalDistribution"]], fix.arg = fixArg),
+               silent = TRUE)
+    if (jaspBase::isTryError(fit))
+      return(conditionMessage(attr(fit, "condition")))
+  }
+  return(NULL)
 }
 
 # Upper and lower chart of the control chart plot (outside the report). A failed chart is left out and its error is
@@ -3190,6 +3212,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
 ## Containers ####
 
+.qcProbabilityPlotSupportError <- function(distribution) {
+  if (distribution %in% c("gamma", "exponential", "logistic", "loglogistic", "3ParameterWeibull", "3ParameterLognormal"))
+    return(gettextf("Probability plot and table for %s distribution are not implemented in Quality Control module. Please use the Distributions module.", distribution))
+  return(NULL)
+}
+
 .qcProbabilityPlotContainer <- function(options, dataset, ready, jaspResults, measurements, stages) {
   if (!options[["probabilityPlot"]] || !is.null(jaspResults[["probabilityContainer"]]))
     return()
@@ -3210,11 +3238,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   } else if (!identical(stages, "")) {
     nStages <- .qcNumberOfStages(dataset[[stages]])
   }
-  if (options[["nullDistribution"]] %in% c("gamma", "exponential", "logistic", "loglogistic", "3ParameterWeibull", "3ParameterLognormal")) {
+  supportError <- .qcProbabilityPlotSupportError(options[["nullDistribution"]])
+  if (!is.null(supportError)) {
     plot <- createJaspPlot(width = 400, height = 400,
                            title = gettext("Probability plot"))
     container[["plot"]] <- plot
-    plot$setError(gettextf("Probability plot and table for %s distribution are not implemented in Quality Control module. Please use the Distributions module.", options[["nullDistribution"]]))
+    plot$setError(supportError)
     return()
   }
 
@@ -3482,6 +3511,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 }
 
 .qcProbabilityPlotObject <- function(options, dataset, measurements, stages) {
+  supportError <- .qcProbabilityPlotSupportError(options[["nullDistribution"]])
+  if (!is.null(supportError))
+    stop(supportError, call. = FALSE)
+
   if (identical(stages, "")) {
     nStages <- 1
     dataset[["stage"]] <- 1
