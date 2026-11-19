@@ -84,6 +84,14 @@ test_that("Variables charts for subgroups: stage without observations between tw
   expect_true(grepl("Stage B has no observations", charts[["controlCharts_plotNote"]][["text"]], fixed = TRUE))
 })
 
+test_that("The empty-stage note identifies the occurrence of a repeated stage", {
+  data <- transform(.emptyStageMiddle, Stage = c("A", "A", "B", "B", "A", "A", "C", "C", "C"))
+  results <- runAnalysis("variablesChartsSubgroups", data, .emptyStageOptions("xBarAndS"))
+  charts  <- results[["results"]][["controlCharts"]][["collection"]]
+  expect_match(charts[["controlCharts_plotNote"]][["text"]],
+               "Stage A (occurrence 2) has no observations", fixed = TRUE)
+})
+
 test_that("Variables charts for subgroups: known parameters draw no center line in a stage without observations", {
   options <- .emptyStageOptions("xBarAndS")
   options$knownParameters     <- TRUE

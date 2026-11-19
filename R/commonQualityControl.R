@@ -886,6 +886,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   # a stage whose rows are all missing has no limits: it gets no limit lines or labels and is listed in emptyStages
   stageHasObservations <- vapply(seq_len(nStages), function(i) any(!is.na(dataset[stageIndex == i, names(dataset) != stages])), logical(1))
   lastObservedStage <- if (any(stageHasObservations)) max(which(stageHasObservations)) else 0
+  stageNames <- as.character(dataset[[stages]][match(seq_len(nStages), stageIndex)])
   emptyStages <- character(0)
   ###
   ### Beginning of loop over all stages to calculate all values
@@ -1142,8 +1143,13 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
     if (!stageHasObservations[i]) {
       stageClData[!names(stageClData) %in% c("subgroup", "stage")] <- NA_real_
-      if (hasStages)
-        emptyStages <- union(emptyStages, as.character(stage))
+      if (hasStages) {
+        stageName <- stageNames[i]
+        sameName <- which(stageNames %in% stageName)
+        if (length(sameName) > 1)
+          stageName <- gettextf("%1$s (occurrence %2$d)", stageName, match(i, sameName))
+        emptyStages <- union(emptyStages, stageName)
+      }
     }
 
     # offset to align geom_step lines with observations
