@@ -333,8 +333,11 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   design[["replications"]] <- options[["replications"]]
   design[["repetitions"]] <- options[["repetitions"]]
   if (twoLevelDesign) {
-    design[["centerpoints"]] <- options[["centerpoints"]]
-    design[["blocks"]] <- as.numeric(options[["blocks"]])
+    # only the settings that the design type uses: the form disables Blocks and Centre points for the types that ignore them,
+    # but a disabled control keeps its value. Blocks are only implemented for the default generator, split-plot designs
+    # have no centre points.
+    design[["centerpoints"]] <- if (options[["factorialType"]] == "factorialTypeSplit") 0 else options[["centerpoints"]]
+    design[["blocks"]] <- if (options[["factorialType"]] == "factorialTypeDefault") as.numeric(options[["blocks"]]) else 1
   }
   return(design)
 }
@@ -488,6 +491,9 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   }
 
   blocked <- options[["factorialType"]] == "factorialTypeDefault" && designSpec[["blocks"]] > 1
+  if (blocked && designSpec[["centerpoints"]] > 0) {
+    standardOrder <- .doeFactorialBlockedStandardOrder(runOrderInfo, designSpec[["runs"]], designSpec[["replications"]])
+  }
   outDesign <- if (blocked) dfDesign[2:(nrow(df)+1)] else dfDesign[1:nrow(df)]
   colnames(outDesign) <- df[["name"]]
   display <- cbind(ro = runOrder, sro = standardOrder, outDesign)
@@ -499,7 +505,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     display <- cbind(display, Block = block)
   }
   if (twoLevelDesign) {
-    display <- .doeFactorialAddCenterPoints(options, display)
+    display <- .doeFactorialAddCenterPoints(designSpec, display)
   }
   if (designSpec[["replications"]] > 1) { # the last part of "<standard order>.<replication>"
     display[["Replication"]] <- as.numeric(sub("^.*\\.", "", as.character(runOrderInfo[["run.no.std.rp"]])))
@@ -512,6 +518,23 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   return(result)
 }
 
+# FrF2 labels the runs of a blocked design "<run>.<block>.<run in block>" and its centre points "0.<block>.0", so the factor
+# level codes of these labels are no run numbers. The factorial runs keep their run number (as without centre points), the
+# centre points of every replicate are numbered after its factorial runs, block by block (as Minitab puts them after the corner points)
+.doeFactorialBlockedStandardOrder <- function(runOrderInfo, nRuns, replications) {
+  labels <- strsplit(as.character(runOrderInfo[["run.no.in.std.order"]]), ".", fixed = TRUE)
+  run <- as.numeric(vapply(labels, `[`, character(1), 1))
+  block <- as.numeric(vapply(labels, `[`, character(1), 2))
+  replication <- if (replications > 1) as.numeric(sub("^.*\\.", "", as.character(runOrderInfo[["run.no.std.rp"]]))) else rep(1, length(run))
+  standardOrder <- run
+  for (r in unique(replication)) {
+    centerPoints <- which(run == 0 & replication == r)
+    centerPoints <- centerPoints[order(block[centerPoints])] # within a block in run order
+    standardOrder[centerPoints] <- nRuns + seq_along(centerPoints)
+  }
+  return(standardOrder)
+}
+
 # Without "Set seed", use the seed drawn by the QML form when the analysis was created; it is an option,
 # so it is saved in the .jasp file and the run order is the same after reopening (a jaspResults state is not saved)
 .doeGetSeed <- function(options) {
@@ -520,9 +543,9 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   return(options[["randomSeed"]])
 }
 
-.doeFactorialAddCenterPoints <- function(options, display) {
+.doeFactorialAddCenterPoints <- function(designSpec, display) {
   indices <- (1 + 2):ncol(display)
-  if (options[["centerpoints"]] > 0) {
+  if (designSpec[["centerpoints"]] > 0) {
     display[, indices] <- sapply(display[, indices], as.numeric)
   } else {
     display[, indices] <- sapply(display[, indices], as.numeric) * 2 - 3

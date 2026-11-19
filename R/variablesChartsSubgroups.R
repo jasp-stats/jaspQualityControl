@@ -163,6 +163,9 @@ variablesChartsSubgroupsInternal <- function(jaspResults, dataset, options) {
                                    xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
                                    unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
       jaspResults[["controlCharts"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
+      emptyStagesNote <- .controlChartEmptyStagesNote(xBarChart$controlChartData$emptyStages)
+      if (length(emptyStagesNote) > 0)
+        plotNotes <- paste0(plotNotes, if (!identical(plotNotes, "") && !endsWith(plotNotes, "<br>")) "<br>", emptyStagesNote)
       if (!identical(plotNotes, ""))
         jaspResults[["controlCharts"]][["plotNote"]] <- createJaspHtml(paste0("<i>Note.</i> ", plotNotes))
 
