@@ -214,7 +214,12 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
   } else {
     set.seed(123)
   }
-  design[["run.order"]] <- sample(seq_len(nrow(design)))
+  runOrder <- sample(seq_len(nrow(design)))
+  # a block is a batch or time period: randomise within each block, the blocks run one after another
+  # (rank by block, then by the random draw; also over the discrete factor levels, which share the blocks)
+  if (!is.null(design[["Block"]]))
+    runOrder <- order(order(design[["Block"]], runOrder))
+  design[["run.order"]] <- runOrder
 
   design <- .doeResponseSurfaceSetDisplayOrder(options, design)
 
