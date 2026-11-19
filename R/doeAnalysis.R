@@ -2903,6 +2903,28 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   return("discrete")
 }
 
+.doeAnalysisPlotXAxis <- function(emm, factorName, factorType) {
+  # Continuous x: numeric axis, breaks and points at outer limits only.
+  if (factorType == "continuous") {
+    emm[["x"]] <- as.numeric(emm[[factorName]])
+    xBreaks    <- unique(range(emm[["x"]], na.rm = TRUE))
+    xScale     <- ggplot2::scale_x_continuous(name = factorName, breaks = xBreaks, expand = ggplot2::expansion(mult = c(0.15, 0.15)))
+    return(list(emm = emm, emmForPoints = emm[emm[["x"]] %in% xBreaks, ], xScale = xScale))
+  }
+
+  # Discrete x: all levels, numeric-looking levels sorted numerically.
+  emm[["x"]] <- as.character(emm[[factorName]])
+  numericX   <- suppressWarnings(as.numeric(unique(emm[["x"]])))
+  if (!anyNA(numericX)) {
+    emm[["x"]] <- factor(emm[["x"]], levels = as.character(sort(numericX)))
+  } else if (is.factor(emm[[factorName]])) {
+    emm[["x"]] <- factor(emm[["x"]], levels = levels(emm[[factorName]]))
+  }
+  xScale <- ggplot2::scale_x_discrete(name = factorName, expand = ggplot2::expansion(add = c(0.5, 0.5)))
+
+  return(list(emm = emm, emmForPoints = emm, xScale = xScale))
+}
+
 .doeAnalysisPlotFactorValues <- function(model, factorName, factorType, gridResolution = 51, outerLimitsOnly = FALSE) {
   values <- model.frame(model)[[factorName]]
 
@@ -3008,7 +3030,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     tryCatch({
       return(.doeAnalysisPredictByTerms(model, termNames, level, includeCi, options, gridResolution))
     }, error = function(e2) {
-      stop(gettextf("Error computing emmeans for terms '%s': %s. Prediction fallback failed: %s.",
+      stop(gettextf("Error computing emmeans for terms '%1$s': %2$s. Prediction fallback failed: %3$s.",
                      paste(termNames, collapse = ", "), conditionMessage(e), conditionMessage(e2)))
     })
   })
@@ -3070,38 +3092,20 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     }
   }
 
+  out <- grid[, termNames, drop = FALSE]
+
   if (includeCi) {
-    pred <- stats::predict(model, newdata = grid, se.fit = TRUE)
-    df <- stats::df.residual(model)
-    tcrit <- stats::qt((1 + level) / 2, df)
-    emmean <- pred$fit
-    se <- pred$se.fit
-    lower <- emmean - tcrit * se
-    upper <- emmean + tcrit * se
+    pred         <- stats::predict(model, newdata = grid, se.fit = TRUE)
+    tcrit        <- stats::qt((1 + level) / 2, stats::df.residual(model))
+    emmean       <- pred$fit
+    out$lower.CL <- emmean - tcrit * pred$se.fit
+    out$upper.CL <- emmean + tcrit * pred$se.fit
   } else {
     emmean <- stats::predict(model, newdata = grid)
   }
 
-  out <- grid[, termNames, drop = FALSE]
   out$emmean <- emmean
-  if (includeCi) {
-    out$lower.CL <- lower
-    out$upper.CL <- upper
-  }
-
   return(out)
-}
-
-.doeAnalysisNormalizeCiLevel <- function(level) {
-  if (is.null(level) || !is.finite(level)) {
-    return(0.95)
-  }
-
-  if (level > 1) {
-    return(level / 100)
-  }
-
-  return(level)
 }
 
 .doeAnalysisPlotFactorialPlots <- function(jaspResults, dependent, options, ready) {
@@ -3142,8 +3146,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   mainEffectContainer$position <- 1
   depContainer[["mainEffect"]] <- mainEffectContainer
 
-  includeCi <- isTRUE(options[["mainEffectsPlotCi"]])
-  ciLevel <- .doeAnalysisNormalizeCiLevel(options[["mainEffectsPlotCiLevel"]])
+  includeCi <- options[["mainEffectsPlotCi"]]
+  ciLevel   <- options[["mainEffectsPlotCiLevel"]]
 
   result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
   model <- result[["object"]]
@@ -3174,45 +3178,19 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       next
     }
 
-    factorType <- .doeAnalysisPlotFactorType(factorName, options)
-    if (factorType == "continuous") {
-      emm[["x"]] <- as.numeric(emm[[factorName]])
-      xBreaks <- sort(unique(c(min(emm[["x"]], na.rm = TRUE), max(emm[["x"]], na.rm = TRUE))))
-    } else {
-      emm[["x"]] <- as.character(emm[[factorName]])
-
-      uniqueX <- unique(emm[["x"]])
-      numericX <- suppressWarnings(as.numeric(uniqueX))
-      if (!anyNA(numericX)) {
-        sortedLevels <- as.character(sort(numericX))
-        emm[["x"]] <- factor(emm[["x"]], levels = sortedLevels)
-      } else if (is.factor(emm[[factorName]])) {
-        emm[["x"]] <- factor(emm[["x"]], levels = levels(emm[[factorName]]))
-      }
-    }
+    xAxis <- .doeAnalysisPlotXAxis(emm, factorName, .doeAnalysisPlotFactorType(factorName, options))
+    emm   <- xAxis[["emm"]]
 
     factorPlot <- createJaspPlot(title = gettextf("Main Effect: %s", factorName), width = 500, height = 500)
-    
-    # Filter points: continuous factors show outer limits only, discrete show all levels
-    emmForPoints <- if (factorType == "continuous") {
-      emm[emm[["x"]] %in% xBreaks, ]
-    } else {
-      emm
-    }
-    
+
     p <- ggplot2::ggplot(emm, ggplot2::aes(x = x, y = emmean, group = 1)) +
       ggplot2::geom_line(color = "black", linewidth = 0.9) +
-      ggplot2::geom_point(data = emmForPoints, color = "black", fill = "black", shape = 21, size = 3.2, stroke = 0.2) +
+      ggplot2::geom_point(data = xAxis[["emmForPoints"]], color = "black", fill = "black", shape = 21, size = 3.2, stroke = 0.2) +
       ggplot2::scale_y_continuous(name = dep, expand = ggplot2::expansion(mult = c(0.15, 0.15))) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw() +
-      ggplot2::theme(plot.margin = ggplot2::margin(10, 10, 10, 10, unit = "pt"))
-
-    if (factorType == "continuous") {
-      p <- p + ggplot2::scale_x_continuous(name = factorName, breaks = xBreaks, expand = ggplot2::expansion(mult = c(0.15, 0.15)))
-    } else {
-      p <- p + ggplot2::scale_x_discrete(name = factorName, expand = ggplot2::expansion(add = c(0.5, 0.5)))
-    }
+      ggplot2::theme(plot.margin = ggplot2::margin(10, 10, 10, 10, unit = "pt")) +
+      xAxis[["xScale"]]
 
     if (includeCi && all(c("lower.CL", "upper.CL") %in% names(emm))) {
       p <- p + ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.CL, ymax = upper.CL), width = 0.25, linewidth = 0.6)
@@ -3240,8 +3218,8 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   interactionEffectContainer$position <- 2
   depContainer[["interactionEffect"]] <- interactionEffectContainer
 
-  includeCi <- isTRUE(options[["interactionPlotCi"]])
-  ciLevel <- .doeAnalysisNormalizeCiLevel(options[["interactionPlotCiLevel"]])
+  includeCi <- options[["interactionPlotCi"]]
+  ciLevel   <- options[["interactionPlotCiLevel"]]
 
   result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
   model <- result[["object"]]
@@ -3290,22 +3268,6 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     xFactorType <- .doeAnalysisPlotFactorType(factorA, options)
     traceFactorType <- .doeAnalysisPlotFactorType(factorB, options)
 
-    if (xFactorType == "continuous") {
-      emm[["x"]] <- as.numeric(emm[[factorA]])
-      xBreaks <- sort(unique(c(min(emm[["x"]], na.rm = TRUE), max(emm[["x"]], na.rm = TRUE))))
-    } else {
-      emm[["x"]] <- as.character(emm[[factorA]])
-
-      uniqueX <- unique(emm[["x"]])
-      numericX <- suppressWarnings(as.numeric(uniqueX))
-      if (!anyNA(numericX)) {
-        sortedLevels <- as.character(sort(numericX))
-        emm[["x"]] <- factor(emm[["x"]], levels = sortedLevels)
-      } else if (is.factor(emm[[factorA]])) {
-        emm[["x"]] <- factor(emm[["x"]], levels = levels(emm[[factorA]]))
-      }
-    }
-
     if (traceFactorType == "continuous") {
       traceValues <- as.character(emm[[factorB]])
       traceNumeric <- suppressWarnings(as.numeric(traceValues))
@@ -3321,16 +3283,12 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       }
     }
 
+    xAxis <- .doeAnalysisPlotXAxis(emm, factorA, xFactorType)
+    emm   <- xAxis[["emm"]]
+
     pairTitle <- gettextf("Interaction: %1$s x %2$s", factorA, factorB)
     pairPlot <- createJaspPlot(title = pairTitle, width = 600, height = 500)
-    
-    # Filter points: continuous x-axis shows outer limits only, discrete shows all
-    emmForPoints <- if (xFactorType == "continuous") {
-      emm[emm[["x"]] %in% xBreaks, ]
-    } else {
-      emm
-    }
-    
+
     hasCi <- includeCi && all(c("lower.CL", "upper.CL") %in% names(emm))
 
     p <- ggplot2::ggplot(emm, ggplot2::aes(x = x, y = emmean, color = trace, group = trace))
@@ -3343,18 +3301,13 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
     p <- p +
       ggplot2::geom_line(linewidth = 0.95) +
-      ggplot2::geom_point(data = emmForPoints, shape = 21, ggplot2::aes(fill = trace), size = 3.2, stroke = 0.2) +
+      ggplot2::geom_point(data = xAxis[["emmForPoints"]], shape = 21, ggplot2::aes(fill = trace), size = 3.2, stroke = 0.2) +
       ggplot2::scale_y_continuous(name = dep, expand = ggplot2::expansion(mult = c(0.15, 0.15))) +
       ggplot2::labs(color = factorB, fill = factorB) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw() +
-      ggplot2::theme(legend.position = "right", plot.margin = ggplot2::margin(10, 10, 10, 10, unit = "pt"))
-
-    if (xFactorType == "continuous") {
-      p <- p + ggplot2::scale_x_continuous(name = factorA, breaks = xBreaks, expand = ggplot2::expansion(mult = c(0.15, 0.15)))
-    } else {
-      p <- p + ggplot2::scale_x_discrete(name = factorA, expand = ggplot2::expansion(add = c(0.5, 0.5)))
-    }
+      ggplot2::theme(legend.position = "right", plot.margin = ggplot2::margin(10, 10, 10, 10, unit = "pt")) +
+      xAxis[["xScale"]]
 
     # Discrete x: error bars at each level
     if (hasCi && xFactorType != "continuous") {
