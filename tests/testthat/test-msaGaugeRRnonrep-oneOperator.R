@@ -7,6 +7,7 @@ context("[Quality Control] MSA - Gauge r&R non-replicable - one operator")
 
 .gaugeRRnonrepOneOperatorOptions <- function(wideFormat, trafficLightChart = FALSE, report = FALSE) {
   options <- analysisOptions("msaGaugeRRnonrep")
+  options$testSet <- "jaspDefault"
   if (wideFormat) {
     options$dataFormat             <- "wideFormat"
     options$partWideFormat         <- "Batch"
