@@ -467,6 +467,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   charts <- list(upperChart, lowerChart)
   failed <- vapply(charts, function(chart) !is.null(chart[["errorMessage"]]), logical(1))
   notes  <- if (identical(plotNotes, "")) character(0) else sub("<br>$", "", plotNotes)
+  notes  <- c(notes, .controlChartEmptyStagesNote(unique(unlist(lapply(charts, function(chart) chart[["controlChartData"]][["emptyStages"]])))))
 
   if (all(failed)) {
     container[["plot"]]$setError(paste(unique(vapply(charts, `[[`, character(1), "errorMessage")), collapse = " "))

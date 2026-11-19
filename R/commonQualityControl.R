@@ -883,6 +883,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   colnames(dfLimitLabel) <- c("x", "y", "label")
   dfStageLabels <- data.frame(matrix(ncol = 4, nrow = 0))
   colnames(dfStageLabels) <- c("x", "y", "label", "separationLine")
+  # a stage whose rows are all missing has no limits: it gets no limit lines or labels and is listed in emptyStages
+  stageHasObservations <- vapply(seq_len(nStages), function(i) any(!is.na(dataset[stageIndex == i, names(dataset) != stages])), logical(1))
+  lastObservedStage <- if (any(stageHasObservations)) max(which(stageHasObservations)) else 0
+  stageNames <- as.character(dataset[[stages]][match(seq_len(nStages), stageIndex)])
+  emptyStages <- character(0)
   ###
   ### Beginning of loop over all stages to calculate all values
   ###
@@ -1142,6 +1147,17 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                       "LWL2" = LWL2))
     }
 
+    if (!stageHasObservations[i]) {
+      stageClData[!names(stageClData) %in% c("subgroup", "stage")] <- NA_real_
+      if (hasStages) {
+        stageName <- stageNames[i]
+        sameName <- which(stageNames %in% stageName)
+        if (length(sameName) > 1)
+          stageName <- gettextf("%1$s (occurrence %2$d)", stageName, match(i, sameName))
+        emptyStages <- union(emptyStages, stageName)
+      }
+    }
+
     # offset to align geom_step lines with observations
     stageClData <- rbind(stageClData, stageClData[nrow(stageClData),])
     stageClData[["subgroup"]][nrow(stageClData)] <- stageClData[["subgroup"]][nrow(stageClData)] + 1
@@ -1167,7 +1183,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         .controlChartLabelValue(lastLCL),
         .controlChartLabelValue(lastUCL))
     }
-    if (stagesSeparateCalculation || (!stagesSeparateCalculation && i == nStages))
+    # with limits calculated from all stages, only the last stage with observations is labelled
+    if (stageHasObservations[i] && (stagesSeparateCalculation || i == lastObservedStage))
       dfLimitLabel <- rbind(dfLimitLabel, data.frame(x = labelXPos,
                                                      y = c(lastCenter, lastLCL, lastUCL),
                                                      label = labelText))
@@ -1203,8 +1220,19 @@ KnownControlStats.RS <- function(N, sigma = 3) {
               "clLabels"       = dfLimitLabel,
               "stageLabels"    = dfStageLabels,
               "violationTable" = tableList,
-              "sd"             = sigma
+              "sd"             = sigma,
+              "emptyStages"    = emptyStages
   ))
+}
+
+# Plot note naming the stages without observations, which have no control limits; character(0) if there are none
+.controlChartEmptyStagesNote <- function(emptyStages) {
+  if (length(emptyStages) == 0)
+    return(character(0))
+  sprintf(ngettext(length(emptyStages),
+                   "Stage %s has no observations, so no control limits are shown for it.",
+                   "Stages %s have no observations, so no control limits are shown for them."),
+          paste(emptyStages, collapse = ", "))
 }
 
 # Text of a limit label value: rounded to the set number of decimals, but with 3 significant digits for small values that
