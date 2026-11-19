@@ -491,6 +491,9 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   }
 
   blocked <- options[["factorialType"]] == "factorialTypeDefault" && designSpec[["blocks"]] > 1
+  if (blocked && designSpec[["centerpoints"]] > 0) {
+    standardOrder <- .doeFactorialBlockedStandardOrder(runOrderInfo, designSpec[["runs"]], designSpec[["replications"]])
+  }
   outDesign <- if (blocked) dfDesign[2:(nrow(df)+1)] else dfDesign[1:nrow(df)]
   colnames(outDesign) <- df[["name"]]
   display <- cbind(ro = runOrder, sro = standardOrder, outDesign)
@@ -513,6 +516,23 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   result[["display"]] <- display
   result[["seed"]] <- seed
   return(result)
+}
+
+# FrF2 labels the runs of a blocked design "<run>.<block>.<run in block>" and its centre points "0.<block>.0", so the factor
+# level codes of these labels are no run numbers. The factorial runs keep their run number (as without centre points), the
+# centre points of every replicate are numbered after its factorial runs, block by block (as Minitab puts them after the corner points)
+.doeFactorialBlockedStandardOrder <- function(runOrderInfo, nRuns, replications) {
+  labels <- strsplit(as.character(runOrderInfo[["run.no.in.std.order"]]), ".", fixed = TRUE)
+  run <- as.numeric(vapply(labels, `[`, character(1), 1))
+  block <- as.numeric(vapply(labels, `[`, character(1), 2))
+  replication <- if (replications > 1) as.numeric(sub("^.*\\.", "", as.character(runOrderInfo[["run.no.std.rp"]]))) else rep(1, length(run))
+  standardOrder <- run
+  for (r in unique(replication)) {
+    centerPoints <- which(run == 0 & replication == r)
+    centerPoints <- centerPoints[order(block[centerPoints])] # within a block in run order
+    standardOrder[centerPoints] <- nRuns + seq_along(centerPoints)
+  }
+  return(standardOrder)
 }
 
 # Without "Set seed", use the seed drawn by the QML form when the analysis was created; it is an option,
