@@ -125,6 +125,7 @@
 * Multivariate control charts: fix Phase II errors and missing observation labels caused by automatic naming.
 * Control charts and process capability: prevent overflow when calculating bias-corrected standard deviations.
 * Control charts with stages: the test results tables now report the chart position and timestamp of out-of-control points in every stage after the first, instead of their position within the stage ([Issue #4672](https://github.com/jasp-stats/jasp-issues/issues/4672)).
+* Control charts now flag a Nelson trend on the sixth consecutive rising or falling point and an oscillation on the fourteenth alternating point. Each stage starts a new sequence ([PR #642](https://github.com/jasp-stats/jaspQualityControl/pull/642)).
 * Control charts with interleaved stages (stages alternating between rows): x-axis labels and test results timestamps now belong to the plotted subgroup in "Across rows" data and in time weighted charts with timestamps.
 * Cumulative sum charts with stages: the names of the stages after the first are now shown halfway along their stage instead of at its last point.
 * Control charts, time weighted charts and process capability: the unbiasing constants d2 and d3 for subgroup sizes or moving range lengths above 50 are now computed exactly instead of by a polynomial approximation that was wrong beyond 100 (e.g. d2 = 5.64 instead of 14.3 for n = 250), so R-bar and moving range based std. dev. and control limits are correct for large subgroups.
