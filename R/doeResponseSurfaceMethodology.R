@@ -20,6 +20,14 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
 
   ready <- options[["selectedRow"]] != -1L && !(options[["designType"]] == "boxBehnkenDesign" && options[["selectedRow"]] > 0) # simple way of stopping box behnken design from crashing if select row is still > 0 from previous CCD selection
 
+  if (ready && !.doeRsmFactorCountsMatch(options)) {
+    tb <- createJaspTable(title = gettext("Design Summary"), position = 1L)
+    tb$dependOn(options = c("numberOfContinuous", "continuousVariables", "numberOfCategorical", "categoricalVariables"))
+    tb$setError(gettext("The number of factor definitions does not match the selected number of factors. Please check the factor tables."))
+    jaspResults[["doeRsmDesignSummaryTable"]] <- tb
+    return()
+  }
+
   if (ready)
     .doeRsmDesignSummaryTable(jaspResults, options)
 
@@ -31,6 +39,12 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
     .doeRsmExportDesign(options, design)
   }
 
+}
+
+.doeRsmFactorCountsMatch <- function(options) {
+  matches <- function(table, count) length(table) > 0L && all(vapply(table, function(column) length(column[["values"]]) == count, logical(1)))
+  matches(options[["continuousVariables"]], options[["numberOfContinuous"]]) &&
+    (options[["numberOfCategorical"]] == 0L || matches(options[["categoricalVariables"]], options[["numberOfCategorical"]]))
 }
 
 .doeRsmDesignSummaryTable <- function(jaspResults, options) {
@@ -107,7 +121,7 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
   }
 
   tb$dependOn(options = c(
-    "numberOfContinuous", "numberOfCategorical", "selectedRow", "replicates", "selectedDesign2",
+    "numberOfContinuous", "continuousVariables", "numberOfCategorical", "selectedRow", "replicates", "selectedDesign2",
     "alphaType", "customAlphaValue", "centerPointType", "customCubeBlock", "customAxialBlock",
     "designType", "displayDesign", "categoricalNoLevels", "categoricalVariables"
   ))
@@ -163,14 +177,11 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
 
   tb$setData(design)
 
-  tb$dependOn(options = c("numberOfContinuous", "numberOfCategorical", "categoricalVariables",
+  tb$dependOn(options = c("numberOfContinuous", "continuousVariables", "numberOfCategorical", "categoricalVariables",
                           "selectedRow", "replicates", "selectedDesign2",
                           "alphaType", "customAlphaValue",
                           "centerPointType", "customCubeBlock", "customAxialBlock", "codedOutput",
                           "runOrder", "setSeed", "seed", "designType"))
-
-  if (!options[["codedOutput"]])
-    tb$dependOn(options = "continuousVariables")
 
   jaspResults[["designTable"]] <- tb
 
