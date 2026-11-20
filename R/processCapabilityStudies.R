@@ -54,6 +54,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   # Some error handling and messages
   if (ready) {
+    if (!wideFormat && options[["subgroupSizeType"]] == "manual" && options[["manualSubgroupSizeValue"]] > nrow(dataset))
+      .quitAnalysis(gettext("The subgroup size must not exceed the number of observations."))
     plotNotes <- ""
     if (!identical(stages, "")) {
       if ((!wideFormat && options[["subgroupSizeType"]] == "manual" &&

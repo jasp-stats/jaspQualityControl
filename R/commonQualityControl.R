@@ -628,7 +628,9 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 # (fewer than k observations, or every window of k consecutive observations has a missing value).
 .movingRangeSigma <- function(x, k, stage = NULL) {
   x <- unlist(x, use.names = FALSE)
-  windowEnds <- if (length(x) >= k) seq.int(k, length(x)) else integer(0)
+  if (length(x) < k)
+    .qcDataError(.movingRangeErrorMessage(k = k, stage = stage))
+  windowEnds <- seq.int(k, length(x))
   mrMatrix   <- matrix(x[outer(windowEnds, seq_len(k) - 1L, "-")], ncol = k) # row i: x[end_i], x[end_i - 1], ...
 
   if (!any(stats::complete.cases(mrMatrix)))
