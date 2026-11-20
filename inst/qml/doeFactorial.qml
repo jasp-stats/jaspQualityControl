@@ -452,6 +452,8 @@ Form
 		SetSeed{ info: qsTr("Set a seed to reproduce a certain random order. Without it, a seed is drawn when the analysis is created and saved with it, so the run order stays the same when the file is reopened. The seed used is shown below the design table.") }
 		// Seed drawn once when the form is created; stored in the options (and the .jasp file) so the run order survives reopening
 		IntegerField { name: "randomSeed"; defaultValue: Math.floor(Math.random() * 999999) + 1; min: 1; max: 999999; visible: false }
+		// Set by Upgrades.qml for blocked designs saved before the blocks were confounded with higher-order interactions, so they keep their blocks and run order
+		CheckBox { name: "legacyBlockAssignment"; visible: false }
 
 	}
 

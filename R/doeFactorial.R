@@ -90,7 +90,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     "repetitions",
     "setSeed",
     "seed",
-    "randomSeed"
+    "randomSeed",
+    "legacyBlockAssignment"
   ))
 }
 
@@ -345,7 +346,9 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
 # Blocks are confounded with higher-order interactions (the default of FrF2 and of Minitab). Only when FrF2 cannot do that
 # (a 2-factor interaction is unavoidable, e.g. 2^4 in 4 blocks) or when the treatment effects of that design are more aliased than
 # with blocks confounded with 2-factor interactions (e.g. a lower resolution), the blocks may be confounded with 2-factor interactions.
-.doeFactorialDefaultFrF2 <- function(designSpec, seed) {
+# Blocked designs saved before this change (legacyBlockAssignment, set by Upgrades.qml) keep the old blocks and run order, which
+# came from alias.block.2fis = TRUE only, so that the worksheet still matches the experiment run with it.
+.doeFactorialDefaultFrF2 <- function(designSpec, seed, legacyBlockAssignment) {
   generateDesign <- function(aliasBlock2fis) {
     FrF2::FrF2(
       nfactors = designSpec[["factors"]],
@@ -361,7 +364,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   # and 4-18 seconds for screening designs with more than 12 factors in 4 or 8 blocks (or more than 20 factors), so there the old
   # setting is used right away
   noSearch <- (designSpec[["blocks"]] == 8 && designSpec[["runs"]] == 64 && designSpec[["factors"]] >= 8) ||
-    (designSpec[["blocks"]] > 2 && designSpec[["factors"]] > 12) || designSpec[["factors"]] > 20
+    (designSpec[["blocks"]] > 2 && designSpec[["factors"]] > 12) || designSpec[["factors"]] > 20 || legacyBlockAssignment
   clearDesign <- NULL
   if (designSpec[["blocks"]] > 1 && !noSearch) {
     clearDesign <- try(generateDesign(FALSE), silent = TRUE)
@@ -470,7 +473,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   }
   if (twoLevelDesign) {
     if (options[["factorialType"]] == "factorialTypeDefault") {
-      design <- .doeFactorialDefaultFrF2(designSpec, seed)
+      design <- .doeFactorialDefaultFrF2(designSpec, seed, options[["legacyBlockAssignment"]])
     } else if (options[["factorialType"]] == "factorialTypeSpecify") {
       entries <- unlist(strsplit(options[["factorialTypeSpecifyGenerators"]], "[,; \t\n\r]+"))
       entries <- trimws(entries)

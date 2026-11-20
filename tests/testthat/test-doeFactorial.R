@@ -1355,3 +1355,19 @@ test_that("19.10 With more than 50 factors the effects confounded with blocks ar
     expect_equal(length(unique(contrast)), 2)
   }
 })
+
+test_that("19.11 Blocked designs saved before the update keep their old blocks and run order", {
+  expect_false(analysisOptions("doeFactorial")[["legacyBlockAssignment"]]) # new analyses use the new blocks
+  options <- blockedDesignOptions(nFactors = 5, row = 2, blocks = "2")
+  options$runOrder <- "runOrderRandom"
+  options$legacyBlockAssignment <- TRUE # set by Upgrades.qml for files saved before the update
+  set.seed(1)
+  results <- runAnalysis("doeFactorial", "debug.csv", options, view = FALSE)
+  old <- as.data.frame(FrF2::FrF2(nfactors = 5, nruns = 32, blocks = 2, alias.block.2fis = TRUE, seed = options$seed))
+  design <- replicatedDesignTable(results)$data
+  expect_equal(confoundedWithBlocks(results), "AE")
+  expect_equal(aliasStructureRows(results)[1], "Blocks = AE")
+  for (factor in LETTERS[1:5])
+    expect_equal(design[[factor]], as.numeric(as.character(old[[factor]])), label = factor)
+  expect_equal(design[["Block"]], as.numeric(as.character(old[["Blocks"]])))
+})

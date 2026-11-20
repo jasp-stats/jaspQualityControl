@@ -1646,4 +1646,20 @@ Upgrades
 		ChangeRename { from: "rule8";       to: "rule4" }
 		ChangeRename { from: "rule8Value";  to: "rule4Value" }
 	}
+
+	// Two-level factorial blocks are now confounded with higher-order interactions (INTERNAL-jasp#3432). Blocked designs saved
+	// before keep their old blocks and run order, so that the worksheet still matches the experiment that was run with it.
+	Upgrade
+	{
+		functionName:	"doeFactorial"
+		fromVersion:	"0.98.4"
+		toVersion:		"0.98.5"
+
+		ChangeSetValue
+		{
+			condition:	function(options) { return options["factorialType"] === "factorialTypeDefault" && Number(options["blocks"]) > 1 }
+			name:		"legacyBlockAssignment"
+			jsonValue:	true
+		}
+	}
 }
