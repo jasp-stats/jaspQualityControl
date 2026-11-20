@@ -65,7 +65,7 @@ Group
 			id:					actualExporter
 			name:				"actualExporter"
 			label:				qsTr("Export design")
-			info:				qsTr("Check to save the selected design to the specified file.")
+			info:				qsTr("Check to save the selected design to a new file. Existing files are not overwritten; choose a new filename if the design changes.")
 			Layout.leftMargin:  25 * preferencesModel.uiScale
 			enabled: 			exportDesignFile.value != ""
 		}

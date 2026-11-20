@@ -47,7 +47,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
 
     .doeFactorialGenerateDesignTable(jaspResults, options, design)
 
-    .doeRsmExportDesign(options, design[["display"]])
+    exportStatus <- .doeRsmExportDesign(options, design[["display"]])
+    .doeShowExportStatus(jaspResults, options, exportStatus)
   }
 }
 
@@ -150,8 +151,6 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   if (options[["exportDesignFile"]] != "") {
     if (!options[["actualExporter"]]) {
       tb$addFootnote(gettext("The design is not exported until 'Export design' is checked."))
-    } else {
-      tb$addFootnote(gettextf("The design is exported as '%1$s'.", basename(options[["exportDesignFile"]])))
     }
   }
 }
