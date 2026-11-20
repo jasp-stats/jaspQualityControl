@@ -467,7 +467,7 @@ Form
 				name:									"blocks"
 				enabled:								factorialTypeDefault.checked
 				label:									qsTr("Blocks")
-				info:									qsTr("Select the number of blocks. Legacy choices reproduce the assignments used before version 0.98.5. In R syntax, use \"higherOrder2\", \"higherOrder4\", or \"higherOrder8\" for the current assignment and \"2\", \"4\", or \"8\" for the legacy assignment.")
+				info:									qsTr("Select the number of blocks. The legacy choices give the block assignment of earlier JASP versions, in which blocks can be confounded with 2-factor interactions that could be kept clear; analyses saved with those versions keep it. In R syntax, use %1 for the current assignment and %2 for the legacy assignment.").arg("\"higherOrder2\", \"higherOrder4\", \"higherOrder8\"").arg("\"2\", \"4\", \"8\"")
 				indexDefaultValue:						0
 				values: [
 						{ label: qsTr("1"), value: "1"},
