@@ -452,8 +452,6 @@ Form
 		SetSeed{ info: qsTr("Set a seed to reproduce a certain random order. Without it, a seed is drawn when the analysis is created and saved with it, so the run order stays the same when the file is reopened. The seed used is shown below the design table.") }
 		// Seed drawn once when the form is created; stored in the options (and the .jasp file) so the run order survives reopening
 		IntegerField { name: "randomSeed"; defaultValue: Math.floor(Math.random() * 999999) + 1; min: 1; max: 999999; visible: false }
-		// Set by Upgrades.qml for blocked designs saved before the blocks were confounded with higher-order interactions, so they keep their blocks and run order
-		CheckBox { name: "legacyBlockAssignment"; visible: false }
 
 	}
 
@@ -469,13 +467,16 @@ Form
 				name:									"blocks"
 				enabled:								factorialTypeDefault.checked
 				label:									qsTr("Blocks")
-				info:									qsTr("Select the number of blocks in the design. Only available for two-level factorial designs with the default generator.")
+				info:									qsTr("Select the number of blocks. Legacy choices reproduce the assignments used before version 0.98.5. In R syntax, use \"higherOrder2\", \"higherOrder4\", or \"higherOrder8\" for the current assignment and \"2\", \"4\", or \"8\" for the legacy assignment.")
 				indexDefaultValue:						0
 				values: [
 						{ label: qsTr("1"), value: "1"},
-						{ label: qsTr("2"), value: "2"},
-						{ label: qsTr("4"), value: "4"},
-						{ label: qsTr("8"), value: "8"}
+						{ label: qsTr("2"), value: "higherOrder2"},
+						{ label: qsTr("4"), value: "higherOrder4"},
+						{ label: qsTr("8"), value: "higherOrder8"},
+						{ label: qsTr("2 (legacy assignment)"), value: "2"},
+						{ label: qsTr("4 (legacy assignment)"), value: "4"},
+						{ label: qsTr("8 (legacy assignment)"), value: "8"}
 						]
 			}
 

@@ -90,8 +90,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     "repetitions",
     "setSeed",
     "seed",
-    "randomSeed",
-    "legacyBlockAssignment"
+    "randomSeed"
   ))
 }
 
@@ -127,6 +126,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   if (twoLevelDesign) {
     tb[["baseRuns"]] <- designSpec[["runs"]]
     tb[["baseBlocks"]] <- designSpec[["blocks"]]
+    if (designSpec[["legacyBlockAssignment"]])
+      tb$addFootnote(gettext("This design uses the legacy block assignment."))
     tb[["centerpoints"]] <- designSpec[["centerpoints"]]
     runs <- (designSpec[["runs"]] * designSpec[["replications"]]) + (designSpec[["blocks"]] * designSpec[["centerpoints"]] * designSpec[["replications"]]) + designSpec[["repetitions"]]
     tb[["totalRuns"]] <- runs
@@ -338,7 +339,10 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     # but a disabled control keeps its value. Blocks are only implemented for the default generator, split-plot designs
     # have no centre points.
     design[["centerpoints"]] <- if (options[["factorialType"]] == "factorialTypeSplit") 0 else options[["centerpoints"]]
-    design[["blocks"]] <- if (options[["factorialType"]] == "factorialTypeDefault") as.numeric(options[["blocks"]]) else 1
+    blocks <- if (options[["factorialType"]] == "factorialTypeDefault") options[["blocks"]] else "1"
+    # Numeric choices are the values written by earlier worksheets and exported R calls.
+    design[["legacyBlockAssignment"]] <- blocks %in% c("2", "4", "8")
+    design[["blocks"]] <- as.numeric(sub("^higherOrder", "", blocks))
   }
   return(design)
 }
@@ -346,7 +350,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
 # Blocks are confounded with higher-order interactions (the default of FrF2 and of Minitab). Only when FrF2 cannot do that
 # (a 2-factor interaction is unavoidable, e.g. 2^4 in 4 blocks) or when the treatment effects of that design are more aliased than
 # with blocks confounded with 2-factor interactions (e.g. a lower resolution), the blocks may be confounded with 2-factor interactions.
-# Blocked designs saved before this change (legacyBlockAssignment, set by Upgrades.qml) keep the old blocks and run order, which
+# Earlier worksheets and R syntax keep the old blocks and run order, which
 # came from alias.block.2fis = TRUE only, so that the worksheet still matches the experiment run with it.
 .doeFactorialDefaultFrF2 <- function(designSpec, seed, legacyBlockAssignment) {
   generateDesign <- function(aliasBlock2fis) {
@@ -363,7 +367,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   # FrF2 needs 20-35 seconds to find out that, for 8 or more factors in 64 runs and 8 blocks, a 2-factor interaction is unavoidable,
   # and 4-18 seconds for screening designs with more than 12 factors in 4 or 8 blocks (or more than 20 factors), so there the old
   # setting is used right away
-  noSearch <- (designSpec[["blocks"]] == 8 && designSpec[["runs"]] == 64 && designSpec[["factors"]] >= 8) ||
+  # With 7 factors, both calls already give the same seven third-order block contrasts.
+  noSearch <- (designSpec[["blocks"]] == 8 && designSpec[["runs"]] == 64 && designSpec[["factors"]] >= 7) ||
     (designSpec[["blocks"]] > 2 && designSpec[["factors"]] > 12) || designSpec[["factors"]] > 20 || legacyBlockAssignment
   clearDesign <- NULL
   if (designSpec[["blocks"]] > 1 && !noSearch) {
@@ -473,7 +478,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   }
   if (twoLevelDesign) {
     if (options[["factorialType"]] == "factorialTypeDefault") {
-      design <- .doeFactorialDefaultFrF2(designSpec, seed, options[["legacyBlockAssignment"]])
+      design <- .doeFactorialDefaultFrF2(designSpec, seed, designSpec[["legacyBlockAssignment"]])
     } else if (options[["factorialType"]] == "factorialTypeSpecify") {
       entries <- unlist(strsplit(options[["factorialTypeSpecifyGenerators"]], "[,; \t\n\r]+"))
       entries <- trimws(entries)
@@ -593,6 +598,11 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     }
     result[["aliases"]] <- list()
     result[["aliases"]]$data <- data.frame(Aliases = c(.doeFactorialBlockAliasRow(blockEffects), aliasRows))
+    codes <- setdiff(names(as.data.frame(design)), "Blocks")
+    if (length(codes) == nrow(df) && !identical(codes, as.character(df[["name"]]))) {
+      mapping <- paste(codes, encodeString(as.character(df[["name"]]), quote = '"'), sep = " = ")
+      result[["aliases"]]$factorKey <- gettextf("Factor codes in worksheet order: %s.", paste(mapping, collapse = ", "))
+    }
     if (length(aliasRows) == 0) {
       # 2-factor interactions confounded with blocks can also be aliased with each other (e.g. "Blocks = AB=CE")
       result[["aliases"]]$note <- if (any(attr(blockEffects, "orders") <= 2)) {
@@ -733,6 +743,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     return()
   }
   tb$setData(design[["aliases"]]$data)
+  if (!is.null(design[["aliases"]]$factorKey))
+    tb$addFootnote(design[["aliases"]]$factorKey)
   if (!is.null(design[["aliases"]]$note)) {
     tb$addFootnote(design[["aliases"]]$note)
   }

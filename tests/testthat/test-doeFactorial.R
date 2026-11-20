@@ -1188,7 +1188,7 @@ blockedDesignOptions <- function(nFactors, row, blocks, replications = 1, center
   options$factorialType <- "factorialTypeDefault"
   options$runOrder <- "runOrderStandard"
   options$selectedRow <- row # row in the design table of the number of factors
-  options$blocks <- blocks
+  options$blocks <- paste0("higherOrder", blocks)
   options$replications <- replications
   options$centerpoints <- centerpoints
   options$setSeed <- TRUE
@@ -1357,10 +1357,9 @@ test_that("19.10 With more than 50 factors the effects confounded with blocks ar
 })
 
 test_that("19.11 Blocked designs saved before the update keep their old blocks and run order", {
-  expect_false(analysisOptions("doeFactorial")[["legacyBlockAssignment"]]) # new analyses use the new blocks
   options <- blockedDesignOptions(nFactors = 5, row = 2, blocks = "2")
   options$runOrder <- "runOrderRandom"
-  options$legacyBlockAssignment <- TRUE # set by Upgrades.qml for files saved before the update
+  options$blocks <- "2" # value stored by earlier worksheets and exported R syntax
   set.seed(1)
   results <- runAnalysis("doeFactorial", "debug.csv", options, view = FALSE)
   old <- as.data.frame(FrF2::FrF2(nfactors = 5, nruns = 32, blocks = 2, alias.block.2fis = TRUE, seed = options$seed))
@@ -1370,4 +1369,18 @@ test_that("19.11 Blocked designs saved before the update keep their old blocks a
   for (factor in LETTERS[1:5])
     expect_equal(design[[factor]], as.numeric(as.character(old[[factor]])), label = factor)
   expect_equal(design[["Block"]], as.numeric(as.character(old[["Blocks"]])))
+})
+
+test_that("19.12 Alias table identifies positional codes for renamed worksheet factors", {
+  options <- blockedDesignOptions(4, 1, "4")
+  options$categoricalVariables[[1]]$values <- c("A", "B", "D", "C")
+  results <- runAnalysis("doeFactorial", "debug.csv", options, view = FALSE)
+  expect_true('Factor codes in worksheet order: A = "A", B = "B", C = "D", D = "C".' %in% aliasStructureFootnotes(results))
+  expect_true("AC" %in% confoundedWithBlocks(results))
+  expect_false("AD" %in% confoundedWithBlocks(results))
+})
+
+test_that("19.13 The 7-factor, 64-run design keeps its seven third-order block contrasts", {
+  results <- blockedDesignResults(7, 3, "8")
+  expect_equal(aliasStructureRows(results), "Blocks = ABC, ADE, AFG, BDF, BEG, CDG, CEF")
 })
