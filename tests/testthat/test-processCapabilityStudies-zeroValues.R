@@ -1,7 +1,6 @@
 context("[Quality Control] Process Capability Study - non-normal distributions with zero values")
 
 # jasp-stats/INTERNAL-jasp#3417: zeros were replaced by half the smallest positive value for every non-normal distribution.
-# Only distributions that cannot be fitted to a zero (Weibull, log-normal, gamma, log-logistic) still need the replacement.
 
 zeroValuesData <- function() {
   diameter <- read.csv("datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv")[["Diameter"]]
@@ -81,15 +80,35 @@ test_that("Exponential capability analysis keeps zeros: the scale is the sample 
   expect_equal(zeroValuesSummary(results)[["mean"]], mean(data))
 })
 
-test_that("Weibull capability analysis replaces zeros for the fit only", {
-  data <- zeroValuesData()$oneZero
-  results <- zeroValuesResults("weibull", data, 0.4, 12)
-  expect_false(is.null(results[["zeroWarning"]]))
+test_that("Changing the capability distribution preserves the normal diagnostic for recorded zeros", {
+  x <- c(0, 3, 3, 3, 4, 4, 6, 10, 10)
+  for (distribution in c("exponential", "weibull")) {
+    results <- zeroValuesResults(distribution, x, 1, 9, nullDistribution = "normal")
+    probability <- results[["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]][[1]]
+    expect_equal(probability$n, 9)
+    expect_equal(probability$mean, mean(x))
+    expect_equal(probability$sd, sd(x))
+    expect_equal(probability$ad, 0.594, tolerance = 0.001)
+    expect_equal(probability$p, 0.085, tolerance = 0.001)
+    if (distribution == "weibull") {
+      capability <- results[["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]]
+      message <- capability[["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["error"]][["errorMessage"]]
+      expect_match(message, "greater than zero")
+      expect_match(message, "transformation that yields positive measurements")
+      expect_match(message, "For capability estimates, consider the 3-parameter Weibull")
+      expect_null(capability[["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]])
+    } else {
+      expect_equal(zeroValuesSummary(results)$theta, mean(x), tolerance = 1e-6)
+    }
+  }
+})
 
-  # process summary and observed ppm describe the data as entered (the replacement 1.8 would lie above the LSL of 0.4)
-  expect_equal(zeroValuesSummary(results)[["mean"]], mean(data))
-  expect_equal(zeroValuesSummary(results)[["sd"]], sd(data))
-  expect_equal(zeroValuesPpm(results, "observed1")[1], 1e6 / 100)
+test_that("Positive-only distributions reject a recorded zero before estimating or using fixed parameters", {
+  for (distribution in c("weibull", "lognormal", "gamma", "loglogistic")) {
+    expect_error(jaspQualityControl:::.distributionParameters(c(0, 1, 2), distribution), "greater than zero")
+  }
+  expect_error(jaspQualityControl:::.distributionParameters(c(0, 1, 2), "weibull",
+                                                            fix.arg = list(shape = 2, scale = 1)), "greater than zero")
 })
 
 test_that("A probability plot distribution that needs positive data shows an error instead of stopping the analysis", {
@@ -98,7 +117,9 @@ test_that("A probability plot distribution that needs positive data shows an err
   expect_null(results[["errorMessage"]])
   expect_equal(zeroValuesSummary(results)[["n"]], 99)
   probabilityTable <- results[["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]]
-  expect_false(is.null(probabilityTable[["error"]][["errorMessage"]]))
+  message <- probabilityTable[["error"]][["errorMessage"]]
+  expect_match(message, "transformation that yields positive measurements")
+  expect_false(grepl("3-parameter Weibull", message, fixed = TRUE))
 })
 
 test_that("3-parameter Weibull with a historical threshold at the smallest observation gives an error, not parameters of another fit", {

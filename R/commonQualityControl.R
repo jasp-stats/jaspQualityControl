@@ -1670,6 +1670,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(c(shape = shape, rate = shape / dataMean))
 }
 
+.qcFitDomainError <- function(distribution, data) {
+  if (distribution %in% c("weibull", "lognormal", "gamma", "loglogistic") && any(data <= 0, na.rm = TRUE))
+    return(gettextf("The parameters could not be estimated. The %s distribution requires all measurements to be greater than zero. Consider a transformation that yields positive measurements.", distribution))
+  NULL
+}
+
 .distributionParameters <- function(data,
                                     distribution = c("lognormal",
                                                      "weibull",
@@ -1680,6 +1686,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                      "logistic",
                                                      "loglogistic"),
                                     fix.arg = NULL) {
+  domainError <- .qcFitDomainError(distribution, data)
+  if (!is.null(domainError))
+    stop(paste(domainError, gettext("For capability estimates, consider the 3-parameter Weibull if a lower threshold is appropriate for the process.")), call. = FALSE)
   estimationErrorMessage <- gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely.")
   # A fixed (historical) threshold at or above the smallest observation gives a likelihood of zero
   thresholdErrorMessage <- function(threshold)
