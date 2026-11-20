@@ -883,6 +883,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   colnames(dfLimitLabel) <- c("x", "y", "label")
   dfStageLabels <- data.frame(matrix(ncol = 4, nrow = 0))
   colnames(dfStageLabels) <- c("x", "y", "label", "separationLine")
+  # a stage whose rows are all missing has no limits: it gets no limit lines or labels and is listed in emptyStages
+  stageHasObservations <- vapply(seq_len(nStages), function(i) any(!is.na(dataset[stageIndex == i, names(dataset) != stages])), logical(1))
+  lastObservedStage <- if (any(stageHasObservations)) max(which(stageHasObservations)) else 0
+  stageNames <- as.character(dataset[[stages]][match(seq_len(nStages), stageIndex)])
+  emptyStages <- character(0)
   ###
   ### Beginning of loop over all stages to calculate all values
   ###
@@ -943,9 +948,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       # the qcc package just returns the values instead of the ranges when there is only one column
       plotStatistic <- if (ncol(dataCurrentStage) == 1) rep(0, nrow(dataCurrentStage)) else qccObject$statistics
       limits <- .controlLimits(mu, sigma, n = n, type = "r", k = nSigmasControlLimits)
-      center <- .carryLimitsOverMissingSubgroups(mu, n)
-      UCL <- .carryLimitsOverMissingSubgroups(limits$UCL, n)
-      LCL <- .carryLimitsOverMissingSubgroups(limits$LCL, n)
+      # a subgroup with one observation has no range: like an empty subgroup, no point and the limits of the previous subgroup
+      plotStatistic[rowSums(!is.na(dataCurrentStage)) == 1] <- NA
+      nWithSpread <- replace(n, n == 1, 0)
+      center <- .carryLimitsOverMissingSubgroups(mu, nWithSpread)
+      UCL <- .carryLimitsOverMissingSubgroups(limits$UCL, nWithSpread)
+      LCL <- .carryLimitsOverMissingSubgroups(limits$LCL, nWithSpread)
       ###
       ### Calculations for X-bar chart
       ###
@@ -1000,9 +1008,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       } else {
         center <- sigma
       }
-      center <- .carryLimitsOverMissingSubgroups(center, n)
-      UCL <- .carryLimitsOverMissingSubgroups(limits$UCL, n)
-      LCL <- .carryLimitsOverMissingSubgroups(limits$LCL, n)
+      # a subgroup with one observation has no standard deviation: like an empty subgroup, no point and the limits of the previous subgroup
+      plotStatistic[rowSums(!is.na(dataCurrentStage)) == 1] <- NA
+      nWithSpread <- replace(n, n == 1, 0)
+      center <- .carryLimitsOverMissingSubgroups(center, nWithSpread)
+      UCL <- .carryLimitsOverMissingSubgroups(limits$UCL, nWithSpread)
+      LCL <- .carryLimitsOverMissingSubgroups(limits$LCL, nWithSpread)
       ###
       ### Calculations for cusum chart
       ###
@@ -1136,6 +1147,17 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                       "LWL2" = LWL2))
     }
 
+    if (!stageHasObservations[i]) {
+      stageClData[!names(stageClData) %in% c("subgroup", "stage")] <- NA_real_
+      if (hasStages) {
+        stageName <- stageNames[i]
+        sameName <- which(stageNames %in% stageName)
+        if (length(sameName) > 1)
+          stageName <- gettextf("%1$s (occurrence %2$d)", stageName, match(i, sameName))
+        emptyStages <- union(emptyStages, stageName)
+      }
+    }
+
     # offset to align geom_step lines with observations
     stageClData <- rbind(stageClData, stageClData[nrow(stageClData),])
     stageClData[["subgroup"]][nrow(stageClData)] <- stageClData[["subgroup"]][nrow(stageClData)] + 1
@@ -1161,7 +1183,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         .controlChartLabelValue(lastLCL),
         .controlChartLabelValue(lastUCL))
     }
-    if (stagesSeparateCalculation || (!stagesSeparateCalculation && i == nStages))
+    # with limits calculated from all stages, only the last stage with observations is labelled
+    if (stageHasObservations[i] && (stagesSeparateCalculation || i == lastObservedStage))
       dfLimitLabel <- rbind(dfLimitLabel, data.frame(x = labelXPos,
                                                      y = c(lastCenter, lastLCL, lastUCL),
                                                      label = labelText))
@@ -1197,8 +1220,19 @@ KnownControlStats.RS <- function(N, sigma = 3) {
               "clLabels"       = dfLimitLabel,
               "stageLabels"    = dfStageLabels,
               "violationTable" = tableList,
-              "sd"             = sigma
+              "sd"             = sigma,
+              "emptyStages"    = emptyStages
   ))
+}
+
+# Plot note naming the stages without observations, which have no control limits; character(0) if there are none
+.controlChartEmptyStagesNote <- function(emptyStages) {
+  if (length(emptyStages) == 0)
+    return(character(0))
+  sprintf(ngettext(length(emptyStages),
+                   "Stage %s has no observations, so no control limits are shown for it.",
+                   "Stages %s have no observations, so no control limits are shown for them."),
+          paste(emptyStages, collapse = ", "))
 }
 
 # Text of a limit label value: rounded to the set number of decimals, but with 3 significant digits for small values that
@@ -1329,8 +1363,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                    gAndtUnit           = c("days", "hours", "minutes", "opportunities")) {
   plotType <- match.arg(plotType)
   yBreakDeterminants <- c(pointData$plotStatistic, clData$LCL, clData$UCL, clData$center)
-  # if all statistics are 0, pretty will select c(-1, 0). But c(0, 1) is better
-  yBreaks <- if (identical(unique(na.omit(yBreakDeterminants)), 0)) c(0, 1) else jaspGraphs::getPrettyAxisBreaks(yBreakDeterminants)
+  # if all statistics are 0, pretty will select c(-1, 0). But c(0, 1) is better, also when there are none (e.g. R chart without a subgroup of 2+ observations)
+  yBreakValues <- unique(na.omit(yBreakDeterminants))
+  yBreaks <- if (length(yBreakValues) == 0 || identical(yBreakValues, 0)) c(0, 1) else jaspGraphs::getPrettyAxisBreaks(yBreakDeterminants)
   yLimits <- range(yBreaks)
   xBreaks <- unique(as.integer(jaspGraphs::getPrettyAxisBreaks(pointData$subgroup))) # we only want integers on the x-axis
   if (xBreaks[1] == 0)  # never start counting at 0 on x axis

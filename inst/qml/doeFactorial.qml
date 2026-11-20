@@ -465,9 +465,9 @@ Form
 			{
 				id: 									blocks
 				name:									"blocks"
-				enabled:								!factorialTypeSplit.checked & !generalFullFactorial.checked
+				enabled:								factorialTypeDefault.checked
 				label:									qsTr("Blocks")
-				info:									qsTr("Select the number of blocks in the design. Not available for split-plot and general full factorial designs.")
+				info:									qsTr("Select the number of blocks in the design. Only available for two-level factorial designs with the default generator.")
 				indexDefaultValue:						0
 				values: [
 						{ label: qsTr("1"), value: "1"},

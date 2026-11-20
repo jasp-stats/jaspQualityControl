@@ -46,19 +46,21 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
              all.target = c(measurements, parts, operators),
              exitAnalysisIfErrors = TRUE)
 
-  # check for balanced design
+  # check for at least 2 operators (the nested ANOVA needs an operator term) and a balanced design
   if (ready) {
     design <- .gaugeNestedDesign(dataset, operators, parts)
-    balanceError <- NULL
-    if (!all(design[["replicatesPerCell"]] == design[["replicatesPerCell"]][1]))
-      balanceError <- gettext("Unbalanced design. Some parts have more repeated measurements than others.")
+    designError <- NULL
+    if (length(design[["partsPerOperator"]]) < 2)
+      designError <- gettext("At least 2 operators are required. The operator variable has only one level.")
+    else if (!all(design[["replicatesPerCell"]] == design[["replicatesPerCell"]][1]))
+      designError <- gettext("Unbalanced design. Some parts have more repeated measurements than others.")
     else if (!all(design[["partsPerOperator"]] == design[["partsPerOperator"]][1]))
-      balanceError <- gettext("Unbalanced design. Some operators measured more parts than others.")
-    if (!is.null(balanceError)) {
+      designError <- gettext("Unbalanced design. Some operators measured more parts than others.")
+    if (!is.null(designError)) {
       plot <- createJaspPlot(title = gettext("Gauge r&R - nested"), width = 700, height = 400)
       jaspResults[["gaugeRRNonRep"]] <- plot
       plot$dependOn(.msaGaugeRRnonrepDataDependencies())
-      plot$setError(balanceError)
+      plot$setError(designError)
       return()
     }
   }
@@ -260,7 +262,8 @@ msaGaugeRRnonrepInternal <- function(jaspResults, dataset, options, ...) {
     }
 
 
-    if (options[["trafficLightChart"]]) {
+    # no chart until all variables are assigned (as in crossed Gauge r&R); its data dependencies remove it when one is unassigned
+    if (options[["trafficLightChart"]] && ready) {
       if (is.null(jaspResults[["trafficLightChart"]])) {
         jaspResults[["trafficLightChart"]] <- createJaspContainer(gettext("Gauge r&R tables"))
         jaspResults[["trafficLightChart"]]$position <- 6

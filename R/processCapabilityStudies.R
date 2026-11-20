@@ -233,28 +233,30 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     }
     if (options[["reportProcessCapabilityPlot"]]) {
       distribution <- if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis") "normal" else options[["nonNormalDistribution"]]
-      if (identical(stages, "")) {
-        plots[[plotIndexCounter]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution = distribution)[[1]]
+      # a failed fit becomes an error panel, so the other report elements remain
+      processCapabilityPlots <- try(.qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution = distribution),
+                                    silent = TRUE)
+      if (jaspBase::isTryError(processCapabilityPlots))
+        processCapabilityPlots <- list(.qcReportErrorPanel(gettext("Capability of the process"),
+                                                           conditionMessage(attr(processCapabilityPlots, "condition"))))
+      for (i in seq_along(processCapabilityPlots)) {
+        plots[[plotIndexCounter]] <- processCapabilityPlots[[i]]
         plotIndexCounter <- plotIndexCounter + 1
-      } else {
-        processCapabilityPlots <- .qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution = distribution)
-        for (i in seq_along(processCapabilityPlots)) {
-          plots[[plotIndexCounter]] <- processCapabilityPlots[[i]]
-          plotIndexCounter <- plotIndexCounter + 1
-        }
       }
     }
     if (options[["reportProbabilityPlot"]]) {
+      probabilityPlots <- try(.qcProbabilityPlotObject(options, dataset, measurements, stages), silent = TRUE)
+      if (jaspBase::isTryError(probabilityPlots))
+        probabilityPlots <- list(.qcReportErrorPanel(gettext("Probability plot"), conditionMessage(attr(probabilityPlots, "condition"))))
       if (identical(stages, "")) {
-        plots[[plotIndexCounter]] <- .qcProbabilityPlotObject(options, dataset, measurements, stages)[[1]]
+        plots[[plotIndexCounter]] <- probabilityPlots[[1]]
+        plotIndexCounter <- plotIndexCounter + 1
       } else {
-        probabilityPlots <- .qcProbabilityPlotObject(options, dataset, measurements, stages)
         for (j in seq_along(probabilityPlots)) {
           plots[[plotIndexCounter]] <- probabilityPlots[[j]]
           plotIndexCounter <- plotIndexCounter + 1
         }
       }
-      plotIndexCounter <- plotIndexCounter + 1
     }
     if (options[["reportProcessCapabilityTables"]]) {
       if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis") {
@@ -289,6 +291,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
           }
         }
 
+      } else if (!is.null(fitError <- .qcNonNormalFitError(options, dataset, measurements, stages))) {
+        # the tables need the fitted distribution: the error takes their place, so the other report elements remain
+        plots[[plotIndexCounter]] <- .qcReportErrorPanel(gettext("Process capability tables"), fitError)
       } else {
         processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnSummaryDF = TRUE,
                                                             datasetAsEntered = datasetAsEntered)
@@ -439,12 +444,30 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   })
 }
 
+# Message of the first stage whose non-normal distribution cannot be fitted, or NULL if all stages can be fitted
+.qcNonNormalFitError <- function(options, dataset, measurements, stages) {
+  if (identical(stages, "")) {
+    dataset[["stage"]] <- 1
+    stages <- "stage"
+  }
+  fixArg <- .buildFixArg(options[["nonNormalDistribution"]], options)
+  for (i in seq_len(.qcNumberOfStages(dataset[[stages]]))) {
+    stageData <- as.vector(na.omit(unlist(dataset[.qcStageRows(dataset[[stages]], i), measurements])))
+    fit <- try(.distributionParameters(data = stageData, distribution = options[["nonNormalDistribution"]], fix.arg = fixArg),
+               silent = TRUE)
+    if (jaspBase::isTryError(fit))
+      return(conditionMessage(attr(fit, "condition")))
+  }
+  return(NULL)
+}
+
 # Upper and lower chart of the control chart plot (outside the report). A failed chart is left out and its error is
 # noted below the plot; if both failed, the plot shows the error.
 .qcCapabilityControlChartPlot <- function(container, upperChart, lowerChart, plotNotes) {
   charts <- list(upperChart, lowerChart)
   failed <- vapply(charts, function(chart) !is.null(chart[["errorMessage"]]), logical(1))
   notes  <- if (identical(plotNotes, "")) character(0) else sub("<br>$", "", plotNotes)
+  notes  <- c(notes, .controlChartEmptyStagesNote(unique(unlist(lapply(charts, function(chart) chart[["controlChartData"]][["emptyStages"]])))))
 
   if (all(failed)) {
     container[["plot"]]$setError(paste(unique(vapply(charts, `[[`, character(1), "errorMessage")), collapse = " "))
@@ -668,13 +691,13 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   }
   if (options[["lowerSpecificationLimit"]]) {
     lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
-    table$addColumnInfo(name = "lsl", type = "integer", title = lslTitle)
+    table$addColumnInfo(name = "lsl", type = "number", title = lslTitle)
   }
   if (options[["target"]])
-    table$addColumnInfo(name = "target", type = "integer", title = gettext("Target"))
+    table$addColumnInfo(name = "target", type = "number", title = gettext("Target"))
   if (options[["upperSpecificationLimit"]]) {
     uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
-    table$addColumnInfo(name = "usl", type = "integer", title = uslTitle)
+    table$addColumnInfo(name = "usl", type = "number", title = uslTitle)
   }
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
@@ -719,9 +742,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
     processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
 
-    tableDfCurrentStage <- data.frame(lsl = round(options[["lowerSpecificationLimitValue"]], .numDecimals),
-                                      target = round(options[["targetValue"]], .numDecimals),
-                                      usl    = round(options[["upperSpecificationLimitValue"]], .numDecimals),
+    # the limits as entered: the table format shows them, also small ones (rounding here gave 0 for e.g. 0.0001)
+    tableDfCurrentStage <- data.frame(lsl    = options[["lowerSpecificationLimitValue"]],
+                                      target = options[["targetValue"]],
+                                      usl    = options[["upperSpecificationLimitValue"]],
                                       mean   = processMean,
                                       n      = length(allData),
                                       sd     = sd(allData, na.rm = TRUE),
@@ -920,18 +944,21 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 #
 # .qcFormatCapabilityAxisLabels (below): strips trailing zeros (e.g. 1.50 -> 1.5). Used
 #   on the plain uncompressed axis where every break gets a label -- trailing zeros add
-#   visual clutter without aiding readability.
+#   visual clutter without aiding readability. It shows at least the set decimals, more when
+#   the step between the breaks needs them (small units: 0.0001 used to read 0).
 #
 # .qcCapabilityAxisLabelDecimals: computes the minimum decimal places needed so that
-#   adjacent tick values remain distinguishable given their step size.
+#   adjacent tick values remain distinguishable given their step size. The cap (against tiny
+#   gaps between a limit and a break) is relative to the size of the values, so that the
+#   labels of small values keep 3 significant digits.
 #
 # .qcFormatCapabilityAxisLabelsFixed: always shows exactly `decimals` places, no stripping.
 #   Used in thin/compressed mode where only a sparse subset of breaks gets labels. Consistent
 #   precision is required so that e.g. 1.500 and 1.505 don't both render as "1.5", and so
 #   all visible labels share the same visual weight.
 .qcFormatCapabilityAxisLabels <- function(x) {
-  formatted <- formatC(round(x, .numDecimals), format = "f", digits = .numDecimals)
-  sub("([.]?0+)$", "", formatted)
+  decimals <- max(.numDecimals, .qcCapabilityAxisLabelDecimals(x))
+  formatC(round(x, decimals) + 0, format = "f", digits = decimals, drop0trailing = TRUE)
 }
 
 .qcCapabilityAxisLabelDecimals <- function(breaks) {
@@ -943,7 +970,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     return(.numDecimals)
 
   decimals <- ceiling(pmax(0, -log10(step) - 1e-8))
-  min(decimals, .numDecimals + 2)
+  largest <- max(abs(breaks))
+  significantDecimals <- if (largest > 0) 2 - floor(log10(largest)) else 0 # 3 significant digits of the largest value
+  min(decimals, max(.numDecimals, significantDecimals) + 2)
 }
 
 .qcFormatCapabilityAxisLabelsFixed <- function(x, decimals) {
@@ -2415,12 +2444,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
   if (options[["lowerSpecificationLimit"]])
-    table$addColumnInfo(name = "lsl", type = "integer", title = lslTitle)
+    table$addColumnInfo(name = "lsl", type = "number", title = lslTitle)
   if (options[["target"]])
-    table$addColumnInfo(name = "target", type = "integer", title = gettext("Target"))
+    table$addColumnInfo(name = "target", type = "number", title = gettext("Target"))
   uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
   if (options[["upperSpecificationLimit"]])
-    table$addColumnInfo(name = "usl", type = "integer", title = uslTitle)
+    table$addColumnInfo(name = "usl", type = "number", title = uslTitle)
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. dev."))
@@ -2493,9 +2522,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     tableDfCurrentStage <- data.frame("n" = n,
                                       "mean" = processMean,
                                       "sd" = sd,
-                                      "lsl" = round(lsl, .numDecimals),
-                                      "usl" = round(usl, .numDecimals),
-                                      "target" = round(target, .numDecimals),
+                                      "lsl" = lsl,
+                                      "usl" = usl,
+                                      "target" = target,
                                       "beta" = beta,
                                       "theta" = theta)
 
@@ -3190,6 +3219,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
 ## Containers ####
 
+.qcProbabilityPlotSupportError <- function(distribution) {
+  if (distribution %in% c("gamma", "exponential", "logistic", "loglogistic", "3ParameterWeibull", "3ParameterLognormal"))
+    return(gettextf("Probability plot and table for %s distribution are not implemented in Quality Control module. Please use the Distributions module.", distribution))
+  return(NULL)
+}
+
 .qcProbabilityPlotContainer <- function(options, dataset, ready, jaspResults, measurements, stages) {
   if (!options[["probabilityPlot"]] || !is.null(jaspResults[["probabilityContainer"]]))
     return()
@@ -3210,11 +3245,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   } else if (!identical(stages, "")) {
     nStages <- .qcNumberOfStages(dataset[[stages]])
   }
-  if (options[["nullDistribution"]] %in% c("gamma", "exponential", "logistic", "loglogistic", "3ParameterWeibull", "3ParameterLognormal")) {
+  supportError <- .qcProbabilityPlotSupportError(options[["nullDistribution"]])
+  if (!is.null(supportError)) {
     plot <- createJaspPlot(width = 400, height = 400,
                            title = gettext("Probability plot"))
     container[["plot"]] <- plot
-    plot$setError(gettextf("Probability plot and table for %s distribution are not implemented in Quality Control module. Please use the Distributions module.", options[["nullDistribution"]]))
+    plot$setError(supportError)
     return()
   }
 
@@ -3482,6 +3518,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 }
 
 .qcProbabilityPlotObject <- function(options, dataset, measurements, stages) {
+  supportError <- .qcProbabilityPlotSupportError(options[["nullDistribution"]])
+  if (!is.null(supportError))
+    stop(supportError, call. = FALSE)
+
   if (identical(stages, "")) {
     nStages <- 1
     dataset[["stage"]] <- 1
@@ -3495,7 +3535,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
     dataCurrentStage <- as.vector(na.omit(unlist(dataCurrentStage[measurements])))
     dataCurrentStage <- dataCurrentStage[order(dataCurrentStage)]
-    label_x <- dataCurrentStage
     n <- length(dataCurrentStage)
 
     # Method for rank
@@ -3511,11 +3550,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
     DisByUser <- options[["nullDistribution"]]
 
-    y <- y_funs[[DisByUser, 'y']](p)
+    yTransform <- y_funs[[DisByUser, 'y']]
+    y <- yTransform(p)
 
     # Quantities
     pSeq <- seq(0.001, 0.999, 0.001)
-    ticks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
 
     # Initialize variance variables (used for confidence band computation)
     varMu <- varSigma <- covarMuSigma <- NA
@@ -3552,9 +3591,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         percentileLower <- percentileEstimate - zalpha * sqrt(varPercentile)
         percentileUpper <- percentileEstimate + zalpha * sqrt(varPercentile)
       }
-      yBreaks <- qnorm(ticks / 100)
-      xBreaks <- label_x <- jaspGraphs::getPrettyAxisBreaks(dataCurrentStage)
-      xLimits <- range(xBreaks)
     } else if (options[["nullDistribution"]] == "lognormal") {
       fit <- try(EnvStats::elnorm(dataCurrentStage))
       if (jaspBase::isTryError(fit)) {
@@ -3588,15 +3624,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         percentileLower <- exp( log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
         percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
       }
-      yBreaks <- qnorm(ticks / 100)
-      dataCurrentStage <- log(label_x)
+      dataCurrentStage <- log(dataCurrentStage)
       percentileEstimate <- log(percentileEstimate)
       percentileLower <- log(percentileLower)
       percentileUpper <- log(percentileUpper)
-      logAxis <- .qcProbabilityPlotLogAxis(label_x, decimals = .numDecimals)
-      xBreaks <- logAxis$breaks
-      label_x <- logAxis$labels
-      xLimits <- logAxis$limits
     } else if (options[["nullDistribution"]] == "weibull") {
       fit_Weibull <- try(.distributionParameters(dataCurrentStage, distribution = "weibull", fix.arg = NULL))
       if (jaspBase::isTryError(fit_Weibull)) {
@@ -3624,24 +3655,21 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         percentileLower <- exp(log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
         percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
       }
-      yBreaks <- log(-1*log(1-(ticks / 100)))
-      dataCurrentStage <- log(label_x)
+      dataCurrentStage <- log(dataCurrentStage)
       percentileEstimate <- log(percentileEstimate)
       percentileLower <- log(percentileLower)
       percentileUpper <- log(percentileUpper)
-      logAxis <- .qcProbabilityPlotLogAxis(label_x, decimals = .numDecimals)
-      xBreaks <- logAxis$breaks
-      label_x <- logAxis$labels
-      xLimits <- logAxis$limits
     }
     data1 <- data.frame(x = dataCurrentStage, y = y)
     lineData <- data.frame(zp = zp, percentileEstimate = percentileEstimate)
     if (hasConfidenceBands) {
       bandData <- data.frame(zp = zp, percentileLower = percentileLower, percentileUpper = percentileUpper)
     }
-    # The outer points of a large sample lie beyond the 0.1% and 99.9% ticks; widen the axis so they are not dropped
+    xAxis <- .qcProbabilityPlotXAxis(dataCurrentStage, logarithmic = DisByUser != "normal", decimals = .numDecimals)
+    yLabels <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
+    yBreaks <- yTransform(yLabels / 100)
+    # Keep extreme observations even when they fall outside the labelled percentages.
     yLimits <- range(yBreaks, y)
-    label_x <- round(label_x, .numDecimals)
     p <- ggplot2::ggplot() +
       ggplot2::geom_line(data = lineData, ggplot2::aes(y = zp, x = percentileEstimate), na.rm = TRUE) +
       jaspGraphs::geom_point(data = data1, ggplot2::aes(x = x, y = y), na.rm = TRUE)
@@ -3658,10 +3686,17 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                            linetype = "dashed", na.rm = TRUE)
     }
     p <- p +
-      ggplot2::scale_x_continuous(gettext("Measurement"), breaks = xBreaks, limits = xLimits, labels = label_x) +
-      ggplot2::scale_y_continuous(gettext('Percent'), labels = ticks, breaks = yBreaks, limits = yLimits) +
+      ggplot2::scale_x_continuous(gettext("Measurement"), breaks = xAxis$breaks, limits = range(xAxis$breaks),
+                                  labels = xAxis$labels) +
+      ggplot2::scale_y_continuous(gettext("Percent"), breaks = yBreaks, limits = yLimits, labels = yLabels) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()
+    # The rightmost label is centred at the end of the axis and can extend beyond the panel.
+    lastLabelChars <- nchar(tail(xAxis$labels, 1L))
+    if (lastLabelChars > 6L) {
+      halfLabelWidth <- lastLabelChars * jaspGraphs::getGraphOption("fontsize") / 4
+      p <- p + ggplot2::theme(plot.margin = ggplot2::margin(r = halfLabelWidth))
+    }
     plotList[[i]] <- p
   }
   return(plotList)
@@ -3709,33 +3744,30 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   return(log(-log(1 - p)))
 }
 
-# x-axis for probability plots drawn on the log scale (lognormal, Weibull). The ticks are the sample values at the
-# minimum and at every 20% of the sorted data (as they always were), placed at their log value. The limits are the
-# data range plus a margin: they used to be a multiple of the logged values, which stretched the axis far beyond the
-# data (the points ended up in a thin strip and the tick labels overlapped). The margin leaves room for half of the
-# outer labels, which sit at the ends of the data.
-# A tick is dropped when it is too close to the previous one for both labels to fit: the sample quantiles bunch up
-# where the data are dense and, with decimals, the labels are wide. charWidth is the width of one character as a
-# fraction of the axis.
-.qcProbabilityPlotLogAxis <- function(x, decimals = 3, charWidth = 0.023) {
-  x <- sort(x[is.finite(x) & x > 0])
-  index <- c(1, jaspGraphs::getPrettyAxisBreaks(seq_along(x), 4)[-1])
-  index <- unique(index[index >= 1 & index <= length(x)])
-  labels <- x[index]
-  logBreaks <- log(labels)
-  nChar <- nchar(as.character(round(labels, decimals)))
-  halfLabel <- charWidth * max(nChar[1], nChar[length(nChar)]) / 2 # as a fraction of the axis
-  margin <- max(0.03, halfLabel / (1 - 2 * halfLabel))             # as a fraction of the data range
-  xLimits <- range(log(x))
-  xLimits <- xLimits + c(-1, 1) * margin * diff(xLimits)
-  keep <- 1
-  for (i in seq_along(labels)[-1]) {
-    last <- keep[length(keep)]
-    minGap <- charWidth * ((nChar[i] + nChar[last]) / 2 + 1)
-    if ((logBreaks[i] - logBreaks[last]) / diff(xLimits) >= minGap)
-      keep <- c(keep, i)
+# Keep the usual precision unless distinct tick values would have the same label.
+.qcProbabilityTickLabels <- function(values, decimals) {
+  labels <- .controlChartLabelValue(values, decimals)
+  distinct <- !duplicated(values)
+  if (!anyDuplicated(labels[distinct]))
+    return(labels)
+
+  # Seventeen significant digits distinguish any two finite double-precision values.
+  for (digits in 4:17) {
+    labels <- sprintf("%.*g", digits, values)
+    if (!anyDuplicated(labels[distinct]))
+      break
   }
-  list(breaks = logBreaks[keep], labels = labels[keep], limits = xLimits)
+  return(labels)
+}
+
+.qcProbabilityPlotXAxis <- function(x, logarithmic, decimals) {
+  breaks <- jaspGraphs::getPrettyAxisBreaks(x)
+  labels <- .qcProbabilityTickLabels(if (logarithmic) exp(breaks) else breaks, decimals)
+  if (length(labels) > 4L && any(nchar(labels) > 9L)) {
+    breaks <- jaspGraphs::getPrettyAxisBreaks(x, n = 3)
+    labels <- .qcProbabilityTickLabels(if (logarithmic) exp(breaks) else breaks, decimals)
+  }
+  return(list(breaks = breaks, labels = labels))
 }
 
 # Functions for distribution plot section ####
