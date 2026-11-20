@@ -122,7 +122,7 @@ Form
 			{
 				name:						"manualProcessSdValue"
 				defaultValue:				1
-				min:						0.000000001
+				min:						0
 				decimals:					9
 			}
 		}
@@ -137,7 +137,7 @@ Form
 			{
 				name:						"toleranceValue"
 				defaultValue:				1
-				min:						0.000000001
+				min:						0
 				decimals:					9
 			}
 		}
