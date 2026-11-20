@@ -364,10 +364,12 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
       seed = seed
     )
   }
-  # FrF2 needs 20-35 seconds to find out that, for 8 or more factors in 64 runs and 8 blocks, a 2-factor interaction is unavoidable,
-  # and 4-18 seconds for screening designs with more than 12 factors in 4 or 8 blocks (or more than 20 factors), so there the old
-  # setting is used right away
-  # With 7 factors, both calls already give the same seven third-order block contrasts.
+  # FrF2 can spend 20-35 seconds searching 64-run designs with 8 blocks and at least 8 factors,
+  # and 4-18 seconds on larger screening designs. Skip those searches to keep the form responsive.
+  # With 7 factors, 64 runs and 8 blocks, both calls give the same seven third-order block contrasts.
+  # FrF2's search is heuristic. For 9 factors, 128 runs and 8 blocks, the fallback confounds CG
+  # with blocks. On the same treatment runs, blocking by the signs of ABC, ADF and BEG gives
+  # eight blocks of 16 runs and keeps all 36 two-factor interactions orthogonal to blocks.
   noSearch <- (designSpec[["blocks"]] == 8 && designSpec[["runs"]] == 64 && designSpec[["factors"]] >= 7) ||
     (designSpec[["blocks"]] > 2 && designSpec[["factors"]] > 12) || designSpec[["factors"]] > 20 || legacyBlockAssignment
   clearDesign <- NULL
