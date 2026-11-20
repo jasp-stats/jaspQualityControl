@@ -28,6 +28,7 @@
 * DOE Analysis: the contour and surface plots now come with a note that states which slice of the model they show: continuous predictors that are not on the axes of a plot are held at their mean, and the prediction is averaged over the levels of the discrete factors and blocks ([INTERNAL-jasp#3395](https://github.com/jasp-stats/INTERNAL-jasp/issues/3395)).
 * DOE Analysis: the note on aliased terms that were removed from the model now says that their effects are assumed to be zero, and names the terms each of them is aliased with ([INTERNAL-jasp#3396](https://github.com/jasp-stats/INTERNAL-jasp/issues/3396)).
 * DOE Analysis, Factorial Design and Response Surface Design: help moved from markdown files into the QML `info` properties.
+* The Process Capability Study help now explains how to read changes from baseline when a stage label recurs. For a sequence A, B, A, both later stages are compared with the first A period ([PR #639](https://github.com/jasp-stats/jaspQualityControl/pull/639)).
 * DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode, and always shows its legend. The "Show legend next to graph" option was removed; surface plots no longer show a color legend.
 
 ## Fixed
