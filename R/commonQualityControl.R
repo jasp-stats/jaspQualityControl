@@ -550,9 +550,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
     zeroBolVector <- plotStatistics == 0
 
-    # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
-    zeroSeqVector <- ave(zeroBolVector, cumsum(!zeroBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
-    r9 <- c(r9, which(zeroSeqVector > k9))
+    zeroSeqVector <- .countConsecutiveTrues(zeroBolVector)
+    r9 <- c(r9, which(zeroSeqVector >= k9))
     redPoints <- c(redPoints, r9)
     violationList[["test9"]] <- if (length(r9) > 0) r9 else numeric()
   }
