@@ -435,39 +435,47 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
   if (file.exists(outpath))
     return(if (.doeSameExportedDesign(outpath, candidate)) "unchanged" else "exists")
 
-  linked <- suppressWarnings(file.link(candidate, outpath))
+  linked <- suppressWarnings(.doeLinkDesign(candidate, outpath))
   if (linked)
     return("created")
-  if (!file.exists(outpath) && .doeCopyExclusive(candidate, outpath))
-    return("created")
+  if (!file.exists(outpath)) {
+    copyStatus <- .doeCopyExclusive(candidate, outpath)
+    if (copyStatus %in% c("created", "incomplete"))
+      return(copyStatus)
+  }
   if (file.exists(outpath))
     return(if (.doeSameExportedDesign(outpath, candidate)) "unchanged" else "exists")
   return("failed")
 
 }
 
+.doeLinkDesign <- function(candidate, outpath) file.link(candidate, outpath)
+
 .doeCopyExclusive <- function(candidate, outpath) {
   output <- tryCatch(file(outpath, open = "wxb"), error = function(e) NULL, warning = function(w) NULL)
   if (is.null(output))
-    return(FALSE)
+    return("open_failed")
   complete <- FALSE
   on.exit({
     if (!is.null(output)) try(close(output), silent = TRUE)
-    if (!complete) unlink(outpath)
   }, add = TRUE)
   tryCatch({
     input <- file(candidate, open = "rb")
-    on.exit(close(input), add = TRUE)
-    repeat {
-      chunk <- readBin(input, "raw", n = 65536L)
-      if (!length(chunk)) break
-      writeBin(chunk, output)
-    }
+    on.exit(try(close(input), silent = TRUE), add = TRUE)
+    .doeCopyChunks(input, output)
     close(output)
     output <- NULL
     complete <- TRUE
-  }, error = function(e) NULL)
-  complete
+  }, error = function(e) NULL, warning = function(w) NULL)
+  if (complete) "created" else "incomplete"
+}
+
+.doeCopyChunks <- function(input, output) {
+  repeat {
+    chunk <- readBin(input, "raw", n = 65536L)
+    if (!length(chunk)) break
+    writeBin(chunk, output)
+  }
 }
 
 .doeSameExportedDesign <- function(path, candidate) {
@@ -487,7 +495,8 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
     created   = gettext("The design was exported to a new worksheet."),
     unchanged = gettext("The existing worksheet matches this design and was left unchanged, including any responses."),
     exists    = gettext("The existing file was not changed. Choose a new filename to export this design."),
-    failed    = gettext("The worksheet could not be created. Check the folder and permissions, or choose a new filename.")
+    failed    = gettext("The worksheet could not be created. Check the folder and permissions, or choose a new filename."),
+    incomplete = gettext("The new worksheet may be incomplete because writing failed. Check the file before using it, and choose a new filename to export again.")
   )
   jaspResults[["exportStatus"]] <- createJaspHtml(text = message, elementType = "p")
   jaspResults[["exportStatus"]]$dependOn(options = setdiff(names(options), ".meta"))
