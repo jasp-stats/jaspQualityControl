@@ -234,7 +234,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     if (options[["reportProcessCapabilityPlot"]]) {
       distribution <- if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis") "normal" else options[["nonNormalDistribution"]]
       # a failed fit becomes an error panel, so the other report elements remain
-      processCapabilityPlots <- try(.qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution = distribution),
+      processCapabilityPlots <- try(.qcProcessCapabilityPlots(options, dataset, measurements, stages, distribution = distribution),
                                     silent = TRUE)
       if (jaspBase::isTryError(processCapabilityPlots))
         processCapabilityPlots <- list(.qcReportErrorPanel(gettext("Capability of the process"),
@@ -291,8 +291,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
           }
         }
 
-      } else if (!is.null(fitError <- .qcNonNormalFitError(options, dataset, measurements, stages))) {
-        # the tables need the fitted distribution: the error takes their place, so the other report elements remain
+      } else if ((identical(stages, "") || .qcNumberOfStages(dataset[[stages]]) == 1) &&
+                 !is.null(fitError <- .qcNonNormalFitError(options, dataset, measurements, stages))) {
         plots[[plotIndexCounter]] <- .qcReportErrorPanel(gettext("Process capability tables"), fitError)
       } else {
         processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnSummaryDF = TRUE,
@@ -306,14 +306,22 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
           tables[[1]] <- list(overallCapDF, performanceDF, processSummaryDF)
           tableTitles <- list(list("Process performance (total)", "Non-conformance statistics", "Process summary"))
         } else {
-          tables[[1]] <- list(overallCapDF, processSummaryDF)
-          tables[[2]] <- performanceDF
-          tableTitles <- list(list("Process performance (total)", "Process summary"), "Non-conformance statistics")
+          tables[[1]] <- overallCapDF
+          tables[[2]] <- processSummaryDF
+          tables[[3]] <- performanceDF
+          tableTitles <- list("Process performance (total)", "Process summary", "Non-conformance statistics")
+          fitError <- .qcNonNormalFitError(options, dataset, measurements, stages)
+          if (!is.null(fitError)) {
+            plots[[plotIndexCounter]] <- .qcReportErrorPanel(gettext("Some process capability estimates are unavailable"), fitError)
+            plotIndexCounter <- plotIndexCounter + 1
+          }
         }
       }
     }
     reportPlotObject <- .qcReport(text = text, plots = plots, tables = tables, textMaxRows = 8, tableTitles = tableTitles,
                                   reportTitle = title, tableSize = tableSize)
+    reportElements <- length(plots) + length(tables) + !is.null(text) + sum(!vapply(plots, ggplot2::is.ggplot, logical(1)))
+    reportPlot$height <- max(plotHeight, ceiling(reportElements / 2) * 500)
     reportPlot$plotObject <- reportPlotObject
   } else {
     # X-bar and R Chart OR ImR OR X-bar and mR Chart
@@ -444,20 +452,26 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   })
 }
 
-# Message of the first stage whose non-normal distribution cannot be fitted, or NULL if all stages can be fitted
+# Messages for stages whose non-normal distribution cannot be fitted, or NULL if all stages can be fitted
 .qcNonNormalFitError <- function(options, dataset, measurements, stages) {
   if (identical(stages, "")) {
     dataset[["stage"]] <- 1
     stages <- "stage"
   }
   fixArg <- .buildFixArg(options[["nonNormalDistribution"]], options)
+  messages <- character()
   for (i in seq_len(.qcNumberOfStages(dataset[[stages]]))) {
     stageData <- as.vector(na.omit(unlist(dataset[.qcStageRows(dataset[[stages]], i), measurements])))
     fit <- try(.distributionParameters(data = stageData, distribution = options[["nonNormalDistribution"]], fix.arg = fixArg),
                silent = TRUE)
-    if (jaspBase::isTryError(fit))
-      return(conditionMessage(attr(fit, "condition")))
+    if (jaspBase::isTryError(fit)) {
+      message <- conditionMessage(attr(fit, "condition"))
+      if (.qcNumberOfStages(dataset[[stages]]) > 1)
+        message <- gettextf("Stage %1$s: %2$s", .qcStageValue(dataset[[stages]], i), message)
+      messages <- c(messages, message)
+    }
   }
+  if (length(messages)) return(paste(messages, collapse = " "))
   return(NULL)
 }
 
@@ -855,13 +869,31 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plot$setError(gettext("At least one of the stages contains no valid measurements."))
     return()
   }
-  plotList <- try(.qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution))
+  plotList <- try(.qcProcessCapabilityPlots(options, dataset, measurements, stages, distribution))
   if (jaspBase::isTryError(plotList)) {
     plot$setError(plotList[1])
     return()
   }
   plotMat <- matrix(plotList, ncol = nCol, nrow = nRow, byrow = TRUE)
   plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
+}
+
+.qcProcessCapabilityPlots <- function(options, dataset, measurements, stages, distribution) {
+  plots <- try(.qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution), silent = TRUE)
+  if (!jaspBase::isTryError(plots))
+    return(plots)
+  if (identical(stages, "") || .qcNumberOfStages(dataset[[stages]]) <= 1)
+    stop(conditionMessage(attr(plots, "condition")), call. = FALSE)
+
+  lapply(seq_len(.qcNumberOfStages(dataset[[stages]])), function(i) {
+    stage <- .qcStageValue(dataset[[stages]], i)
+    stageData <- dataset[.qcStageRows(dataset[[stages]], i), , drop = FALSE]
+    stagePlot <- try(.qcProcessCapabilityPlotObject(options, stageData, measurements, stages, distribution), silent = TRUE)
+    if (jaspBase::isTryError(stagePlot))
+      .qcReportErrorPanel(as.character(stage), conditionMessage(attr(stagePlot, "condition")))
+    else
+      stagePlot[[1]] + ggplot2::ggtitle(as.character(stage))
+  })
 }
 
 
@@ -2487,6 +2519,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   ## estimate parameters
   distParameters <- list()
+  fitErrors <- character()
   for (i in seq_len(nStages)) {
     stage <- .qcStageValue(dataset[[stages]], i)
     dataCurrentStage <- dataset[.qcStageRows(dataset[[stages]], i), ][!names(dataset) %in% stages]
@@ -2499,9 +2532,14 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                                                        distribution = options[["nonNormalDistribution"]],
                                                        fix.arg = fix.arg))
     if (jaspBase::isTryError(distParameters[[i]])) {
-      table$setError(.extractErrorMessage(distParameters[[i]]))
-      container[["summaryTableNonNormal"]] <- table
-      return()
+      if (nStages == 1) {
+        table$setError(.extractErrorMessage(distParameters[[i]]))
+        container[["summaryTableNonNormal"]] <- table
+        return()
+      }
+      fitErrors <- c(fitErrors, gettextf("Distribution fit unavailable for stage %1$s: %2$s", stage,
+                                        .extractErrorMessage(distParameters[[i]])))
+      distParameters[[i]] <- list(beta = NA_real_, theta = NA_real_, threshold = NA_real_, failed = TRUE)
     }
   }
 
@@ -2584,6 +2622,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   }
 
   table2 <- createJaspTable(title = gettextf("Process performance (total)"))
+  if (length(fitErrors))
+    table2$addFootnote(paste(fitErrors, collapse = " "))
   table2$showSpecifiedColumnsOnly <- TRUE
   sourceVector2 <- c()
   if (nStages > 1) {
@@ -2626,6 +2666,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     if (options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull")
       threshold <- distParameters[[i]]$threshold
 
+    if (isTRUE(distParameters[[i]]$failed)) {
+      tableDfCurrentStage2 <- data.frame(ppl = NA_real_, ppu = NA_real_, pp = NA_real_, ppk = NA_real_)
+    } else {
     if (options[['nonNormalMethod' ]] == "percentile") {
       lPercentile <- 0.00135 # lower percentile
       uPercentile <- 0.99865 # upper percentile
@@ -2900,6 +2943,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     tableDfCurrentStage2[["pp"]] <- pp
     ppk <- if (all(is.na(c(ppl, ppu)))) NA else min(c(ppl, ppu), na.rm = T)
     tableDfCurrentStage2[["ppk"]] <- ppk
+    }
 
     if (i == 1 && nStages > 1)
       baseLineDf2 <- tableDfCurrentStage2
@@ -2945,6 +2989,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   }
 
   table3 <- createJaspTable(title = gettextf("Non-conformance statistics"))
+  if (length(fitErrors))
+    table3$addFootnote(paste(fitErrors, collapse = " "))
   table3$addColumnInfo(name = "rowNames", type = "string", title = "")
   if (nStages > 1) {
     table3$transpose <- TRUE
@@ -2997,6 +3043,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     observed <- c(oLSL, oUSL, oTOT)
 
     # expected total
+    if (isTRUE(distParameters[[i]]$failed)) {
+      expOverall <- c(NA_real_, NA_real_, NA_real_)
+      distname <- options[["nonNormalDistribution"]]
+    } else {
 
     #####################
     ####  lognormal #####
@@ -3124,6 +3174,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
     eoTOT <- if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) sum(c(eoLSL, eoUSL), na.rm = TRUE) else NA
     expOverall <- c(eoLSL, eoUSL, eoTOT)
+    }
 
     if (i == 1 && nStages > 1) {
       observedBaseline <- observed
@@ -3175,6 +3226,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   }
 
   # Add remaining footnotes
+  if (length(fitErrors))
+    footnotes <- paste0(footnotes, paste(fitErrors, collapse = " "), " ")
   footnotes <- paste0(footnotes, gettextf("Calculations based on %s distribution. ", distname))
   if (options[["nonNormalDistribution"]] == "loglogistic")
     footnotes <- paste0(footnotes, gettextf("Location parameter is log-transformed. "))
