@@ -37,11 +37,12 @@ test_that("Failed exclusive copying leaves the created destination for inspectio
   destination <- tempfile()
   on.exit(unlink(c(source, destination)))
   writeBin(rep(as.raw(42), 65537), source)
-  local_mocked_bindings(.doeCopyChunks = function(input, output) {
+  with_mocked_bindings({
+    expect_identical(copy(source, destination), "incomplete")
+  }, .doeCopyChunks = function(input, output) {
     writeBin(readBin(input, "raw", n = 65536), output)
     stop("simulated copy failure")
   }, .package = "jaspQualityControl")
-  expect_identical(copy(source, destination), "incomplete")
   expect_true(file.exists(destination))
   expect_equal(file.info(destination)$size, 65536)
   writeBin(as.raw(c(17, 23)), destination)
@@ -62,13 +63,13 @@ test_that("A factor named Response does not lose its values", {
 })
 
 test_that("A failed fallback copy is reported as incomplete", {
-  local_mocked_bindings(.doeLinkDesign = function(...) FALSE,
-                        .doeCopyExclusive = function(...) "incomplete", .package = "jaspQualityControl")
   path <- tempfile(fileext = ".csv")
   on.exit(unlink(path))
   options <- list(exportDesignFile = path, actualExporter = TRUE)
   design <- data.frame(run.order = 1:2, std.order = 1:2, x = c(-1, 1))
-  expect_identical(jaspQualityControl:::.doeRsmExportDesign(options, design), "incomplete")
+  with_mocked_bindings({
+    expect_identical(jaspQualityControl:::.doeRsmExportDesign(options, design), "incomplete")
+  }, .doeLinkDesign = function(...) FALSE, .doeCopyExclusive = function(...) "incomplete", .package = "jaspQualityControl")
 })
 
 test_that("An incomplete worksheet is identified in the analysis results", {
