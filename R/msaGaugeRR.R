@@ -870,7 +870,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
       for (row in 1:len) {
         for (col in 1:len) {
           if (row >= col) {
-            plotMat[[row, col]] <- ggplot2::ggplot() + ggplot2::theme_void()
+            plotMat[[row, col]] <- .qcEmptyPanel()
           }else{
             plotMat[[row, col]] <- .singleScatterPlot(operator1 = operatorVector[row], operator2 = operatorVector[col],
                                                       data = operatorSplit, options = options, measurements = measurements, axisLabels = FALSE)
@@ -895,7 +895,7 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
     xlab <- paste("Operator", operator2)
     ylab <- paste("Operator", operator1)
   }else{
-    xlab <- ylab <- ggplot2::element_blank()
+    xlab <- ylab <- NULL
   }
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(df$Operator1)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(df$Operator2)
