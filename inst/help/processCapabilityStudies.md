@@ -47,7 +47,7 @@ The size of the subgroups is relevant for the calculation of the process varianc
 
 #### Type of data distribution
 - Type of data distribution: indicate whether the data approximates a normal distribution or another distribution (the available distributions are: Weibull, Lognormal, Gamma, Exponential, Logistic, Log-logistic, 3-parameter Weibull, and 3-parameter lognormal)
-    - Specify a distribution: the non-normal distribution to be used. The two-parameter Weibull, log-normal, gamma and log-logistic fits require positive measurements. If a measurement is zero, JASP reports a fit error. The probability table and plot use their own selected distribution and the same recorded measurements, after any transformation you explicitly select.
+    - Specify a distribution: the non-normal distribution to be used. The two-parameter Weibull, log-normal, gamma and log-logistic fits require positive measurements. If a measurement is zero or negative, consider the **3-parameter Weibull** for capability estimates when a lower threshold is appropriate for the process. To keep the selected distribution, you can use **Transform data** to select a suitable transformation that yields positive measurements. The probability table and plot use their own selected distribution and the same measurements after any selected transformation.
     - Non-normal capability statistics: the method used to calculate the capability statistics for non-normally distributed data.
     - Historical parameters: Select which parameters should use fixed historical values instead of being estimated. Note that if not all parameters are set historically, JASP keeps the historical parameters fixed while estimating the remaining parameters freely.
 

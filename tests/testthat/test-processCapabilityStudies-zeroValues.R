@@ -92,7 +92,10 @@ test_that("Changing the capability distribution preserves the normal diagnostic 
     expect_equal(probability$p, 0.085, tolerance = 0.001)
     if (distribution == "weibull") {
       capability <- results[["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]]
-      expect_match(capability[["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["error"]][["errorMessage"]], "greater than zero")
+      message <- capability[["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["error"]][["errorMessage"]]
+      expect_match(message, "greater than zero")
+      expect_match(message, "transformation that yields positive measurements")
+      expect_match(message, "For capability estimates, consider the 3-parameter Weibull")
       expect_null(capability[["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]])
     } else {
       expect_equal(zeroValuesSummary(results)$theta, mean(x), tolerance = 1e-6)
@@ -114,7 +117,9 @@ test_that("A probability plot distribution that needs positive data shows an err
   expect_null(results[["errorMessage"]])
   expect_equal(zeroValuesSummary(results)[["n"]], 99)
   probabilityTable <- results[["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]]
-  expect_false(is.null(probabilityTable[["error"]][["errorMessage"]]))
+  message <- probabilityTable[["error"]][["errorMessage"]]
+  expect_match(message, "transformation that yields positive measurements")
+  expect_false(grepl("3-parameter Weibull", message, fixed = TRUE))
 })
 
 test_that("3-parameter Weibull with a historical threshold at the smallest observation gives an error, not parameters of another fit", {
