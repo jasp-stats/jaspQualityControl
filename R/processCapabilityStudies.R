@@ -797,18 +797,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       formattedStages[grep("Change", formattedStages)] <- formattedChangeNames
       formattedTableDf[["stage"]] <- formattedStages
     }
-    lsl <- options[["lowerSpecificationLimitValue"]]
-    target <- options[["targetValue"]]
-    usl <- options[["upperSpecificationLimitValue"]]
-    if (!options[["lowerSpecificationLimit"]])
-      lsl <- '*'
-    if (!options[["target"]])
-      target <- '*'
-    if (!options[["upperSpecificationLimit"]])
-      usl <- '*'
-    formattedTableDf[["lsl"]] <- tableList[["lsl"]]
-    formattedTableDf[["target"]] <- tableList[["target"]]
-    formattedTableDf[["usl"]] <- tableList[["usl"]]
+    formattedTableDf[["lsl"]] <- if (options[["lowerSpecificationLimit"]]) tableList[["lsl"]] else rep("*", tableNRows)
+    formattedTableDf[["target"]] <- if (options[["target"]]) tableList[["target"]] else rep("*", tableNRows)
+    formattedTableDf[["usl"]] <- if (options[["upperSpecificationLimit"]]) tableList[["usl"]] else rep("*", tableNRows)
     formattedTableDf[["n"]] <- tableList[["n"]]
     formattedTableDf[["mean"]] <- round(tableList[["mean"]], nDecimals)
     formattedTableDf[["sd"]] <- round(tableList[["sd"]], nDecimals)
