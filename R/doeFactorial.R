@@ -511,8 +511,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     display[["Replication"]] <- as.numeric(sub("^.*\\.", "", as.character(runOrderInfo[["run.no.std.rp"]])))
   }
   display <- .doeFactorialAddRandomRepeats(options, display)
-  display <- .doeFactorialSetDisplayOrder(options, display)
   display <- .doeFactorialDecodeDesign(options, display)
+  display <- .doeFactorialSetDisplayOrder(options, display)
   result[["display"]] <- display
   result[["seed"]] <- seed
   return(result)
