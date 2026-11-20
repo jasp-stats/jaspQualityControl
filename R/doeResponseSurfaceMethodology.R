@@ -491,16 +491,20 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
 .doeShowExportStatus <- function(jaspResults, options, status) {
   if (is.null(status))
     return()
-  message <- switch(status,
+  message <- .doeExportStatusMessage(status)
+  jaspResults[["exportStatus"]] <- createJaspHtml(text = message, elementType = "p")
+  jaspResults[["exportStatus"]]$dependOn(options = setdiff(names(options), ".meta"))
+
+}
+
+.doeExportStatusMessage <- function(status) {
+  switch(status,
     created   = gettext("The design was exported to a new worksheet."),
     unchanged = gettext("The existing worksheet matches this design and was left unchanged, including any responses."),
     exists    = gettext("The existing file was not changed. Choose a new filename to export this design."),
     failed    = gettext("The worksheet could not be created. Check the folder and permissions, or choose a new filename."),
     incomplete = gettext("The new worksheet may be incomplete because writing failed. Check the file before using it, and choose a new filename to export again.")
   )
-  jaspResults[["exportStatus"]] <- createJaspHtml(text = message, elementType = "p")
-  jaspResults[["exportStatus"]]$dependOn(options = setdiff(names(options), ".meta"))
-
 }
 
 .doeRsmDesignTypeFromInt <- function(i) {

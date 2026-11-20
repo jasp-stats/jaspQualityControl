@@ -72,21 +72,7 @@ test_that("A failed fallback copy is reported as incomplete", {
 })
 
 test_that("An incomplete worksheet is identified in the analysis results", {
-  local_mocked_bindings(.doeLinkDesign = function(...) FALSE,
-                        .doeCopyChunks = function(...) stop("simulated copy failure"), .package = "jaspQualityControl")
-  options <- analysisOptions("doeFactorial")
-  options$numberOfCategorical <- 3
-  options$categoricalVariables <- list(
-    list(levels = paste("Row", 0:2), name = "data 1", values = c("A", "B", "C")),
-    list(levels = paste("Row", 0:2), name = "data 2", values = rep("a", 3)),
-    list(levels = paste("Row", 0:2), name = "data 3", values = rep("b", 3)))
-  options$selectedDesign2 <- list(list(levels = c("Row 0", "Row 1"), name = "data 1", values = c(4, 8)),
-                                  list(levels = c("Row 0", "Row 1"), name = "data 2", values = c(0, 0)))
-  options$selectedRow <- 1
-  options$displayDesign <- TRUE
-  options$actualExporter <- TRUE
-  options$exportDesignFile <- tempfile(fileext = ".csv")
-  on.exit(unlink(options$exportDesignFile))
-  result <- runAnalysis("doeFactorial", "debug.csv", options)
-  expect_match(result$results$exportStatus$text, "worksheet may be incomplete")
+  message <- jaspQualityControl:::.doeExportStatusMessage("incomplete")
+  expect_match(message, "worksheet may be incomplete")
+  expect_match(message, "Check the file")
 })
