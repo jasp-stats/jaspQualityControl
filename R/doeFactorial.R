@@ -47,7 +47,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
 
     .doeFactorialGenerateDesignTable(jaspResults, options, design)
 
-    exportStatus <- .doeRsmExportDesign(options, design[["display"]])
+    factorNames <- .doeRsmCategorical2df(options[["categoricalVariables"]])[["name"]]
+    exportStatus <- .doeRsmExportDesign(options, design[["display"]], factorNames, 2L + seq_along(factorNames))
     .doeShowExportStatus(jaspResults, options, exportStatus)
   }
 }
@@ -494,7 +495,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     standardOrder <- .doeFactorialBlockedStandardOrder(runOrderInfo, designSpec[["runs"]], designSpec[["replications"]])
   }
   outDesign <- if (blocked) dfDesign[2:(nrow(df)+1)] else dfDesign[1:nrow(df)]
-  colnames(outDesign) <- df[["name"]]
+  colnames(outDesign) <- .doeFactorialFactorKeys(df[["name"]])
   display <- cbind(ro = runOrder, sro = standardOrder, outDesign)
 
   if (!is.null(dfDesign[["Blocks"]])) {
@@ -583,7 +584,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   if (!options[["codedOutput"]]) {
     # Decode factor levels
     df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
-    factorIndices <- which(colnames(display) %in% df[["name"]])
+    factorIndices <- 2L + seq_len(nrow(df))
     for (i in seq_len(length(factorIndices))) {
       column <- as.factor(display[, factorIndices[i]])
       factorLevels <- levels(column)
@@ -599,6 +600,10 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     }
   }
   return(display)
+}
+
+.doeFactorialFactorKeys <- function(names) {
+  tail(make.unique(c("ro", "sro", "Block", "Replication", names)), length(names))
 }
 
 .doeFactorialAliasTable <- function(jaspResults, options, design) {
@@ -623,16 +628,18 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   }
   df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
   tb <- createJaspTable(title = gettext("Factorial Design"), position = 3L)
-  tb$addColumnInfo(name = "ro", title = gettext("Run Order"), type = "integer")
-  tb$addColumnInfo(name = "sro", title = gettext("Standard Order"), type = "integer")
+  factorNames <- jaspBase::decodeColNames(df[["name"]])
+  metadataTitle <- function(title) if (title %in% factorNames) gettextf("%s (design)", title) else title
+  tb$addColumnInfo(name = "ro", title = metadataTitle(gettext("Run Order")), type = "integer")
+  tb$addColumnInfo(name = "sro", title = metadataTitle(gettext("Standard Order")), type = "integer")
   for (i in 1:options[["numberOfCategorical"]]) {
-    tb$addColumnInfo(name = df[["name"]][i], title = df[["name"]][i], type = "string")
+    tb$addColumnInfo(name = .doeFactorialFactorKeys(df[["name"]])[i], title = df[["name"]][i], type = "string")
   }
   if ("Block" %in% colnames(design[["display"]])) {
-    tb$addColumnInfo(name = "Block", title = gettext("Block"), type = "integer")
+    tb$addColumnInfo(name = "Block", title = metadataTitle(gettext("Block")), type = "integer")
   }
   if ("Replication" %in% colnames(design[["display"]])) {
-    tb$addColumnInfo(name = "Replication", title = gettext("Replication"), type = "integer")
+    tb$addColumnInfo(name = "Replication", title = metadataTitle(gettext("Replication")), type = "integer")
   }
   tb$dependOn(options = c("displayDesign", "codedOutput", "runOrder", .doeFactorialBaseDependencies()))
   if (options[["factorialType"]] == "factorialTypeSplit") {

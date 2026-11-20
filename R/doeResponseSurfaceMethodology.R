@@ -404,7 +404,7 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
 
 }
 
-.doeRsmExportDesign <- function(options, design) {
+.doeRsmExportDesign <- function(options, design, factorNames = NULL, factorIndices = NULL) {
 
   outpath <- options[["exportDesignFile"]]
   if (identical(outpath, "") || !options[["actualExporter"]])
@@ -419,8 +419,13 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
   out_design <- as.data.frame(design)
   colnames(out_design)[1:2] <- c("RunOrder", "StandardOrder")
   out_design <- cbind(out_design, Response = rep("", nrow(out_design)))
-
-  names(out_design) <- make.unique(names(out_design))
+  if (is.null(factorNames)) {
+    names(out_design) <- make.unique(names(out_design))
+  } else {
+    otherIndices <- setdiff(seq_len(ncol(out_design)), factorIndices)
+    priorityNames <- make.unique(c(jaspBase::decodeColNames(factorNames), names(out_design)[otherIndices]))
+    names(out_design)[c(factorIndices, otherIndices)] <- priorityNames
+  }
 
   # Write a complete candidate beside the destination; neither publication method replaces an existing file.
   candidate <- tempfile(pattern = ".jasp-design-", tmpdir = dirname(outpath), fileext = ".csv")

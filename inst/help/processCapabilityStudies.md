@@ -14,7 +14,7 @@ Data can be in the form of all observations in one column ("Single column") or a
 - Measurements: the observations/data collected from a certain process parameter
 - Subgroups ("Column" option): the subgroup that each observation is assigned to, if all observations are in the same column.
 - Timestamp ("Row" option): optinal subgroup names for each row of observations, that are used as x-axis labels. 
-- Stages: a column to split the analysis into multiple parts by assigning a stage to each subgroup. A new stage starts each time the stage value changes from one row (subgroup) to the next, so a recurring value (e.g., A, B, A) forms separate stages, shown in row order and each with its own limits and estimates; moving ranges do not span a stage change. In "row" format, only one stage per subgroup is possible. In "column" format, only the first specified stage for each subgroup is considered.
+- Stages: a column to split the analysis into multiple parts by assigning a stage to each subgroup. A new stage starts each time the stage value changes from one row (subgroup) to the next, so a recurring value (e.g., A, B, A) forms separate stages, shown in row order and each with its own limits and estimates; moving ranges do not span a stage change. The first stage is the baseline for reported changes. In "row" format, only one stage per subgroup is possible. In "column" format, only the first specified stage for each subgroup is considered.
 
 ### Specifying Subgroups in "Column" Format
 -------
@@ -47,7 +47,7 @@ The size of the subgroups is relevant for the calculation of the process varianc
 
 #### Type of data distribution
 - Type of data distribution: indicate whether the data approximates a normal distribution or another distribution (the available distributions are: Weibull, Lognormal, Gamma, Exponential, Logistic, Log-logistic, 3-parameter Weibull, and 3-parameter lognormal)
-    - Specify a distribution: the non-normal distribution to be used. 
+    - Specify a distribution: the non-normal distribution to be used. The two-parameter Weibull, log-normal, gamma and log-logistic fits require positive measurements. If a measurement is zero or negative, consider the **3-parameter Weibull** for capability estimates when a lower threshold is appropriate for the process. To keep the selected distribution, you can use **Transform data** to select a suitable transformation that yields positive measurements. The probability table and plot use their own selected distribution and the same measurements after any selected transformation.
     - Non-normal capability statistics: the method used to calculate the capability statistics for non-normally distributed data.
     - Historical parameters: Select which parameters should use fixed historical values instead of being estimated. Note that if not all parameters are set historically, JASP keeps the historical parameters fixed while estimating the remaining parameters freely.
 
