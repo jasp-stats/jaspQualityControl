@@ -515,9 +515,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
     withinBolVector <- plotStatistics < oneSigmaUpper & plotStatistics > oneSigmaLower
 
-    # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
-    withinSeqVector <- ave(withinBolVector, cumsum(!withinBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
-    r7 <- c(r7, which(withinSeqVector > k7))
+    withinSeqVector <- .countConsecutiveTrues(withinBolVector)
+    r7 <- c(r7, which(withinSeqVector >= k7))
     redPoints <- c(redPoints, r7)
     violationList[["test7"]] <- if (length(r7) > 0) r7 else numeric()
   }
