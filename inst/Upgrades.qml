@@ -1451,28 +1451,39 @@ Upgrades
 		ChangeRename {from: "processCapabilityTableZbench";		to: "processCapabilityTableZ"}
 	}
 
-	// Test Retest: process std. dev. and tolerance now have a minimum above zero; saved zero values fall back to the default
+	// Test Retest: retain invalid saved denominators as zero for explicit validation.
 	Upgrade
 	{
 		functionName:	"msaTestRetest"
 		fromVersion:	"0.98.2"
 		toVersion:		"0.98.3"
 
+		ChangeSetValue { name: "manualProcessSdValue"; jsonValue: 0; msg: qsTr("Enter a process standard deviation greater than zero and refresh the analysis."); condition: function(options) { return options["manualProcessSdValue"] === undefined && options["manualProcessSd"]; } }
+		ChangeSetValue { name: "manualProcessSdValue"; jsonValue: 1; condition: function(options) { return options["manualProcessSdValue"] === undefined; } }
+		ChangeSetValue { name: "toleranceValue"; jsonValue: 0; msg: qsTr("Enter a tolerance greater than zero and refresh the analysis."); condition: function(options) { return options["toleranceValue"] === undefined && options["tolerance"]; } }
+		ChangeSetValue { name: "toleranceValue"; jsonValue: 1; condition: function(options) { return options["toleranceValue"] === undefined; } }
+
 		ChangeJS
 		{
 			name:		"manualProcessSdValue"
+			condition: function(options) { var v = options["manualProcessSdValue"]; return v === null || !isFinite(v) || v <= 0; }
+			msg: qsTr("Enter a process standard deviation greater than zero and refresh the analysis.")
 			jsFunction:	function(options)
 			{
-				return options["manualProcessSdValue"] >= 0.000000001 ? options["manualProcessSdValue"] : 1;
+				var value = options["manualProcessSdValue"];
+				return value !== null && isFinite(value) && value > 0 ? value : 0;
 			}
 		}
 
 		ChangeJS
 		{
 			name:		"toleranceValue"
+			condition: function(options) { var v = options["toleranceValue"]; return v === null || !isFinite(v) || v <= 0; }
+			msg: qsTr("Enter a tolerance greater than zero and refresh the analysis.")
 			jsFunction:	function(options)
 			{
-				return options["toleranceValue"] >= 0.000000001 ? options["toleranceValue"] : 1;
+				var value = options["toleranceValue"];
+				return value !== null && isFinite(value) && value > 0 ? value : 0;
 			}
 		}
 	}

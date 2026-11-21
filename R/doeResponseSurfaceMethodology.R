@@ -403,7 +403,7 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
 
 }
 
-.doeRsmExportDesign <- function(options, design) {
+.doeRsmExportDesign <- function(options, design, factorNames = NULL, factorIndices = NULL) {
 
   outpath <- options[["exportDesignFile"]]
   if (identical(outpath, "") || !options[["actualExporter"]])
@@ -417,9 +417,16 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
 
   out_design <- as.data.frame(design)
   colnames(out_design)[1:2] <- c("RunOrder", "StandardOrder")
-  out_design[["Response"]] <- ""
+  if (is.null(factorNames)) {
+    out_design[["Response"]] <- ""
+  } else {
+    out_design <- cbind(out_design, Response = rep("", nrow(out_design)))
+    otherIndices <- setdiff(seq_len(ncol(out_design)), factorIndices)
+    priorityNames <- make.unique(c(jaspBase::decodeColNames(factorNames), names(out_design)[otherIndices]))
+    names(out_design)[c(factorIndices, otherIndices)] <- priorityNames
+  }
 
-  utils::write.csv(x = out_design, file = options[["exportDesignFile"]], row.names = FALSE, quote = FALSE)
+  utils::write.csv(x = out_design, file = options[["exportDesignFile"]], row.names = FALSE)
 
 }
 
