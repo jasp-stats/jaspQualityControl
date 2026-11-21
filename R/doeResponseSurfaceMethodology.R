@@ -31,8 +31,10 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
     # export with the entered factor names: continuous factors follow the run order columns, discrete factors are last
     nContinuous <- options[["numberOfContinuous"]]
     nCategorical <- options[["numberOfCategorical"]]
-    factorNames <- c(options[["continuousVariables"]][[1L]][["values"]][seq_len(nContinuous)],
-                     options[["categoricalVariables"]][[1L]][["values"]][seq_len(nCategorical)])
+    # an empty table column arrives as list(), so unlist; without discrete factors their table can be empty
+    continuousNames <- as.character(unlist(options[["continuousVariables"]][[1L]][["values"]]))[seq_len(nContinuous)]
+    categoricalNames <- if (nCategorical > 0) as.character(unlist(options[["categoricalVariables"]][[1L]][["values"]]))[seq_len(nCategorical)] else character(0)
+    factorNames <- c(continuousNames, categoricalNames)
     factorIndices <- c(2L + seq_len(nContinuous), ncol(design) - nCategorical + seq_len(nCategorical))
     .doeRsmExportDesign(options, design, factorNames, factorIndices)
   }

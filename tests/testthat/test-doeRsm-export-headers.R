@@ -15,30 +15,46 @@ test_that("response-surface worksheet uses factor names without losing metadata 
 
 test_that("CCD and Box-Behnken worksheets use displayed factor names", {
   for (type in c("centralCompositeDesign", "boxBehnkenDesign")) {
-    opts <- analysisOptions("doeResponseSurfaceMethodology")
-    opts$numberOfContinuous <- 3L
-    opts$continuousVariables <- list(
-      list(levels = paste("Row", 0:2), name = "data 1", values = c("Temperature", "Pressure", "Time")),
-      list(levels = paste("Row", 0:2), name = "data 2", values = rep(-1, 3)),
-      list(levels = paste("Row", 0:2), name = "data 3", values = rep(1, 3)))
-    opts$numberOfCategorical <- 1L
-    opts$categoricalVariables <- list(
-      list(levels = "Row 0", name = "data 1", values = "Material"),
-      list(levels = "Row 0", name = "data 2", values = "a"),
-      list(levels = "Row 0", name = "data 3", values = "b"))
-    opts$designType <- type
-    opts$selectedRow <- 0L
-    opts$displayDesign <- TRUE
-    opts$runOrder <- "runOrderStandard"
-    opts$actualExporter <- TRUE
-    opts$exportDesignFile <- tempfile(fileext = ".csv")
-    result <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", opts, view = FALSE)
-    expect_identical(result$status, "complete")
-    exported <- read.csv(opts$exportDesignFile, check.names = FALSE)
-    unlink(opts$exportDesignFile)
-    fields <- result$results$designTable$schema$fields
-    discreteName <- fields[[which(vapply(fields, function(field) identical(field$name, "x_cat1"), logical(1)))]]$title
-    expect_true(all(c("RunOrder", "StandardOrder", "Temperature", "Pressure", "Time", discreteName, "Response") %in% names(exported)))
-    expect_equal(nrow(exported), length(result$results$designTable$data))
+    for (nCategorical in 0:1) {
+      opts <- analysisOptions("doeResponseSurfaceMethodology")
+      opts$numberOfContinuous <- 3L
+      opts$continuousVariables <- list(
+        list(levels = paste("Row", 0:2), name = "data 1", values = c("Temperature", "Pressure", "Time")),
+        list(levels = paste("Row", 0:2), name = "data 2", values = rep(-1, 3)),
+        list(levels = paste("Row", 0:2), name = "data 3", values = rep(1, 3)))
+      opts$numberOfCategorical <- nCategorical
+      opts$categoricalVariables <- if (nCategorical == 0) {
+        list(list(levels = list(), name = "data 1", values = list()), # an empty table, as sent by the GUI
+             list(levels = list(), name = "data 2", values = list()),
+             list(levels = list(), name = "data 3", values = list()))
+      } else {
+        list(list(levels = "Row 0", name = "data 1", values = "Material"),
+             list(levels = "Row 0", name = "data 2", values = "a"),
+             list(levels = "Row 0", name = "data 3", values = "b"))
+      }
+      opts$designType <- type
+      opts$selectedRow <- 0L
+      opts$displayDesign <- TRUE
+      opts$runOrder <- "runOrderStandard"
+      opts$actualExporter <- TRUE
+      opts$exportDesignFile <- tempfile(fileext = ".csv")
+      result <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", opts, view = FALSE)
+      info <- paste(type, nCategorical, "discrete factors")
+      expect_identical(result$status, "complete", info = info)
+      exported <- read.csv(opts$exportDesignFile, check.names = FALSE)
+      unlink(opts$exportDesignFile)
+      # every named column holds the values of its factor in the design table
+      tableData <- result$results$designTable$data
+      tableColumn <- function(name) vapply(tableData, function(row) as.character(row[[name]]), character(1))
+      for (i in 1:3)
+        expect_equal(as.character(exported[[c("Temperature", "Pressure", "Time")[i]]]), tableColumn(paste0("x", i)), info = info)
+      if (nCategorical == 1) { # the form sets the discrete factor name, so take it from the table
+        fields <- result$results$designTable$schema$fields
+        discreteName <- fields[[which(vapply(fields, function(field) identical(field$name, "x_cat1"), logical(1)))]]$title
+        expect_equal(as.character(exported[[discreteName]]), tableColumn("x_cat1"), info = info)
+      }
+      expect_identical(names(exported)[c(1:2, ncol(exported))], c("RunOrder", "StandardOrder", "Response"))
+      expect_equal(nrow(exported), length(tableData), info = info)
+    }
   }
 })
