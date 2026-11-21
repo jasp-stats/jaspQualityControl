@@ -86,8 +86,13 @@ test_that("Probability plots distinguish nearby measurements at different scales
                   info = distribution)
       xScale <- plot$scales$get_scales("x")
       x <- if (distribution == "normal") data$Measurement else log(data$Measurement)
-      expect_equal(xScale$breaks, jaspGraphs::getPrettyAxisBreaks(x, n = 3), info = distribution)
-      expect_equal(xScale$limits, range(xScale$breaks), info = distribution)
+      if (distribution == "normal") {
+        expect_equal(xScale$breaks, jaspGraphs::getPrettyAxisBreaks(x, n = 3), info = distribution)
+        expect_equal(xScale$limits, range(xScale$breaks), info = distribution)
+      } else { # log scale: round ticks on the measurement scale, the axis spans the data and the ticks
+        expect_true(xScale$limits[1] <= min(x) && xScale$limits[2] >= max(x), info = distribution)
+        expect_true(all(xScale$breaks >= xScale$limits[1] & xScale$breaks <= xScale$limits[2]), info = distribution)
+      }
       expect_true(all(nzchar(xScale$labels)), info = distribution)
       values <- if (distribution == "normal") xScale$breaks else exp(xScale$breaks)
       expect_lt(max(abs(as.numeric(xScale$labels) - values)), min(diff(values)) / 2, label = distribution)
