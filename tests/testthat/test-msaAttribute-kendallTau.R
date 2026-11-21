@@ -391,3 +391,45 @@ test_that("KT27 Ratings or standard in text: a footnote gives the order of the l
   expect_false(any(startsWith(footnotes(runAnalysis("msaAttribute", wide, .kendallOptions("wideFormat", c("T1", "T2", "T3"), "Ref"))),
                               "Order of the ordinal levels")))
 })
+
+test_that("Numeric-looking labels remain distinct at the conversion boundary", {
+  labels <- c("01", "1", "2")
+  standard <- rep(labels, 5)
+  swapped <- rep(c("1", "01", "2"), 5)
+  columns <- data.frame(T1 = factor(standard, levels = labels, ordered = TRUE),
+                        T2 = factor(swapped, levels = labels, ordered = TRUE),
+                        Ref = factor(standard, levels = labels, ordered = TRUE))
+  collide <- jaspQualityControl:::.msaAttributeNumericLabelsCollide(columns)
+  expect_true(collide)
+  converted <- as.data.frame(lapply(columns, jaspQualityControl:::.msaAttributeAsNumberIfPossible,
+                                    preserveNumericLabels = collide))
+  expect_identical(as.character(converted$T1), standard)
+  expect_identical(as.character(converted$T2), swapped)
+  expect_equal(jaspQualityControl:::.countRowMatches(converted), 5)
+  ranks <- jaspQualityControl:::.msaAttributeKendallValues(converted, labels)
+  expect_equal(cor(ranks$T2, ranks$Ref, method = "kendall"), 1 / 3)
+})
+
+test_that("Numeric-looking labels remain distinct across columns", {
+  labels <- c("01", "1", "2")
+  ordinal <- function(x) factor(x, levels = labels, ordered = TRUE)
+  columns <- data.frame(T1 = ordinal(c("01", "2", "01", "2")),
+                        T2 = ordinal(c("1", "2", "1", "2")))
+  collide <- jaspQualityControl:::.msaAttributeNumericLabelsCollide(columns)
+  expect_true(collide)
+  converted <- as.data.frame(lapply(columns, jaspQualityControl:::.msaAttributeAsNumberIfPossible,
+                                    preserveNumericLabels = collide))
+  expect_equal(jaspQualityControl:::.countRowMatches(as.data.frame(lapply(converted, as.character))), 2)
+})
+
+test_that("Unambiguous decimal labels retain numeric values", {
+  columns <- data.frame(T1 = factor(c("1.0", "2.0", "3.0"), ordered = TRUE),
+                        Ref = factor(c("3.0", "2.0", "1.0"), ordered = TRUE))
+  collide <- jaspQualityControl:::.msaAttributeNumericLabelsCollide(columns)
+  expect_false(collide)
+  converted <- lapply(columns, jaspQualityControl:::.msaAttributeAsNumberIfPossible,
+                      preserveNumericLabels = collide)
+  expect_identical(converted$T1, c(1, 2, 3))
+  expect_identical(converted$Ref, c(3, 2, 1))
+  expect_equal(cor(converted$T1, converted$Ref, method = "kendall"), -1)
+})

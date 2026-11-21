@@ -59,11 +59,15 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 
   # Ratings of nominal or ordinal variables arrive as factors: give them their numbers back, which Kendall's
   # tau and the rating correlations need.
+  # Keep the same representation across columns when distinct labels map to the same number.
+  # Otherwise, for example, "01" in one column and "1" in another would be conflated.
+  categoryColumns <- c(numeric.vars, if (standards != "") standards)
+  preserveNumericLabels <- .msaAttributeNumericLabelsCollide(dataset[categoryColumns])
   for (measurement in numeric.vars)
-    dataset[[measurement]] <- .msaAttributeAsNumberIfPossible(dataset[[measurement]])
+    dataset[[measurement]] <- .msaAttributeAsNumberIfPossible(dataset[[measurement]], preserveNumericLabels)
   # The standard is compared with the ratings, so it needs the same representation (e.g., 1 rather than "1.0").
   if (standards != "")
-    dataset[[standards]] <- .msaAttributeAsNumberIfPossible(dataset[[standards]])
+    dataset[[standards]] <- .msaAttributeAsNumberIfPossible(dataset[[standards]], preserveNumericLabels)
 
   # The scales of Kendall's tau for the ratings and standard that are not numbers. A standard in text shares the
   # scale of ratings in text, so that its levels cannot run in another order than theirs.
@@ -700,17 +704,24 @@ msaAttributeInternal <- function(jaspResults, dataset, options, ...) {
 }
 
 
+# Distinct labels must not collapse to the same number across ratings and the standard.
+.msaAttributeNumericLabelsCollide <- function(columns) {
+  labels <- unique(unlist(lapply(columns, as.character), use.names = FALSE))
+  numbers <- suppressWarnings(as.numeric(labels))
+  anyDuplicated(numbers[!is.na(numbers)]) > 0
+}
+
 # A factor (or character vector) whose values are all numbers, e.g. ratings 1 to 5, as those numbers;
 # anything else as a plain factor or character vector. as.numeric() on the factor itself would give the level
 # codes instead.
-.msaAttributeAsNumberIfPossible <- function(x) {
+.msaAttributeAsNumberIfPossible <- function(x, preserveNumericLabels = FALSE) {
   if (is.numeric(x))
     return(x)
 
   values  <- as.character(x)
   numbers <- suppressWarnings(as.numeric(values))
 
-  if (all(is.na(numbers) == is.na(values)))
+  if (!preserveNumericLabels && all(is.na(numbers) == is.na(values)))
     return(numbers)
 
   if (is.ordered(x))
