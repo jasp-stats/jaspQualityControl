@@ -47,7 +47,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
 
     .doeFactorialGenerateDesignTable(jaspResults, options, design)
 
-    .doeRsmExportDesign(options, design[["display"]])
+    factorNames <- .doeRsmCategorical2df(options[["categoricalVariables"]])[["name"]]
+    .doeRsmExportDesign(options, design[["display"]], factorNames, 2L + seq_along(factorNames))
   }
 }
 
@@ -126,6 +127,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   if (twoLevelDesign) {
     tb[["baseRuns"]] <- designSpec[["runs"]]
     tb[["baseBlocks"]] <- designSpec[["blocks"]]
+    if (designSpec[["legacyBlockAssignment"]])
+      tb$addFootnote(gettext("This design uses the legacy block assignment."))
     tb[["centerpoints"]] <- designSpec[["centerpoints"]]
     runs <- (designSpec[["runs"]] * designSpec[["replications"]]) + (designSpec[["blocks"]] * designSpec[["centerpoints"]] * designSpec[["replications"]]) + designSpec[["repetitions"]]
     tb[["totalRuns"]] <- runs
@@ -337,9 +340,132 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     # but a disabled control keeps its value. Blocks are only implemented for the default generator, split-plot designs
     # have no centre points.
     design[["centerpoints"]] <- if (options[["factorialType"]] == "factorialTypeSplit") 0 else options[["centerpoints"]]
-    design[["blocks"]] <- if (options[["factorialType"]] == "factorialTypeDefault") as.numeric(options[["blocks"]]) else 1
+    blocks <- if (options[["factorialType"]] == "factorialTypeDefault") options[["blocks"]] else "1"
+    # Numeric choices are the values written by earlier worksheets and exported R calls.
+    design[["legacyBlockAssignment"]] <- blocks %in% c("2", "4", "8")
+    design[["blocks"]] <- as.numeric(sub("^higherOrder", "", blocks))
   }
   return(design)
+}
+
+# Blocks are confounded with higher-order interactions (the default of FrF2 and of Minitab). Only when FrF2 cannot do that
+# (a 2-factor interaction is unavoidable, e.g. 2^4 in 4 blocks) or when the treatment effects of that design are more aliased than
+# with blocks confounded with 2-factor interactions (e.g. a lower resolution), the blocks may be confounded with 2-factor interactions.
+# Earlier worksheets and R syntax keep the old blocks and run order, which
+# came from alias.block.2fis = TRUE only, so that the worksheet still matches the experiment run with it.
+.doeFactorialDefaultFrF2 <- function(designSpec, seed, legacyBlockAssignment) {
+  generateDesign <- function(aliasBlock2fis) {
+    FrF2::FrF2(
+      nfactors = designSpec[["factors"]],
+      nruns = designSpec[["runs"]],
+      ncenter = designSpec[["centerpoints"]],
+      replications = designSpec[["replications"]],
+      blocks = designSpec[["blocks"]],
+      alias.block.2fis = aliasBlock2fis,
+      seed = seed
+    )
+  }
+  # FrF2 can spend 20-35 seconds searching 64-run designs with 8 blocks and at least 8 factors,
+  # and 4-18 seconds on larger screening designs. Skip those searches to keep the form responsive.
+  # With 7 factors, 64 runs and 8 blocks, both calls give the same seven third-order block contrasts.
+  # FrF2's search is heuristic. For 9 factors, 128 runs and 8 blocks, the fallback confounds CG
+  # with blocks. On the same treatment runs, blocking by the signs of ABC, ADF and BEG gives
+  # eight blocks of 16 runs and keeps all 36 two-factor interactions orthogonal to blocks.
+  noSearch <- (designSpec[["blocks"]] == 8 && designSpec[["runs"]] == 64 && designSpec[["factors"]] >= 7) ||
+    (designSpec[["blocks"]] > 2 && designSpec[["factors"]] > 12) || designSpec[["factors"]] > 20 || legacyBlockAssignment
+  clearDesign <- NULL
+  if (designSpec[["blocks"]] > 1 && !noSearch) {
+    clearDesign <- try(generateDesign(FALSE), silent = TRUE)
+  }
+  design <- generateDesign(TRUE)
+  if (!is.null(clearDesign) && !isTryError(clearDesign) &&
+      !.doeFactorialMoreAliased(.doeFactorialTreatmentWordlengths(clearDesign), .doeFactorialTreatmentWordlengths(design))) {
+    return(clearDesign)
+  }
+  return(design)
+}
+
+# The generalized word length pattern A3, A4 and A5 of the treatment effects only, without blocks, centre points and replications.
+# The smaller the A3, then A4, then A5, the less the main effects and the 2-factor interactions are aliased.
+.doeFactorialTreatmentWordlengths <- function(design) {
+  dfDesign <- as.data.frame(design)
+  x <- dfDesign[setdiff(colnames(dfDesign), "Blocks")]
+  x[] <- lapply(x, function(column) as.numeric(as.character(column)))
+  x <- unique(x[rowSums(x == 0) == 0, , drop = FALSE])
+  x[] <- lapply(x, factor)
+  wordlengths <- DoE.base::GWLP(x, kmax = min(5, ncol(x)))
+  return(c(wordlengths, rep(0, 6 - length(wordlengths)))[4:6]) # the first is A0
+}
+
+.doeFactorialMoreAliased <- function(wordlengths, reference) {
+  difference <- round(wordlengths - reference, 6)
+  difference <- difference[difference != 0]
+  return(length(difference) > 0 && difference[1] > 0)
+}
+
+# The effects that are confounded with the blocks: all effects whose contrast is constant within every block, but not
+# within the whole design. Effects are tried by increasing order (until the contrasts of all blocks are found, or the number of
+# effects tried reaches maxEffects), as only the lowest-order effects of an aliased group are shown. Returns one string per
+# group of aliased effects, the lowest-order effects of the group joined by "=", ordered by their order, e.g. "ABCDE" or
+# c("ABCD", "ABEF", "CDEF"); the attribute "orders" holds the order of each group.
+.doeFactorialBlockConfounding <- function(design, maxEffects = 2e5) {
+  dfDesign <- as.data.frame(design)
+  factors <- setdiff(colnames(dfDesign), "Blocks")
+  # as in FrF2::aliasprint: "AB", but "F1:F2" for the factor names of designs with more than 50 factors
+  separator <- if (all(nchar(factors) == 1)) "" else ":"
+  x <- vapply(dfDesign[factors], function(column) as.numeric(as.character(column)), numeric(nrow(dfDesign)))
+  # blocks are labelled "<block>.<replication>" with replications and every replicate has the same blocks
+  block <- sub("\\..*$", "", as.character(dfDesign[["Blocks"]]))
+  keep <- rowSums(x == 0) == 0 & !duplicated(data.frame(block, x)) # no centre points
+  x <- x[keep, , drop = FALSE]
+  block <- block[keep]
+  blockSizes <- as.vector(table(block))
+  nContrasts <- length(blockSizes) - 1 # contrasts between the blocks
+  nFactors <- length(factors)
+
+  groups <- list() # effects with the same contrast (up to the sign) of the lowest order
+  groupOrders <- numeric(0)
+  tried <- 0
+  for (order in seq_len(nFactors)) {
+    tried <- tried + choose(nFactors, order)
+    if (tried > maxEffects || length(groups) == nContrasts) {
+      break
+    }
+    combinations <- utils::combn(nFactors, order)
+    for (first in seq(1, ncol(combinations), by = 5000)) {
+      chunk <- combinations[, first:min(first + 4999, ncol(combinations)), drop = FALSE]
+      effects <- x[, chunk[1, ], drop = FALSE]
+      for (i in seq_len(order)[-1]) {
+        effects <- effects * x[, chunk[i, ], drop = FALSE]
+      }
+      constantWithinBlocks <- colSums(abs(rowsum(effects, block)) == blockSizes) == length(blockSizes)
+      for (i in which(constantWithinBlocks & abs(colSums(effects)) < nrow(x))) {
+        key <- paste(effects[, i] * effects[1, i], collapse = "")
+        if (is.null(groups[[key]])) {
+          groupOrders[key] <- order
+          groups[[key]] <- character(0)
+        }
+        if (groupOrders[[key]] == order) {
+          groups[[key]] <- c(groups[[key]], paste(factors[chunk[, i]], collapse = separator))
+        }
+      }
+    }
+  }
+  if (length(groups) == 0) {
+    return(character(0))
+  }
+  groups <- lapply(groups, sort)
+  groups <- groups[order(groupOrders[names(groups)], vapply(groups, `[`, character(1), 1))]
+  result <- unname(vapply(groups, paste, character(1), collapse = "="))
+  attr(result, "orders") <- unname(groupOrders[names(groups)])
+  return(result)
+}
+
+.doeFactorialBlockAliasRow <- function(blockEffects) {
+  if (length(blockEffects) == 0) {
+    return(character(0))
+  }
+  return(gettextf("Blocks = %s", paste(blockEffects, collapse = ", ")))
 }
 
 .doeFactorialGenerateDesign <- function(jaspResults, options) {
@@ -355,15 +481,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   }
   if (twoLevelDesign) {
     if (options[["factorialType"]] == "factorialTypeDefault") {
-      design <- FrF2::FrF2(
-        nfactors = designSpec[["factors"]],
-        nruns = designSpec[["runs"]],
-        ncenter = designSpec[["centerpoints"]],
-        replications = designSpec[["replications"]],
-        blocks = designSpec[["blocks"]],
-        alias.block.2fis = TRUE,
-        seed = seed
-      )
+      design <- .doeFactorialDefaultFrF2(designSpec, seed, designSpec[["legacyBlockAssignment"]])
     } else if (options[["factorialType"]] == "factorialTypeSpecify") {
       entries <- unlist(strsplit(options[["factorialTypeSpecifyGenerators"]], "[,; \t\n\r]+"))
       entries <- trimws(entries)
@@ -476,10 +594,25 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   result[["design"]] <- design
   if (twoLevelDesign) {
     aliases <- FrF2::aliasprint(design)
+    aliasRows <- c(aliases[["main"]], aliases[["fi2"]])
+    blockEffects <- character(0)
+    if (options[["factorialType"]] == "factorialTypeDefault" && designSpec[["blocks"]] > 1) {
+      blockEffects <- .doeFactorialBlockConfounding(design)
+    }
     result[["aliases"]] <- list()
-    result[["aliases"]]$data <- data.frame(Aliases = c(aliases[["main"]], aliases[["fi2"]]))
-    if (nrow(result[["aliases"]]$data) == 0) {
-      result[["aliases"]]$note <- gettext("No aliasing among main effects and 2-factor interactions.")
+    result[["aliases"]]$data <- data.frame(Aliases = c(.doeFactorialBlockAliasRow(blockEffects), aliasRows))
+    codes <- setdiff(names(as.data.frame(design)), "Blocks")
+    if (length(codes) == nrow(df) && !identical(codes, as.character(df[["name"]]))) {
+      mapping <- paste(codes, encodeString(as.character(df[["name"]]), quote = '"'), sep = " = ")
+      result[["aliases"]]$factorKey <- gettextf("Factor codes in worksheet order: %s.", paste(mapping, collapse = ", "))
+    }
+    if (length(aliasRows) == 0) {
+      # 2-factor interactions confounded with blocks can also be aliased with each other (e.g. "Blocks = AB=CE")
+      result[["aliases"]]$note <- if (any(attr(blockEffects, "orders") <= 2)) {
+        gettext("No aliasing among main effects and 2-factor interactions, except for the 2-factor interactions confounded with blocks.")
+      } else {
+        gettext("No aliasing among main effects and 2-factor interactions.")
+      }
     }
   }
   runOrder <- 1:nrow(design)
@@ -495,7 +628,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     standardOrder <- .doeFactorialBlockedStandardOrder(runOrderInfo, designSpec[["runs"]], designSpec[["replications"]])
   }
   outDesign <- if (blocked) dfDesign[2:(nrow(df)+1)] else dfDesign[1:nrow(df)]
-  colnames(outDesign) <- df[["name"]]
+  colnames(outDesign) <- .doeFactorialFactorKeys(df[["name"]])
   display <- cbind(ro = runOrder, sro = standardOrder, outDesign)
 
   if (!is.null(dfDesign[["Blocks"]])) {
@@ -584,7 +717,7 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   if (!options[["codedOutput"]]) {
     # Decode factor levels
     df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
-    factorIndices <- which(colnames(display) %in% df[["name"]])
+    factorIndices <- 2L + seq_len(nrow(df))
     for (i in seq_len(length(factorIndices))) {
       column <- as.factor(display[, factorIndices[i]])
       factorLevels <- levels(column)
@@ -602,6 +735,10 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   return(display)
 }
 
+.doeFactorialFactorKeys <- function(names) {
+  tail(make.unique(c("ro", "sro", "Block", "Replication", names)), length(names))
+}
+
 .doeFactorialAliasTable <- function(jaspResults, options, design) {
   if (!is.null(jaspResults[["showAliasStructure"]]) || !options[["showAliasStructure"]] || !options[["factorialType"]] == "factorialTypeDefault") {
     return()
@@ -613,6 +750,8 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
     return()
   }
   tb$setData(design[["aliases"]]$data)
+  if (!is.null(design[["aliases"]]$factorKey))
+    tb$addFootnote(design[["aliases"]]$factorKey)
   if (!is.null(design[["aliases"]]$note)) {
     tb$addFootnote(design[["aliases"]]$note)
   }
@@ -624,16 +763,18 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
   }
   df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
   tb <- createJaspTable(title = gettext("Factorial Design"), position = 3L)
-  tb$addColumnInfo(name = "ro", title = gettext("Run Order"), type = "integer")
-  tb$addColumnInfo(name = "sro", title = gettext("Standard Order"), type = "integer")
+  factorNames <- jaspBase::decodeColNames(df[["name"]])
+  metadataTitle <- function(title) if (title %in% factorNames) gettextf("%s (design)", title) else title
+  tb$addColumnInfo(name = "ro", title = metadataTitle(gettext("Run Order")), type = "integer")
+  tb$addColumnInfo(name = "sro", title = metadataTitle(gettext("Standard Order")), type = "integer")
   for (i in 1:options[["numberOfCategorical"]]) {
-    tb$addColumnInfo(name = df[["name"]][i], title = df[["name"]][i], type = "string")
+    tb$addColumnInfo(name = .doeFactorialFactorKeys(df[["name"]])[i], title = df[["name"]][i], type = "string")
   }
   if ("Block" %in% colnames(design[["display"]])) {
-    tb$addColumnInfo(name = "Block", title = gettext("Block"), type = "integer")
+    tb$addColumnInfo(name = "Block", title = metadataTitle(gettext("Block")), type = "integer")
   }
   if ("Replication" %in% colnames(design[["display"]])) {
-    tb$addColumnInfo(name = "Replication", title = gettext("Replication"), type = "integer")
+    tb$addColumnInfo(name = "Replication", title = metadataTitle(gettext("Replication")), type = "integer")
   }
   tb$dependOn(options = c("displayDesign", "codedOutput", "runOrder", .doeFactorialBaseDependencies()))
   if (options[["factorialType"]] == "factorialTypeSplit") {

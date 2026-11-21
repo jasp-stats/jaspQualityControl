@@ -10,10 +10,6 @@ test_that("msaTestRetest results match", {
   opts <- jaspTools::analysisOptions(jaspFile)
   dataset <- jaspTools::extractDatasetFromJASPFile(jaspFile)
 
-  # The file stores tolerance = 0, below the QML minimum. JASP Desktop maps it to the default 1 on load
-  # (inst/Upgrades.qml, msaTestRetest 0.98.2 -> 0.98.3); jaspTools does not apply upgrades.
-  opts[["toleranceValue"]] <- 1
-
   # Run analysis
   set.seed(1)
   results <- jaspTools::runAnalysis("msaTestRetest", dataset, opts, view = FALSE)

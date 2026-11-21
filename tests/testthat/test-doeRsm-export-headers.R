@@ -1,21 +1,16 @@
 test_that("response-surface worksheet uses factor names without losing metadata or responses", {
-  headers <- jaspQualityControl:::.doeRsmExportHeaders
   export <- jaspQualityControl:::.doeRsmExportDesign
-  opts <- list(numberOfContinuous = 2L, numberOfCategorical = 1L,
-               continuousVariables = list(list(values = c("RunOrder", "Temp, C"))),
-               categoricalVariables = list(list(values = "Response")),
-               actualExporter = TRUE, exportDesignFile = tempfile(fileext = ".csv"))
+  opts <- list(actualExporter = TRUE, exportDesignFile = tempfile(fileext = ".csv"))
   on.exit(unlink(opts$exportDesignFile))
-  for (designType in c("centralCompositeDesign", "boxBehnkenDesign")) {
-    opts$designType <- designType
-    design <- data.frame(run.order = 1:2, std.order = 1:2, x1 = c(-1, 1), x2 = c(1, -1), Block = 1:2, x_cat1 = c("a", "b"))
-    export(opts, headers(opts, design))
-    result <- read.csv(opts$exportDesignFile, check.names = FALSE)
-    expect_identical(names(result), c("RunOrder", "StandardOrder", "RunOrder.1", "Temp, C", "Block", "Response.1", "Response"))
-    expect_equal(result[["RunOrder.1"]], c(-1L, 1L))
-    expect_equal(result[["Temp, C"]], c(1L, -1L))
-    expect_identical(result[["Response.1"]], c("a", "b"))
-  }
+  design <- data.frame(run.order = 1:2, std.order = 1:2, x1 = c(-1, 1), x2 = c(1, -1), Block = 1:2, x_cat1 = c("a", "b"))
+  # the entered names have priority, as in the factorial export: the design's own Block column becomes Block.1
+  export(opts, design, factorNames = c("Temp, C", "Pressure", "Block"), factorIndices = c(3L, 4L, 6L))
+  result <- read.csv(opts$exportDesignFile, check.names = FALSE)
+  expect_identical(names(result), c("RunOrder", "StandardOrder", "Temp, C", "Pressure", "Block.1", "Block", "Response"))
+  expect_equal(result[["Temp, C"]], c(-1L, 1L))
+  expect_equal(result[["Block.1"]], 1:2)
+  expect_identical(result[["Block"]], c("a", "b"))
+  expect_true(all(is.na(result[["Response"]])))
 })
 
 test_that("CCD and Box-Behnken worksheets use displayed factor names", {
@@ -37,7 +32,7 @@ test_that("CCD and Box-Behnken worksheets use displayed factor names", {
     opts$runOrder <- "runOrderStandard"
     opts$actualExporter <- TRUE
     opts$exportDesignFile <- tempfile(fileext = ".csv")
-    result <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", opts)
+    result <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", opts, view = FALSE)
     expect_identical(result$status, "complete")
     exported <- read.csv(opts$exportDesignFile, check.names = FALSE)
     unlink(opts$exportDesignFile)
