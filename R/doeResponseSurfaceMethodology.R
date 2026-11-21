@@ -359,8 +359,10 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
                                     "custom"       = options[["customAlphaValue"]]
     )
   } else { # boxBehnkenDesign
-    if (options[["centerPointType"]] == "custom")
+    if (options[["centerPointType"]] == "custom") {
+      designSpec[["runs"]] <- designSpec[["runs"]] + designSpec[["blocks"]] * (options[["customCubeBlock"]] - designSpec[["centerpoints"]])
       designSpec[["centerpoints"]]  <- options[["customCubeBlock"]]
+    }
   }
 
   # This would be better, but it does not work because the QML tableview values do not update properly
