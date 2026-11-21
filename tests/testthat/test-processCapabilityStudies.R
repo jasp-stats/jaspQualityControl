@@ -4744,18 +4744,21 @@ for (distribution in c("weibull", "lognormal")) {
 }
 
 ##### X-axis of probability plot on the log scale (Weibull, lognormal) ####
-test_that("Log-scale probability plot axis fits the data and has pretty breaks", {
+test_that("Log-scale probability plot axis fits the data and has round ticks on the measurement scale", {
   dataSets <- list(near100 = qnorm(ppoints(100), mean = 100, sd = 5), near10000 = qnorm(ppoints(100), mean = 10000, sd = 20),
-                   wide = qweibull(ppoints(100), shape = 2, scale = 50), small = qweibull(ppoints(100), shape = 2, scale = 0.2))
-  for (x in dataSets) {
+                   wide = qweibull(ppoints(100), shape = 2, scale = 50), small = qweibull(ppoints(100), shape = 2, scale = 0.2),
+                   report = c(3.6, 4, 5, 6, 7, 8, 12.4), onTicks = c(1, 4, 10), decades = 10^(-3:4))
+  expected <- list(near100 = seq(85, 115, 5), near10000 = seq(9940, 10060, 20), wide = c(5, 10, 20, 50, 100),
+                   small = c(0.01, 0.02, 0.05, 0.1, 0.2, 0.5), report = seq(4, 14, 2), onTicks = c(1, 2, 4, 6, 8, 10),
+                   decades = 10^(-3:4))
+  for (name in names(dataSets)) {
+    x <- dataSets[[name]]
     axis <- jaspQualityControl:::.qcProbabilityPlotXAxis(log(x), logarithmic = TRUE, decimals = 3)
-    dataRange <- range(log(x))
-    limits <- range(axis$breaks)
-    testthat::expect_lte(limits[1], dataRange[1])
-    testthat::expect_gte(limits[2], dataRange[2])
-    testthat::expect_gt(diff(dataRange) / diff(limits), 0.75)
-    testthat::expect_equal(axis$breaks, jaspGraphs::getPrettyAxisBreaks(log(x)))
-    testthat::expect_identical(axis$labels, jaspQualityControl:::.controlChartLabelValue(exp(axis$breaks), 3))
+    # the axis spans the data (no value is dropped); ticks far beyond the data on the log scale are left out
+    testthat::expect_lte(axis$limits[1], min(log(x)), label = name)
+    testthat::expect_gte(axis$limits[2], max(log(x)), label = name)
+    testthat::expect_equal(exp(axis$breaks), expected[[name]], info = name)
+    testthat::expect_identical(axis$labels, jaspQualityControl:::.qcProbabilityTickLabels(expected[[name]], 3), info = name)
   }
 })
 

@@ -3649,7 +3649,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                            linetype = "dashed", na.rm = TRUE)
     }
     p <- p +
-      ggplot2::scale_x_continuous(gettext("Measurement"), breaks = xAxis$breaks, limits = range(xAxis$breaks),
+      ggplot2::scale_x_continuous(gettext("Measurement"), breaks = xAxis$breaks, limits = xAxis$limits,
                                   labels = xAxis$labels) +
       ggplot2::scale_y_continuous(gettext("Percent"), breaks = yBreaks, limits = yLimits, labels = yLabels) +
       jaspGraphs::geom_rangeframe() +
@@ -3724,13 +3724,53 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 }
 
 .qcProbabilityPlotXAxis <- function(x, logarithmic, decimals) {
+  if (logarithmic) {
+    # x is on the log scale: choose round ticks on the measurement scale (pretty breaks of log(x) gave e.g. 2.718, 3.32)
+    breaks <- .qcLogAxisBreaks(exp(x))
+    # the ticks that bracket the data can lie far beyond it on the log scale, so keep the ticks within (or close to) the
+    # data; the limits always include the data, so no value is dropped by a rounding error of exp/log
+    dataRange <- range(x, na.rm = TRUE)
+    margin <- 0.15 * diff(dataRange) + 1e-9 # a bracketing tick this close to the data is kept, so the axis line reaches it
+    inside <- log(breaks) >= dataRange[1] - margin & log(breaks) <= dataRange[2] + margin
+    if (sum(inside) >= 2L)
+      breaks <- breaks[inside]
+    return(list(breaks = log(breaks), labels = .qcProbabilityTickLabels(breaks, decimals),
+                limits = range(log(breaks), dataRange)))
+  }
   breaks <- jaspGraphs::getPrettyAxisBreaks(x)
-  labels <- .qcProbabilityTickLabels(if (logarithmic) exp(breaks) else breaks, decimals)
+  labels <- .qcProbabilityTickLabels(breaks, decimals)
   if (length(labels) > 4L && any(nchar(labels) > 9L)) {
     breaks <- jaspGraphs::getPrettyAxisBreaks(x, n = 3)
-    labels <- .qcProbabilityTickLabels(if (logarithmic) exp(breaks) else breaks, decimals)
+    labels <- .qcProbabilityTickLabels(breaks, decimals)
   }
-  return(list(breaks = breaks, labels = labels))
+  return(list(breaks = breaks, labels = labels, limits = range(breaks)))
+}
+
+# Round positive ticks that cover the (positive) values, for an axis drawn on the log scale: pretty, equally spaced
+# values when the data lie within a factor 10, otherwise 1, 2, 5 per decade (only the powers of 10 for many decades).
+.qcLogAxisBreaks <- function(values) {
+  # shrink the range by a rounding error, so that data on a round value (e.g. 10 after exp(log(10))) end on that tick
+  dataRange <- range(values[is.finite(values) & values > 0]) * c(1 + 1e-9, 1 - 1e-9)
+  oneTwoFive <- function(decades) sort(as.vector(outer(c(1, 2, 5), 10^decades)))
+  candidates <- oneTwoFive(seq(floor(log10(dataRange[1])) - 1, ceiling(log10(dataRange[2]))))
+  if (dataRange[2] / dataRange[1] <= 10) {
+    breaks <- pretty(dataRange)
+    breaks <- breaks[breaks > 0]
+    if (min(breaks) > dataRange[1]) # pretty() started at 0: begin at the round value below the data instead
+      breaks <- c(max(candidates[candidates <= dataRange[1]]), breaks)
+    return(breaks)
+  }
+  breaks <- candidates[candidates >= max(candidates[candidates <= dataRange[1]]) &
+                       candidates <= min(candidates[candidates >= dataRange[2]])]
+  if (length(breaks) > 8L) {
+    decades <- seq(floor(log10(dataRange[1])), ceiling(log10(dataRange[2])))
+    breaks <- 10^decades
+    if (length(breaks) > 8L)
+      breaks <- 10^decades[seq(1, length(decades), by = 2)]
+    if (max(breaks) < dataRange[2])
+      breaks <- c(breaks, max(breaks) * 100)
+  }
+  return(breaks)
 }
 
 # Functions for distribution plot section ####
