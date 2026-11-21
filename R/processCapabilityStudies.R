@@ -3000,6 +3000,16 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   rowNames <- c(paste0("ppm < ", lslTitle), paste0("ppm > ", uslTitle), "Total ppm")
   tableNCols <- if (nStages > 1) 4 else 3
   tableDf3 <- data.frame(matrix(nrow = 0, ncol = tableNCols))
+  # set once, so a stage whose fit failed (also the last one) does not leave the footnote without a display name
+  distname <- switch(options[["nonNormalDistribution"]],
+                     "lognormal"           = "log-normal",
+                     "weibull"             = "Weibull",
+                     "3ParameterLognormal" = "3-parameter-lognormal",
+                     "3ParameterWeibull"   = "3-parameter-Weibull",
+                     "gamma"               = "gamma",
+                     "exponential"         = "exponential",
+                     "logistic"            = "logistic",
+                     "loglogistic"         = "log-logistic")
   for (i in seq_len(nStages)) {
     stage <- .qcStageValue(dataset[[stages]], i)
     stageTitle <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
@@ -3045,14 +3055,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     # expected total
     if (isTRUE(distParameters[[i]]$failed)) {
       expOverall <- c(NA_real_, NA_real_, NA_real_)
-      distname <- options[["nonNormalDistribution"]]
     } else {
 
     #####################
     ####  lognormal #####
     #####################
     if (options[["nonNormalDistribution"]] == "lognormal") {
-      distname <- "log-normal"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
         eoLSL <- 1e6 * plnorm(q = lsl, meanlog = beta, sdlog = theta, lower.tail = TRUE)
       } else {
@@ -3067,7 +3075,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     ####  weibull   #####
     #####################
     } else if (options[["nonNormalDistribution"]] == "weibull") {
-      distname <- "Weibull"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
         eoLSL <- 1e6 * pweibull(q = lsl, shape = beta, scale = theta, lower.tail = TRUE)
       } else {
@@ -3082,7 +3089,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     ####  3 parameter lognormal   #####
     ###################################
     } else if (options[["nonNormalDistribution"]] == "3ParameterLognormal") {
-      distname <- "3-parameter-lognormal"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
         eoLSL <- 1e6 * FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = TRUE) # in this function, shape is theta and scale is beta, which is reverse to convention
       } else {
@@ -3097,7 +3103,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     ####  3 parameter weibull   #####
     ###################################
     } else if (options[["nonNormalDistribution"]] == "3ParameterWeibull") {
-      distname <- "3-parameter-Weibull"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
         eoLSL <- 1e6 * FAdist::pweibull3(q = lsl, shape = beta, scale = theta, thres = threshold, lower.tail = TRUE)
       } else {
@@ -3112,7 +3117,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     ####  gamma     #####
     #####################
     } else if (options[["nonNormalDistribution"]] == "gamma") {
-      distname <- "gamma"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
 
         eoLSL <- 1e6 * pgamma(q = lsl, shape = beta, scale = theta, lower.tail = TRUE)
@@ -3128,7 +3132,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     ####  exponential     #####
     ###########################
     } else if (options[["nonNormalDistribution"]] == "exponential") {
-      distname <- "exponential"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
 
         eoLSL <- 1e6 * pexp(q = lsl, rate = 1/theta, lower.tail = TRUE)
@@ -3144,7 +3147,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     ####  logistic     #####
     ########################
     } else if (options[["nonNormalDistribution"]] == "logistic") {
-      distname <- "logistic"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
         eoLSL <- 1e6 * plogis(q = lsl, location = beta, scale = theta, lower.tail = TRUE)
       } else {
@@ -3159,7 +3161,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     ####  Log-logistic     #####
     #############################
     } else if (options[["nonNormalDistribution"]] == "loglogistic") {
-      distname <- "log-logistic"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
         eoLSL <- 1e6 * flexsurv::pllogis(q = lsl, shape = 1/theta, scale = exp(beta), lower.tail = TRUE)
       } else {
