@@ -3734,8 +3734,18 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     inside <- log(breaks) >= dataRange[1] - margin & log(breaks) <= dataRange[2] + margin
     if (sum(inside) >= 2L)
       breaks <- breaks[inside]
-    return(list(breaks = log(breaks), labels = .qcProbabilityTickLabels(breaks, decimals),
-                limits = range(log(breaks), dataRange)))
+    labels <- .qcProbabilityTickLabels(breaks, decimals)
+    limits <- range(log(breaks), dataRange)
+    # equally spaced ticks bunch up at the top of a log axis: leave out a tick whose label would touch the previous one
+    # (the axis is taken to hold about 40 characters, as in the smaller report panels)
+    charWidth <- diff(limits) / 40
+    keep <- 1L
+    for (i in seq_along(breaks)[-1L]) {
+      last <- keep[length(keep)]
+      if (log(breaks[i]) - log(breaks[last]) >= charWidth * ((nchar(labels[i]) + nchar(labels[last])) / 2 + 1))
+        keep <- c(keep, i)
+    }
+    return(list(breaks = log(breaks[keep]), labels = labels[keep], limits = limits))
   }
   breaks <- jaspGraphs::getPrettyAxisBreaks(x)
   labels <- .qcProbabilityTickLabels(breaks, decimals)
