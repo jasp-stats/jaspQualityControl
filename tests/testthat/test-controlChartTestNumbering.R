@@ -10,8 +10,8 @@ nelsonViolations <- function(x, ruleList) {
 test_that("NL1.1 Each test number detects its own pattern", {
   expect_equal(nelsonViolations(c(0, 0, 3.5, 0), list(rule1 = list(enabled = TRUE))), list(test1 = 3))
   expect_equal(nelsonViolations(c(1, 1, 1, -1), list(rule2 = list(enabled = TRUE, k = 3))), list(test2 = 3))
-  expect_equal(nelsonViolations(c(0, 1, 2, 3, 0), list(rule3 = list(enabled = TRUE, k = 3))), list(test3 = 4))
-  expect_equal(nelsonViolations(c(0, 1, 0, 1, 0, 1), list(rule4 = list(enabled = TRUE, k = 4))), list(test4 = c(5, 6)))
+  expect_equal(nelsonViolations(c(0, 1, 2, 3, 0), list(rule3 = list(enabled = TRUE, k = 3))), list(test3 = c(3, 4)))
+  expect_equal(nelsonViolations(c(0, 1, 0, 1, 0, 1), list(rule4 = list(enabled = TRUE, k = 4))), list(test4 = c(4, 5, 6)))
   expect_equal(nelsonViolations(c(0, 2.5, 0, 2.5, 0), list(rule5 = list(enabled = TRUE, k = 2))), list(test5 = 4))
   expect_equal(nelsonViolations(c(1.5, 0, 1.5, 1.5, 1.5, 0), list(rule6 = list(enabled = TRUE, k = 4))), list(test6 = 5))
   expect_equal(nelsonViolations(rep(0.1, 5), list(rule7 = list(enabled = TRUE, k = 3))), list(test7 = c(3, 4, 5)))

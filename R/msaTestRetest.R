@@ -131,15 +131,17 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
     TrafficContainer <- jaspResults[["trafficPlot"]]
 
     # %GRR panels only for the reference values the user entered (unticked fields keep a hidden value)
-    if (!options[["manualProcessSd"]] && !options[["tolerance"]]) {
+    useSD <- options[["manualProcessSd"]] && .trValidDenominator(options[["manualProcessSdValue"]])
+    useTol <- options[["tolerance"]] && .trValidDenominator(options[["toleranceValue"]])
+    if (!useSD && !useTol) {
       if (ready) {
         TrafficContainer[["plot"]] <- createJaspPlot(width = 1000)
-        TrafficContainer[["plot"]]$setError(gettext("Enter a process std. dev. or a tolerance to draw the traffic light chart."))
+        TrafficContainer[["plot"]]$setError(gettext("Enter a process std. dev. or a tolerance greater than zero to draw the traffic light chart."))
       }
     } else {
       valuesVec <- .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready, GRRpercent = TRUE)
-      if (options[["manualProcessSd"]]) {
-        TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec[1], ToleranceUsed = options[["tolerance"]],
+      if (useSD) {
+        TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec[1], ToleranceUsed = useTol,
                                                    ToleranceVar = valuesVec[2], options = options, ready = ready,
                                                    Xlab.StudySD = "Percent study variation of GRR", Xlab.Tol = "Percent tolerance of GRR")
       } else { # tolerance only: single panel with the tolerance value
@@ -180,6 +182,8 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
   return(plot)
 }
 
+.trValidDenominator <- function(value) length(value) == 1L && is.finite(value) && value > 0
+
 .rAndRtableRange <- function(dataset, measurements, parts, operators, options, jaspResults, ready, GRRpercent = FALSE, ProcessSD = "", tolerance = "", EnableSD = FALSE, EnableTol = FALSE) {
 
   if (!ready)
@@ -189,8 +193,8 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
   Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / n)
   d2 <- .d2Value(n)
   GRR <- Rbar/d2
-  GRRpercent.PSD <- GRR/options[["manualProcessSdValue"]]
-  GRRpercent.Tol <- GRR/(options[["toleranceValue"]] / 6)
+  GRRpercent.PSD <- if (.trValidDenominator(options[["manualProcessSdValue"]])) GRR/options[["manualProcessSdValue"]] else NA_real_
+  GRRpercent.Tol <- if (.trValidDenominator(options[["toleranceValue"]])) GRR/(options[["toleranceValue"]] / 6) else NA_real_
 
   if (GRRpercent)
     return(c(GRRpercent.PSD * 100, GRRpercent.Tol * 100))
@@ -217,6 +221,8 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
       table$addColumnInfo(name = "GRRpercent.PSD", title = gettextf("%%GRR of process std. dev."), type = "number", format = "pc")
       rows[["PSD"]] = options[["manualProcessSdValue"]]
       rows[["GRRpercent.PSD"]] = GRRpercent.PSD
+      if (is.na(GRRpercent.PSD))
+        table$addFootnote(gettext("Enter a process standard deviation greater than zero to calculate its percentage."))
     }
 
     if (EnableTol) {
@@ -224,6 +230,8 @@ msaTestRetestInternal <- function(jaspResults, dataset, options, ...) {
       table$addColumnInfo(name = "GRRpercent.Tol", title = gettextf("%%GRR of tolerance"), type = "number", format = "pc")
       rows[["tolerance"]] = options[["toleranceValue"]]
       rows[["GRRpercent.Tol"]] = GRRpercent.Tol
+      if (is.na(GRRpercent.Tol))
+        table$addFootnote(gettext("Enter a tolerance greater than zero to calculate its percentage."))
     }
 
     table$addRows(rows)

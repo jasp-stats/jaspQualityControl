@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-11-14 03:40\n"
+"POT-Creation-Date: 2026-11-21 03:40\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -158,13 +158,16 @@ msgstr "Toets 2: Verschuiving"
 msgid "Test 3: Trend"
 msgstr "Toets 3: Trend"
 
-msgid "Test 4: Increasing variation"
-msgstr "Toets 4: Toenemende variatie"
+#, fuzzy
+msgid "Test 5: Beyond 2 sigma, same side"
+msgstr "Toets 1: Voorbij limiet"
 
-msgid "Test 5: Reducing variation"
+#, fuzzy
+msgid "Test 7: Reducing variation"
 msgstr "Toets 5: Gereduceerde variatie"
 
-msgid "Test 6: Bimodal distribution"
+#, fuzzy
+msgid "Test 8: Bimodal distribution"
 msgstr "Toets 6: Bimodale verdeling"
 
 msgid "Points where a test failed."
@@ -178,6 +181,9 @@ msgstr ""
 msgid ""
 "Cannot estimate the standard deviation from moving ranges of length %1$s: "
 "stage '%2$s' has fewer than %1$s consecutive non-missing observations."
+msgstr ""
+
+msgid "%1$s (occurrence %2$d)"
 msgstr ""
 
 #, fuzzy
@@ -207,12 +213,12 @@ msgid "- lower"
 msgstr "Onder"
 
 #, fuzzy
-msgid "Test 7: Slightly increasing variation"
-msgstr "Toets 4: Toenemende variatie"
+msgid "Test 4: Oscillation"
+msgstr "Toets 5: Gereduceerde variatie"
 
 #, fuzzy
-msgid "Test 8: Oscillation"
-msgstr "Toets 5: Gereduceerde variatie"
+msgid "Test 6: Beyond 1 sigma, same side"
+msgstr "Toets 1: Voorbij limiet"
 
 #, fuzzy
 msgid "Test 9: Benneyan test"
@@ -256,20 +262,44 @@ msgstr "Cumulatieve som"
 msgid "Exponentially weighted moving average"
 msgstr "Exponentieel gewogen voortschrijdend gemiddelde figuur"
 
-msgid "LSL = %g"
+#, fuzzy
+msgid "LSL = %s"
 msgstr "LSL = %g"
 
-msgid "Tar. = %g"
+#, fuzzy
+msgid "Tar. = %s"
 msgstr "Tar. = %g"
 
-msgid "USL = %g"
+#, fuzzy
+msgid "USL = %s"
 msgstr "USL = %g"
+
+msgid ""
+"The parameters could not be estimated. The %s distribution requires all "
+"measurements to be greater than zero. Consider a transformation that yields "
+"positive measurements."
+msgstr ""
+
+msgid ""
+"For capability estimates, consider the 3-parameter Weibull if a lower "
+"threshold is appropriate for the process."
+msgstr ""
 
 msgid ""
 "The parameters could not be estimated for the selected distribution, most "
 "likely because the observed distribution of the data are very far away from "
 "the selected distribution, please try one that describes your data more "
 "closely."
+msgstr ""
+
+msgid ""
+"The parameters could not be estimated: the historical threshold (%1$s) must "
+"be smaller than the smallest observation (%2$s)."
+msgstr ""
+
+msgid ""
+"It can only equal the smallest observation with a historical shape of 1 "
+"(shifted exponential distribution)."
 msgstr ""
 
 msgid "Design of Experiments - Analysis"
@@ -292,20 +322,25 @@ msgstr ""
 "De opgegeven laag/hoog niveaus %1$s voor %2$s komen niet overeen met de "
 "niveaus in de dataset."
 
-msgid ""
-"Calculated with the continuous predictors in coded (−1/+1) units, so the "
-"table is the same in coded and uncoded units."
+msgid "Model omits lower-order terms: %s. Add these terms to continue."
 msgstr ""
 
 msgid ""
-"Calculated in uncoded units: coding the predictors changes this model (e.g., "
-"an interaction or squared term without its main effects)."
+"Removing aliased terms leaves missing lower-order terms: %s. Remove the "
+"higher-order terms that require them or revise the design."
 msgstr ""
 
 msgid ""
-"Type III sums of squares are unavailable for this model, because some of its "
-"coefficients are aliased. Use Type I or Type II sums of squares."
+"This model is not supported in both display units. Check lower-order terms, "
+"aliasing and predictor scales."
 msgstr ""
+
+msgid "ANOVA tests use coded units."
+msgstr ""
+
+#, fuzzy
+msgid "Aliases: %s."
+msgstr "Beoordelaar: %s"
 
 msgid "Response Optimizer Settings"
 msgstr ""
@@ -327,16 +362,23 @@ msgstr "Tolerantie: %s"
 msgid "The targets of the goals maximize and minimize are estimated from data."
 msgstr ""
 
-msgid "Response Optimizer Solution"
+msgid "Response Optimizer: Best Solution Found"
 msgstr ""
 
 msgid "%s fit"
 msgstr ""
 
 msgid ""
-"No factor setting with a composite desirability above 0 was found. The "
-"optimizer starts from the design points and can miss acceptable settings "
-"that lie between them."
+"Search bounds use each factor's observed range; combinations may lie outside "
+"the sampled design region."
+msgstr ""
+
+msgid "Some optimization runs failed; the best solution found is shown."
+msgstr ""
+
+msgid ""
+"No acceptable setting was found. Very narrow feasible regions may be missed "
+"by the numerical search."
 msgstr ""
 
 #, fuzzy
@@ -380,14 +422,14 @@ msgid "Composite desirability"
 msgstr "Geschiktheid"
 
 msgid ""
-"One or more input parameters for continuous predictors are outside of the "
-"design space. Extrapolation beyond the design space might not be valid."
+"One or more settings are outside the observed factor ranges. Predictions "
+"involve extrapolation."
 msgstr ""
 
 msgid "Predicted Responses (Manual Predictor Values)"
 msgstr ""
 
-msgid "Predicted Responses (Optimal Solution)"
+msgid "Predicted Responses (Best Solution Found)"
 msgstr ""
 
 msgid "Response"
@@ -420,6 +462,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"%1$s: predictions and optimization assume that the removed aliased terms "
+"(%2$s) have zero effects."
+msgstr ""
+
+msgid ""
 "Predictions are averaged over the blocks; the prediction interval excludes "
 "variation between blocks."
 msgstr ""
@@ -434,6 +481,9 @@ msgid ""
 "Some contrasts of the model are aliased, so the data cannot estimate the "
 "response at some settings (e.g., combinations of factor levels without "
 "runs). These settings are left out."
+msgstr ""
+
+msgid "Optimization did not converge. Check the response goals and bounds."
 msgstr ""
 
 msgid ""
@@ -467,6 +517,10 @@ msgid ""
 "to allow them."
 msgstr ""
 
+#, fuzzy
+msgid "the intercept"
+msgstr "Intercept"
+
 msgid "Lack of fit"
 msgstr ""
 
@@ -484,7 +538,13 @@ msgstr ""
 msgid "Predictive %s"
 msgstr "Predictoren"
 
-msgid "The following aliased terms were removed: %s."
+msgid "%1$s (aliased with %2$s)"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"The following aliased terms were removed; their effects are assumed to be "
+"zero: %s."
 msgstr "De volgende gealiaste termen zijn verwijderd: %s."
 
 #, fuzzy
@@ -524,6 +584,11 @@ msgid ""
 "has no degrees of freedom for error, so there are no F-tests."
 msgstr ""
 
+msgid ""
+"Type II sums of squares instead of the selected Type III: Type III sums of "
+"squares are not available when some coefficients are aliased."
+msgstr ""
+
 #, fuzzy
 msgid "Type I sums of squares."
 msgstr "Kwadratensom"
@@ -535,6 +600,26 @@ msgstr "Kwadratensom"
 #, fuzzy
 msgid "Type III sums of squares."
 msgstr "Kwadratensom"
+
+msgid "Center-point curvature is not modeled automatically."
+msgstr ""
+
+msgid "Pure error assumes that omitted predictors (%s) have no effect."
+msgstr ""
+
+#, fuzzy
+msgid "Factor Coding"
+msgstr "Factoriaal Ontwerp"
+
+#, fuzzy
+msgid "Factor"
+msgstr "Factoriaal Ontwerp"
+
+msgid "Low (−1)"
+msgstr ""
+
+msgid "High (+1)"
+msgstr ""
 
 msgid "Coded"
 msgstr "Gecodeerd"
@@ -582,6 +667,9 @@ msgid ""
 "blocks, and covariates."
 msgstr ""
 
+msgid "SE, t and p refer to the uncoded coefficients."
+msgstr ""
+
 msgid "Levels without runs are left out of the model: %s."
 msgstr ""
 
@@ -595,7 +683,7 @@ msgid ""
 "(e.g., an interaction or squared term without its main effects)."
 msgstr ""
 
-msgid "VIF is not available when some coefficients are aliased."
+msgid "VIF is calculated without the aliased coefficients."
 msgstr ""
 
 msgid "Discrete Predictor Levels"
@@ -640,6 +728,11 @@ msgid "Formula"
 msgstr ""
 
 msgid ""
+"AIC selection in coded units. Tests and intervals do not account for model "
+"selection."
+msgstr ""
+
+msgid ""
 "The model is saturated (no error degrees of freedom) and its effects are not "
 "available in uncoded units, because coding changes the model."
 msgstr ""
@@ -652,15 +745,20 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Lenth's method requires orthogonal two-level effects with equal precision."
+msgstr ""
+
+msgid ""
 "The model is saturated (no error degrees of freedom) and Lenth's pseudo "
 "standard error of its effects is zero, so the effects cannot be assessed."
 msgstr ""
 
-msgid "Pareto Chart of Standardized Effects"
+#, fuzzy
+msgid "Pareto Chart of Standardized Effects (α = .05)"
 msgstr "Pareto Figuur van Gestandaardiseerde Effecten"
 
 #, fuzzy
-msgid "Pareto Chart of Effects"
+msgid "Pareto Chart of Effects (Lenth screening, α = .05)"
 msgstr "Pareto Figuur van Gestandaardiseerde Effecten"
 
 #, fuzzy
@@ -671,11 +769,11 @@ msgid "Standardized Effect"
 msgstr "Gestandaardiseerd Effect"
 
 #, fuzzy
-msgid "Normal Plot of Standardized Effects"
+msgid "Normal Plot of Standardized Effects (α = .05)"
 msgstr "Pareto Figuur van Gestandaardiseerde Effecten"
 
 #, fuzzy
-msgid "Normal Plot of Effects"
+msgid "Normal Plot of Effects (Lenth screening, α = .05)"
 msgstr "Pareto Figuur van Gestandaardiseerde Effecten"
 
 msgid "Percent"
@@ -748,6 +846,16 @@ msgid ""
 "the discrete predictors)."
 msgstr ""
 
+msgid ""
+"Continuous predictors that are not on the axes of a plot are held at their "
+"mean (see \"Slice at\" in the plot)."
+msgstr ""
+
+msgid ""
+"The prediction is averaged over the levels of the discrete factors and "
+"blocks (%s)."
+msgstr ""
+
 msgid "The analysis failed with the following error message: %s"
 msgstr "De analyse is mislukt met de volgende foutmelding: %s"
 
@@ -788,6 +896,9 @@ msgstr "Waarde"
 msgid "Please select a row in the design table."
 msgstr "Selecteer een rij in de ontwerptabel."
 
+msgid "This design uses the legacy block assignment."
+msgstr ""
+
 msgid "Cannote create designs with more than 100000 total runs."
 msgstr "Kan geen ontwerpen maken met meer dan 100000 totale series."
 
@@ -799,6 +910,9 @@ msgstr "Het ontwerp wordt pas geëxporteerd als 'Export ontwerp' is aangevinkt."
 
 msgid "The design is exported as '%1$s'."
 msgstr "Het ontwerp wordt geëxporteerd als '%1$s'."
+
+msgid "Blocks = %s"
+msgstr ""
 
 msgid ""
 "The selected design is a full factorial; no generators can be specified."
@@ -828,6 +942,15 @@ msgid ""
 "are: %3$s."
 msgstr ""
 
+msgid "Factor codes in worksheet order: %s."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"No aliasing among main effects and 2-factor interactions, except for the 2-"
+"factor interactions confounded with blocks."
+msgstr "Geen aliasing tussen hoofdeffecten en 2-factor interacties."
+
 msgid "No aliasing among main effects and 2-factor interactions."
 msgstr "Geen aliasing tussen hoofdeffecten en 2-factor interacties."
 
@@ -837,14 +960,28 @@ msgstr "Aliasstructuur"
 msgid "Factorial Design"
 msgstr "Factoriaal Ontwerp"
 
+msgid "%s (design)"
+msgstr ""
+
 msgid "Run Order"
 msgstr "Serie Volgorde"
 
 msgid "Standard Order"
 msgstr "Standaard Volgorde"
 
+#, fuzzy
+msgid "Block"
+msgstr "Basis blokken"
+
+#, fuzzy
+msgid "Replication"
+msgstr "Replicaties"
+
 msgid "Hard-to-change factors: %1$s"
 msgstr "Moeilijk te veranderen factoren: %1$s"
+
+msgid "Run order randomized with seed %1$s."
+msgstr ""
 
 #, fuzzy
 msgid "Continuous factors"
@@ -953,10 +1090,6 @@ msgstr "Gematched"
 msgid "Confidence interval of 95%%"
 msgstr "Betrouwbaarheidsinterval van 95%%"
 
-#, fuzzy
-msgid "Invalid reference and/or results were inserted."
-msgstr "Er zijn ongeldige Referentie en/of Resultaten ingevoegd."
-
 msgid "Invalid values (NA) found in appraiser %s."
 msgstr "Ongeldige waarden (NA) gevonden in beoordelaar %s."
 
@@ -975,6 +1108,11 @@ msgstr "Mispercentage"
 
 msgid "False alarm rate"
 msgstr "Vals alarm percentage"
+
+msgid ""
+"The miss rate and false alarm rate need exactly two categories in the "
+"results and the standard."
+msgstr ""
 
 #, fuzzy
 msgid ""
@@ -1000,6 +1138,12 @@ msgstr ""
 "Onaanvaardbaar: x < 80%% (effectiviteit), x > 5%% (mispercentage), x > 10%% "
 "(vals alarmpercentage)"
 
+msgid ""
+"Accept (good) category: %1$s. Miss rate: percentage of ratings of parts with "
+"standard %2$s that are %1$s. False alarm rate: percentage of ratings of "
+"parts with standard %1$s that are %2$s."
+msgstr ""
+
 #, fuzzy
 msgid "More than one measurement per operator required."
 msgstr "Meer dan 1 Meting per Operator vereist."
@@ -1018,8 +1162,15 @@ msgid "Each part must have a single reference value."
 msgstr ""
 
 #, fuzzy
-msgid "Kendall's tau is only available for numeric measurements."
+msgid ""
+"Kendall's tau is only available for numeric or ordinal measurements, with "
+"the same order of the levels in every column."
 msgstr "Kendall's Tau is alleen beschikbaar voor numerieke metingen."
+
+msgid ""
+"Kendall's tau is only available for a numeric standard or an ordinal "
+"standard with the same order of the levels as the ratings."
+msgstr ""
 
 #, fuzzy
 msgid "Kendall's tau is only available for non-binary measurements."
@@ -1036,6 +1187,9 @@ msgstr ""
 msgid ""
 "Appraiser vs standard: Kendall's tau-b of each trial with the standard, "
 "averaged over trials."
+msgstr ""
+
+msgid "Order of the ordinal levels: %s."
 msgstr ""
 
 msgid "Agreement counts and totals must have compatible lengths."
@@ -1147,6 +1301,12 @@ msgstr ""
 #, fuzzy
 msgid "t-test not possible. No variance detected in Part(s) %s."
 msgstr "T-Toets niet mogelijk. Geen variantie gedetecteerd in onderdelen %s."
+
+msgid "Linearity requires at least 2 different reference values."
+msgstr ""
+
+msgid "The linearity slope could not be estimated from the reference values."
+msgstr ""
 
 msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
 msgstr ""
@@ -1393,6 +1553,12 @@ msgstr "Spreidingsdiagram van Operator  %1$s vs Operator %2$s"
 msgid "Matrix plot for operators"
 msgstr "Matrixfiguur voor Operators"
 
+msgid "Repeat"
+msgstr "Herhaal"
+
+msgid "Reprod"
+msgstr "Reprod"
+
 msgid "%% Study Variation"
 msgstr "%% Studievariatie"
 
@@ -1401,6 +1567,10 @@ msgstr ""
 
 msgid "%.2f"
 msgstr "%.2f"
+
+msgid ""
+"At least 2 operators are required. The operator variable has only one level."
+msgstr ""
 
 msgid ""
 "Unbalanced design. Some parts have more repeated measurements than others."
@@ -1493,6 +1663,11 @@ msgstr "Range Methode R Figuur"
 msgid "Range chart by part"
 msgstr "Range figuur per onderdeel"
 
+msgid ""
+"Enter a process std. dev. or a tolerance greater than zero to draw the "
+"traffic light chart."
+msgstr ""
+
 msgid "Run chart of parts"
 msgstr "Serie figuur van onderdelen"
 
@@ -1519,12 +1694,20 @@ msgstr "Proces Std. Dev."
 msgid "%%GRR of process std. dev."
 msgstr "%%GRR van Proces Std. Dev."
 
+msgid ""
+"Enter a process standard deviation greater than zero to calculate its "
+"percentage."
+msgstr ""
+
 msgid "Tolerance"
 msgstr "Tolerantie"
 
 #, fuzzy
 msgid "%%GRR of tolerance"
 msgstr "%%GRR van Tolerantie"
+
+msgid "Enter a tolerance greater than zero to calculate its percentage."
+msgstr ""
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
 msgstr "Spreidingsdiagram van 1e meting vs 2e meting"
@@ -1645,6 +1828,10 @@ msgstr "Geen valide metingen in %s."
 
 msgid "Ref."
 msgstr ""
+
+#, fuzzy
+msgid "Observation"
+msgstr "Aantal defecten"
 
 msgid ""
 "The stage variable must have at least two levels to define training and test "
@@ -1867,13 +2054,6 @@ msgstr ""
 "Subgroepgrootte is >5, resultaten kunnen vertekend zijn. Een s-figuur wordt "
 "aanbevolen."
 
-msgid ""
-"All zero values have been replaced with a value equal to one-half of the "
-"smallest data point."
-msgstr ""
-"Alle nulwaarden zijn vervangen door een waarde gelijk aan de helft van het "
-"kleinste gegevenspunt."
-
 msgid "Process Capability Report"
 msgstr "Procesgeschiktheid Rapport"
 
@@ -1898,6 +2078,16 @@ msgstr "Gerapporteerd door: %s"
 
 msgid "Conclusion: %s"
 msgstr "Conclusie: %s"
+
+msgid "Capability of the process"
+msgstr "Geschiktheid van het proces"
+
+msgid "Probability plot"
+msgstr "Kansfiguur"
+
+#, fuzzy
+msgid "Process capability tables"
+msgstr "Procesgeschiktheid"
 
 msgid "X-bar & %s control chart"
 msgstr "X-bar & %s controle figuur"
@@ -2018,9 +2208,6 @@ msgstr ""
 msgid "The mean is based on a historical value."
 msgstr ""
 
-msgid "Capability of the process"
-msgstr "Geschiktheid van het proces"
-
 msgid "No valid measurements detected."
 msgstr "Geen valide metingen gedetecteerd."
 
@@ -2084,15 +2271,15 @@ msgid "Log-logistic dist."
 msgstr "Lognormale verd."
 
 #, fuzzy
-msgid "Target = %g"
+msgid "Target = %s"
 msgstr "Tar. = %g"
 
 #, fuzzy
-msgid "LB = %g"
+msgid "LB = %s"
 msgstr "CL = %g"
 
 #, fuzzy
-msgid "UB = %g"
+msgid "UB = %s"
 msgstr "UCL = %g"
 
 #, fuzzy
@@ -2227,16 +2414,13 @@ msgstr ""
 msgid "The threshold is based on a historical value."
 msgstr ""
 
-msgid "Probability table and plot"
-msgstr "Kanstabel en figuur"
-
-msgid "Probability plot"
-msgstr "Kansfiguur"
-
 msgid ""
 "Probability plot and table for %s distribution are not implemented in "
 "Quality Control module. Please use the Distributions module."
 msgstr ""
+
+msgid "Probability table and plot"
+msgstr "Kanstabel en figuur"
 
 msgid ""
 "Need at least 2 measurements to calculate probability table/plot. %1$i "
@@ -2260,8 +2444,9 @@ msgstr "Std. dev. (%1$s)"
 msgid "AD"
 msgstr "AD"
 
+#, fuzzy
 msgid ""
-"The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s "
+"The Anderson-Darling statistic (AD) is calculated against the %1$s "
 "distribution."
 msgstr ""
 "De Anderson-Darling statistiek A<i>D</i> wordt berekend tegen de %1$s "
@@ -2426,6 +2611,48 @@ msgstr "X-bar & %1$s controle figuur"
 msgid "Variables Chart for Subgroups Report"
 msgstr "Variabelen Figuur voor Subgroepen Rapport"
 
+msgid "Stage %s has no observations, so no control limits are shown for it."
+msgid_plural ""
+"Stages %s have no observations, so no control limits are shown for them."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid ""
+"%1$s cannot be analysed: after leaving out its runs with a missing value, "
+"the factor %2$s has fewer than 2 levels left."
+msgid_plural ""
+"%1$s cannot be analysed: after leaving out its runs with a missing value, "
+"the factors %2$s have fewer than 2 levels left."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid ""
+"%1$d run with a missing value of a predictor, block or covariate was left "
+"out of the analysis of all responses."
+msgid_plural ""
+"%1$d runs with a missing value of a predictor, block or covariate were left "
+"out of the analysis of all responses."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid ""
+"%1$d run with a missing value of %2$s was left out of the analysis of this "
+"response."
+msgid_plural ""
+"%1$d runs with a missing value of %2$s were left out of the analysis of this "
+"response."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid ""
+"The response optimizer cannot be used because the response %1$s could not be "
+"analysed, see its output."
+msgid_plural ""
+"The response optimizer cannot be used because the responses %1$s could not "
+"be analysed, see their output."
+msgstr[0] ""
+msgstr[1] ""
+
 #, fuzzy
 msgid "The following covariate was considered but not included: %1$s."
 msgid_plural "The following covariates were considered but not included: %1$s."
@@ -2440,6 +2667,35 @@ msgid_plural ""
 "terms are in the model)."
 msgstr[0] ""
 msgstr[1] ""
+
+msgid ""
+"The Box-Cox transformation requires measurement + shift > 0, but %1$i "
+"measurement is smaller than or equal to -shift (%2$s). Increase the shift or "
+"use the Yeo-Johnson or Johnson transformation."
+msgid_plural ""
+"The Box-Cox transformation requires measurement + shift > 0, but %1$i "
+"measurements are smaller than or equal to -shift (%2$s). Increase the shift "
+"or use the Yeo-Johnson or Johnson transformation."
+msgstr[0] ""
+msgstr[1] ""
+
+#~ msgid "Test 4: Increasing variation"
+#~ msgstr "Toets 4: Toenemende variatie"
+
+#, fuzzy
+#~ msgid "Test 7: Slightly increasing variation"
+#~ msgstr "Toets 4: Toenemende variatie"
+
+#, fuzzy
+#~ msgid "Invalid reference and/or results were inserted."
+#~ msgstr "Er zijn ongeldige Referentie en/of Resultaten ingevoegd."
+
+#~ msgid ""
+#~ "All zero values have been replaced with a value equal to one-half of the "
+#~ "smallest data point."
+#~ msgstr ""
+#~ "Alle nulwaarden zijn vervangen door een waarde gelijk aan de helft van "
+#~ "het kleinste gegevenspunt."
 
 #, fuzzy
 #~ msgid "target is"
@@ -2469,12 +2725,6 @@ msgstr[1] ""
 
 #~ msgid "ANOVA"
 #~ msgstr "ANOVA"
-
-#~ msgid "Repeat"
-#~ msgstr "Herhaal"
-
-#~ msgid "Reprod"
-#~ msgstr "Reprod"
 
 #~ msgid ""
 #~ "Parameter estimation failed. Values might be too extreme. Try a different "

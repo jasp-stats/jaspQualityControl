@@ -1,9 +1,6 @@
 context("[Quality Control] Process Capability Study - control charts of non-normal studies with zero values")
 
-# jasp-stats/jasp-issues#4690: for the distributions that need positive data (Weibull, log-normal, gamma, log-logistic)
-# zeros are replaced by half the smallest positive value before the fit. The control charts were drawn from the
-# replaced data (the X-bar point of the subgroup with the zero was 7.44 instead of 7.08) and the note on the replaced
-# zeros stayed after a transformation, stage or subgroup change that left no zeros.
+# Regression from jasp-stats/jasp-issues#4690: a replacement zero changed the second subgroup mean from 7.08 to 7.44.
 
 .zeroChartData <- function() {
   diameter <- read.csv(testthat::test_path("datasets", "processCapabilityStudy", "processCapabilityAnalysisLongFormatDebug.csv"))[["Diameter"]]
@@ -53,18 +50,16 @@ context("[Quality Control] Process Capability Study - control charts of non-norm
   list(means = unname(vapply(subgroups, mean, numeric(1))), ranges = unname(vapply(subgroups, function(x) diff(range(x)), numeric(1))))
 }
 
-test_that("Weibull X-bar & R chart shows the data as entered, not the zero replaced for the fit", {
+test_that("Weibull X-bar & R chart shows the recorded subgroup means and ranges", {
   results <- .zeroChartRun("weibull")
   expected <- .zeroChartSubgroups()
   expect_equal(expected$means[2], 7.08)
   points <- .zeroChartPoints(results, "xBar")
   expect_equal(points[[1]], expected$means)
   expect_equal(points[[2]], expected$ranges)
-  # the fit still replaces the zero
-  expect_false(is.null(results[["results"]][["zeroWarning"]]))
 })
 
-test_that("X-bar & R chart is the same for a distribution that keeps zeros (logistic) and one that replaces them (Weibull)", {
+test_that("X-bar & R chart is the same for logistic and Weibull capability", {
   weibull  <- .zeroChartPoints(.zeroChartRun("weibull"), "xBar")
   logistic <- .zeroChartRun("logistic")
   expect_null(logistic[["results"]][["zeroWarning"]])
@@ -90,25 +85,17 @@ test_that("Weibull X-mR chart (also in the report) shows the data as entered", {
   }
 })
 
-test_that("The zero values note depends on every option that changes the data, and goes when no zeros are left", {
-  # jaspTools runs are stateless (no state is reused between runs), so the dependencies are checked directly
-  dependencies <- jaspQualityControl:::.qcCapabilityZeroWarningDependencies()
-  dataOptions <- c("capabilityStudyType", "nonNormalDistribution", "dataFormat", "measurementLongFormat", "measurementsWideFormat",
-                   "stagesLongFormat", "stagesWideFormat", "subgroup", "subgroupSizeType", "groupingVariableMethod",
-                   "manualSubgroupSizeValue", "dataTransformation", "dataTransformationShift", "dataTransformationLambda",
-                   "dataTransformationMethod", "dataTransformationContinuityAdjustment")
-  expect_true(all(dataOptions %in% dependencies), label = paste(setdiff(dataOptions, dependencies), collapse = ", "))
-  qmlFile <- system.file("qml", "processCapabilityStudies.qml", package = "jaspQualityControl")
-  qmlOptions <- sub('.*name:\\s*"([^"]+)".*', "\\1", grep('name:\\s*"[^"]+"', readLines(qmlFile), value = TRUE))
-  expect_true(all(dataOptions %in% qmlOptions), label = paste(setdiff(dataOptions, qmlOptions), collapse = ", "))
-
-  # fresh run: Box-Cox with shift 2 and lambda 0 leaves no zeros, so no note
+test_that("An explicitly selected Box-Cox transformation can yield a valid Weibull fit", {
   options <- .zeroChartOptions("weibull")
+  options$processCapabilityTable <- TRUE
   options$dataTransformation <- "boxCox"
   options$dataTransformationShift <- 2
   options$dataTransformationLambda <- 0
   set.seed(1)
   results <- runAnalysis("processCapabilityStudies", .zeroChartData(), options, view = FALSE)
   expect_equal(results[["status"]], "complete")
-  expect_null(results[["results"]][["zeroWarning"]])
+  tables <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]]
+  summary <- tables[["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]]
+  expect_null(summary$error)
+  expect_gt(summary$data[[1]]$beta, 0)
 })

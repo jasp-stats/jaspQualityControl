@@ -356,11 +356,6 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(result)
 }
 
-# Function to determine if two numbers alternate in increase/decrease pattern
-.patternAlternates <- function(x, y) {
-  return((x < 0 && y > 0) || (x > 0 && y < 0))
-}
-
 .nelsonLaws <- function(plotStatistics,
                         center = NULL,
                         UCL = NULL,
@@ -448,8 +443,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
           consecutiveDecreaseCount <- 0
         }
 
-        # Check if the count reaches k and record the offending sequence
-        if (consecutiveIncreaseCount >= k3 | consecutiveDecreaseCount >= k3) {
+        # k points have k - 1 consecutive differences.
+        if (consecutiveIncreaseCount >= k3 - 1 | consecutiveDecreaseCount >= k3 - 1) {
           r3 <- c(r3, i + 1)
         }
       }
@@ -465,22 +460,19 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     k4 <- ruleList[["rule4"]][["k"]]
     r4 <- c()
 
-    # Calculate differences between consecutive points
     differences <- diff(plotStatistics)
-
-
-    if (k4 <= length(differences)) { # only need to calculate if the number of plot statistics is shorter than the minimum seq
-      for (i in 1:(length(differences)-(k4-1))) {
-        currentSequence <- differences[i:(i+k4-1)]
-        sequenceCount <- 1
-        for (j in 1:(k4-1)) {
-          if (!is.na(currentSequence[j]) && !is.na(currentSequence[j + 1]) && .patternAlternates(currentSequence[j], currentSequence[j + 1])) {
-            sequenceCount <- sequenceCount + 1
-          }
-        }
-        if (sequenceCount >= k4) {
-          r4 <- c(r4, k4 + i)
-        }
+    alternatingDifferences <- 0
+    previousSign <- 0
+    for (i in seq_along(differences)) {
+      currentSign <- sign(differences[i])
+      if (is.na(currentSign) || currentSign == 0) {
+        alternatingDifferences <- 0
+        previousSign <- 0
+      } else {
+        alternatingDifferences <- if (currentSign == -previousSign) alternatingDifferences + 1 else 1
+        previousSign <- currentSign
+        if (alternatingDifferences >= k4 - 1)
+          r4 <- c(r4, i + 1)
       }
     }
     redPoints <- c(redPoints, r4)
@@ -549,9 +541,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
     zeroBolVector <- plotStatistics == 0
 
-    # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
-    zeroSeqVector <- ave(zeroBolVector, cumsum(!zeroBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
-    r9 <- c(r9, which(zeroSeqVector > k9))
+    zeroSeqVector <- .countConsecutiveTrues(zeroBolVector)
+    r9 <- c(r9, which(zeroSeqVector >= k9))
     redPoints <- c(redPoints, r9)
     violationList[["test9"]] <- if (length(r9) > 0) r9 else numeric()
   }
@@ -1669,6 +1660,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(c(shape = shape, rate = shape / dataMean))
 }
 
+.qcFitDomainError <- function(distribution, data) {
+  if (distribution %in% c("weibull", "lognormal", "gamma", "loglogistic") && any(data <= 0, na.rm = TRUE))
+    return(gettextf("The parameters could not be estimated. The %s distribution requires all measurements to be greater than zero. Consider a transformation that yields positive measurements.", distribution))
+  NULL
+}
+
 .distributionParameters <- function(data,
                                     distribution = c("lognormal",
                                                      "weibull",
@@ -1679,6 +1676,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                      "logistic",
                                                      "loglogistic"),
                                     fix.arg = NULL) {
+  domainError <- .qcFitDomainError(distribution, data)
+  if (!is.null(domainError))
+    stop(paste(domainError, gettext("For capability estimates, consider the 3-parameter Weibull if a lower threshold is appropriate for the process.")), call. = FALSE)
   estimationErrorMessage <- gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely.")
   # A fixed (historical) threshold at or above the smallest observation gives a likelihood of zero
   thresholdErrorMessage <- function(threshold)
