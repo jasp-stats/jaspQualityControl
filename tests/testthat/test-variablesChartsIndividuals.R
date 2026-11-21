@@ -397,22 +397,22 @@ test_that("12.1 Test of all rules for x-mr chart", {
 test_that("12.2 Test of all rules for x-mr chart - I Table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableI"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 37", "Point 22", "Point 22", "Point 38", "Point 29", "Point 44",
-                                      "Point 40", "Point 15", "Point 38", "Point 23", "", "Point 39",
-                                      "Point 30", "Point 45", "Point 41", "Point 16", "Point 39",
-                                      "Point 24", "", "Point 40", "Point 31", "", "Point 42", "",
-                                      "Point 40", "Point 25", "", "Point 41", "Point 32", "", "Point 43",
-                                      "", "Point 41", "Point 26", "", "Point 42", "Point 33", "",
-                                      "Point 44", "", "Point 42", "Point 27", "", "Point 43", "Point 34",
-                                      "", "", "", "Point 43", "Point 28", "", "Point 44", "Point 35",
-                                      "", "", "", "Point 44", "Point 29", "", "", "Point 36", "",
-                                      "", "", "Point 45", "Point 30", "", "", "", "", "", "", "",
-                                      "Point 31", "", "", "", "", "", "", "", "Point 32", "", "",
-                                      "", "", "", "", "", "Point 33", "", "", "", "", "", "", "",
-                                      "Point 34", "", "", "", "", "", "", "", "Point 35", "", "",
-                                      "", "", "", "", "", "Point 36", "", "", "", "", "", "", "",
-                                      "Point 43", "", "", "", "", "", "", "", "Point 44", "", "",
-                                      "", "", "", ""))
+                                 list("Point 37", "Point 22", "Point 21", "Point 14", "Point 38", "Point 40",
+                                      "Point 29", "Point 44", "Point 38", "Point 23", "Point 22",
+                                      "Point 15", "Point 39", "Point 41", "Point 30", "Point 45",
+                                      "Point 39", "Point 24", "", "Point 16", "Point 40", "Point 42",
+                                      "Point 31", "", "Point 40", "Point 25", "", "", "Point 41",
+                                      "Point 43", "Point 32", "", "Point 41", "Point 26", "", "",
+                                      "Point 42", "Point 44", "Point 33", "", "Point 42", "Point 27",
+                                      "", "", "Point 43", "", "Point 34", "", "Point 43", "Point 28",
+                                      "", "", "Point 44", "", "Point 35", "", "Point 44", "Point 29",
+                                      "", "", "", "", "Point 36", "", "Point 45", "Point 30", "",
+                                      "", "", "", "", "", "", "Point 31", "", "", "", "", "", "",
+                                      "", "Point 32", "", "", "", "", "", "", "", "Point 33", "",
+                                      "", "", "", "", "", "", "Point 34", "", "", "", "", "", "",
+                                      "", "Point 35", "", "", "", "", "", "", "", "Point 36", "",
+                                      "", "", "", "", "", "", "Point 43", "", "", "", "", "", "",
+                                      "", "Point 44", "", "", "", "", "", ""))
 })
 
 test_that("12.3 Test of all rules for x-mr chart - MR Table", {

@@ -467,13 +467,16 @@ Form
 				name:									"blocks"
 				enabled:								factorialTypeDefault.checked
 				label:									qsTr("Blocks")
-				info:									qsTr("Select the number of blocks in the design. Only available for two-level factorial designs with the default generator.")
+				info:									qsTr("Select the number of blocks. The legacy choices give the block assignment of earlier JASP versions, in which blocks can be confounded with 2-factor interactions that could be kept clear; analyses saved with those versions keep it. In R syntax, use %1 for the current assignment and %2 for the legacy assignment.").arg("\"higherOrder2\", \"higherOrder4\", \"higherOrder8\"").arg("\"2\", \"4\", \"8\"")
 				indexDefaultValue:						0
 				values: [
 						{ label: qsTr("1"), value: "1"},
-						{ label: qsTr("2"), value: "2"},
-						{ label: qsTr("4"), value: "4"},
-						{ label: qsTr("8"), value: "8"}
+						{ label: qsTr("2"), value: "higherOrder2"},
+						{ label: qsTr("4"), value: "higherOrder4"},
+						{ label: qsTr("8"), value: "higherOrder8"},
+						{ label: qsTr("2 (legacy assignment)"), value: "2"},
+						{ label: qsTr("4 (legacy assignment)"), value: "4"},
+						{ label: qsTr("8 (legacy assignment)"), value: "8"}
 						]
 			}
 

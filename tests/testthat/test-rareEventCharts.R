@@ -497,11 +497,11 @@ test_that("15.1 Test of all rules for G chart", {
 test_that("15.2 Test of all rules for G chart table", {
   table <- results[["results"]][["gChart"]][["collection"]][["gChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 32", "Point 9", "Point 11", "Point 26", "Point 4", "",
-                                      "Point 18", "Point 12", "Point 27", "Point 5", "", "Point 19",
-                                      "Point 13", "Point 28", "", "", "Point 20", "", "Point 29",
-                                      "", "", "Point 21", "", "Point 30", "", "", "Point 22",
-                                      "", "Point 31", "", "", "Point 23", "", "", "", "", "Point 24",
+                                 list("Point 32", "Point 9", "Point 10", "Point 25", "Point 4", "",
+                                      "Point 18", "Point 11", "Point 26", "Point 5", "", "Point 19",
+                                      "Point 12", "Point 27", "", "", "Point 20", "Point 13", "Point 28",
+                                      "", "", "Point 21", "", "Point 29", "", "", "Point 22", "",
+                                      "Point 30", "", "", "Point 23", "", "Point 31", "", "", "Point 24",
                                       "", "", "", "", "Point 25", "", "", "", "", "Point 26", "",
                                       "", "", "", "Point 27", "", "", "", "", "Point 28", "", "",
                                       "", "", "Point 29", "", "", "", "", "Point 30", "", "", "",
