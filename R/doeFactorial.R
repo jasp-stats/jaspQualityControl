@@ -709,9 +709,11 @@ doeFactorialInternal <- function(jaspResults, dataset, options, ...) {
 
 .doeFactorialDecodeDesign <- function(options, display) {
   twoLevelDesign <- options[["categoricalNoLevels"]] == 2
-  # Decode and order the blocks column
+  # Decode the blocks column: number the blocks in standard order, replicate by replicate, so that a run keeps its block
+  # number in both run orders
   if ("Block" %in% colnames(display)) {
-    display[["Block"]] <- seq_along(unique(display[["Block"]]))[match(display[["Block"]], unique(display[["Block"]]))]
+    standardOrder <- if ("Replication" %in% colnames(display)) order(display[["Replication"]], display[["sro"]]) else order(display[["sro"]])
+    display[["Block"]] <- match(display[["Block"]], unique(display[["Block"]][standardOrder]))
   }
   # Decode the design
   if (!options[["codedOutput"]]) {
