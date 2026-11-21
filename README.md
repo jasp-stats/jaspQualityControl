@@ -1,3 +1,12 @@
+<div align="right">
+
+[![Unit Tests](https://github.com/jasp-stats/jaspQualityControl/actions/workflows/unittests.yml/badge.svg)](https://github.com/jasp-stats/jaspQualityControl/actions/workflows/unittests.yml)
+[![codecov](https://codecov.io/gh/jasp-stats/jaspQualityControl/branch/master/graph/badge.svg)](https://codecov.io/gh/jasp-stats/jaspQualityControl)
+<br>
+<b>Maintainer:</b> <a href="https://github.com/JTPetter/">Jonas Petter</a>
+
+</div>
+
 # The Quality Control Module
 
 Investigate if a manufactured product adheres to a defined set of quality criteria.
@@ -29,12 +38,3 @@ The analyses in the Quality Control module are structured in JASP in the followi
        - Two-level Factorial Design
        - Response Surface
 ```
-
-<div align="right">
-
-[![Unit Tests](https://github.com/jasp-stats/jaspQualityControl/actions/workflows/unittests.yml/badge.svg)](https://github.com/jasp-stats/jaspQualityControl/actions/workflows/unittests.yml)
-[![codecov](https://codecov.io/gh/jasp-stats/jaspQualityControl/branch/master/graph/badge.svg)](https://codecov.io/gh/jasp-stats/jaspQualityControl)
-<br>
-<b>Maintainer:</b> <a href="https://github.com/JTPetter/">Jonas Petter</a>
-
-</div>
