@@ -12,6 +12,7 @@ filtration$Rate2[c(3, 12)] <- NA
 
 filtrationOptions <- function(dependent) {
   options <- analysisOptions("doeAnalysis")
+  options$contourSurfacePlotResponseDivision <- 5
   options$designType <- "factorialDesign"
   options$dependentFactorial <- dependent
   options$continuousFactorsFactorial <- c("A", "B", "C", "D")
@@ -82,6 +83,15 @@ test_that("Runs with a missing predictor are left out of all responses, with a f
   expect_equal(footnoteTexts(summaryTable(results, "Rate")), predictorNote)
   expect_equal(footnoteTexts(summaryTable(results, "Rate2")),
                c(predictorNote, "2 runs with a missing value of Rate2 were left out of the analysis of this response."))
+
+  for (dep in c("Rate", "Rate2")) {
+    keep <- complete.cases(data[c("A", "B", "C", "D", dep)])
+    fit <- lm(reformulate(c("A", "C", "D", "A:C", "A:D"), dep), data = data[keep, ])
+    plotName <- results[["results"]][[dep]][["collection"]][[paste0(dep, "_plotRunOrder")]][["data"]]
+    plotData <- ggplot2::ggplot_build(results[["state"]][["figures"]][[plotName]][["obj"]])[["data"]][[2]]
+    expect_equal(plotData[["x"]], which(keep))
+    expect_equal(plotData[["y"]], unname(resid(fit)), tolerance = 1e-6)
+  }
 })
 
 test_that("Response optimizer uses the observed range of a response without its missing values", {

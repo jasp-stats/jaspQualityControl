@@ -121,24 +121,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   if (length(measurements) > 5 && options[["controlChartType"]] == "xBarR") # if the subgroup size is above 5, R chart is not recommended
     plotNotes <- paste0(plotNotes, gettext("Subgroup size is >5, results may be biased. An s-chart is recommended."))
 
-  # correction for zero values for non-normal capability. Only for distributions that cannot be fitted to zeros: the exponential,
-  # logistic and 3-parameter distributions are defined at 0, so their fit, capability indices and ppm use the data as entered.
-  # The Process summary mean and standard deviation and the control charts always use the data as entered.
-  datasetAsEntered <- dataset
-  if (options$capabilityStudyType == "nonNormalCapabilityAnalysis" && ready &&
-      !options[["nonNormalDistribution"]] %in% c("exponential", "logistic", "3ParameterLognormal", "3ParameterWeibull")) {
-    x <- na.omit(unlist(dataset[measurements]))
-    zeroCorrect <- any(x == 0)
-    if (zeroCorrect) {
-      zeroCorrectionIndices <- which(dataset[measurements] == 0, arr.ind = TRUE)
-      dataset[measurements][zeroCorrectionIndices] <- min(x[x > 0])/2
-      jaspResults[["zeroWarning"]] <- createJaspHtml(text = gettext("All zero values have been replaced with a value equal to one-half of the smallest data point."), elementType = "p",
-                                                     title = "Zero values found in non-normal capability study:",
-                                                     position = 1)
-      jaspResults[["zeroWarning"]]$dependOn(.qcCapabilityZeroWarningDependencies())
-    }
-  }
-
   # Report
   if (options[["report"]]) {
     nElements <- sum(options[["reportProcessStability"]]*2, options[["reportProcessCapabilityPlot"]], options[["reportProbabilityPlot"]],
@@ -200,7 +182,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       controlCharts <- list()
       # X-bar and second chart OR ImR Chart
       if (options[["controlChartType"]] == "xmr") {
-        xmrCharts <- .qcCapabilityXmrCharts(options, datasetAsEntered, measurements, stages)
+        xmrCharts <- .qcCapabilityXmrCharts(options, dataset, measurements, stages)
         controlCharts[[1]] <- xmrCharts[["individualChart"]]$plotObject
         controlCharts[[2]] <- xmrCharts[["mrChart"]]$plotObject
       } else {
@@ -219,11 +201,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         # Create the rule list for the out-of-control signals
         ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
         ruleList2 <- .getRuleListSubgroupCharts(options, type = secondPlotType)
-        controlCharts[[1]] <- .qcCapabilityControlChart(dataset = datasetAsEntered[columnsToPass], plotType = "xBar", xBarSdType = sdType,
+        controlCharts[[1]] <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                             xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
                                             unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList1)$plotObject
-        controlCharts[[2]] <- .qcCapabilityControlChart(dataset = datasetAsEntered[columnsToPass], plotType = secondPlotType,
+        controlCharts[[2]] <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
                                             tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
                                             fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList2)$plotObject
@@ -295,12 +277,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
                  !is.null(fitError <- .qcNonNormalFitError(options, dataset, measurements, stages))) {
         plots[[plotIndexCounter]] <- .qcReportErrorPanel(gettext("Process capability tables"), fitError)
       } else {
-        processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnSummaryDF = TRUE,
-                                                            datasetAsEntered = datasetAsEntered)
-        overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnCapabilityDF = TRUE,
-                                                            datasetAsEntered = datasetAsEntered)
-        performanceDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnPerformanceDF = TRUE,
-                                                            datasetAsEntered = datasetAsEntered)
+        processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnSummaryDF = TRUE)
+        overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnCapabilityDF = TRUE)
+        performanceDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnPerformanceDF = TRUE)
         tableSize <- 6
         if (identical(stages, "")) {
           tables[[1]] <- list(overallCapDF, performanceDF, processSummaryDF)
@@ -367,11 +346,11 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
         # Create the rule list for the out-of-control signals
         ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
         ruleList2 <- .getRuleListSubgroupCharts(options, type = secondPlotType)
-        xBarChart <- .qcCapabilityControlChart(dataset = datasetAsEntered[columnsToPass], plotType = "xBar", xBarSdType = sdType,
+        xBarChart <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
                                    nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                    xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
                                    unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList1)
-        secondPlot <- .qcCapabilityControlChart(dataset = datasetAsEntered[columnsToPass], plotType = secondPlotType,
+        secondPlot <- .qcCapabilityControlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
                                     nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
                                     tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
                                     fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList2)
@@ -390,7 +369,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
-        xmrCharts <- .qcCapabilityXmrCharts(options, datasetAsEntered, measurements, stages)
+        xmrCharts <- .qcCapabilityXmrCharts(options, dataset, measurements, stages)
         individualChart <- xmrCharts[["individualChart"]]
         mrChart <- xmrCharts[["mrChart"]]
         .qcCapabilityControlChartPlot(jaspResults[["xmr"]], upperChart = individualChart, lowerChart = mrChart, plotNotes = plotNotes)
@@ -406,13 +385,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements, stages)
 
     # Perform capability analysis
-    .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements, stages, datasetAsEntered)
+    .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements, stages)
   }
-}
-
-# The zero values note: whether zeros are replaced depends on the data after stage/subgroup removal and transformation
-.qcCapabilityZeroWarningDependencies <- function() {
-  return(c("capabilityStudyType", "nonNormalDistribution", .qcDataOptionNames()))
 }
 
 # The individuals and moving range chart of the X-mR control chart, used by the control chart output and the report
@@ -543,7 +517,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 ## Containers ####
 
 
-.qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults, measurements, stages, datasetAsEntered = dataset) {
+.qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults, measurements, stages) {
   container <- createJaspContainer(gettext("Capability study"))
   container$dependOn(c(
     "capabilityStudyType", "processCapabilityPlot", "processCapabilityTable",
@@ -614,7 +588,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     if (options[["processCapabilityPlot"]])
       .qcProcessCapabilityPlot(options, dataset, ready, nonNormalContainer, measurements, stages, options[["nonNormalDistribution"]])
     if (options[["processCapabilityTable"]])
-      .qcProcessCapabilityTableNonNormal(options, dataset, ready, nonNormalContainer, measurements, stages, datasetAsEntered = datasetAsEntered)
+      .qcProcessCapabilityTableNonNormal(options, dataset, ready, nonNormalContainer, measurements, stages)
   }
 }
 
@@ -811,18 +785,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       formattedStages[grep("Change", formattedStages)] <- formattedChangeNames
       formattedTableDf[["stage"]] <- formattedStages
     }
-    lsl <- options[["lowerSpecificationLimitValue"]]
-    target <- options[["targetValue"]]
-    usl <- options[["upperSpecificationLimitValue"]]
-    if (!options[["lowerSpecificationLimit"]])
-      lsl <- '*'
-    if (!options[["target"]])
-      target <- '*'
-    if (!options[["upperSpecificationLimit"]])
-      usl <- '*'
-    formattedTableDf[["lsl"]] <- tableList[["lsl"]]
-    formattedTableDf[["target"]] <- tableList[["target"]]
-    formattedTableDf[["usl"]] <- tableList[["usl"]]
+    formattedTableDf[["lsl"]] <- if (options[["lowerSpecificationLimit"]]) tableList[["lsl"]] else rep("*", tableNRows)
+    formattedTableDf[["target"]] <- if (options[["target"]]) tableList[["target"]] else rep("*", tableNRows)
+    formattedTableDf[["usl"]] <- if (options[["upperSpecificationLimit"]]) tableList[["usl"]] else rep("*", tableNRows)
     formattedTableDf[["n"]] <- tableList[["n"]]
     formattedTableDf[["mean"]] <- round(tableList[["mean"]], nDecimals)
     formattedTableDf[["sd"]] <- round(tableList[["sd"]], nDecimals)
@@ -2433,14 +2398,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 }
 
 .qcProcessCapabilityTableNonNormal <- function(options, dataset, ready, container, measurements, stages,
-                                               returnSummaryDF = FALSE, returnCapabilityDF = FALSE, returnPerformanceDF = FALSE,
-                                               datasetAsEntered = NULL) {
+                                               returnSummaryDF = FALSE, returnCapabilityDF = FALSE, returnPerformanceDF = FALSE) {
   if (!ready)
     return()
-
-  # zeros may have been replaced in dataset for the fit; the sample size, mean and std. dev. of the summary use the data as entered
-  if (is.null(datasetAsEntered))
-    datasetAsEntered <- dataset
 
   nDecimals <- .numDecimals
 
@@ -2550,10 +2510,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   for (i in seq_len(nStages)) {
     stage <- .qcStageValue(dataset[[stages]], i)
-    allDataAsEntered <- as.vector(na.omit(unlist(datasetAsEntered[.qcStageRows(dataset[[stages]], i), measurements])))
-    n <- length(allDataAsEntered)
-    sd <- sd(allDataAsEntered)
-    processMean <- mean(allDataAsEntered)
+    allData <- as.vector(na.omit(unlist(dataset[.qcStageRows(dataset[[stages]], i), measurements])))
+    n <- length(allData)
+    sd <- sd(allData)
+    processMean <- mean(allData)
     beta <- distParameters[[i]]$beta
     theta <- distParameters[[i]]$theta
 
@@ -2601,15 +2561,9 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       formattedStages[grep("Change", formattedStages)] <- formattedChangeNames
       formattedTableDf1[["stage"]] <- formattedStages
     }
-    if (!options[["lowerSpecificationLimit"]])
-      lsl <- '*'
-    if (!options[["target"]])
-      target <- '*'
-    if (!options[["upperSpecificationLimit"]])
-      usl <- '*'
-    formattedTableDf1[["lsl"]] <- tableList[["lsl"]]
-    formattedTableDf1[["target"]] <- tableList[["target"]]
-    formattedTableDf1[["usl"]] <- tableList[["usl"]]
+    formattedTableDf1[["lsl"]] <- if (options[["lowerSpecificationLimit"]]) tableList[["lsl"]] else rep("*", tableNRows)
+    formattedTableDf1[["target"]] <- if (options[["target"]]) tableList[["target"]] else rep("*", tableNRows)
+    formattedTableDf1[["usl"]] <- if (options[["upperSpecificationLimit"]]) tableList[["usl"]] else rep("*", tableNRows)
     formattedTableDf1[["n"]] <- tableList[["n"]]
     formattedTableDf1[["mean"]] <- round(tableList[["mean"]], nDecimals)
     formattedTableDf1[["sd"]] <- round(tableList[["sd"]], nDecimals)
@@ -3030,7 +2984,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
     #Calculate performance
     stage <- .qcStageValue(dataset[[stages]], i)
-    allData <- na.omit(unlist(datasetAsEntered[.qcStageRows(dataset[[stages]], i), measurements]))
+    allData <- na.omit(unlist(dataset[.qcStageRows(dataset[[stages]], i), measurements]))
     n <- length(allData)
     allDataVector <- as.vector(allData)
     beta <- distParameters[[i]]$beta
@@ -3286,7 +3240,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   container$dependOn(c(
     "probabilityPlot", "probabilityPlotRankMethod", "nullDistribution",
     "probabilityPlotGridLines", "report",
-    "capabilityStudyType", "nonNormalDistribution", # decide whether zeros are replaced in the data
     .qcDataOptionNames()
   ))
   container$position <- 3
@@ -3370,6 +3323,12 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
        || options[["nullDistribution"]] == "3ParameterLognormal"|| options[["nullDistribution"]] == "3ParameterWeibull") &&
       any(na.omit(unlist(dataset[measurements])) < 0)) {
     table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
+    container[["probabilityTable"]] <- table
+    return()
+  }
+  domainError <- .qcFitDomainError(options[["nullDistribution"]], unlist(dataset[measurements]))
+  if (!is.null(domainError)) {
+    table$setError(domainError)
     container[["probabilityTable"]] <- table
     return()
   }
@@ -3575,6 +3534,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   supportError <- .qcProbabilityPlotSupportError(options[["nullDistribution"]])
   if (!is.null(supportError))
     stop(supportError, call. = FALSE)
+
+  domainError <- .qcFitDomainError(options[["nullDistribution"]], unlist(dataset[measurements]))
+  if (!is.null(domainError))
+    stop(domainError, call. = FALSE)
 
   if (identical(stages, "")) {
     nStages <- 1
@@ -3836,7 +3799,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     plot$dependOn(c(
       "histogram", "histogramDensityLine", "histogramBinNumber",
       "report", "nullDistribution", "histogramBinBoundaryDirection",
-      "capabilityStudyType", "nonNormalDistribution", # decide whether zeros are replaced in the data
       .qcDataOptionNames()
     ))
     jaspResults[["histogram"]] <- plot
@@ -3857,7 +3819,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
   plot$dependOn(c(
     "histogram", "histogramDensityLine", "histogramBinNumber",
     "report", "nullDistribution", "histogramBinBoundaryDirection",
-    "capabilityStudyType", "nonNormalDistribution", # decide whether zeros are replaced in the data
     .qcDataOptionNames()
   ))
   plot$position <- 2
