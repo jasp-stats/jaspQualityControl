@@ -828,3 +828,17 @@ test_that("LF recurring stage - Cumulative sum chart test results use each flagg
                                       "Point 10 - upper (D10)", "", "Point 11 - upper (D11)", "",
                                       "Point 12 - upper (D12)"))
 })
+
+test_that("LF recurring stage - Cumulative sum chart accepts a negative target", {
+  # Translating the data and target together preserves the CUSUM signals.
+  negativeTargetOptions <- options
+  negativeTargetOptions$cumulativeSumChartTarget <- -7
+  shifted <- interleavedStagesDataset
+  shifted$Measurement <- shifted$Measurement - 17
+  shiftedResults <- runAnalysis("timeWeightedCharts", shifted, negativeTargetOptions)
+  table <- shiftedResults[["results"]][["CusumChart"]][["collection"]][["CusumChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                list("B", "Point 8 - upper (D8)", "", "Point 9 - upper (D9)", "A",
+                                     "Point 10 - upper (D10)", "", "Point 11 - upper (D11)", "",
+                                     "Point 12 - upper (D12)"))
+})
