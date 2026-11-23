@@ -2387,13 +2387,6 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     footnotes <- paste0(footnotes, gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL). "))
   }
 
-  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull"
-       || options[["nullDistribution"]] == "3ParameterLognormal"|| options[["nullDistribution"]] == "3ParameterWeibull") &&
-      any(na.omit(unlist(dataset[measurements])) < 0)) {
-    table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
-    container[["summaryTableNonNormal"]] <- table
-    return()
-  }
   if(!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]){
     table$addFootnote(gettext("Set at least one specification limit (upper or lower) to start the analysis."))
     container[["summaryTableNonNormal"]] <- table
