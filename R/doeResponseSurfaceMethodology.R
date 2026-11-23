@@ -28,7 +28,15 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
     design <- .doeRsmGenerateDesign(options, jaspResults)
     .doeRsmGenerateDesignTable(jaspResults, options, design)
 
-    .doeRsmExportDesign(options, design)
+    # export with the entered factor names: continuous factors follow the run order columns, discrete factors are last
+    nContinuous <- options[["numberOfContinuous"]]
+    nCategorical <- options[["numberOfCategorical"]]
+    # an empty table column arrives as list(), so unlist; without discrete factors their table can be empty
+    continuousNames <- as.character(unlist(options[["continuousVariables"]][[1L]][["values"]]))[seq_len(nContinuous)]
+    categoricalNames <- if (nCategorical > 0) as.character(unlist(options[["categoricalVariables"]][[1L]][["values"]]))[seq_len(nCategorical)] else character(0)
+    factorNames <- c(continuousNames, categoricalNames)
+    factorIndices <- c(2L + seq_len(nContinuous), ncol(design) - nCategorical + seq_len(nCategorical))
+    .doeRsmExportDesign(options, design, factorNames, factorIndices)
   }
 
 }
@@ -107,7 +115,7 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
   }
 
   tb$dependOn(options = c(
-    "numberOfContinuous", "numberOfCategorical", "selectedRow", "replicates", "selectedDesign2",
+    "numberOfContinuous", "continuousVariables", "numberOfCategorical", "selectedRow", "replicates", "selectedDesign2",
     "alphaType", "customAlphaValue", "centerPointType", "customCubeBlock", "customAxialBlock",
     "designType", "displayDesign", "categoricalNoLevels", "categoricalVariables"
   ))
@@ -163,14 +171,11 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
 
   tb$setData(design)
 
-  tb$dependOn(options = c("numberOfContinuous", "numberOfCategorical", "categoricalVariables",
+  tb$dependOn(options = c("numberOfContinuous", "continuousVariables", "numberOfCategorical", "categoricalVariables",
                           "selectedRow", "replicates", "selectedDesign2",
                           "alphaType", "customAlphaValue",
                           "centerPointType", "customCubeBlock", "customAxialBlock", "codedOutput",
                           "runOrder", "setSeed", "seed", "designType"))
-
-  if (!options[["codedOutput"]])
-    tb$dependOn(options = "continuousVariables")
 
   jaspResults[["designTable"]] <- tb
 
@@ -359,8 +364,10 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
                                     "custom"       = options[["customAlphaValue"]]
     )
   } else { # boxBehnkenDesign
-    if (options[["centerPointType"]] == "custom")
+    if (options[["centerPointType"]] == "custom") {
+      designSpec[["runs"]] <- designSpec[["runs"]] + designSpec[["blocks"]] * (options[["customCubeBlock"]] - designSpec[["centerpoints"]])
       designSpec[["centerpoints"]]  <- options[["customCubeBlock"]]
+    }
   }
 
   # This would be better, but it does not work because the QML tableview values do not update properly

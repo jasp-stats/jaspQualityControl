@@ -1168,6 +1168,21 @@ test_that("18.7 Replicated blocked design in run order: Block and Replication ma
   expect_equal(c(summary[["baseBlocks"]], summary[["totalBlocks"]], summary[["totalRuns"]]), c(2, 4, 24))
 })
 
+test_that("18.8 Blocked replicated design: block numbers stay with their runs in standard and random order", {
+  for (blocks in c("2", "higherOrder2")) {
+    for (centers in c(0, 2)) {
+      options <- replicatedDesignOptions(blocks = blocks, replications = 2, centerpoints = centers)
+      standard <- replicatedDesignTable(runAnalysis("doeFactorial", "debug.csv", options, view = FALSE))$data
+      options$runOrder <- "runOrderRandom"
+      random <- replicatedDesignTable(runAnalysis("doeFactorial", "debug.csv", options, view = FALSE))$data
+      standard <- standard[order(standard$ro), ]
+      random <- random[order(random$ro), ]
+      rownames(standard) <- rownames(random) <- NULL
+      expect_equal(standard, random, info = paste("blocks", blocks, "centre points", centers))
+    }
+  }
+})
+
 ## Blocks and aliasing ####
 # Blocks are confounded with the highest-order interactions, only when a 2-factor interaction is unavoidable (or the resolution
 # of the selected design would drop) they are confounded with 2-factor interactions (INTERNAL-jasp#3432)
@@ -1357,6 +1372,7 @@ test_that("19.10 With more than 50 factors the effects confounded with blocks ar
 })
 
 test_that("19.11 Blocked designs saved before the update keep their old blocks and run order", {
+  # the blocks hold the same runs; their numbers follow the standard order (as in the standard-order view)
   options <- blockedDesignOptions(nFactors = 5, row = 2, blocks = "2")
   options$runOrder <- "runOrderRandom"
   options$blocks <- "2" # value stored by earlier worksheets and exported R syntax
@@ -1368,7 +1384,8 @@ test_that("19.11 Blocked designs saved before the update keep their old blocks a
   expect_equal(aliasStructureRows(results)[1], "Blocks = AE")
   for (factor in LETTERS[1:5])
     expect_equal(design[[factor]], as.numeric(as.character(old[[factor]])), label = factor)
-  expect_equal(design[["Block"]], as.numeric(as.character(old[["Blocks"]])))
+  sameRuns <- table(design[["Block"]], old[["Blocks"]])
+  expect_true(all(rowSums(sameRuns > 0) == 1) && all(colSums(sameRuns > 0) == 1))
 })
 
 test_that("19.12 Alias table identifies positional codes for renamed worksheet factors", {

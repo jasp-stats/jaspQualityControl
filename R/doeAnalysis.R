@@ -649,7 +649,13 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
       termNamesRemovedCoded[term_i] <- gsub("\\s", "", termNamesRemovedCoded[term_i])
     }
 
-    discretePredictorsIndices <- which(termNamesRemoved %in% discretePredictors)
+    factorTerms <- .doeFactorTermMap(unlist(discretePredictors), dataset)
+    discretePredictorsIndices <- which(termNames %in% names(factorTerms))
+    discreteLevels <- .doeCoefficientLevels(termNames[discretePredictorsIndices],
+                                             unname(factorTerms[termNames[discretePredictorsIndices]]), dataset)
+    multiLevelIndicesCoded <- which(termNamesCoded %in% names(factorTerms)[factorTerms %in% multiLevelVars])
+    multiLevelsCoded <- .doeCoefficientLevels(termNamesCoded[multiLevelIndicesCoded],
+                                             unname(factorTerms[termNamesCoded[multiLevelIndicesCoded]]), dataset)
 
     # Only terms of discrete factors with more than 2 levels have appended factor levels in the coded model, so just remove whitespace
     termNames <- gsub("\\s", "", termNames)
@@ -748,16 +754,13 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     result[["regression"]][["factorLevels"]] <- list()
     result[["regression"]][["factorLevels"]][["factorNamesAliased"]] <- termNamesAliased[discretePredictorsIndices]
     result[["regression"]][["factorLevels"]][["factorNames"]] <- termNames[discretePredictorsIndices]
-    result[["regression"]][["factorLevels"]][["levels"]] <- .doeCoefficientLevels(termNames[discretePredictorsIndices],
-                                                                                 termNamesRemoved[discretePredictorsIndices], dataset)
+    result[["regression"]][["factorLevels"]][["levels"]] <- discreteLevels
 
     # In the coded model, only discrete factors with more than 2 levels have level-specific terms
-    multiLevelIndicesCoded <- which(termNamesRemovedCoded %in% multiLevelVars)
     resultCoded[["regression"]][["factorLevels"]] <- list()
     resultCoded[["regression"]][["factorLevels"]][["factorNamesAliased"]] <- termNamesAliasedCoded[multiLevelIndicesCoded]
     resultCoded[["regression"]][["factorLevels"]][["factorNames"]] <- termNamesCoded[multiLevelIndicesCoded]
-    resultCoded[["regression"]][["factorLevels"]][["levels"]] <- .doeCoefficientLevels(termNamesCoded[multiLevelIndicesCoded],
-                                                                                      termNamesRemovedCoded[multiLevelIndicesCoded], dataset)
+    resultCoded[["regression"]][["factorLevels"]][["levels"]] <- multiLevelsCoded
 
 
     coefficientTests <- function(coefTable, rows, saturated, keep) {
@@ -797,6 +800,16 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     jaspResults[[currentDependent]][["doeResultCoded"]] <- createJaspState(resultCoded)
     jaspResults[[currentDependent]][["doeResultCoded"]]$dependOn(options = .doeAnalysisBaseDependencies())
   }
+}
+
+# Factor coefficient names before display whitespace is removed; factors with one level have no contrast columns.
+.doeFactorTermMap <- function(factors, dataset) {
+  unlist(lapply(factors, function(var) {
+    nContrasts <- nlevels(dataset[[var]]) - 1L
+    if (nContrasts < 1L)
+      return(stats::setNames(character(0), character(0)))
+    stats::setNames(rep(var, nContrasts), paste0(var, seq_len(nContrasts)))
+  }))
 }
 
 # Level of each main-effect coefficient of a discrete factor, for the Discrete Predictor Levels legend. lm() names the
@@ -2389,7 +2402,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
     effectNote <- if (coded) {
       gettext("Effect = 2 \u00D7 coefficient: the change in the response when a term goes from its \u22121 to its +1 setting.")
     } else {
-      gettext("Effect = 2 \u00D7 coefficient in coded (\u22121/+1) units, not 2 \u00D7 the coefficient shown: the change in the response when a term goes from its \u22121 to its +1 setting. For discrete predictors the sign follows the level shown in the Discrete Predictor Levels table.")
+      gettext("Effect = 2 \u00D7 coefficient with continuous predictors in coded (\u22121/+1) units. For discrete predictors the sign follows the level shown in the Discrete Predictor Levels table, which has contrast +1; the other level has contrast \u22121.")
     }
     tb$addFootnote(paste(effectNote, gettext("Not shown for squared terms, discrete predictors with more than two levels, blocks, and covariates."),
                          if (!coded) gettext("SE, t and p refer to the uncoded coefficients.")))

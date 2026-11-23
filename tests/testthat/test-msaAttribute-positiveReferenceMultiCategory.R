@@ -86,3 +86,33 @@ test_that("Two categories still give the miss and false alarm rates", {
                                  list("A", "40 (unacceptable)", "50 (unacceptable)", "50 (unacceptable)",
                                       "B", "60 (unacceptable)", "33.33 (unacceptable)", "0 (acceptable)"))
 })
+
+test_that("Different binary categories do not produce decision rates", {
+  data <- data.frame(Operator = rep(c("A", "B"), each = 4), Part = rep(1:4, 2),
+                     T1 = rep(c("Go", "NoGo", "Go", "NoGo"), 2),
+                     T2 = rep(c("Go", "NoGo", "NoGo", "Go"), 2),
+                     Ref = rep(c("Go", "Reject", "Go", "Reject"), 2))
+  withoutReference <- runAnalysis("msaAttribute", data, .msaAttributeWideOptions("", FALSE), makeTests = FALSE)
+  expected <- withoutReference[["results"]][["AAAtableGraphs"]][["collection"]]
+  for (category in c("accept", "reject")) {
+    options <- .msaAttributeWideOptions("Go", TRUE)
+    options$positiveReferenceCategory <- category
+    results <- runAnalysis("msaAttribute", data, options, makeTests = FALSE)
+    aaa <- results[["results"]][["AAAtableGraphs"]][["collection"]]
+    expect_equal(aaa[["AAAtableGraphs_StudyEffectiveness"]][["error"]][["errorMessage"]],
+                 "The results and the standard must have the same categories to calculate miss and false alarm rates.")
+    for (name in agreementTables)
+      expect_equal(aaa[[name]][["data"]], expected[[name]][["data"]], info = name)
+  }
+})
+
+test_that("A standard with one observed category reports the binary-category requirement", {
+  data <- data.frame(Operator = rep(c("A", "B"), each = 4), Part = rep(1:4, 2),
+                     T1 = rep(c("Go", "NoGo", "Go", "NoGo"), 2),
+                     T2 = rep(c("Go", "NoGo", "NoGo", "Go"), 2), Ref = rep("Go", 8))
+  results <- runAnalysis("msaAttribute", data, .msaAttributeWideOptions("Go", TRUE), makeTests = FALSE)
+  aaa <- results[["results"]][["AAAtableGraphs"]][["collection"]]
+  expect_equal(aaa[["AAAtableGraphs_StudyEffectiveness"]][["error"]][["errorMessage"]],
+               "The miss rate and false alarm rate need exactly two categories in the results and the standard.")
+  expect_null(aaa[["AAAtableGraphs_AllVsStandard"]][["error"]])
+})

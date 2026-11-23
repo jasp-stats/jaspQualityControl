@@ -523,9 +523,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
     withinBolVector <- plotStatistics < oneSigmaUpper & plotStatistics > oneSigmaLower
 
-    # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
-    withinSeqVector <- ave(withinBolVector, cumsum(!withinBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
-    r7 <- c(r7, which(withinSeqVector > k7))
+    withinSeqVector <- .countConsecutiveTrues(withinBolVector)
+    r7 <- c(r7, which(withinSeqVector >= k7))
     redPoints <- c(redPoints, r7)
     violationList[["test7"]] <- if (length(r7) > 0) r7 else numeric()
   }
@@ -1650,7 +1649,20 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   # log(shape) - digamma(shape) = log(mean(data)) - mean(log(data)), computed from the relative deviations so that
   # it keeps its precision when the data vary little (it is about CV^2 / 2).
   deviation <- (data - dataMean) / dataMean
-  logRatio  <- -mean(log1p(deviation) - deviation) - mean(deviation)
+  if (max(abs(deviation)) < 0.001) {
+    # The floating-point mean need not equal the exact sample mean. The Jensen gap is
+    # mean(h(u)) - h(mean(u)), where u is the relative deviation and h(u) = u - log1p(u).
+    # Removing the linear term analytically keeps even a sub-epsilon gap measurable.
+    h <- function(u) u^2 * (1/2 + u * (-1/3 + u * (1/4 - u/5)))
+    logRatio <- mean(h(deviation)) - h(mean(deviation))
+  } else {
+    # A very small positive measurement can round to a relative deviation of exactly -1.
+    logRelative <- numeric(length(data))
+    nearZero <- deviation <= -0.5
+    logRelative[nearZero] <- log(data[nearZero]) - log(dataMean)
+    logRelative[!nearZero] <- log1p(deviation[!nearZero])
+    logRatio <- log1p(mean(deviation)) - mean(logRelative)
+  }
   if (!(logRatio > 0))
     stop("The data do not vary, so the gamma shape cannot be estimated.", call. = FALSE)
 

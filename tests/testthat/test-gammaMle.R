@@ -32,6 +32,29 @@ test_that("gamma fit solves its likelihood equations from large to tiny variatio
   }
 })
 
+test_that("gamma upper-tail ppm retain precision for tightly clustered measurements", {
+  # Shapes from the likelihood equation evaluated with 70-digit decimal arithmetic.
+  offsets <- c(1e8, 1e9)
+  shapes <- c(690978956409681.2, 6.909788937215822e16)
+  for (i in seq_along(offsets)) {
+    x <- offsets[i] + c(0, 1, 2, 4, 7, 11)
+    fit <- .gammaFit(x)
+    expect_equal(fit[["shape"]], shapes[i], tolerance = 1e-10)
+    for (unit in c(1e-3, 1e3))
+      expect_equal(.gammaFit(x * unit) * c(1, unit), fit, tolerance = 1e-7)
+    expected <- pgamma(offsets[i] + 10, shapes[i], scale = mean(x) / shapes[i], lower.tail = FALSE)
+    actual <- pgamma(offsets[i] + 10, fit[["shape"]], rate = fit[["rate"]], lower.tail = FALSE)
+    expect_lt(abs(1e6 * (actual - expected)), 0.05)
+  }
+})
+
+test_that("gamma fitting handles a positive value much smaller than the mean", {
+  x <- c(1e-100, 1, 2, 4, 7, 11)
+  fit <- .gammaFit(x)
+  expect_lt(abs(log(fit[["shape"]]) - digamma(fit[["shape"]]) -
+                  (log(mean(x)) - mean(log(x)))), 1e-11)
+})
+
 test_that("gamma fit with a historical shape or scale estimates the other parameter", {
   set.seed(3)
   x <- rgamma(40, shape = 4, rate = 2)
