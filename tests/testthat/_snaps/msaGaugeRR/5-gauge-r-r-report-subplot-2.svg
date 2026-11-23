@@ -61,8 +61,8 @@
 <polyline points='337.99,548.32 337.99,539.81 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <polyline points='440.54,548.32 440.54,539.81 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <text x='132.91' y='566.99' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='85.06px' lengthAdjust='spacingAndGlyphs'>Gauge r&amp;R</text>
-<text x='235.45' y='566.99' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='98.29px' lengthAdjust='spacingAndGlyphs'>Repeatability</text>
-<text x='337.99' y='566.99' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='111.51px' lengthAdjust='spacingAndGlyphs'>Reproducibility</text>
+<text x='235.45' y='566.99' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='54.82px' lengthAdjust='spacingAndGlyphs'>Repeat</text>
+<text x='337.99' y='566.99' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='55.76px' lengthAdjust='spacingAndGlyphs'>Reprod</text>
 <text x='440.54' y='566.99' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='85.98px' lengthAdjust='spacingAndGlyphs'>Part-to-part</text>
 <text transform='translate(14.77,283.00) rotate(-90)' text-anchor='middle' style='font-size: 13.50px; font-family: sans;' textLength='46.53px' lengthAdjust='spacingAndGlyphs'>Percent</text>
 <rect x='513.02' y='26.19' width='177.09' height='96.00' style='stroke-width: 0.75; stroke: none;' />
