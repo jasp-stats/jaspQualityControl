@@ -67,9 +67,20 @@ for (stages in c("", "Stage")) {
     expect_equal(sum(vapply(report$subplots, .reportFitErrorIsControlChart, logical(1))), 2)
 
     panelTexts <- .reportFitErrorPanelTexts(results)
-    # one error panel for the capability plot (instead of one plot per stage) and one in place of the capability tables
-    capabilityPanel <- .reportFitErrorPanelIndex(panelTexts, "Capability of the process")
-    tablesPanel <- .reportFitErrorPanelIndex(panelTexts, "Process capability tables")
+    if (stages == "") {
+      # one error panel for the capability plot and one in place of the capability tables
+      capabilityPanel <- .reportFitErrorPanelIndex(panelTexts, "Capability of the process")
+      tablesPanel <- .reportFitErrorPanelIndex(panelTexts, "Process capability tables")
+    } else {
+      # only stage 1 (with the zero) cannot be fitted: an error panel for its capability plot, stage 2 keeps its plot,
+      # and the tables are shown with a panel that names the stage whose estimates are unavailable
+      capabilityPanel <- which(vapply(panelTexts, function(x) length(x) > 1 && x[1] == "1" &&
+                                        grepl("could not be estimated", paste(x, collapse = " ")), logical(1)))
+      tablesPanel <- .reportFitErrorPanelIndex(panelTexts, "Some process capability estimates are unavailable")
+      expect_false(any(vapply(panelTexts, function(x) x[1] %in% "2" && grepl("could not be estimated", paste(x, collapse = " ")), logical(1))))
+      expect_true(any(vapply(panelTexts, function(x) "Process performance (total)" %in% x, logical(1))))
+      expect_match(paste(panelTexts[[tablesPanel]], collapse = " "), "Stage 1:")
+    }
     expect_length(capabilityPanel, 1)
     expect_length(tablesPanel, 1)
     expect_true(length(panelTexts[[capabilityPanel]]) > 1) # title plus the error message
