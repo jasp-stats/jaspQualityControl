@@ -28,7 +28,8 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
     design <- .doeRsmGenerateDesign(options, jaspResults)
     .doeRsmGenerateDesignTable(jaspResults, options, design)
 
-    .doeRsmExportDesign(options, design)
+    exportStatus <- .doeRsmExportDesign(options, design)
+    .doeShowExportStatus(jaspResults, options, exportStatus)
   }
 
 }
@@ -407,27 +408,108 @@ doeResponseSurfaceMethodologyInternal <- function(jaspResults, dataset, options,
 
   outpath <- options[["exportDesignFile"]]
   if (identical(outpath, "") || !options[["actualExporter"]])
-    return()
+    return(NULL)
 
   if (!dir.exists(dirname(outpath)))
-    return()
+    return("failed")
 
   if (is.null(design))
-    return()
+    return(NULL)
 
   out_design <- as.data.frame(design)
   colnames(out_design)[1:2] <- c("RunOrder", "StandardOrder")
+  out_design <- cbind(out_design, Response = rep("", nrow(out_design)))
   if (is.null(factorNames)) {
-    out_design[["Response"]] <- ""
+    names(out_design) <- make.unique(names(out_design))
   } else {
-    out_design <- cbind(out_design, Response = rep("", nrow(out_design)))
     otherIndices <- setdiff(seq_len(ncol(out_design)), factorIndices)
     priorityNames <- make.unique(c(jaspBase::decodeColNames(factorNames), names(out_design)[otherIndices]))
     names(out_design)[c(factorIndices, otherIndices)] <- priorityNames
   }
 
-  utils::write.csv(x = out_design, file = options[["exportDesignFile"]], row.names = FALSE)
+  # Write a complete candidate beside the destination; neither publication method replaces an existing file.
+  candidate <- tempfile(pattern = ".jasp-design-", tmpdir = dirname(outpath), fileext = ".csv")
+  on.exit(unlink(candidate), add = TRUE)
+  written <- tryCatch({
+    utils::write.csv(x = out_design, file = candidate, row.names = FALSE)
+    TRUE
+  }, error = function(e) FALSE)
+  if (!written)
+    return("failed")
 
+  if (file.exists(outpath))
+    return(if (.doeSameExportedDesign(outpath, candidate)) "unchanged" else "exists")
+
+  linked <- suppressWarnings(.doeLinkDesign(candidate, outpath))
+  if (linked)
+    return("created")
+  if (!file.exists(outpath)) {
+    copyStatus <- .doeCopyExclusive(candidate, outpath)
+    if (copyStatus %in% c("created", "incomplete"))
+      return(copyStatus)
+  }
+  if (file.exists(outpath))
+    return(if (.doeSameExportedDesign(outpath, candidate)) "unchanged" else "exists")
+  return("failed")
+
+}
+
+.doeLinkDesign <- function(candidate, outpath) file.link(candidate, outpath)
+
+.doeCopyExclusive <- function(candidate, outpath) {
+  output <- tryCatch(file(outpath, open = "wxb"), error = function(e) NULL, warning = function(w) NULL)
+  if (is.null(output))
+    return("open_failed")
+  complete <- FALSE
+  on.exit({
+    if (!is.null(output)) try(close(output), silent = TRUE)
+  }, add = TRUE)
+  tryCatch({
+    input <- file(candidate, open = "rb")
+    on.exit(try(close(input), silent = TRUE), add = TRUE)
+    .doeCopyChunks(input, output)
+    close(output)
+    output <- NULL
+    complete <- TRUE
+  }, error = function(e) NULL, warning = function(w) NULL)
+  if (complete) "created" else "incomplete"
+}
+
+.doeCopyChunks <- function(input, output) {
+  repeat {
+    chunk <- readBin(input, "raw", n = 65536L)
+    if (!length(chunk)) break
+    writeBin(chunk, output)
+  }
+}
+
+.doeSameExportedDesign <- function(path, candidate) {
+  tryCatch({
+    readDesign <- function(file) utils::read.csv(file, check.names = FALSE, colClasses = "character", na.strings = NULL)
+    existing <- readDesign(path)
+    proposed <- readDesign(candidate)
+    identical(names(existing), names(proposed)) && ncol(proposed) > 0L &&
+      identical(existing[-ncol(existing)], proposed[-ncol(proposed)])
+  }, error = function(e) FALSE)
+}
+
+.doeShowExportStatus <- function(jaspResults, options, status) {
+  if (is.null(status))
+    return()
+  message <- .doeExportStatusMessage(status)
+  jaspResults[["exportStatus"]] <- createJaspHtml(text = message, elementType = "p")
+  jaspResults[["exportStatus"]]$dependOn(options = setdiff(names(options), ".meta"))
+
+}
+
+.doeExportStatusMessage <- function(status) {
+  switch(status,
+    created   = gettext("The design was exported to a new worksheet."),
+    unchanged = gettext("The existing worksheet matches this design and was left unchanged, including any responses."),
+    exists    = gettext("The existing file was not changed. Choose a new filename to export this design."),
+    failed    = gettext("The worksheet could not be created. Check the folder and permissions, or choose a new filename."),
+    incomplete = gettext("The new worksheet may be incomplete because writing failed. Check the file before using it, and choose a new filename to export again.")
+  )
 }
 
 .doeRsmDesignTypeFromInt <- function(i) {
