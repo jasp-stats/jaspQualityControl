@@ -90,9 +90,7 @@ test_that("Run chart of the Type 1 instrument capability example keeps all lines
   set.seed(1)
   results  <- jaspTools::runAnalysis("msaType1Gauge", dataset, opts)
 
-  # jaspTools (from its PR #101) gives a .jasp variables option as list(types = , value = ); before, the column name
-  measurement  <- opts[["measurement"]]
-  measurements <- dataset[[unlist(if (is.list(measurement) && "value" %in% names(measurement)) measurement[["value"]] else measurement)]]
+  measurements <- dataset[[opts[["measurement"]][["value"]]]]
   tolerance    <- opts[["referenceValue"]] + c(1, -1) * opts[["percentToleranceForCg"]] / 200 * opts[["toleranceRange"]]
   .type1RunChartChecks(.type1RunChartPlot(results), measurements[!is.na(measurements)],
                        nSigma = as.numeric(opts[["studyVarianceMultiplier"]]) / 2, reference = opts[["referenceValue"]],
