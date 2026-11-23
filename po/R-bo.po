@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
-"POT-Creation-Date: 2026-11-14 03:40\n"
+"POT-Creation-Date: 2026-11-21 03:40\n"
 "PO-Revision-Date: 2026-01-06 14:01+0000\n"
 "Last-Translator: Zev Oster <zevelijah@gmail.com>\n"
 "Language-Team: Tibetan <https://hosted.weblate.org/projects/jasp/"
@@ -153,13 +153,13 @@ msgstr ""
 msgid "Test 3: Trend"
 msgstr ""
 
-msgid "Test 4: Increasing variation"
+msgid "Test 5: Beyond 2 sigma, same side"
 msgstr ""
 
-msgid "Test 5: Reducing variation"
+msgid "Test 7: Reducing variation"
 msgstr ""
 
-msgid "Test 6: Bimodal distribution"
+msgid "Test 8: Bimodal distribution"
 msgstr ""
 
 msgid "Points where a test failed."
@@ -173,6 +173,9 @@ msgstr ""
 msgid ""
 "Cannot estimate the standard deviation from moving ranges of length %1$s: "
 "stage '%2$s' has fewer than %1$s consecutive non-missing observations."
+msgstr ""
+
+msgid "%1$s (occurrence %2$d)"
 msgstr ""
 
 msgid "CL = %s"
@@ -196,10 +199,10 @@ msgstr ""
 msgid "- lower"
 msgstr ""
 
-msgid "Test 7: Slightly increasing variation"
+msgid "Test 4: Oscillation"
 msgstr ""
 
-msgid "Test 8: Oscillation"
+msgid "Test 6: Beyond 1 sigma, same side"
 msgstr ""
 
 msgid "Test 9: Benneyan test"
@@ -238,13 +241,24 @@ msgstr ""
 msgid "Exponentially weighted moving average"
 msgstr ""
 
-msgid "LSL = %g"
+msgid "LSL = %s"
 msgstr ""
 
-msgid "Tar. = %g"
+msgid "Tar. = %s"
 msgstr ""
 
-msgid "USL = %g"
+msgid "USL = %s"
+msgstr ""
+
+msgid ""
+"The parameters could not be estimated. The %s distribution requires all "
+"measurements to be greater than zero. Consider a transformation that yields "
+"positive measurements."
+msgstr ""
+
+msgid ""
+"For capability estimates, consider the 3-parameter Weibull if a lower "
+"threshold is appropriate for the process."
 msgstr ""
 
 msgid ""
@@ -252,6 +266,16 @@ msgid ""
 "likely because the observed distribution of the data are very far away from "
 "the selected distribution, please try one that describes your data more "
 "closely."
+msgstr ""
+
+msgid ""
+"The parameters could not be estimated: the historical threshold (%1$s) must "
+"be smaller than the smallest observation (%2$s)."
+msgstr ""
+
+msgid ""
+"It can only equal the smallest observation with a historical shape of 1 "
+"(shifted exponential distribution)."
 msgstr ""
 
 msgid "Design of Experiments - Analysis"
@@ -272,19 +296,23 @@ msgid ""
 "dataset."
 msgstr ""
 
-msgid ""
-"Calculated with the continuous predictors in coded (−1/+1) units, so the "
-"table is the same in coded and uncoded units."
+msgid "Model omits lower-order terms: %s. Add these terms to continue."
 msgstr ""
 
 msgid ""
-"Calculated in uncoded units: coding the predictors changes this model (e.g., "
-"an interaction or squared term without its main effects)."
+"Removing aliased terms leaves missing lower-order terms: %s. Remove the "
+"higher-order terms that require them or revise the design."
 msgstr ""
 
 msgid ""
-"Type III sums of squares are unavailable for this model, because some of its "
-"coefficients are aliased. Use Type I or Type II sums of squares."
+"This model is not supported in both display units. Check lower-order terms, "
+"aliasing and predictor scales."
+msgstr ""
+
+msgid "ANOVA tests use coded units."
+msgstr ""
+
+msgid "Aliases: %s."
 msgstr ""
 
 msgid "Response Optimizer Settings"
@@ -306,16 +334,23 @@ msgstr ""
 msgid "The targets of the goals maximize and minimize are estimated from data."
 msgstr ""
 
-msgid "Response Optimizer Solution"
+msgid "Response Optimizer: Best Solution Found"
 msgstr ""
 
 msgid "%s fit"
 msgstr ""
 
 msgid ""
-"No factor setting with a composite desirability above 0 was found. The "
-"optimizer starts from the design points and can miss acceptable settings "
-"that lie between them."
+"Search bounds use each factor's observed range; combinations may lie outside "
+"the sampled design region."
+msgstr ""
+
+msgid "Some optimization runs failed; the best solution found is shown."
+msgstr ""
+
+msgid ""
+"No acceptable setting was found. Very narrow feasible regions may be missed "
+"by the numerical search."
 msgstr ""
 
 msgid "Optimization Plot"
@@ -356,14 +391,14 @@ msgid "Composite desirability"
 msgstr ""
 
 msgid ""
-"One or more input parameters for continuous predictors are outside of the "
-"design space. Extrapolation beyond the design space might not be valid."
+"One or more settings are outside the observed factor ranges. Predictions "
+"involve extrapolation."
 msgstr ""
 
 msgid "Predicted Responses (Manual Predictor Values)"
 msgstr ""
 
-msgid "Predicted Responses (Optimal Solution)"
+msgid "Predicted Responses (Best Solution Found)"
 msgstr ""
 
 msgid "Response"
@@ -396,6 +431,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"%1$s: predictions and optimization assume that the removed aliased terms "
+"(%2$s) have zero effects."
+msgstr ""
+
+msgid ""
 "Predictions are averaged over the blocks; the prediction interval excludes "
 "variation between blocks."
 msgstr ""
@@ -410,6 +450,9 @@ msgid ""
 "Some contrasts of the model are aliased, so the data cannot estimate the "
 "response at some settings (e.g., combinations of factor levels without "
 "runs). These settings are left out."
+msgstr ""
+
+msgid "Optimization did not converge. Check the response goals and bounds."
 msgstr ""
 
 msgid ""
@@ -443,6 +486,9 @@ msgid ""
 "to allow them."
 msgstr ""
 
+msgid "the intercept"
+msgstr ""
+
 msgid "Lack of fit"
 msgstr ""
 
@@ -458,7 +504,12 @@ msgstr ""
 msgid "Predictive %s"
 msgstr ""
 
-msgid "The following aliased terms were removed: %s."
+msgid "%1$s (aliased with %2$s)"
+msgstr ""
+
+msgid ""
+"The following aliased terms were removed; their effects are assumed to be "
+"zero: %s."
 msgstr ""
 
 msgid "The following terms are aliased and were not estimated: %s."
@@ -495,6 +546,11 @@ msgid ""
 "has no degrees of freedom for error, so there are no F-tests."
 msgstr ""
 
+msgid ""
+"Type II sums of squares instead of the selected Type III: Type III sums of "
+"squares are not available when some coefficients are aliased."
+msgstr ""
+
 msgid "Type I sums of squares."
 msgstr ""
 
@@ -502,6 +558,24 @@ msgid "Type II sums of squares."
 msgstr ""
 
 msgid "Type III sums of squares."
+msgstr ""
+
+msgid "Center-point curvature is not modeled automatically."
+msgstr ""
+
+msgid "Pure error assumes that omitted predictors (%s) have no effect."
+msgstr ""
+
+msgid "Factor Coding"
+msgstr ""
+
+msgid "Factor"
+msgstr ""
+
+msgid "Low (−1)"
+msgstr ""
+
+msgid "High (+1)"
 msgstr ""
 
 msgid "Coded"
@@ -548,6 +622,9 @@ msgid ""
 "blocks, and covariates."
 msgstr ""
 
+msgid "SE, t and p refer to the uncoded coefficients."
+msgstr ""
+
 msgid "Levels without runs are left out of the model: %s."
 msgstr ""
 
@@ -561,7 +638,7 @@ msgid ""
 "(e.g., an interaction or squared term without its main effects)."
 msgstr ""
 
-msgid "VIF is not available when some coefficients are aliased."
+msgid "VIF is calculated without the aliased coefficients."
 msgstr ""
 
 msgid "Discrete Predictor Levels"
@@ -605,6 +682,11 @@ msgid "Formula"
 msgstr ""
 
 msgid ""
+"AIC selection in coded units. Tests and intervals do not account for model "
+"selection."
+msgstr ""
+
+msgid ""
 "The model is saturated (no error degrees of freedom) and its effects are not "
 "available in uncoded units, because coding changes the model."
 msgstr ""
@@ -617,14 +699,18 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Lenth's method requires orthogonal two-level effects with equal precision."
+msgstr ""
+
+msgid ""
 "The model is saturated (no error degrees of freedom) and Lenth's pseudo "
 "standard error of its effects is zero, so the effects cannot be assessed."
 msgstr ""
 
-msgid "Pareto Chart of Standardized Effects"
+msgid "Pareto Chart of Standardized Effects (α = .05)"
 msgstr ""
 
-msgid "Pareto Chart of Effects"
+msgid "Pareto Chart of Effects (Lenth screening, α = .05)"
 msgstr ""
 
 msgid "ME = %s"
@@ -633,10 +719,10 @@ msgstr ""
 msgid "Standardized Effect"
 msgstr ""
 
-msgid "Normal Plot of Standardized Effects"
+msgid "Normal Plot of Standardized Effects (α = .05)"
 msgstr ""
 
-msgid "Normal Plot of Effects"
+msgid "Normal Plot of Effects (Lenth screening, α = .05)"
 msgstr ""
 
 msgid "Percent"
@@ -708,6 +794,16 @@ msgid ""
 "the discrete predictors)."
 msgstr ""
 
+msgid ""
+"Continuous predictors that are not on the axes of a plot are held at their "
+"mean (see \"Slice at\" in the plot)."
+msgstr ""
+
+msgid ""
+"The prediction is averaged over the levels of the discrete factors and "
+"blocks (%s)."
+msgstr ""
+
 msgid "The analysis failed with the following error message: %s"
 msgstr ""
 
@@ -747,6 +843,9 @@ msgstr ""
 msgid "Please select a row in the design table."
 msgstr ""
 
+msgid "This design uses the legacy block assignment."
+msgstr ""
+
 msgid "Cannote create designs with more than 100000 total runs."
 msgstr ""
 
@@ -757,6 +856,9 @@ msgid "The design is not exported until 'Export design' is checked."
 msgstr ""
 
 msgid "The design is exported as '%1$s'."
+msgstr ""
+
+msgid "Blocks = %s"
 msgstr ""
 
 msgid ""
@@ -787,6 +889,14 @@ msgid ""
 "are: %3$s."
 msgstr ""
 
+msgid "Factor codes in worksheet order: %s."
+msgstr ""
+
+msgid ""
+"No aliasing among main effects and 2-factor interactions, except for the 2-"
+"factor interactions confounded with blocks."
+msgstr ""
+
 msgid "No aliasing among main effects and 2-factor interactions."
 msgstr ""
 
@@ -796,13 +906,25 @@ msgstr ""
 msgid "Factorial Design"
 msgstr ""
 
+msgid "%s (design)"
+msgstr ""
+
 msgid "Run Order"
 msgstr ""
 
 msgid "Standard Order"
 msgstr ""
 
+msgid "Block"
+msgstr ""
+
+msgid "Replication"
+msgstr ""
+
 msgid "Hard-to-change factors: %1$s"
+msgstr ""
+
+msgid "Run order randomized with seed %1$s."
 msgstr ""
 
 msgid "Continuous factors"
@@ -895,9 +1017,6 @@ msgstr ""
 msgid "Confidence interval of 95%%"
 msgstr ""
 
-msgid "Invalid reference and/or results were inserted."
-msgstr ""
-
 msgid "Invalid values (NA) found in appraiser %s."
 msgstr ""
 
@@ -917,6 +1036,11 @@ msgid "False alarm rate"
 msgstr ""
 
 msgid ""
+"The miss rate and false alarm rate need exactly two categories in the "
+"results and the standard."
+msgstr ""
+
+msgid ""
 "Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false "
 "alarm rate)"
 msgstr ""
@@ -929,6 +1053,12 @@ msgstr ""
 msgid ""
 "Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false "
 "alarm rate)"
+msgstr ""
+
+msgid ""
+"Accept (good) category: %1$s. Miss rate: percentage of ratings of parts with "
+"standard %2$s that are %1$s. False alarm rate: percentage of ratings of "
+"parts with standard %1$s that are %2$s."
 msgstr ""
 
 msgid "More than one measurement per operator required."
@@ -944,7 +1074,14 @@ msgstr ""
 msgid "Each part must have a single reference value."
 msgstr ""
 
-msgid "Kendall's tau is only available for numeric measurements."
+msgid ""
+"Kendall's tau is only available for numeric or ordinal measurements, with "
+"the same order of the levels in every column."
+msgstr ""
+
+msgid ""
+"Kendall's tau is only available for a numeric standard or an ordinal "
+"standard with the same order of the levels as the ratings."
 msgstr ""
 
 msgid "Kendall's tau is only available for non-binary measurements."
@@ -961,6 +1098,9 @@ msgstr ""
 msgid ""
 "Appraiser vs standard: Kendall's tau-b of each trial with the standard, "
 "averaged over trials."
+msgstr ""
+
+msgid "Order of the ordinal levels: %s."
 msgstr ""
 
 msgid "Agreement counts and totals must have compatible lengths."
@@ -1048,6 +1188,12 @@ msgid ""
 msgstr ""
 
 msgid "t-test not possible. No variance detected in Part(s) %s."
+msgstr ""
+
+msgid "Linearity requires at least 2 different reference values."
+msgstr ""
+
+msgid "The linearity slope could not be estimated from the reference values."
 msgstr ""
 
 msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
@@ -1245,6 +1391,12 @@ msgstr ""
 msgid "Matrix plot for operators"
 msgstr ""
 
+msgid "Repeat"
+msgstr ""
+
+msgid "Reprod"
+msgstr ""
+
 msgid "%% Study Variation"
 msgstr ""
 
@@ -1252,6 +1404,10 @@ msgid "Error: Gauge study failed. Could not create traffic light chart."
 msgstr ""
 
 msgid "%.2f"
+msgstr ""
+
+msgid ""
+"At least 2 operators are required. The operator variable has only one level."
 msgstr ""
 
 msgid ""
@@ -1331,6 +1487,11 @@ msgstr ""
 msgid "Range chart by part"
 msgstr ""
 
+msgid ""
+"Enter a process std. dev. or a tolerance greater than zero to draw the "
+"traffic light chart."
+msgstr ""
+
 msgid "Run chart of parts"
 msgstr ""
 
@@ -1355,10 +1516,18 @@ msgstr ""
 msgid "%%GRR of process std. dev."
 msgstr ""
 
+msgid ""
+"Enter a process standard deviation greater than zero to calculate its "
+"percentage."
+msgstr ""
+
 msgid "Tolerance"
 msgstr ""
 
 msgid "%%GRR of tolerance"
+msgstr ""
+
+msgid "Enter a tolerance greater than zero to calculate its percentage."
 msgstr ""
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
@@ -1457,6 +1626,9 @@ msgid "No valid measurements in %s."
 msgstr ""
 
 msgid "Ref."
+msgstr ""
+
+msgid "Observation"
 msgstr ""
 
 msgid ""
@@ -1659,11 +1831,6 @@ msgstr ""
 msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
 msgstr ""
 
-msgid ""
-"All zero values have been replaced with a value equal to one-half of the "
-"smallest data point."
-msgstr ""
-
 msgid "Process Capability Report"
 msgstr ""
 
@@ -1687,6 +1854,15 @@ msgid "Reported by: %s"
 msgstr ""
 
 msgid "Conclusion: %s"
+msgstr ""
+
+msgid "Capability of the process"
+msgstr ""
+
+msgid "Probability plot"
+msgstr ""
+
+msgid "Process capability tables"
 msgstr ""
 
 msgid "X-bar & %s control chart"
@@ -1797,9 +1973,6 @@ msgstr ""
 msgid "The mean is based on a historical value."
 msgstr ""
 
-msgid "Capability of the process"
-msgstr ""
-
 msgid "No valid measurements detected."
 msgstr ""
 
@@ -1851,13 +2024,13 @@ msgstr ""
 msgid "Log-logistic dist."
 msgstr ""
 
-msgid "Target = %g"
+msgid "Target = %s"
 msgstr ""
 
-msgid "LB = %g"
+msgid "LB = %s"
 msgstr ""
 
-msgid "UB = %g"
+msgid "UB = %s"
 msgstr ""
 
 msgid "Lognormal dist."
@@ -1986,15 +2159,12 @@ msgstr ""
 msgid "The threshold is based on a historical value."
 msgstr ""
 
-msgid "Probability table and plot"
-msgstr ""
-
-msgid "Probability plot"
-msgstr ""
-
 msgid ""
 "Probability plot and table for %s distribution are not implemented in "
 "Quality Control module. Please use the Distributions module."
+msgstr ""
+
+msgid "Probability table and plot"
 msgstr ""
 
 msgid ""
@@ -2018,7 +2188,7 @@ msgid "AD"
 msgstr ""
 
 msgid ""
-"The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s "
+"The Anderson-Darling statistic (AD) is calculated against the %1$s "
 "distribution."
 msgstr ""
 
@@ -2165,6 +2335,43 @@ msgstr ""
 msgid "Variables Chart for Subgroups Report"
 msgstr ""
 
+msgid "Stage %s has no observations, so no control limits are shown for it."
+msgid_plural ""
+"Stages %s have no observations, so no control limits are shown for them."
+msgstr[0] ""
+
+msgid ""
+"%1$s cannot be analysed: after leaving out its runs with a missing value, "
+"the factor %2$s has fewer than 2 levels left."
+msgid_plural ""
+"%1$s cannot be analysed: after leaving out its runs with a missing value, "
+"the factors %2$s have fewer than 2 levels left."
+msgstr[0] ""
+
+msgid ""
+"%1$d run with a missing value of a predictor, block or covariate was left "
+"out of the analysis of all responses."
+msgid_plural ""
+"%1$d runs with a missing value of a predictor, block or covariate were left "
+"out of the analysis of all responses."
+msgstr[0] ""
+
+msgid ""
+"%1$d run with a missing value of %2$s was left out of the analysis of this "
+"response."
+msgid_plural ""
+"%1$d runs with a missing value of %2$s were left out of the analysis of this "
+"response."
+msgstr[0] ""
+
+msgid ""
+"The response optimizer cannot be used because the response %1$s could not be "
+"analysed, see its output."
+msgid_plural ""
+"The response optimizer cannot be used because the responses %1$s could not "
+"be analysed, see their output."
+msgstr[0] ""
+
 msgid "The following covariate was considered but not included: %1$s."
 msgid_plural "The following covariates were considered but not included: %1$s."
 msgstr[0] ""
@@ -2175,4 +2382,14 @@ msgid ""
 msgid_plural ""
 "The main effects %1$s were retained to respect marginality (their squared "
 "terms are in the model)."
+msgstr[0] ""
+
+msgid ""
+"The Box-Cox transformation requires measurement + shift > 0, but %1$i "
+"measurement is smaller than or equal to -shift (%2$s). Increase the shift or "
+"use the Yeo-Johnson or Johnson transformation."
+msgid_plural ""
+"The Box-Cox transformation requires measurement + shift > 0, but %1$i "
+"measurements are smaller than or equal to -shift (%2$s). Increase the shift "
+"or use the Yeo-Johnson or Johnson transformation."
 msgstr[0] ""

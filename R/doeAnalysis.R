@@ -194,6 +194,7 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
   # droplevels: levels without runs (filtered or missing) would make lm() drop the sum-to-zero contrasts
   completePredictors <- stats::complete.cases(dataset[setdiff(names(dataset), dependent)])
   dataset <- droplevels(dataset[completePredictors, , drop = FALSE])
+  attr(dataset, "originalRunOrder") <- which(completePredictors)
   attr(dataset, "runsMissingPredictors") <- sum(!completePredictors)
   attr(dataset, "allLevelCounts") <- lengths(allLevels)
   levelsWithoutRuns <- Map(function(var, varLevels) setdiff(varLevels, levels(dataset[[var]])), names(allLevels), allLevels)
@@ -2828,7 +2829,10 @@ doeAnalysisInternal <- function(jaspResults, dataset, options, ...) {
 
 .doeAnalysisPlotResidualsVsOrderPlotObject <- function(result, dataset, options) {
   residuals <- resid(result[["object"]])
-  runOrder  <- match(names(residuals), rownames(dataset)) # the runs of this response (without those with a missing response)
+  runOrder  <- attr(dataset, "originalRunOrder")
+  if (is.null(runOrder))
+    runOrder <- seq_len(nrow(dataset))
+  runOrder  <- runOrder[match(names(residuals), rownames(dataset))] # exclude missing responses without renumbering runs
   plotData  <- data.frame(x = runOrder, y = residuals)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData$x)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData$y)

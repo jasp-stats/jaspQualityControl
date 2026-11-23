@@ -1,5 +1,26 @@
 context("Test-retest paired input validation")
 
+test_that("invalid selected denominators do not suppress gauge estimates or valid percentages", {
+  data <- data.frame(part = letters[1:5], first = 10:14, second = 11:15)
+  for (invalid in c("manualProcessSdValue", "toleranceValue")) {
+    options <- jaspTools::analysisOptions("msaTestRetest")
+    options$dataFormat <- "wideFormat"
+    options$partWideFormat <- "part"
+    options$measurementsWideFormat <- c("first", "second")
+    options$manualProcessSd <- options$tolerance <- TRUE
+    options$manualProcessSdValue <- 2
+    options$toleranceValue <- 3
+    options[[invalid]] <- 0
+    result <- jaspTools::runAnalysis("msaTestRetest", data, options, view = FALSE)
+    row <- result$results$rAndR2$data[[1]]
+    expect_equal(row$GRR, 1 / 1.19105)
+    expect_identical(row[[if (invalid == "manualProcessSdValue") "GRRpercent.PSD" else "GRRpercent.Tol"]], "")
+    expected <- if (invalid == "manualProcessSdValue") (1 / 1.19105) / (3 / 6) else (1 / 1.19105) / 2
+    expect_equal(row[[if (invalid == "manualProcessSdValue") "GRRpercent.Tol" else "GRRpercent.PSD"]], expected)
+    expect_length(result$results$rAndR2$footnotes, 1L)
+  }
+})
+
 .trvWide <- data.frame(part = letters[1:5], first = 10:14, second = 11:15, third = 1001:1005)
 .trvRun <- function(data = .trvWide, wide = TRUE, readings = c("first", "second"), plots = FALSE) {
   options <- jaspTools::analysisOptions("msaTestRetest")

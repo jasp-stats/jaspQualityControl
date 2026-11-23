@@ -182,6 +182,7 @@ Form
 			{
 				name:							"cumulativeSumChartTarget"
 				label:							qsTr("Target")
+				negativeValues:					true
 				defaultValue:					0
 			}
 

@@ -23,7 +23,7 @@
 #'
 #' @param actualExporter, Check to save the selected design to the specified file.
 #'    Defaults to \code{FALSE}.
-#' @param blocks, Select the number of blocks in the design. Only available for two-level factorial designs with the default generator.
+#' @param blocks, Select the number of blocks. The legacy choices give the block assignment of earlier JASP versions, in which blocks can be confounded with 2-factor interactions that could be kept clear; analyses saved with those versions keep it. In R syntax, use "higherOrder2", "higherOrder4", "higherOrder8" for the current assignment and "2", "4", "8" for the legacy assignment.
 #' @param categoricalNoLevels, Set the maximum number of levels for the factors in the design. Only applicable for general full factorial designs, else factors always have two levels. If a factor has fewer levels than the maximum number of levels in the design, leave the remaining level cells empty or add a space.
 #' @param categoricalVariables, Set the names of the factors and give the values for each level.
 #' @param centerpoints, Select the number of centre points per block to add to the design. Not available for split-plot and general full factorial designs.
@@ -68,7 +68,7 @@ doeFactorial <- function(
           numberOfCategorical = 3,
           plotHeight = 320,
           plotWidth = 480,
-          randomSeed = 528422,
+          randomSeed = 596085,
           replications = 1,
           runOrder = "runOrderRandom",
           seed = 1,
