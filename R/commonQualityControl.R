@@ -184,11 +184,19 @@
   indicesRemainingNA <- .indicesOfNAinList(plotList)
   if (!is.null(indicesRemainingNA)) {
     for (k in indicesRemainingNA)
-      plotList[[k]] <- ggplot2::ggplot() + ggplot2::theme_void()
+      plotList[[k]] <- .qcEmptyPanel()
   }
 
   plot <- jaspGraphs::ggMatrixPlot(plotList = plotList, topLabels = topLabel)
   return(plot)
+}
+
+# An empty panel for matrix plots. It needs a (blank) layer: a ggplot without layers gives an empty plotly
+# subplot that plotly::subplot() drops, so the interactive version of the whole matrix plot fails.
+.qcEmptyPanel <- function() {
+  ggplot2::ggplot(data.frame(x = 0, y = 0), ggplot2::aes(x = x, y = y)) +
+    ggplot2::geom_blank() +
+    ggplot2::theme_void()
 }
 
 .indicesOfNAinList <- function(list) {

@@ -151,7 +151,7 @@ variablesChartsIndividualsInternal <- function(jaspResults, dataset, options) {
     plotIndexCounter <- 1
     if (options[["reportIMRChart"]]) {
       plots[[plotIndexCounter]] <- if (inherits(individualChart, "qcDataError")) # keep the I/MR slots, the error panel replaces both
-        list(.qcReportErrorPanel(gettext("X-mR control chart"), conditionMessage(individualChart)), ggplot2::ggplot() + ggplot2::theme_void())
+        list(.qcReportErrorPanel(gettext("X-mR control chart"), conditionMessage(individualChart)), .qcEmptyPanel())
       else
         list(individualChart$plotObject, mrChart$plotObject)
       plotIndexCounter <- plotIndexCounter + 1
