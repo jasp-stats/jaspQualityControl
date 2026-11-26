@@ -51,8 +51,27 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   rateChart <- options[["attributesChart"]] == "defects" &&
     options[["attributesChartDefectsChartType"]] %in% c("uChart", "laneyUPrimeChart")
   countChart <- binomialChart || options[["attributesChart"]] == "defects"
+
+  # Rows with a missing count, sample size or timestamp (e.g. blank rows below shorter columns)
+  # are removed and reported in a note instead of stopping the analysis.
+  completeRows <- stats::complete.cases(dataset)
+  nRemovedRows <- sum(!completeRows)
+  dataset      <- dataset[completeRows, , drop = FALSE]
+  if (!is.null(xLabs))
+    xLabs <- xLabs[completeRows]
+  if (nRemovedRows > 0) {
+    missingValuesNote <- createJaspHtml(gettextf("<i>Note.</i> Removed %i observation(s) with missing values.", nRemovedRows))
+    missingValuesNote$dependOn(c("defectiveOrDefect", "total", "timeStamp", "attributesChart"))
+    missingValuesNote$position <- 3
+    jaspResults[["missingValuesNote"]] <- missingValuesNote
+  } else {
+    jaspResults[["missingValuesNote"]] <- NULL
+  }
+  if (nrow(dataset) == 0)
+    .quitAnalysis(gettext("No observations remain after removing rows with missing values."))
+
   # c charts also consume the assigned sample-size column for the equal-size check.
-  .hasErrors(dataset, type = c("infinity", "missingValues", "negativeValues"),
+  .hasErrors(dataset, type = c("infinity", "negativeValues"),
              all.target = c(D, total), exitAnalysisIfErrors = TRUE)
 
   if (countChart) {
@@ -71,8 +90,6 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
       }
     }, exitAnalysisIfErrors = TRUE)
   }
-
-  dataset <- na.omit(dataset)
 
   if (options[["attributesChart"]] == "defectives" && ready) {
     dependedDefectives <- c("total", "defectiveOrDefect", "attributesChart", "attributesChartDefectivesChartType", 'timeStamp')

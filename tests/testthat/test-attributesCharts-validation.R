@@ -31,18 +31,18 @@ test_that("every active binomial chart enforces binomial support", {
       expect_identical(.acvRun(counts, family = "defectives", chart = chart)$status, "validationError")
     expect_identical(.acvRun(c(0, 10, 4), family = "defectives", chart = chart)$status, "complete")
     for (sizes in list(c(10, 10.5, 10), c(0, 10, 10), c(-1, 10, 10),
-                        c(Inf, 10, 10), c(NA, 10, 10)))
+                        c(Inf, 10, 10)))
       expect_identical(.acvRun(c(0, 1, 2), sizes, "defectives", chart)$status, "validationError")
   }
 })
 
 test_that("active charts reject invalid counts and exposures", {
   for (chart in c("uChart", "laneyUPrimeChart", "cChart")) {
-    for (counts in list(c(-1, 2, 1), c(0.5, 2, 1), c(Inf, 2, 1), c(NA, 2, 1)))
+    for (counts in list(c(-1, 2, 1), c(0.5, 2, 1), c(Inf, 2, 1)))
       expect_identical(.acvRun(counts, chart = chart)$status, "validationError")
   }
   for (chart in c("uChart", "laneyUPrimeChart")) {
-    for (sizes in list(c(0, 10, 10), c(-1, 10, 10), c(Inf, 10, 10), c(NA, 10, 10)))
+    for (sizes in list(c(0, 10, 10), c(-1, 10, 10), c(Inf, 10, 10)))
       expect_identical(.acvRun(sizes = sizes, chart = chart)$status, "validationError")
   }
 })
@@ -70,8 +70,7 @@ test_that("incomplete assignments remain ready for further input", {
 
 test_that("c charts retain validation of their assigned sample-size column", {
   counts <- c(2, 20, 4, 6, 8)
-  for (sizes in list(c(10, NA, 10, 10, 10),
-                     c(10, Inf, 10, 10, 10), c(10, -1, 10, 10, 10))) {
+  for (sizes in list(c(10, Inf, 10, 10, 10), c(10, -1, 10, 10, 10))) {
     result <- .acvRun(counts, sizes, chart = "cChart")
     expect_identical(result$status, "validationError")
     expect_null(result$results$CchartPlot)
@@ -85,6 +84,35 @@ test_that("c charts retain validation of their assigned sample-size column", {
   plot <- result$state$figures[[result$results$CchartPlot$data]]$obj
   pointIndex <- which(vapply(plot$layers, function(layer) inherits(layer$geom, "GeomPoint"), logical(1)))[1]
   expect_equal(ggplot2::ggplot_build(plot)$data[[pointIndex]]$y, counts)
+})
+
+.acvPoints <- function(result, key) {
+  plot <- result$state$figures[[result$results[[key]]$data]]$obj
+  pointIndex <- which(vapply(plot$layers, function(layer) inherits(layer$geom, "GeomPoint"), logical(1)))[1]
+  ggplot2::ggplot_build(plot)$data[[pointIndex]]$y
+}
+
+test_that("rows with a missing count or sample size are removed with a note", {
+  # Blank rows inside the data and below shorter columns are both dropped, not rejected.
+  counts <- c(2, NA, 4, 6, 3, 5, NA)
+  sizes  <- c(10, 10, NA, 10, 10, 10, NA)
+  kept   <- c(1, 4, 5, 6)
+  charts <- list(pChart = c("defectives", "PchartPlot", "p"),  npChart = c("defectives", "NPchartPlot", "np"),
+                 cChart = c("defects", "CchartPlot", "c"),     uChart  = c("defects", "UchartPlot", "u"))
+  for (chart in names(charts)) {
+    family <- charts[[chart]][1]
+    result <- .acvRun(counts, sizes, family = family, chart = chart)
+    expect_identical(result$status, "complete")
+    expect_match(result$results$missingValuesNote$rawtext, "Removed 3 observation\\(s\\) with missing values")
+    plotted <- switch(charts[[chart]][3], p = counts[kept] / sizes[kept], u = counts[kept] / sizes[kept], counts[kept])
+    expect_equal(.acvPoints(result, charts[[chart]][2]), plotted)
+  }
+
+  # Complete data have no note, and no complete rows stop the analysis with an explanation.
+  expect_null(.acvRun(c(2, 4, 6), c(10, 10, 10), "defectives", "pChart")$results$missingValuesNote)
+  result <- .acvRun(c(2, NA, 6), c(NA, 10, NA), "defectives", "pChart")
+  expect_identical(result$status, "validationError")
+  expect_match(result$results$errorMessage, "No observations remain")
 })
 
 test_that("valid np data retain observations and binomial control limits", {
