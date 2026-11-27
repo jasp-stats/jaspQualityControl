@@ -20,6 +20,20 @@
   return(dataset[!is.na(dataset[[stages]]), , drop = FALSE])
 }
 
+# Empty rows after the last measurement (e.g. below a measurement column that is shorter than the other columns)
+# are not data: with a manual subgroup size or in wide format they would become empty subgroups at the end of the chart.
+# Rows that still name a stage or an axis label are kept (an empty stage or a labelled empty subgroup is shown), and
+# missing values inside the data are kept, so the subgroups formed by row position do not shift.
+.qcRemoveTrailingEmptyRows <- function(dataset, measurements, labelColumns = character()) {
+  labelColumns <- labelColumns[labelColumns != "" & labelColumns %in% names(dataset)]
+  hasContent   <- rowSums(!is.na(dataset[, measurements, drop = FALSE])) > 0
+  for (column in labelColumns)
+    hasContent <- hasContent | (!is.na(dataset[[column]]) & as.character(dataset[[column]]) != "")
+  if (!any(hasContent)) # nothing to keep: leave the data to the existing checks
+    return(dataset)
+  return(dataset[seq_len(max(which(hasContent))), , drop = FALSE])
+}
+
 .reshapeSubgroupDataLongToWide <- function(dataset,
                                            measurements,
                                            stages = "",

@@ -203,7 +203,9 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
 
 
       NelsonTables[["NelsonTableI"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", sixsigma = IMRchart$sixsigma_I, name = "Individuals", xLabels = xLabs)
-      NelsonTables[["NelsonTableMR"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = IMRchart$sixsigma_R, name = "Moving Range", xLabels = xLabs)
+      # a moving range belongs to the later of its two samples: type "Range" numbers it so, xLabs[-1] labels it so
+      NelsonTables[["NelsonTableMR"]] <- .NelsonTable(dataset = dataset, options = options, type = "Range", sixsigma = IMRchart$sixsigma_R, name = "Moving Range",
+                                                      xLabels = if (is.null(xLabs)) NULL else xLabs[-1])
 
       jaspResults[["NelsonTableIMR"]] <- NelsonTables
     }
@@ -341,7 +343,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   }
 
   if (!identical(timeStamp, ""))
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
+    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesTimeStampLabels(dataset[, timeStamp], xBreaks))
 
   return(list(p = p, sixsigma = sixsigma))
 }
@@ -385,7 +387,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     jaspGraphs::themeJaspRaw()
 
   if (!identical(timeStamp, ""))
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
+    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesTimeStampLabels(dataset[, timeStamp], xBreaks))
 
   return(list(p = p, sixsigma = sixsigma))
 }
@@ -429,7 +431,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     jaspGraphs::themeJaspRaw()
 
   if (!identical(timeStamp, ""))
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
+    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesTimeStampLabels(dataset[, timeStamp], xBreaks))
 
   return(list(p = p, sixsigma = sixsigma))
 }
@@ -498,7 +500,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   }
 
   if (!identical(timeStamp, ""))
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
+    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesTimeStampLabels(dataset[, timeStamp], xBreaks))
 
   return(list(p = p, sixsigma = sixsigma))
 }
@@ -543,7 +545,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     jaspGraphs::themeJaspRaw()
 
   if (!identical(timeStamp, ""))
-    p1 <- p1 + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp])[xBreaks])
+    p1 <- p1 + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesTimeStampLabels(dataset[, timeStamp], xBreaks))
 
   #data
   data <- data.frame(process = dataset[, options[["defectiveOrDefect"]]] / dataset[, options$total])
@@ -583,8 +585,9 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
+  # a moving range belongs to the later of its two samples, as in the default labels above
   if (!identical(timeStamp, ""))
-    p2 <- p2 + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp])[xBreaks])
+    p2 <- p2 + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesTimeStampLabels(dataset[, timeStamp], xBreaks, offset = 1))
 
   p3 <-  jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
 
@@ -663,7 +666,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   }
 
   if (!identical(timeStamp, ""))
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
+    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesTimeStampLabels(dataset[, timeStamp], xBreaks))
 
   return(list(p = p, sixsigma = sixsigma))
 }
@@ -739,7 +742,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   }
 
   if (!identical(timeStamp, ""))
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = dataset[, options$timeStamp])
+    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesTimeStampLabels(dataset[, timeStamp], xBreaks))
 
   return(list(p = p, sixsigma = sixsigma))
 }
@@ -750,6 +753,14 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   if (allsix)
     return(NelsonLaws(sixsigma, allsix = TRUE)$red_points)
   NelsonLaws(sixsigma, chart = "c")$red_points
+}
+
+# Timestamp labels for the axis breaks: the sample at each break (breaks are thinned for more than
+# 60 samples, and sit half a sample to the right when the limits vary). Breaks past the last sample get no label.
+.attributesTimeStampLabels <- function(timeStamps, xBreaks, offset = 0) {
+  labels <- as.character(timeStamps)[floor(xBreaks + 1e-8) + offset]
+  labels[is.na(labels)] <- ""
+  return(labels)
 }
 
 .Check_equal_samples <- function(dataset,options) {
