@@ -1401,11 +1401,11 @@ msgstr "*"
 msgid "Number of distinct categories = %i"
 msgstr "தனித்துவமான வகைகளின் எண்ணிக்கை = %i"
 
-msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %i"
-msgstr "படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. <spam>&#215;</spam> %i"
+msgid "Study Variation is calculated as std. dev. <span>&#215;</span> %i"
+msgstr "படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. <span>&#215;</span> %i"
 
-msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
-msgstr "படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. <spam>&#215;</spam> %.2f"
+msgid "Study Variation is calculated as std. dev. <span>&#215;</span> %.2f"
+msgstr "படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. <span>&#215;</span> %.2f"
 
 msgid ""
 "Historical standard deviation is used to calculate some values for std. "
@@ -1425,11 +1425,11 @@ msgstr ""
 msgid "Two-way Analysis of Variance table without interaction"
 msgstr "தொடர்பு இல்லாமல் இருவழி ANOVA அட்டவணை"
 
-msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
-msgstr "படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. <spam>&#215;</spam> %i"
+msgid "Study variation is calculated as std. dev. <span>&#215;</span> %i"
+msgstr "படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. <span>&#215;</span> %i"
 
-msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
-msgstr "படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. <spam>&#215;</spam> %.2f"
+msgid "Study variation is calculated as std. dev. <span>&#215;</span> %.2f"
+msgstr "படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. <span>&#215;</span> %.2f"
 
 msgid "Components of variation"
 msgstr "மாறுபாட்டின் கூறுகள்"

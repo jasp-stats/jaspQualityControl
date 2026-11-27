@@ -1446,11 +1446,11 @@ msgstr "*"
 msgid "Number of distinct categories = %i"
 msgstr "区別できるカテゴリの数 = %i"
 
-msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %i"
-msgstr "調査変動は 標準偏差 <spam>&#215;</spam> %i として計算されます"
+msgid "Study Variation is calculated as std. dev. <span>&#215;</span> %i"
+msgstr "調査変動は 標準偏差 <span>&#215;</span> %i として計算されます"
 
-msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
-msgstr "調査変動は 標準偏差 <spam>&#215;</spam> %.2f として計算されます"
+msgid "Study Variation is calculated as std. dev. <span>&#215;</span> %.2f"
+msgstr "調査変動は 標準偏差 <span>&#215;</span> %.2f として計算されます"
 
 msgid ""
 "Historical standard deviation is used to calculate some values for std. "
@@ -1467,11 +1467,11 @@ msgstr "%% 工程変動の値は %% 調査変動の値と同じであるため�
 msgid "Two-way Analysis of Variance table without interaction"
 msgstr "交互作用なしの二元配置分散分析表"
 
-msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
-msgstr "調査変動は 標準偏差 <spam>&#215;</spam> %i として計算されます"
+msgid "Study variation is calculated as std. dev. <span>&#215;</span> %i"
+msgstr "調査変動は 標準偏差 <span>&#215;</span> %i として計算されます"
 
-msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
-msgstr "調査変動は 標準偏差 <spam>&#215;</spam> %.2f として計算されます"
+msgid "Study variation is calculated as std. dev. <span>&#215;</span> %.2f"
+msgstr "調査変動は 標準偏差 <span>&#215;</span> %.2f として計算されます"
 
 msgid "Components of variation"
 msgstr "変動成分"

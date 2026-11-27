@@ -1453,8 +1453,9 @@ for (chartType in c("xBarAndR", "xBarAndS", "xBarAndSNoUnbiasing")) {
 
   test_that(sprintf("WF30 %s chart: rows without observations keep finite limits", chartType), {
     xBar <- .emptyRowsChart(results, 1)
-    # the six rows (and the closing point of the step line) all have the limits of the rows with observations
-    expect_true(all(vapply(xBar$lines, function(y) length(y) == 7 && length(unique(y)) == 1 && is.finite(y[1]), logical(1))))
+    # the first five rows (and the closing point of the step line) all have the limits of the rows with observations;
+    # the empty last row is not a subgroup, as it comes after the last measurement and carries no label
+    expect_true(all(vapply(xBar$lines, function(y) length(y) == 6 && length(unique(y)) == 1 && is.finite(y[1]), logical(1))))
     expect_true("CL = 3.7" %in% xBar$labels)
     expect_true(any(startsWith(xBar$labels, "LCL = ")) && any(startsWith(xBar$labels, "UCL = ")))
     secondChart <- .emptyRowsChart(results, 2)

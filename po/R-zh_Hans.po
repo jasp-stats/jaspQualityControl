@@ -1379,12 +1379,12 @@ msgid "Number of distinct categories = %i"
 msgstr "可区分类别数 = %i"
 
 #, fuzzy
-msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %i"
-msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %i"
+msgid "Study Variation is calculated as std. dev. <span>&#215;</span> %i"
+msgstr "研究变异计算作为标准偏差 <span>&#215;</span> %i"
 
 #, fuzzy
-msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
-msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %.2f"
+msgid "Study Variation is calculated as std. dev. <span>&#215;</span> %.2f"
+msgstr "研究变异计算作为标准偏差 <span>&#215;</span> %.2f"
 
 msgid ""
 "Historical standard deviation is used to calculate some values for std. "
@@ -1400,12 +1400,12 @@ msgid "Two-way Analysis of Variance table without interaction"
 msgstr "无交互作用的双因素方差分析表"
 
 #, fuzzy
-msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
-msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %i"
+msgid "Study variation is calculated as std. dev. <span>&#215;</span> %i"
+msgstr "研究变异计算作为标准偏差 <span>&#215;</span> %i"
 
 #, fuzzy
-msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
-msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %.2f"
+msgid "Study variation is calculated as std. dev. <span>&#215;</span> %.2f"
+msgstr "研究变异计算作为标准偏差 <span>&#215;</span> %.2f"
 
 msgid "Components of variation"
 msgstr "变异分量"

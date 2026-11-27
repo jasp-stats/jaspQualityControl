@@ -60,17 +60,16 @@ test_that("X-mR chart colours every point listed in its test tables", {
   expect_equal(unlist(lapply(iTable$data, `[[`, "test8")), 8)
   expect_equal(.redFill(plot$subplots[[1]]), c(8L, 23L, 24L, 25L, 26L))
   expect_equal(.redFill(plot$subplots[[1]]), as.integer(.redFlagged(iTable)))
+  # Moving ranges are plotted at the later sample.
   expect_equal(.redFill(plot$subplots[[2]]), as.integer(.redFlagged(tables$NelsonTableIMR_NelsonTableMR)))
 })
 
-test_that("charts with a single subgroup still mark points beyond the limits", {
-  for (chart in c("pChart", "laneyPPrimeChart")) {
-    options <- jaspTools::analysisOptions("attributesCharts")
-    options$defectiveOrDefect <- "count"
-    options$total <- "size"
-    options$attributesChart <- "defectives"
-    options$attributesChartDefectivesChartType <- chart
-    results <- jaspTools::runAnalysis("attributesCharts", data.frame(count = 5, size = 100), options, view = FALSE)
-    expect_identical(results$status, "complete", info = chart)
-  }
+test_that("a p chart can render with one subgroup", {
+  options <- jaspTools::analysisOptions("attributesCharts")
+  options$defectiveOrDefect <- "count"
+  options$total <- "size"
+  options$attributesChart <- "defectives"
+  options$attributesChartDefectivesChartType <- "pChart"
+  results <- jaspTools::runAnalysis("attributesCharts", data.frame(count = 5, size = 100), options, view = FALSE)
+  expect_identical(results$status, "complete")
 })

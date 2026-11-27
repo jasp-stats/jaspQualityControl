@@ -54,6 +54,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   # Some error handling and messages
   if (ready) {
+    if (wideFormat || options[["subgroupSizeType"]] == "manual")
+      dataset <- .qcRemoveTrailingEmptyRows(dataset, measurements, labelColumns = if (wideFormat) factorVariables else stages)
     plotNotes <- ""
     if (!identical(stages, "")) {
       if ((!wideFormat && options[["subgroupSizeType"]] == "manual" &&
@@ -75,7 +77,7 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
     }
     if (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" && (anyNA(dataset[[subgroupVariable]]) ||
                                                                                any(dataset[[subgroupVariable]] == ""))) {
-      nDroppedSubgroupRows <- sum(c(is.na(dataset[[subgroupVariable]]), dataset[[subgroupVariable]] == ""))
+      nDroppedSubgroupRows <- sum(is.na(dataset[[subgroupVariable]]) | dataset[[subgroupVariable]] == "")
       dataset <- dataset[!is.na(dataset[[subgroupVariable]]),]
       dataset <- dataset[dataset[[subgroupVariable]] != "",]
       plotNotes <- paste0(plotNotes, gettextf("Removed %i observation(s) that were not assigned to any subgroups.<br>", nDroppedSubgroupRows))
@@ -657,7 +659,8 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
 
   output <- list(dataset=dataset, transformedSpecs=transformedSpecs)
 
-  jaspResults[["dataTransformationState"]] <- createJaspState(object = output, dependencies = .qcDataOptionNames())
+  # the axis labels decide which trailing rows without measurements are kept (.qcRemoveTrailingEmptyRows)
+  jaspResults[["dataTransformationState"]] <- createJaspState(object = output, dependencies = c(.qcDataOptionNames(), "axisLabels"))
 
   return(output)
 }

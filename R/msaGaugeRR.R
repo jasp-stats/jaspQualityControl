@@ -559,9 +559,9 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
         RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
       }
       if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
-        RRtable2$addFootnote(gettextf("Study Variation is calculated as std. dev. <spam>&#215;</spam> %i", as.integer(studyVarMultiplier)))
+        RRtable2$addFootnote(gettextf("Study Variation is calculated as std. dev. <span>&#215;</span> %i", as.integer(studyVarMultiplier)))
       }else{
-        RRtable2$addFootnote(gettextf("Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f", studyVarMultiplier))
+        RRtable2$addFootnote(gettextf("Study Variation is calculated as std. dev. <span>&#215;</span> %.2f", studyVarMultiplier))
       }
 
       if(options[["processVariationReference"]] == "historicalSd"){
@@ -652,9 +652,9 @@ msaGaugeRRInternal <- function(jaspResults, dataset, options, ...) {
       nCategories <- .gaugeNumberDistinctCategories(sqrt(varCompPart), sqrt(varCompTotalGauge))
       RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
       if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
-        RRtable2$addFootnote(gettextf("Study variation is calculated as std. dev. <spam>&#215;</spam> %i", as.integer(studyVarMultiplier)))
+        RRtable2$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %i", as.integer(studyVarMultiplier)))
       }else{
-        RRtable2$addFootnote(gettextf("Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f", studyVarMultiplier))
+        RRtable2$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %.2f", studyVarMultiplier))
       }
 
       if(options[["processVariationReference"]] == "historicalSd"){

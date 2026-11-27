@@ -1175,10 +1175,10 @@ msgstr ""
 msgid "Number of distinct categories = %i"
 msgstr ""
 
-msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %i"
+msgid "Study Variation is calculated as std. dev. <span>&#215;</span> %i"
 msgstr ""
 
-msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
+msgid "Study Variation is calculated as std. dev. <span>&#215;</span> %.2f"
 msgstr ""
 
 msgid "Historical standard deviation is used to calculate some values for std. dev., study variation, and %%study variation."
@@ -1190,10 +1190,10 @@ msgstr ""
 msgid "Two-way Analysis of Variance table without interaction"
 msgstr ""
 
-msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
+msgid "Study variation is calculated as std. dev. <span>&#215;</span> %i"
 msgstr ""
 
-msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
+msgid "Study variation is calculated as std. dev. <span>&#215;</span> %.2f"
 msgstr ""
 
 msgid "Components of variation"

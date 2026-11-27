@@ -62,6 +62,8 @@ variablesChartsSubgroupsInternal <- function(jaspResults, dataset, options) {
   }
   if (!wideFormat && !identical(subgroupVariable, "")) # empty strings should also be treated as NA
     dataset[,subgroupVariable][dataset[[subgroupVariable]] == ""] <- NA
+  if (wideFormat || options[["subgroupSizeType"]] == "manual")
+    dataset <- .qcRemoveTrailingEmptyRows(dataset, measurements, labelColumns = if (wideFormat) factorVariables else stages)
 
   # error handling
   .hasErrors(dataset, type = c('infinity'),
