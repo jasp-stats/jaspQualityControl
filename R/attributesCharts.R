@@ -50,16 +50,21 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     options[["attributesChartDefectsChartType"]] %in% c("uChart", "laneyUPrimeChart")
   countChart <- binomialChart || options[["attributesChart"]] == "defects"
 
-  # Rows with a missing count, sample size or timestamp (e.g. blank rows below shorter columns)
-  # are removed and reported in a note instead of stopping the analysis.
-  completeRows <- stats::complete.cases(dataset)
+  # A timestamp labels a sample. Only missing counts or sample sizes omit it from the chart.
+  completeRows <- stats::complete.cases(dataset[c(D, total)])
   nRemovedRows <- sum(!completeRows)
   sampleNumbers <- which(completeRows)
   dataset      <- dataset[completeRows, , drop = FALSE]
-  xLabs <- if (identical(timeStamp, "")) sampleNumbers else as.vector(dataset[[timeStamp]])
-  axisLabels <- if (!identical(timeStamp, "") || !identical(sampleNumbers, seq_len(nrow(dataset)))) xLabs
+  axisLabels <- if (!identical(timeStamp, "")) {
+    timestamps <- as.character(dataset[[timeStamp]])
+    missingLabels <- is.na(timestamps) | timestamps == ""
+    timestamps[missingLabels] <- as.character(sampleNumbers[missingLabels])
+    timestamps
+  }
+  xLabs <- if (is.null(axisLabels)) sampleNumbers else axisLabels
   if (nRemovedRows > 0) {
-    missingValuesNote <- createJaspHtml(gettextf("<i>Note.</i> Removed %i observation(s) with missing values.", nRemovedRows))
+    omissionText <- gettextf("Removed %i observation(s) with missing values.", nRemovedRows)
+    missingValuesNote <- createJaspHtml(paste0("<i>", gettext("Note."), "</i> ", omissionText))
     missingValuesNote$dependOn(c("defectiveOrDefect", "total", "timeStamp", "attributesChart"))
     missingValuesNote$position <- 3
     jaspResults[["missingValuesNote"]] <- missingValuesNote
@@ -274,8 +279,10 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     else if (options[["attributesChart"]] == "xmr")
       attributeChart <- .Ichart_attributes(dataset, options, sampleNumbers, axisLabels)$p
 
+    if (nRemovedRows > 0)
+      text <- c(omissionText, text)
     plots <- list(attributeChart)
-    reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = 8,
+    reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = max(8L, length(text)),
                                   reportTitle = title)
     reportPlot$plotObject <- reportPlotObject
   }
@@ -286,7 +293,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   sixsigma <- with(data1, qcc::qcc(D, sample, type = "p", plot = FALSE))
   sample <- data1$sample
   D <- data1$D
-  subgroups = c(1:length(sixsigma$statistics))
+  subgroups <- sampleNumbers
   data_plot <- data.frame(subgroups = subgroups, P = sixsigma$statistics)
   center <- sixsigma$center
   # Limits per subgroup size around the pooled CL, bounded to [0, 1] (qcc), as in Minitab
@@ -294,13 +301,12 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   LCL <- sixsigma$limits[,1]
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
   yLimits <- range(c(0,yBreaks * 1.2))
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1]) + 0.5
-  else
-    xBreaks <- c(subgroups) + 0.5
-  xLimits <- c(1,max(xBreaks) * 1.15)
+  xBreaks <- .attributesAxisBreaks(subgroups)
+  stepped <- length(unique(UCL)) != 1L || length(unique(LCL)) != 1L
+  stepOffset <- if (stepped) 0.5 else 0
+  xLimits <- c(1, (max(xBreaks) + 0.5) * 1.15) - stepOffset
   dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
+    x = (max(xLimits) + stepOffset) * 0.95 - stepOffset,
     y = c(center),
     l = c(
       gettextf("CL = %g", round(center, 4))
@@ -315,7 +321,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     jaspGraphs::themeJaspRaw()
 
   # both limits are checked: with UCL capped at 1 for every subgroup, LCL can still vary
-  if (length(unique(UCL)) == 1 && length(unique(LCL)) == 1){
+  if (!stepped) {
     UCL <- UCL[1]
     LCL <- LCL[1]
     dfLabel <- data.frame(
@@ -327,27 +333,26 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
         gettextf("LCL = %g",   round(LCL, 5))
       )
     )
-    xBreaks <- xBreaks -0.5
 
     p <- p +
       ggplot2::geom_hline(yintercept = c(UCL, LCL), col = "red", linetype = "dashed", size = 1.5) +
       ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
       ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
       .attributesLine(sampleNumbers, data = data_plot, ggplot2::aes(x = subgroups, y = P),col = "blue") +
-      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue'))
+      .attributesPoint(axisLabels, data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue'))
   } else{
-    n <- length(UCL)
-    p <- p + ggplot2::geom_step(ggplot2::aes(x = subgroups, y = UCL, col = "red"), size = 1.5, linetype = "F1") +
-      .attributesLine(sampleNumbers, ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),col = "blue") +
-      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue')) +
-      ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = xBreaks - 0.5) +
-      ggplot2::geom_step(ggplot2::aes(x = subgroups, y = LCL, col = "red"), size = 1.5, linetype = "F1") +
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = UCL[n], col = "red"), size = 1.5)+
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = LCL[n], col = "red"), size = 1.5)
+    upper <- .attributesLimitSteps(subgroups, UCL)
+    lower <- .attributesLimitSteps(subgroups, LCL)
+    p <- p + upper$steps +
+      .attributesLine(sampleNumbers, ggplot2::aes(x = subgroups, y = P), data = data_plot, col = "blue") +
+      .attributesPoint(axisLabels, ggplot2::aes(x = subgroups, y = P), data = data_plot, size = 4,
+                       fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, "red", "blue")) +
+      ggplot2::scale_x_continuous(name = gettext("Sample"), breaks = xBreaks, limits = range(xLimits)) +
+      lower$steps + upper$ends + lower$ends
   }
 
   if (!is.null(axisLabels))
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, xBreaks))
+    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, sampleNumbers, xBreaks))
 
   return(list(p = p, sixsigma = sixsigma))
 }
@@ -355,7 +360,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   .Check_equal_samples(dataset, options)
 
   data1 <- data.frame(D = dataset[, options[["defectiveOrDefect"]]], sample = dataset[, options$total])
-  subgroups <- 1:nrow(data1)
+  subgroups <- sampleNumbers
   data_plot <- data.frame(subgroups = subgroups, D = data1$D)
 
   sixsigma <- with(data1, qcc::qcc(D, sample, type = "np", plot = FALSE))
@@ -364,10 +369,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$D ,UCL))
   yLimits <- range(yBreaks)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  else
-    xBreaks <- c(subgroups)
+  xBreaks <- .attributesAxisBreaks(subgroups)
   xLimits <- c(1,max(xBreaks) * 1.15)
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
@@ -387,11 +389,11 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     .attributesLine(sampleNumbers, col = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue')) +
+    .attributesPoint(axisLabels, size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue')) +
     jaspGraphs::themeJaspRaw()
 
   if (!is.null(axisLabels))
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, xBreaks))
+    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, sampleNumbers, xBreaks))
 
   return(list(p = p, sixsigma = sixsigma))
 }
@@ -400,7 +402,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   .Check_equal_samples(dataset, options)
 
   data1 <- data.frame(D = dataset[, options[["defectiveOrDefect"]]], sample = dataset[, options$total])
-  subgroups <- 1:nrow(data1)
+  subgroups <- sampleNumbers
   data_plot <- data.frame(subgroups = subgroups, D = data1$D)
   sixsigma <- with(data1, qcc::qcc(D, sample, type = "c", plot = FALSE))
   center <- sixsigma$center
@@ -408,10 +410,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$D ,UCL))
   yLimits <- range(yBreaks)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  else
-    xBreaks <- c(subgroups)
+  xBreaks <- .attributesAxisBreaks(subgroups)
   xLimits <- c(1,max(xBreaks) * 1.15)
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
@@ -430,12 +429,12 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     ggplot2::scale_y_continuous(name =  gettext("D") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
     .attributesLine(sampleNumbers, col = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue')) +
+    .attributesPoint(axisLabels, size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
   if (!is.null(axisLabels))
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, xBreaks))
+    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, sampleNumbers, xBreaks))
 
   return(list(p = p, sixsigma = sixsigma))
 }
@@ -443,7 +442,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
 .Uchart <- function(dataset, options, sampleNumbers, axisLabels) {
   data1 <- data.frame(D = dataset[, options[["defectiveOrDefect"]]], sample = dataset[, options$total])
   data1$P <- data1$D/data1$sample
-  subgroups <- 1:nrow(data1)
+  subgroups <- sampleNumbers
   data_plot <- data.frame(subgroups = subgroups, P = data1$P)
 
   sixsigma <- with(data1, qcc::qcc(D, sample, type = "u", plot = FALSE))
@@ -452,13 +451,12 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   LCL <- sixsigma$limits[,1]
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
   yLimits <- range(c(0,yBreaks * 1.2))
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1]) + 0.5
-  else
-    xBreaks <- c(subgroups) + 0.5
-  xLimits <- c(1,max(xBreaks) * 1.15)
+  xBreaks <- .attributesAxisBreaks(subgroups)
+  stepped <- length(unique(UCL)) != 1L
+  stepOffset <- if (stepped) 0.5 else 0
+  xLimits <- c(1, (max(xBreaks) + 0.5) * 1.15) - stepOffset
   dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
+    x = (max(xLimits) + stepOffset) * 0.95 - stepOffset,
     y = c(center),
     l = c(
       gettextf("CL = %g", round(center, 4))
@@ -472,7 +470,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  if (length(unique(UCL)) == 1){
+  if (!stepped) {
     dfLabel <- data.frame(
       x = max(xLimits) * 0.95,
       y = c(center, UCL, LCL),
@@ -482,29 +480,28 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
         gettextf("LCL = %g",   round(LCL, 5))
       )
     )
-    xBreaks <- xBreaks -0.5
 
     p <- p +
       ggplot2::geom_hline(yintercept = c(UCL, LCL), col = "red", linetype = "dashed", size = 1.5) +
       ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
       ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
       .attributesLine(sampleNumbers, data = data_plot, ggplot2::aes(x = subgroups, y = P),col = "blue") +
-      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue'))
+      .attributesPoint(axisLabels, data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue'))
   } else{
 
-    n <- length(UCL)
-    p <- p + ggplot2::geom_step(ggplot2::aes(x = subgroups, y = UCL, col = "red"), size = 1.5, linetype = "F1") +
-      .attributesLine(sampleNumbers, ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),col = "blue") +
-      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue')) +
-      ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = xBreaks - 0.5) +
-      ggplot2::geom_step(ggplot2::aes(x = subgroups, y = LCL, col = "red"), size = 1.5, linetype = "F1") +
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = UCL[n], col = "red"), size = 1.5)+
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = LCL[n], col = "red"), size = 1.5)
+    upper <- .attributesLimitSteps(subgroups, UCL)
+    lower <- .attributesLimitSteps(subgroups, LCL)
+    p <- p + upper$steps +
+      .attributesLine(sampleNumbers, ggplot2::aes(x = subgroups, y = P), data = data_plot, col = "blue") +
+      .attributesPoint(axisLabels, ggplot2::aes(x = subgroups, y = P), data = data_plot, size = 4,
+                       fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, "red", "blue")) +
+      ggplot2::scale_x_continuous(name = gettext("Sample"), breaks = xBreaks, limits = range(xLimits)) +
+      lower$steps + upper$ends + lower$ends
 
   }
 
   if (!is.null(axisLabels))
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, xBreaks))
+    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, sampleNumbers, xBreaks))
 
   return(list(p = p, sixsigma = sixsigma))
 }
@@ -518,7 +515,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   # Use the same moving-range estimate as qcc's Individuals chart, with complete adjacent pairs.
   sigma <- sixsigma_R$center / qcc::qcc.options("exp.R.unscaled")[2L]
   sixsigma_I <- qcc::qcc(proportions, type = "xbar.one", std.dev = sigma, plot = FALSE)
-  subgroups <- seq_along(proportions)
+  subgroups <- sampleNumbers
   data_plot <- data.frame(subgroups = subgroups, P = proportions)
 
   center <- sixsigma_I$center
@@ -526,10 +523,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   LCL <- min(sixsigma_I$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$P, UCL))
   yLimits <- range(yBreaks)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  else
-    xBreaks <- c(subgroups)
+  xBreaks <- .attributesAxisBreaks(subgroups)
   xLimits <- c(1,max(xBreaks) * 1.15)
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
@@ -548,28 +542,25 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
     .attributesLine(sampleNumbers, col = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(.attributesTests(sixsigma_I, sampleNumbers, allsix = TRUE)$red_points, 'red', 'blue')) +
+    .attributesPoint(axisLabels, size = 4, fill = ifelse(.attributesTests(sixsigma_I, sampleNumbers, allsix = TRUE)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
   if (!is.null(axisLabels))
-    p1 <- p1 + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, xBreaks))
+    p1 <- p1 + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, sampleNumbers, xBreaks))
 
-  subgroups <- seq_len(length(proportions) - 1L)
-  data_plot <- data.frame(subgroups = rangeEnds - 1L, data = sixsigma_R$statistics)
+  subgroups <- sampleNumbers[-1L]
+  rangeSamples <- sampleNumbers[rangeEnds]
+  data_plot <- data.frame(subgroups = rangeSamples, data = sixsigma_R$statistics)
   center <- sixsigma_R$center
   UCL <- max(sixsigma_R$limits)
   LCL <- min(sixsigma_R$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$data, UCL))
   yLimits <- range(yBreaks)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  else
-    xBreaks <- c(subgroups)
-  xLimits <- c(1,max(xBreaks) * 1.15)
-  Xlabels <- xBreaks + 1
+  xBreaks <- .attributesAxisBreaks(subgroups - 1L) + 1L
+  xLimits <- c(2, (max(xBreaks) - 1) * 1.15 + 1)
   dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
+    x = (max(xLimits) - 1) * 0.95 + 1,
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 4)),
@@ -583,15 +574,15 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     ggplot2::geom_hline(yintercept = c(UCL, LCL), col = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Moving Range") ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = Xlabels) +
-    .attributesLine(sampleNumbers[rangeEnds], col = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(.attributesTests(sixsigma_R, sampleNumbers[rangeEnds])$red_points, 'red', 'blue')) +
+    ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
+    .attributesLine(rangeSamples, col = "blue") +
+    .attributesPoint(if (!is.null(axisLabels)) axisLabels[rangeEnds], size = 4, fill = ifelse(.attributesTests(sixsigma_R, rangeSamples)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
   # a moving range belongs to the later of its two samples, as in the default labels above
   if (!is.null(axisLabels))
-    p2 <- p2 + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, xBreaks, offset = 1))
+    p2 <- p2 + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels[-1L], subgroups, xBreaks))
 
   p3 <-  jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
 
@@ -602,7 +593,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
 .LanyU <- function(dataset, options, sampleNumbers, axisLabels) {
   data1 <- data.frame(D = dataset[,options[["defectiveOrDefect"]]], sample = dataset[,options$total])
   data1$P <- data1$D/data1$sample
-  subgroups <- c(1:nrow(data1))
+  subgroups <- sampleNumbers
   data_plot <- data.frame(subgroups = subgroups, P = data1$P)
 
   #Sixsigma
@@ -615,13 +606,12 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   sixsigma <- list(statistics = data1$P, limits = data.frame(LCL, UCL), center = center)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
   yLimits <- range(c(0,yBreaks * 1.2))
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1]) + 0.5
-  else
-    xBreaks <- c(subgroups) + 0.5
-  xLimits <- c(1,max(xBreaks) * 1.15)
+  xBreaks <- .attributesAxisBreaks(subgroups)
+  stepped <- length(UCL) != 1L
+  stepOffset <- if (stepped) 0.5 else 0
+  xLimits <- c(1, (max(xBreaks) + 0.5) * 1.15) - stepOffset
   dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
+    x = (max(xLimits) + stepOffset) * 0.95 - stepOffset,
     y = c(center),
     l = c(
       gettextf("CL = %g", round(center, 4))
@@ -635,7 +625,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  if (length(UCL) == 1){
+  if (!stepped) {
     dfLabel <- data.frame(
       x = max(xLimits) * .95,
       y = c(center, UCL, LCL),
@@ -645,28 +635,27 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
         gettextf("LCL = %g",   round(LCL, 5))
       )
     )
-    xBreaks <- xBreaks - 0.5
 
     p <- p +
       ggplot2::geom_hline(yintercept = c(UCL, LCL), col = "red", linetype = "dashed", size = 1.5) +
       ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
       ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
       .attributesLine(sampleNumbers, data = data_plot, ggplot2::aes(x = subgroups, y = P),col = "blue") +
-      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue'))
+      .attributesPoint(axisLabels, data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue'))
   } else{
-    n <- length(UCL)
-    p <- p + ggplot2::geom_step(ggplot2::aes(x = subgroups, y = UCL, col = "red"), size = 1.5, linetype = "F1") +
-      .attributesLine(sampleNumbers, ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),col = "blue") +
-      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue')) +
-      ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = xBreaks - 0.5) +
-      ggplot2::geom_step(ggplot2::aes(x = subgroups, y = LCL, col = "red"), size = 1.5, linetype = "F1") +
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = UCL[n], col = "red"), size = 1.5)+
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = LCL[n], col = "red"), size = 1.5)
+    upper <- .attributesLimitSteps(subgroups, UCL)
+    lower <- .attributesLimitSteps(subgroups, LCL)
+    p <- p + upper$steps +
+      .attributesLine(sampleNumbers, ggplot2::aes(x = subgroups, y = P), data = data_plot, col = "blue") +
+      .attributesPoint(axisLabels, ggplot2::aes(x = subgroups, y = P), data = data_plot, size = 4,
+                       fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, "red", "blue")) +
+      ggplot2::scale_x_continuous(name = gettext("Sample"), breaks = xBreaks, limits = range(xLimits)) +
+      lower$steps + upper$ends + lower$ends
 
   }
 
   if (!is.null(axisLabels))
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, xBreaks))
+    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, sampleNumbers, xBreaks))
 
   return(list(p = p, sixsigma = sixsigma))
 }
@@ -674,7 +663,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
 .LanyP <- function(dataset, options, sampleNumbers, axisLabels) {
   data1 <- data.frame(D = dataset[,options[["defectiveOrDefect"]]], sample = dataset[,options$total])
   data1$P <- data1$D/data1$sample
-  subgroups <- c(1:nrow(data1))
+  subgroups <- sampleNumbers
   data_plot <- data.frame(subgroups = subgroups, P = data1$P)
 
   #Sixsigma
@@ -687,13 +676,12 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   sixsigma <- list(statistics = data1$P, limits = data.frame(LCL, UCL), center = center)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
   yLimits <- range(c(0,yBreaks * 1.2))
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1]) + 0.5
-  else
-    xBreaks <- c(subgroups) + 0.5
-  xLimits <- c(1,max(xBreaks) * 1.15)
+  xBreaks <- .attributesAxisBreaks(subgroups)
+  stepped <- length(UCL) != 1L
+  stepOffset <- if (stepped) 0.5 else 0
+  xLimits <- c(1, (max(xBreaks) + 0.5) * 1.15) - stepOffset
   dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
+    x = (max(xLimits) + stepOffset) * 0.95 - stepOffset,
     y = c(center),
     l = c(
       gettextf("CL = %g", round(center, 4))
@@ -707,7 +695,7 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  if (length(UCL) == 1){
+  if (!stepped) {
     dfLabel <- data.frame(
       x = max(xLimits) * .95,
       y = c(center, UCL, LCL),
@@ -717,28 +705,27 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
         gettextf("LCL = %g",   round(LCL, 5))
       )
     )
-    xBreaks <- xBreaks -0.5
 
     p <- p +
       ggplot2::geom_hline(yintercept = c(UCL, LCL), col = "red", linetype = "dashed", size = 1.5) +
       ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
       ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
       .attributesLine(sampleNumbers, data = data_plot, ggplot2::aes(x = subgroups, y = P),col = "blue") +
-      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue'))
+      .attributesPoint(axisLabels, data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue'))
   } else{
-    n <- length(UCL)
-    p <- p + ggplot2::geom_step(ggplot2::aes(x = subgroups, y = UCL, col = "red"), size = 1.5, linetype = "F1") +
-      .attributesLine(sampleNumbers, ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),col = "blue") +
-      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, 'red', 'blue')) +
-      ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = xBreaks - 0.5) +
-      ggplot2::geom_step(ggplot2::aes(x = subgroups, y = LCL, col = "red"), size = 1.5, linetype = "F1") +
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = UCL[n], col = "red"), size = 1.5)+
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = LCL[n], col = "red"), size = 1.5)
+    upper <- .attributesLimitSteps(subgroups, UCL)
+    lower <- .attributesLimitSteps(subgroups, LCL)
+    p <- p + upper$steps +
+      .attributesLine(sampleNumbers, ggplot2::aes(x = subgroups, y = P), data = data_plot, col = "blue") +
+      .attributesPoint(axisLabels, ggplot2::aes(x = subgroups, y = P), data = data_plot, size = 4,
+                       fill = ifelse(.attributesTests(sixsigma, sampleNumbers)$red_points, "red", "blue")) +
+      ggplot2::scale_x_continuous(name = gettext("Sample"), breaks = xBreaks, limits = range(xLimits)) +
+      lower$steps + upper$ends + lower$ends
 
   }
 
   if (!is.null(axisLabels))
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, xBreaks))
+    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = .attributesSampleLabels(axisLabels, sampleNumbers, xBreaks))
 
   return(list(p = p, sixsigma = sixsigma))
 }
@@ -780,11 +767,44 @@ attributesChartsInternal <- function(jaspResults, dataset, options) {
   list(red_points = redPoints, Rules = flagged)
 }
 
-# Breaks can be thinned or shifted by half a sample for stepped limits.
-.attributesSampleLabels <- function(labels, breaks, offset = 0L) {
-  labels <- as.character(labels)[floor(breaks + 1e-8) + offset]
+# Center the limits around each sample. Stop the steps at gaps and extend the
+# last limit of each run to the right edge of its sample.
+.attributesLimitSteps <- function(samples, limits) {
+  run <- cumsum(c(TRUE, diff(samples) != 1L))
+  last <- which(!duplicated(run, fromLast = TRUE))
+  steps <- data.frame(x = samples - 0.5, limit = limits, run = run)
+  ends <- data.frame(x = rep(samples[last], each = 2L) + c(-0.5, 0.5),
+                     limit = rep(limits[last], each = 2L), run = rep(run[last], each = 2L))
+  mapping <- ggplot2::aes(x = x, y = limit, group = run, col = "red")
+  list(steps = ggplot2::geom_step(mapping, data = steps, linewidth = 1.5, linetype = "F1"),
+       ends = ggplot2::geom_step(mapping, data = ends, linewidth = 1.5))
+}
+
+.attributesAxisBreaks <- function(samples) {
+  if (length(samples) > 60L)
+    c(min(samples), jaspGraphs::getPrettyAxisBreaks(samples)[-1L])
+  else
+    samples
+}
+
+.attributesSampleLabels <- function(labels, sampleNumbers, breaks) {
+  labels <- labels[match(breaks, sampleNumbers)]
   labels[is.na(labels)] <- ""
   labels
+}
+
+.attributesPoint <- function(labels, ...) {
+  point <- jaspGraphs::geom_point(...)
+  if (!is.null(labels)) {
+    label <- gsub("&", "&amp;", labels, fixed = TRUE)
+    label <- gsub("<", "&lt;", label, fixed = TRUE)
+    label <- gsub(">", "&gt;", label, fixed = TRUE)
+    hover <- paste0(gettext("Sample"), ": ", label)
+    mapping <- if (is.null(point$mapping)) ggplot2::aes() else point$mapping
+    mapping$text <- ggplot2::aes(text = hover)$text
+    point$mapping <- mapping
+  }
+  point
 }
 
 .Check_equal_samples <- function(dataset,options) {

@@ -60,8 +60,8 @@ test_that("X-mR chart colours every point listed in its test tables", {
   expect_equal(unlist(lapply(iTable$data, `[[`, "test8")), 8)
   expect_equal(.redFill(plot$subplots[[1]]), c(8L, 23L, 24L, 25L, 26L))
   expect_equal(.redFill(plot$subplots[[1]]), as.integer(.redFlagged(iTable)))
-  # moving range i is drawn at x = i and belongs to sample i + 1, which the axis and the test table name
-  expect_equal(.redFill(plot$subplots[[2]]) + 1L, as.integer(.redFlagged(tables$NelsonTableIMR_NelsonTableMR)))
+  # Moving ranges are plotted at the later sample.
+  expect_equal(.redFill(plot$subplots[[2]]), as.integer(.redFlagged(tables$NelsonTableIMR_NelsonTableMR)))
 })
 
 test_that("a p chart can render with one subgroup", {

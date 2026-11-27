@@ -167,5 +167,5 @@ test_that("a missing sample interrupts the Nelson shift test", {
   rows <- result$results$NelsonTable$data
   expect_false(any(vapply(rows, function(row) !is.null(row$test2), logical(1))))
   plot <- result$state$figures[[result$results$PchartPlot$data]]$obj
-  expect_identical(plot$scales$get_scales("x")$labels, as.character(which(!is.na(counts))))
+  expect_equal(plot$scales$get_scales("x")$breaks, which(!is.na(counts)))
 })

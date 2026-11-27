@@ -1473,14 +1473,14 @@ msgid "Number of distinct categories = %i"
 msgstr "Aantal verschillende categorieën = %i"
 
 #, fuzzy
-msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %i"
+msgid "Study Variation is calculated as std. dev. <span>&#215;</span> %i"
 msgstr ""
-"Studievariatie wordt berekend als Std. Afwijking <spam>&#215;</spam> %i"
+"Studievariatie wordt berekend als Std. Afwijking <span>&#215;</span> %i"
 
 #, fuzzy
-msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
+msgid "Study Variation is calculated as std. dev. <span>&#215;</span> %.2f"
 msgstr ""
-"Studievariatie wordt berekend als Std. Afwijking <spam>&#215;</spam> %.2f"
+"Studievariatie wordt berekend als Std. Afwijking <span>&#215;</span> %.2f"
 
 #, fuzzy
 msgid ""
@@ -1503,14 +1503,14 @@ msgid "Two-way Analysis of Variance table without interaction"
 msgstr "Two-way ANOVA Tabel zonder Interactie"
 
 #, fuzzy
-msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
+msgid "Study variation is calculated as std. dev. <span>&#215;</span> %i"
 msgstr ""
-"Studievariatie wordt berekend als Std. Afwijking <spam>&#215;</spam> %i"
+"Studievariatie wordt berekend als Std. Afwijking <span>&#215;</span> %i"
 
 #, fuzzy
-msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
+msgid "Study variation is calculated as std. dev. <span>&#215;</span> %.2f"
 msgstr ""
-"Studievariatie wordt berekend als Std. Afwijking <spam>&#215;</spam> %.2f"
+"Studievariatie wordt berekend als Std. Afwijking <span>&#215;</span> %.2f"
 
 #, fuzzy
 msgid "Components of variation"
