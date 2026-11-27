@@ -132,3 +132,40 @@ test_that("valid np data retain observations and binomial control limits", {
   actualLimits <- unlist(lapply(built[limitIndices], function(layer) layer$yintercept), use.names = FALSE)
   expect_equal(sort(actualLimits), sort(expectedLimits))
 })
+
+test_that("moving-range charts require consecutive complete samples", {
+  charts <- list(c("xmr", "xmr"), c("defectives", "laneyPPrimeChart"), c("defects", "laneyUPrimeChart"))
+  for (chart in charts) {
+    for (counts in list(c(3, NA, NA), c(3, NA, 6))) {
+      result <- .acvRun(counts, family = chart[1], chart = chart[2])
+      expect_identical(result$status, "validationError")
+      expect_match(result$results$errorMessage, "At least two consecutive samples")
+    }
+  }
+})
+
+test_that("Laney limits use moving ranges within consecutive samples", {
+  samples <- c(1L, 2L, 4L, 5L)
+  data <- data.frame(count = c(2, 3, 7, 6), size = 10)
+  options <- list(defectiveOrDefect = "count", total = "size")
+  rates <- data$count / data$size
+  center <- sum(data$count) / sum(data$size)
+  for (binomial in c(TRUE, FALSE)) {
+    chart <- if (binomial) jaspQualityControl:::.LanyP else jaspQualityControl:::.LanyU
+    standardError <- sqrt(center * (if (binomial) 1 - center else 1) / data$size)
+    z <- (rates - center) / standardError
+    sigma <- mean(c(abs(z[2] - z[1]), abs(z[4] - z[3]))) / 1.128
+    fit <- chart(data, options, samples, NULL)$sixsigma
+    expect_equal(fit$limits$UCL, center + 3 * standardError * sigma)
+  }
+})
+
+test_that("a missing sample interrupts the Nelson shift test", {
+  counts <- c(rep(2, 4), NA, rep(2, 3), rep(3, 6))
+  result <- .acvRun(counts, rep(10, length(counts)), "defectives", "pChart")
+  expect_identical(result$status, "complete")
+  rows <- result$results$NelsonTable$data
+  expect_false(any(vapply(rows, function(row) !is.null(row$test2), logical(1))))
+  plot <- result$state$figures[[result$results$PchartPlot$data]]$obj
+  expect_identical(plot$scales$get_scales("x")$labels, as.character(which(!is.na(counts))))
+})

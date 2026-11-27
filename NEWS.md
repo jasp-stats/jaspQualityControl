@@ -35,7 +35,7 @@
 
 ## Fixed
 * Attributes Control Charts with a timestamp and more than 60 samples stopped with "`breaks` and `labels` must have the same length". The thinned axis now shows the timestamps of the samples at its breaks.
-* Attributes Control Charts, X-mR chart: the moving range test table and the timestamp labels of the moving range chart named the first of the two samples of a moving range; they now name the second one, as the sample numbers on the axis already did.
+* Attributes Control Charts keep the original sample numbers when rows are omitted. Gaps interrupt the tests for runs and trends. X-mR and Laney charts estimate moving ranges from consecutive complete samples, and the X-mR plot and test table identify each moving range by the later sample.
 * Process Capability Study: the note on observations without a subgroup read "Removed NA observation(s)" when the subgroup column had empty cells; it now gives the number.
 * Variables Charts for Subgroups and Process Capability Study with a manual subgroup size or in wide format: empty rows after the last measurement (e.g. below a measurement column that is shorter than the other columns) no longer appear as empty subgroups at the end of the chart. Rows that name a stage or an axis label are kept.
 * Control chart, process capability and Gauge r&R reports with an empty panel (e.g. a non-normal capability study with stages, or an X-mR report without report metadata) and the Gauge r&R matrix plot for three or more operators could not be converted to an interactive plot ("The length of the widths argument must be equal to the number of columns"). Their blank panels and the hidden axis titles of the matrix plot now convert; the static plots are unchanged.

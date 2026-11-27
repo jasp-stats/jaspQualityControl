@@ -1,10 +1,10 @@
 context("Attributes charts timestamp labels")
 
-.actRun <- function(data, family, chart = "pChart") {
+.actRun <- function(data, family, chart = "pChart", timeStamp = "lot") {
   options <- jaspTools::analysisOptions("attributesCharts")
   options$defectiveOrDefect <- "count"
   options$total <- "size"
-  options$timeStamp <- "lot"
+  options$timeStamp <- timeStamp
   options$attributesChart <- family
   options$attributesChartDefectivesChartType <- if (family == "defectives") chart else "npChart"
   options$attributesChartDefectsChartType <- if (family == "defects") chart else "cChart"
@@ -50,4 +50,25 @@ test_that("X-mR moving ranges are labelled with the later of their two samples",
   result <- jaspTools::runAnalysis("attributesCharts", data[c("count", "size")], options, view = FALSE)
   mrTable <- result$results$NelsonTableIMR$collection$NelsonTableIMR_NelsonTableMR$data
   expect_equal(vapply(mrTable, function(row) as.numeric(row$test1), numeric(1)), c(7, 8))
+})
+
+test_that("X-mR skips moving ranges across missing samples and keeps source labels", {
+  counts <- c(rep(3, 6), NA, 20, 3, 3, 3)
+  data <- data.frame(count = counts, size = 50, lot = LETTERS[seq_along(counts)])
+  for (timeStamp in c("", "lot")) {
+    result <- .actRun(data, "xmr", timeStamp = timeStamp)
+    expect_identical(result$status, "complete")
+    mrTable <- result$results$NelsonTableIMR$collection$NelsonTableIMR_NelsonTableMR$data
+    expectedSignal <- if (timeStamp == "") 9 else "I"
+    expect_equal(lapply(mrTable, function(row) row$test1), list(expectedSignal))
+
+    mrPlot <- result$state$figures[[result$results$IPlotA$data]]$obj$subplots[[2]]
+    expect_equal(mrPlot$data$subgroups, c(1:5, 7:9))
+    expect_equal(mrPlot$data$data, c(rep(0, 5), 0.34, 0, 0))
+    expectedLabels <- if (timeStamp == "") as.character(c(2:6, 8:11)) else LETTERS[c(2:6, 8:11)]
+    expect_identical(mrPlot$scales$get_scales("x")$labels, expectedLabels)
+    built <- ggplot2::ggplot_build(mrPlot)
+    line <- which(vapply(mrPlot$layers, function(layer) inherits(layer$geom, "GeomLine"), logical(1)))[1]
+    expect_equal(length(unique(built$data[[line]]$group)), 2L)
+  }
 })

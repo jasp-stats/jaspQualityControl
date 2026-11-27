@@ -71,6 +71,8 @@ test_that("the capability study note counts the observations without a subgroup"
   options$measurementLongFormat <- "y"
   options$subgroupSizeType <- "groupingVariable"
   options$subgroup <- "lot"
+  options$manualSubgroupSizeValue <- 5
+  options$probabilityPlotRankMethod <- "bernard"
   data <- data.frame(y = c(.trailingValues, NA, NA), lot = c(rep(sprintf("L%d", 1:5), each = 5), NA, NA))
   results <- jaspTools::runAnalysis("processCapabilityStudies", data, options, view = FALSE)
   note <- results[["results"]][["xBar"]][["collection"]][["xBar_plotNote"]][["text"]]
