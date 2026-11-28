@@ -116,7 +116,7 @@ variablesChartsSubgroupsInternal <- function(jaspResults, dataset, options) {
   }
 
   # Check if all subgroups are of size 1 and return error if yes
-  if (all(apply(dataset[measurements], 1, function(x) length(x) <= 1))) {
+  if (all(rowSums(!is.na(dataset[measurements])) <= 1)) {
     plot <- createJaspPlot(title = gettext("Control charts"), width = 700, height = 400)
     plot$setError(gettext("All subgroups are of size 1. Variables charts for subgroups cannot be calculated. Use variables charts for individuals."))
     jaspResults[["plot"]] <- plot

@@ -393,9 +393,14 @@ results <- runAnalysis("variablesChartsSubgroups",
                        options)
 
 test_that("LF19. X-bar & R control chart with all but one missing value in measurement", {
-  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart9")
+  # No subgroup has enough observed measurements to estimate within-subgroup variation.
+  plot <- results[["results"]][["plot"]]
+  expect_identical(plot[["status"]], "error")
+  expect_identical(plot[["error"]][["errorMessage"]],
+                   paste("All subgroups are of size 1.",
+                         "Variables charts for subgroups cannot be calculated.",
+                         "Use variables charts for individuals."))
+  expect_null(results[["results"]][["controlCharts"]])
 })
 
 ##### x-bar & s chart ####
@@ -409,9 +414,14 @@ results <- runAnalysis("variablesChartsSubgroups",
                        options)
 
 test_that("LF20. X-bar & s control chart with all but one missing value in measurement", {
-  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart9")
+  # No subgroup has enough observed measurements to estimate within-subgroup variation.
+  plot <- results[["results"]][["plot"]]
+  expect_identical(plot[["status"]], "error")
+  expect_identical(plot[["error"]][["errorMessage"]],
+                   paste("All subgroups are of size 1.",
+                         "Variables charts for subgroups cannot be calculated.",
+                         "Use variables charts for individuals."))
+  expect_null(results[["results"]][["controlCharts"]])
 })
 
 #### All values missing ####
