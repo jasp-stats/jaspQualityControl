@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-11-21 03:40\n"
+"POT-Creation-Date: 2026-11-28 03:40\n"
 "PO-Revision-Date: 2026-11-01 08:51+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
@@ -62,6 +62,21 @@ msgstr "指数加权移动平均控制图"
 
 msgid "Attributes Control Charts"
 msgstr "属性控制图"
+
+msgid "Removed %i observation(s) with missing values."
+msgstr "已移除 %i 个含缺失值的观测。"
+
+msgid "Note."
+msgstr ""
+
+#, fuzzy
+msgid "No observations remain after removing rows with missing values."
+msgstr "已移除 %i 个含缺失值的观测。"
+
+msgid ""
+"At least two consecutive samples with complete data are required to estimate "
+"moving ranges."
+msgstr ""
 
 msgid "Defective item and defect counts must be nonnegative integers."
 msgstr ""
@@ -639,10 +654,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Effect = 2 × coefficient in coded (−1/+1) units, not 2 × the coefficient "
-"shown: the change in the response when a term goes from its −1 to its +1 "
-"setting. For discrete predictors the sign follows the level shown in the "
-"Discrete Predictor Levels table."
+"Effect = 2 × coefficient with continuous predictors in coded (−1/+1) units. "
+"For discrete predictors the sign follows the level shown in the Discrete "
+"Predictor Levels table, which has contrast +1; the other level has contrast "
+"−1."
 msgstr ""
 
 msgid ""
@@ -1079,6 +1094,11 @@ msgstr "误报率"
 msgid ""
 "The miss rate and false alarm rate need exactly two categories in the "
 "results and the standard."
+msgstr ""
+
+msgid ""
+"The results and the standard must have the same categories to calculate miss "
+"and false alarm rates."
 msgstr ""
 
 msgid ""
@@ -1739,9 +1759,6 @@ msgstr ""
 "Hotelling T² 控制图摘要，包括变量数、观测数、置信水平、控制限以及协方差矩阵的"
 "行列式。"
 
-msgid "Removed %i observation(s) with missing values."
-msgstr "已移除 %i 个含缺失值的观测。"
-
 msgid "Phase"
 msgstr "阶段"
 
@@ -1930,6 +1947,10 @@ msgstr "概率图"
 msgid "Process capability tables"
 msgstr "过程能力"
 
+#, fuzzy
+msgid "Some process capability estimates are unavailable"
+msgstr "过程能力"
+
 msgid "X-bar & %s control chart"
 msgstr "X̄ 与 %s 控制图"
 
@@ -1945,6 +1966,9 @@ msgstr "子组大小为 1，无法计算所选控制图。请使用 x-mR 控制�
 
 msgid "X-mR control chart"
 msgstr "单值-移动极差控制图"
+
+msgid "Stage %1$s: %2$s"
+msgstr ""
 
 msgid "%1$s chart not shown. %2$s"
 msgstr ""
@@ -2209,6 +2233,10 @@ msgstr "形状 (%1$s)"
 
 msgid "Threshold"
 msgstr "阈值"
+
+#, fuzzy
+msgid "Distribution fit unavailable for stage %1$s: %2$s"
+msgstr "此图不适用于饱和设计。"
 
 msgid "Calculations based on %s distribution."
 msgstr "基于%s 分布的计算。"
@@ -2885,9 +2913,6 @@ msgstr[0] ""
 
 #~ msgid "Could not equally divide data points into groups of size %i."
 #~ msgstr "无法将数据点平均划分为大小为 %i 的组。"
-
-#~ msgid "This plot is unavailable for saturated designs."
-#~ msgstr "此图不适用于饱和设计。"
 
 #~ msgid "Residuals vs. Standard Order"
 #~ msgstr "残差 vs. 标准秩次"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspQualityControl 0.98.5\n"
-"POT-Creation-Date: 2026-11-21 03:40\n"
+"Project-Id-Version: jaspQualityControl 0.98.6\n"
+"POT-Creation-Date: 2026-11-28 03:40\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,6 +57,18 @@ msgid "Exponentially weighted moving average chart"
 msgstr ""
 
 msgid "Attributes Control Charts"
+msgstr ""
+
+msgid "Removed %i observation(s) with missing values."
+msgstr ""
+
+msgid "Note."
+msgstr ""
+
+msgid "No observations remain after removing rows with missing values."
+msgstr ""
+
+msgid "At least two consecutive samples with complete data are required to estimate moving ranges."
 msgstr ""
 
 msgid "Defective item and defect counts must be nonnegative integers."
@@ -533,7 +545,7 @@ msgstr ""
 msgid "Effect = 2 × coefficient: the change in the response when a term goes from its −1 to its +1 setting."
 msgstr ""
 
-msgid "Effect = 2 × coefficient in coded (−1/+1) units, not 2 × the coefficient shown: the change in the response when a term goes from its −1 to its +1 setting. For discrete predictors the sign follows the level shown in the Discrete Predictor Levels table."
+msgid "Effect = 2 × coefficient with continuous predictors in coded (−1/+1) units. For discrete predictors the sign follows the level shown in the Discrete Predictor Levels table, which has contrast +1; the other level has contrast −1."
 msgstr ""
 
 msgid "Not shown for squared terms, discrete predictors with more than two levels, blocks, and covariates."
@@ -909,6 +921,9 @@ msgid "False alarm rate"
 msgstr ""
 
 msgid "The miss rate and false alarm rate need exactly two categories in the results and the standard."
+msgstr ""
+
+msgid "The results and the standard must have the same categories to calculate miss and false alarm rates."
 msgstr ""
 
 msgid "Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false alarm rate)"
@@ -1496,9 +1511,6 @@ msgstr ""
 msgid "Summary of the Hotelling T² control chart, including the number of variables, observations, confidence level, control limits, and the determinant of the covariance matrix."
 msgstr ""
 
-msgid "Removed %i observation(s) with missing values."
-msgstr ""
-
 msgid "Phase"
 msgstr ""
 
@@ -1664,6 +1676,9 @@ msgstr ""
 msgid "Process capability tables"
 msgstr ""
 
+msgid "Some process capability estimates are unavailable"
+msgstr ""
+
 msgid "X-bar & %s control chart"
 msgstr ""
 
@@ -1674,6 +1689,9 @@ msgid "Subgroup size is 1, calculation of selected control chart not possible. U
 msgstr ""
 
 msgid "X-mR control chart"
+msgstr ""
+
+msgid "Stage %1$s: %2$s"
 msgstr ""
 
 msgid "%1$s chart not shown. %2$s"
@@ -1905,6 +1923,9 @@ msgid "Shape (%1$s)"
 msgstr ""
 
 msgid "Threshold"
+msgstr ""
+
+msgid "Distribution fit unavailable for stage %1$s: %2$s"
 msgstr ""
 
 msgid "Calculations based on %s distribution."

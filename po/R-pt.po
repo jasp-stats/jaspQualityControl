@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2026-11-21 03:40\n"
+"POT-Creation-Date: 2026-11-28 03:40\n"
 "PO-Revision-Date: 2026-01-28 10:47+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
@@ -65,6 +65,24 @@ msgstr "Gráfico de média móvel ponderada exponencialmente"
 
 msgid "Attributes Control Charts"
 msgstr "Gráficos de Controle de Atributos"
+
+#, fuzzy
+msgid "Removed %i observation(s) with missing values."
+msgstr ""
+"%i observações removidas que não foram atribuídas a nenhum subgrupo.<br>"
+
+msgid "Note."
+msgstr ""
+
+#, fuzzy
+msgid "No observations remain after removing rows with missing values."
+msgstr ""
+"%i observações removidas que não foram atribuídas a nenhum subgrupo.<br>"
+
+msgid ""
+"At least two consecutive samples with complete data are required to estimate "
+"moving ranges."
+msgstr ""
 
 msgid "Defective item and defect counts must be nonnegative integers."
 msgstr ""
@@ -648,10 +666,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Effect = 2 × coefficient in coded (−1/+1) units, not 2 × the coefficient "
-"shown: the change in the response when a term goes from its −1 to its +1 "
-"setting. For discrete predictors the sign follows the level shown in the "
-"Discrete Predictor Levels table."
+"Effect = 2 × coefficient with continuous predictors in coded (−1/+1) units. "
+"For discrete predictors the sign follows the level shown in the Discrete "
+"Predictor Levels table, which has contrast +1; the other level has contrast "
+"−1."
 msgstr ""
 
 msgid ""
@@ -1089,6 +1107,11 @@ msgstr "Taxa de alarme falso"
 msgid ""
 "The miss rate and false alarm rate need exactly two categories in the "
 "results and the standard."
+msgstr ""
+
+msgid ""
+"The results and the standard must have the same categories to calculate miss "
+"and false alarm rates."
 msgstr ""
 
 msgid ""
@@ -1781,11 +1804,6 @@ msgid ""
 "determinant of the covariance matrix."
 msgstr ""
 
-#, fuzzy
-msgid "Removed %i observation(s) with missing values."
-msgstr ""
-"%i observações removidas que não foram atribuídas a nenhum subgrupo.<br>"
-
 msgid "Phase"
 msgstr ""
 
@@ -1983,6 +2001,10 @@ msgstr "Gráfico de probabilidade"
 msgid "Process capability tables"
 msgstr "Capacidade do processo"
 
+#, fuzzy
+msgid "Some process capability estimates are unavailable"
+msgstr "Capacidade do processo"
+
 msgid "X-bar & %s control chart"
 msgstr "Gráfico de controle X-barra & %s"
 
@@ -2002,6 +2024,9 @@ msgstr ""
 
 msgid "X-mR control chart"
 msgstr "Gráfico de controle X-mR"
+
+msgid "Stage %1$s: %2$s"
+msgstr ""
 
 msgid "%1$s chart not shown. %2$s"
 msgstr ""
@@ -2287,6 +2312,9 @@ msgstr "Forma (%1$s)"
 
 msgid "Threshold"
 msgstr "Limiar"
+
+msgid "Distribution fit unavailable for stage %1$s: %2$s"
+msgstr ""
 
 msgid "Calculations based on %s distribution."
 msgstr "Cálculos baseados na distribuição %s."

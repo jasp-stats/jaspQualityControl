@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-11-21 03:40\n"
+"POT-Creation-Date: 2026-11-28 03:40\n"
 "PO-Revision-Date: 2026-10-14 19:51+0000\n"
 "Last-Translator: Johannes Keyser "
 "<jokeyser@users.noreply.hosted.weblate.org>\n"
@@ -67,6 +67,20 @@ msgstr "Exponentiell-gewichteter-gleitender-Mittelwert-Karte"
 
 msgid "Attributes Control Charts"
 msgstr "Attribut-Regelkarten"
+
+msgid "Removed %i observation(s) with missing values."
+msgstr ""
+
+msgid "Note."
+msgstr ""
+
+msgid "No observations remain after removing rows with missing values."
+msgstr ""
+
+msgid ""
+"At least two consecutive samples with complete data are required to estimate "
+"moving ranges."
+msgstr ""
 
 msgid "Defective item and defect counts must be nonnegative integers."
 msgstr ""
@@ -645,10 +659,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Effect = 2 × coefficient in coded (−1/+1) units, not 2 × the coefficient "
-"shown: the change in the response when a term goes from its −1 to its +1 "
-"setting. For discrete predictors the sign follows the level shown in the "
-"Discrete Predictor Levels table."
+"Effect = 2 × coefficient with continuous predictors in coded (−1/+1) units. "
+"For discrete predictors the sign follows the level shown in the Discrete "
+"Predictor Levels table, which has contrast +1; the other level has contrast "
+"−1."
 msgstr ""
 
 msgid ""
@@ -1097,6 +1111,11 @@ msgstr ""
 msgid ""
 "The miss rate and false alarm rate need exactly two categories in the "
 "results and the standard."
+msgstr ""
+
+msgid ""
+"The results and the standard must have the same categories to calculate miss "
+"and false alarm rates."
 msgstr ""
 
 msgid ""
@@ -1800,9 +1819,6 @@ msgid ""
 "determinant of the covariance matrix."
 msgstr ""
 
-msgid "Removed %i observation(s) with missing values."
-msgstr ""
-
 msgid "Phase"
 msgstr ""
 
@@ -1997,6 +2013,10 @@ msgid "Process capability tables"
 msgstr "Wahrscheinlichkeitstabelle und -diagramm"
 
 #, fuzzy
+msgid "Some process capability estimates are unavailable"
+msgstr "Wahrscheinlichkeitstabelle und -diagramm"
+
+#, fuzzy
 msgid "X-bar & %s control chart"
 msgstr "X-quer & s-Kontrollkarte"
 
@@ -2011,6 +2031,9 @@ msgid ""
 msgstr ""
 
 msgid "X-mR control chart"
+msgstr ""
+
+msgid "Stage %1$s: %2$s"
 msgstr ""
 
 msgid "%1$s chart not shown. %2$s"
@@ -2279,6 +2302,10 @@ msgstr ""
 
 msgid "Threshold"
 msgstr ""
+
+#, fuzzy
+msgid "Distribution fit unavailable for stage %1$s: %2$s"
+msgstr "Dieses Diagramm ist für gesättigte Designs nicht verfügbar."
 
 msgid "Calculations based on %s distribution."
 msgstr ""
@@ -2801,9 +2828,6 @@ msgstr[1] ""
 #~ msgstr ""
 #~ "Diagramm unmöglich: Das Experiment ist kein vollständiges faktorielles "
 #~ "Design."
-
-#~ msgid "This plot is unavailable for saturated designs."
-#~ msgstr "Dieses Diagramm ist für gesättigte Designs nicht verfügbar."
 
 #~ msgid "Residuals vs. Standard Order"
 #~ msgstr "Residuen vs. Standard-Reihenfolge"

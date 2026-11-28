@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
-"POT-Creation-Date: 2026-11-21 03:40\n"
+"POT-Creation-Date: 2026-11-28 03:40\n"
 "PO-Revision-Date: 2026-03-22 14:09+0000\n"
 "Last-Translator: தமிழ்நேரம் <tamilneram247@gmail.com>\n"
 "Language-Team: Tamil <https://hosted.weblate.org/projects/jasp/"
@@ -64,6 +64,22 @@ msgstr "அதிவேக எடையுள்ள நகரும் சரா
 
 msgid "Attributes Control Charts"
 msgstr "பண்புக்கூறுகள் கட்டுப்பாட்டு விளக்கப்படங்கள்"
+
+#, fuzzy
+msgid "Removed %i observation(s) with missing values."
+msgstr "எந்த துணைக்குழுவிற்கும் ஒதுக்கப்படாத %i கண்காணிப்பு(கள்) அகற்றப்பட்டது.<br>"
+
+msgid "Note."
+msgstr ""
+
+#, fuzzy
+msgid "No observations remain after removing rows with missing values."
+msgstr "எந்த துணைக்குழுவிற்கும் ஒதுக்கப்படாத %i கண்காணிப்பு(கள்) அகற்றப்பட்டது.<br>"
+
+msgid ""
+"At least two consecutive samples with complete data are required to estimate "
+"moving ranges."
+msgstr ""
 
 msgid "Defective item and defect counts must be nonnegative integers."
 msgstr ""
@@ -645,10 +661,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Effect = 2 × coefficient in coded (−1/+1) units, not 2 × the coefficient "
-"shown: the change in the response when a term goes from its −1 to its +1 "
-"setting. For discrete predictors the sign follows the level shown in the "
-"Discrete Predictor Levels table."
+"Effect = 2 × coefficient with continuous predictors in coded (−1/+1) units. "
+"For discrete predictors the sign follows the level shown in the Discrete "
+"Predictor Levels table, which has contrast +1; the other level has contrast "
+"−1."
 msgstr ""
 
 msgid ""
@@ -1082,6 +1098,11 @@ msgstr "தவறான அலாரம் வீதம்"
 msgid ""
 "The miss rate and false alarm rate need exactly two categories in the "
 "results and the standard."
+msgstr ""
+
+msgid ""
+"The results and the standard must have the same categories to calculate miss "
+"and false alarm rates."
 msgstr ""
 
 msgid ""
@@ -1763,10 +1784,6 @@ msgid ""
 "determinant of the covariance matrix."
 msgstr ""
 
-#, fuzzy
-msgid "Removed %i observation(s) with missing values."
-msgstr "எந்த துணைக்குழுவிற்கும் ஒதுக்கப்படாத %i கண்காணிப்பு(கள்) அகற்றப்பட்டது.<br>"
-
 msgid "Phase"
 msgstr ""
 
@@ -1962,6 +1979,10 @@ msgstr "நிகழ்தகவு சூழ்ச்சி"
 msgid "Process capability tables"
 msgstr "செயல்முறை திறன்"
 
+#, fuzzy
+msgid "Some process capability estimates are unavailable"
+msgstr "செயல்முறை திறன்"
+
 msgid "X-bar & %s control chart"
 msgstr "X-bar & %s கட்டுப்பாட்டு விளக்கப்படம்"
 
@@ -1981,6 +2002,9 @@ msgstr ""
 
 msgid "X-mR control chart"
 msgstr "X-mR கட்டுப்பாட்டு விளக்கப்படம்"
+
+msgid "Stage %1$s: %2$s"
+msgstr ""
 
 msgid "%1$s chart not shown. %2$s"
 msgstr ""
@@ -2263,6 +2287,9 @@ msgstr "வடிவம் (%1$s)"
 
 msgid "Threshold"
 msgstr "வாசல்"
+
+msgid "Distribution fit unavailable for stage %1$s: %2$s"
+msgstr ""
 
 msgid "Calculations based on %s distribution."
 msgstr "%s விநியோகத்தின் அடிப்படையில் கணக்கீடுகள்."

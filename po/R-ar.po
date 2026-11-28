@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.98.2\n"
-"POT-Creation-Date: 2026-11-21 03:40\n"
+"POT-Creation-Date: 2026-11-28 03:40\n"
 "PO-Revision-Date: 2026-11-12 10:35+0000\n"
 "Last-Translator: Fahad Mahfouz Al-Subhi "
 "<fahadalsubhi@users.noreply.hosted.weblate.org>\n"
@@ -65,6 +65,21 @@ msgstr "خريطة المتوسط المتحرك الموزون أُسّيًا"
 
 msgid "Attributes Control Charts"
 msgstr "مخططات ضبط الصفات"
+
+msgid "Removed %i observation(s) with missing values."
+msgstr "أُزيلت %i من المشاهدات التي تحتوي على قيم مفقودة."
+
+msgid "Note."
+msgstr ""
+
+#, fuzzy
+msgid "No observations remain after removing rows with missing values."
+msgstr "أُزيلت %i من المشاهدات التي تحتوي على قيم مفقودة."
+
+msgid ""
+"At least two consecutive samples with complete data are required to estimate "
+"moving ranges."
+msgstr ""
 
 msgid "Defective item and defect counts must be nonnegative integers."
 msgstr ""
@@ -646,10 +661,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Effect = 2 × coefficient in coded (−1/+1) units, not 2 × the coefficient "
-"shown: the change in the response when a term goes from its −1 to its +1 "
-"setting. For discrete predictors the sign follows the level shown in the "
-"Discrete Predictor Levels table."
+"Effect = 2 × coefficient with continuous predictors in coded (−1/+1) units. "
+"For discrete predictors the sign follows the level shown in the Discrete "
+"Predictor Levels table, which has contrast +1; the other level has contrast "
+"−1."
 msgstr ""
 
 msgid ""
@@ -1090,6 +1105,11 @@ msgstr "معدل الإنذارات الكاذبة"
 msgid ""
 "The miss rate and false alarm rate need exactly two categories in the "
 "results and the standard."
+msgstr ""
+
+msgid ""
+"The results and the standard must have the same categories to calculate miss "
+"and false alarm rates."
 msgstr ""
 
 msgid ""
@@ -1765,9 +1785,6 @@ msgstr ""
 "ملخص لخريطة الضبط T² لهوتلنغ، يشمل عدد المتغيرات والمشاهدات ومستوى الثقة "
 "وحدود الضبط ومحدِّد مصفوفة التغاير."
 
-msgid "Removed %i observation(s) with missing values."
-msgstr "أُزيلت %i من المشاهدات التي تحتوي على قيم مفقودة."
-
 msgid "Phase"
 msgstr "المرحلة"
 
@@ -1959,6 +1976,10 @@ msgstr "مخطط الاحتمال"
 msgid "Process capability tables"
 msgstr "مقدرة العملية"
 
+#, fuzzy
+msgid "Some process capability estimates are unavailable"
+msgstr "مقدرة العملية"
+
 msgid "X-bar & %s control chart"
 msgstr "خريطة ضبط X-bar و%s"
 
@@ -1978,6 +1999,9 @@ msgstr ""
 
 msgid "X-mR control chart"
 msgstr "خريطة ضبط X-mR"
+
+msgid "Stage %1$s: %2$s"
+msgstr ""
 
 msgid "%1$s chart not shown. %2$s"
 msgstr ""
@@ -2247,6 +2271,9 @@ msgstr "الشكل (%1$s)"
 
 msgid "Threshold"
 msgstr "العتبة"
+
+msgid "Distribution fit unavailable for stage %1$s: %2$s"
+msgstr ""
 
 msgid "Calculations based on %s distribution."
 msgstr "تستند الحسابات إلى توزيع %s."

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
-"POT-Creation-Date: 2026-11-21 03:40\n"
+"POT-Creation-Date: 2026-11-28 03:40\n"
 "PO-Revision-Date: 2025-12-31 12:01+0000\n"
 "Last-Translator: Marko Bojović <bojovicmarko@outlook.com>\n"
 "Language-Team: Serbian <https://hosted.weblate.org/projects/jasp/"
@@ -64,6 +64,20 @@ msgid "Exponentially weighted moving average chart"
 msgstr ""
 
 msgid "Attributes Control Charts"
+msgstr ""
+
+msgid "Removed %i observation(s) with missing values."
+msgstr ""
+
+msgid "Note."
+msgstr ""
+
+msgid "No observations remain after removing rows with missing values."
+msgstr ""
+
+msgid ""
+"At least two consecutive samples with complete data are required to estimate "
+"moving ranges."
 msgstr ""
 
 msgid "Defective item and defect counts must be nonnegative integers."
@@ -619,10 +633,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Effect = 2 × coefficient in coded (−1/+1) units, not 2 × the coefficient "
-"shown: the change in the response when a term goes from its −1 to its +1 "
-"setting. For discrete predictors the sign follows the level shown in the "
-"Discrete Predictor Levels table."
+"Effect = 2 × coefficient with continuous predictors in coded (−1/+1) units. "
+"For discrete predictors the sign follows the level shown in the Discrete "
+"Predictor Levels table, which has contrast +1; the other level has contrast "
+"−1."
 msgstr ""
 
 msgid ""
@@ -1047,6 +1061,11 @@ msgstr ""
 msgid ""
 "The miss rate and false alarm rate need exactly two categories in the "
 "results and the standard."
+msgstr ""
+
+msgid ""
+"The results and the standard must have the same categories to calculate miss "
+"and false alarm rates."
 msgstr ""
 
 msgid ""
@@ -1689,9 +1708,6 @@ msgid ""
 "determinant of the covariance matrix."
 msgstr ""
 
-msgid "Removed %i observation(s) with missing values."
-msgstr ""
-
 msgid "Phase"
 msgstr ""
 
@@ -1875,6 +1891,9 @@ msgstr ""
 msgid "Process capability tables"
 msgstr ""
 
+msgid "Some process capability estimates are unavailable"
+msgstr ""
+
 msgid "X-bar & %s control chart"
 msgstr ""
 
@@ -1889,6 +1908,9 @@ msgid ""
 msgstr ""
 
 msgid "X-mR control chart"
+msgstr ""
+
+msgid "Stage %1$s: %2$s"
 msgstr ""
 
 msgid "%1$s chart not shown. %2$s"
@@ -2143,6 +2165,9 @@ msgid "Shape (%1$s)"
 msgstr ""
 
 msgid "Threshold"
+msgstr ""
+
+msgid "Distribution fit unavailable for stage %1$s: %2$s"
 msgstr ""
 
 msgid "Calculations based on %s distribution."
