@@ -23,8 +23,13 @@ probabilityOfDetection(
   plotHeight = 320,
   plotWidth = 480,
   verticalAsymptotes = list(),
-  xAxisTicksType = "dataBased"
+  xAxisTicksType = "dataBased",
+  ...
 )
+}
+\arguments{
+\item{...}{options that are not an argument of this function: the options of an older version of the
+analysis, to be used together with \code{version}. They are upgraded to the options of this version.}
 }
 \description{
 Probability of Detection

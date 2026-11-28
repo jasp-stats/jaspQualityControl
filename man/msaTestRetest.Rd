@@ -25,8 +25,13 @@ msaTestRetest(
   scatterPlotMeasurementFitLine = TRUE,
   tolerance = FALSE,
   toleranceValue = 1,
-  trafficLightChart = FALSE
+  trafficLightChart = FALSE,
+  ...
 )
+}
+\arguments{
+\item{...}{options that are not an argument of this function: the options of an older version of the
+analysis, to be used together with \code{version}. They are upgraded to the options of this version.}
 }
 \description{
 Test-retest (Range method)

@@ -80,8 +80,13 @@ msaGaugeRR(
   trafficLightChart = FALSE,
   type3 = FALSE,
   varianceComponentsGraph = TRUE,
-  xBarChart = FALSE
+  xBarChart = FALSE,
+  ...
 )
+}
+\arguments{
+\item{...}{options that are not an argument of this function: the options of an older version of the
+analysis, to be used together with \code{version}. They are upgraded to the options of this version.}
 }
 \description{
 Type 2 and 3 Gauge r&R Study

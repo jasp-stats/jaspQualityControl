@@ -23,6 +23,8 @@
 #'    Defaults to \code{FALSE}.
 #' @param stagesLongFormat, Column that assigns a stage to each subgroup. A new stage starts each time the stage value changes from one row to the next, so a recurring value (e.g., A, B, A) forms separate stages, plotted in row order and each with its own limits and estimates.
 #' @param stagesWideFormat, Column that assigns a stage to each subgroup. A new stage starts each time the stage value changes from one row to the next, so a recurring value (e.g., A, B, A) forms separate stages, plotted in row order and each with its own limits and estimates.
+#' @param ... options that are not an argument of this function: the options of an older version of the
+#'   analysis, to be used together with `version`. They are upgraded to the options of this version.
 processCapabilityStudies <- function(
           data = NULL,
           version = "1",
@@ -140,9 +142,15 @@ processCapabilityStudies <- function(
           upperSpecificationLimitValue = 1,
           xBarMovingRangeLength = 2,
           xmrChartMovingRangeLength = 2,
-          xmrChartSpecificationLimits = FALSE) {
+          xmrChartSpecificationLimits = FALSE,
+          ...) {
 
-   options <- mget(names(formals(sys.function())), envir = environment(), inherits = FALSE)
+   options <- mget(setdiff(names(formals(sys.function())), "..."), envir = environment(), inherits = FALSE)
+   options <- c(options, list(...))
+   if (!all(nzchar(names(options))) || anyDuplicated(names(options)))
+      stop("The extra options given to processCapabilityStudies must be named, each name once.")
+   if (...length() > 0L && missing(version))
+      stop("processCapabilityStudies has no option ", paste(names(list(...)), collapse = ", "), ". Options of an older version need the `version` they were written for.")
    options[["data"]] <- NULL
    options[["version"]] <- NULL
 

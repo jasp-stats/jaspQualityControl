@@ -20,7 +20,8 @@ multivariateControlCharts(
   tSquaredValuesTable = FALSE,
   trainingLevel = "",
   tsqColumn = "",
-  variables = list(types = list(), value = list())
+  variables = list(types = list(), value = list()),
+  ...
 )
 }
 \arguments{
@@ -50,6 +51,9 @@ Defaults to \code{FALSE}.}
 \item{trainingLevel, }{Select which level of the stage variable represents the training (in-control) phase. Control limits and the covariance matrix are estimated from this phase only.}
 
 \item{variables, }{Two or more continuous quality characteristics to monitor jointly using a Hotelling T² chart.}
+
+\item{...}{options that are not an argument of this function: the options of an older version of the
+analysis, to be used together with \code{version}. They are upgraded to the options of this version.}
 }
 \description{
 Multivariate Control Charts

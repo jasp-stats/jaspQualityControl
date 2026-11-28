@@ -58,6 +58,8 @@
 #'   \item \code{"runOrderStandard"}: Sort the runs in standard (non-randomized) order.
 #' }
 #' @param selectedDesign2, Select one of the pre-set designs by clicking on it in the table.
+#' @param ... options that are not an argument of this function: the options of an older version of the
+#'   analysis, to be used together with `version`. They are upgraded to the options of this version.
 doeResponseSurfaceMethodology <- function(
           data = NULL,
           version = "1",
@@ -84,9 +86,15 @@ doeResponseSurfaceMethodology <- function(
           selectedCol = -1,
           selectedDesign2 = list(list(levels = list("Row 0", "Row 1"), name = "data 1", values = list(13, 14)), list(levels = list("Row 0", "Row 1"), name = "data 2", values = list(5, 6)), list(levels = list("Row 0", "Row 1"), name = "data 3", values = list(0, 3)), list(levels = list("Row 0", "Row 1"), name = "data 4", values = list(0, 3)), list(levels = list("Row 0", "Row 1"), name = "data 5", values = list(1.414, 1.414))),
           selectedRow = -1,
-          setSeed = FALSE) {
+          setSeed = FALSE,
+          ...) {
 
-   options <- mget(names(formals(sys.function())), envir = environment(), inherits = FALSE)
+   options <- mget(setdiff(names(formals(sys.function())), "..."), envir = environment(), inherits = FALSE)
+   options <- c(options, list(...))
+   if (!all(nzchar(names(options))) || anyDuplicated(names(options)))
+      stop("The extra options given to doeResponseSurfaceMethodology must be named, each name once.")
+   if (...length() > 0L && missing(version))
+      stop("doeResponseSurfaceMethodology has no option ", paste(names(list(...)), collapse = ", "), ". Options of an older version need the `version` they were written for.")
    options[["data"]] <- NULL
    options[["version"]] <- NULL
 

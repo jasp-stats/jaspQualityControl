@@ -51,6 +51,8 @@
 #' @param selectedDesign2, Select one of the pre-set designs by clicking on it in the table.
 #' @param showAliasStructure, Check to display the alias structure of the generated design. Only available for two-level factorial designs with the default generator.
 #'    Defaults to \code{FALSE}.
+#' @param ... options that are not an argument of this function: the options of an older version of the
+#'   analysis, to be used together with `version`. They are upgraded to the options of this version.
 doeFactorial <- function(
           data = NULL,
           version = "1",
@@ -68,7 +70,7 @@ doeFactorial <- function(
           numberOfCategorical = 3,
           plotHeight = 320,
           plotWidth = 480,
-          randomSeed = 596085,
+          randomSeed = 492787,
           replications = 1,
           runOrder = "runOrderRandom",
           seed = 1,
@@ -76,9 +78,15 @@ doeFactorial <- function(
           selectedDesign2 = list(list(levels = list("Row 0", "Row 1"), name = "data 1", values = list(4, 8)), list(levels = list("Row 0", "Row 1"), name = "data 2", values = list(0, 0))),
           selectedRow = -1,
           setSeed = FALSE,
-          showAliasStructure = FALSE) {
+          showAliasStructure = FALSE,
+          ...) {
 
-   options <- mget(names(formals(sys.function())), envir = environment(), inherits = FALSE)
+   options <- mget(setdiff(names(formals(sys.function())), "..."), envir = environment(), inherits = FALSE)
+   options <- c(options, list(...))
+   if (!all(nzchar(names(options))) || anyDuplicated(names(options)))
+      stop("The extra options given to doeFactorial must be named, each name once.")
+   if (...length() > 0L && missing(version))
+      stop("doeFactorial has no option ", paste(names(list(...)), collapse = ", "), ". Options of an older version need the `version` they were written for.")
    options[["data"]] <- NULL
    options[["version"]] <- NULL
 

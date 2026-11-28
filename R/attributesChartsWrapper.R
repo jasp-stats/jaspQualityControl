@@ -19,6 +19,8 @@
 
 #' Control Charts for Attributes
 #'
+#' @param ... options that are not an argument of this function: the options of an older version of the
+#'   analysis, to be used together with `version`. They are upgraded to the options of this version.
 attributesCharts <- function(
           data = NULL,
           version = "1",
@@ -49,9 +51,15 @@ attributesCharts <- function(
           reportTitle = TRUE,
           reportTitleText = "",
           timeStamp = list(types = list(), value = ""),
-          total = list(types = list(), value = "")) {
+          total = list(types = list(), value = ""),
+          ...) {
 
-   options <- mget(names(formals(sys.function())), envir = environment(), inherits = FALSE)
+   options <- mget(setdiff(names(formals(sys.function())), "..."), envir = environment(), inherits = FALSE)
+   options <- c(options, list(...))
+   if (!all(nzchar(names(options))) || anyDuplicated(names(options)))
+      stop("The extra options given to attributesCharts must be named, each name once.")
+   if (...length() > 0L && missing(version))
+      stop("attributesCharts has no option ", paste(names(list(...)), collapse = ", "), ". Options of an older version need the `version` they were written for.")
    options[["data"]] <- NULL
    options[["version"]] <- NULL
 

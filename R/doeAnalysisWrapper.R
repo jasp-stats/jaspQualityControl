@@ -117,6 +117,8 @@
 #' @param tableCoefficientsCiLevel, Confidence level of the intervals.
 #' @param tableEquation, Display the regression coefficients as an equation predicting the response.
 #'    Defaults to \code{TRUE}.
+#' @param ... options that are not an argument of this function: the options of an older version of the
+#'   analysis, to be used together with `version`. They are upgraded to the options of this version.
 doeAnalysis <- function(
           data = NULL,
           version = "1",
@@ -173,9 +175,15 @@ doeAnalysis <- function(
           tableAlias = TRUE,
           tableCoefficientsCi = FALSE,
           tableCoefficientsCiLevel = 0.95,
-          tableEquation = TRUE) {
+          tableEquation = TRUE,
+          ...) {
 
-   options <- mget(names(formals(sys.function())), envir = environment(), inherits = FALSE)
+   options <- mget(setdiff(names(formals(sys.function())), "..."), envir = environment(), inherits = FALSE)
+   options <- c(options, list(...))
+   if (!all(nzchar(names(options))) || anyDuplicated(names(options)))
+      stop("The extra options given to doeAnalysis must be named, each name once.")
+   if (...length() > 0L && missing(version))
+      stop("doeAnalysis has no option ", paste(names(list(...)), collapse = ", "), ". Options of an older version need the `version` they were written for.")
    options[["data"]] <- NULL
    options[["version"]] <- NULL
 

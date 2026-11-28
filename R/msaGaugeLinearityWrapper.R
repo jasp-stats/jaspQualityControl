@@ -19,6 +19,8 @@
 
 #' Type 4 Linearity Study
 #'
+#' @param ... options that are not an argument of this function: the options of an older version of the
+#'   analysis, to be used together with `version`. They are upgraded to the options of this version.
 msaGaugeLinearity <- function(
           data = NULL,
           version = "1",
@@ -32,9 +34,15 @@ msaGaugeLinearity <- function(
           percentProcessVariationPlot = FALSE,
           plotHeight = 320,
           plotWidth = 480,
-          standard = list(types = list(), value = "")) {
+          standard = list(types = list(), value = ""),
+          ...) {
 
-   options <- mget(names(formals(sys.function())), envir = environment(), inherits = FALSE)
+   options <- mget(setdiff(names(formals(sys.function())), "..."), envir = environment(), inherits = FALSE)
+   options <- c(options, list(...))
+   if (!all(nzchar(names(options))) || anyDuplicated(names(options)))
+      stop("The extra options given to msaGaugeLinearity must be named, each name once.")
+   if (...length() > 0L && missing(version))
+      stop("msaGaugeLinearity has no option ", paste(names(list(...)), collapse = ", "), ". Options of an older version need the `version` they were written for.")
    options[["data"]] <- NULL
    options[["version"]] <- NULL
 

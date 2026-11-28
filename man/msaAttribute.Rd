@@ -22,7 +22,8 @@ msaAttribute(
   positiveReference = "",
   positiveReferenceCategory = "accept",
   standardLongFormat = list(types = list(), value = ""),
-  standardWideFormat = list(types = list(), value = "")
+  standardWideFormat = list(types = list(), value = ""),
+  ...
 )
 }
 \arguments{
@@ -33,6 +34,9 @@ msaAttribute(
 \item \code{"accept"}
 \item \code{"reject"}
 }}
+
+\item{...}{options that are not an argument of this function: the options of an older version of the
+analysis, to be used together with \code{version}. They are upgraded to the options of this version.}
 }
 \description{
 Attributes Agreement Analysis

@@ -39,7 +39,8 @@ doeResponseSurfaceMethodology(
     3)), list(levels = list("Row 0", "Row 1"), name = "data 4", values = list(0, 3)),
     list(levels = list("Row 0", "Row 1"), name = "data 5", values = list(1.414, 1.414))),
   selectedRow = -1,
-  setSeed = FALSE
+  setSeed = FALSE,
+  ...
 )
 }
 \arguments{
@@ -96,6 +97,9 @@ Defaults to \code{TRUE}.}
 }}
 
 \item{selectedDesign2, }{Select one of the pre-set designs by clicking on it in the table.}
+
+\item{...}{options that are not an argument of this function: the options of an older version of the
+analysis, to be used together with \code{version}. They are upgraded to the options of this version.}
 }
 \description{
 A response surface design is an experimental framework used to optimize and understand the relationships between several explanatory variables and one or more response variables. By systematically varying the input variables, researchers can explore the effects of these variables on the response, identify optimal conditions, and understand the interactions between variables. Response surface designs are particularly useful in situations where the goal is to optimize a process or product, as they provide a detailed map of the response landscape, enabling precise fine-tuning and improvement.

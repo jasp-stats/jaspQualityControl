@@ -24,7 +24,7 @@ doeFactorial(
   numberOfCategorical = 3,
   plotHeight = 320,
   plotWidth = 480,
-  randomSeed = 596085,
+  randomSeed = 492787,
   replications = 1,
   runOrder = "runOrderRandom",
   seed = 1,
@@ -34,7 +34,8 @@ doeFactorial(
     0))),
   selectedRow = -1,
   setSeed = FALSE,
-  showAliasStructure = FALSE
+  showAliasStructure = FALSE,
+  ...
 )
 }
 \arguments{
@@ -83,6 +84,9 @@ Defaults to \code{TRUE}.}
 
 \item{showAliasStructure, }{Check to display the alias structure of the generated design. Only available for two-level factorial designs with the default generator.
 Defaults to \code{FALSE}.}
+
+\item{...}{options that are not an argument of this function: the options of an older version of the
+analysis, to be used together with \code{version}. They are upgraded to the options of this version.}
 }
 \description{
 A factorial design is an experimental setup used to study the effects of multiple factors by varying them simultaneously. Each factor is tested at different levels and in different combinations with other factors. This design allows for the examination of both the main effects of each factor and the interactions between factors. It provides a systematic approach to understanding how different variables influence the outcome.

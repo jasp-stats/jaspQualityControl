@@ -19,6 +19,8 @@
 
 #' Probability of Detection
 #'
+#' @param ... options that are not an argument of this function: the options of an older version of the
+#'   analysis, to be used together with `version`. They are upgraded to the options of this version.
 probabilityOfDetection <- function(
           data = NULL,
           version = "1",
@@ -38,9 +40,15 @@ probabilityOfDetection <- function(
           plotHeight = 320,
           plotWidth = 480,
           verticalAsymptotes = list(),
-          xAxisTicksType = "dataBased") {
+          xAxisTicksType = "dataBased",
+          ...) {
 
-   options <- mget(names(formals(sys.function())), envir = environment(), inherits = FALSE)
+   options <- mget(setdiff(names(formals(sys.function())), "..."), envir = environment(), inherits = FALSE)
+   options <- c(options, list(...))
+   if (!all(nzchar(names(options))) || anyDuplicated(names(options)))
+      stop("The extra options given to probabilityOfDetection must be named, each name once.")
+   if (...length() > 0L && missing(version))
+      stop("probabilityOfDetection has no option ", paste(names(list(...)), collapse = ", "), ". Options of an older version need the `version` they were written for.")
    options[["data"]] <- NULL
    options[["version"]] <- NULL
 

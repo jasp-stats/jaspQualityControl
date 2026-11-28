@@ -27,8 +27,13 @@ msaType1Gauge(
   studyVarianceMultiplier = "6",
   tTest = TRUE,
   tTestCiLevel = 0.95,
-  toleranceRange = 1
+  toleranceRange = 1,
+  ...
 )
+}
+\arguments{
+\item{...}{options that are not an argument of this function: the options of an older version of the
+analysis, to be used together with \code{version}. They are upgraded to the options of this version.}
 }
 \description{
 Type 1 Instrument Capability Study

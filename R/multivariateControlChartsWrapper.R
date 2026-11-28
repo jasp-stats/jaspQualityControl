@@ -35,6 +35,8 @@
 #'    Defaults to \code{FALSE}.
 #' @param trainingLevel, Select which level of the stage variable represents the training (in-control) phase. Control limits and the covariance matrix are estimated from this phase only.
 #' @param variables, Two or more continuous quality characteristics to monitor jointly using a Hotelling T² chart.
+#' @param ... options that are not an argument of this function: the options of an older version of the
+#'   analysis, to be used together with `version`. They are upgraded to the options of this version.
 multivariateControlCharts <- function(
           data = NULL,
           version = "1",
@@ -51,9 +53,15 @@ multivariateControlCharts <- function(
           tSquaredValuesTable = FALSE,
           trainingLevel = "",
           tsqColumn = "",
-          variables = list(types = list(), value = list())) {
+          variables = list(types = list(), value = list()),
+          ...) {
 
-   options <- mget(names(formals(sys.function())), envir = environment(), inherits = FALSE)
+   options <- mget(setdiff(names(formals(sys.function())), "..."), envir = environment(), inherits = FALSE)
+   options <- c(options, list(...))
+   if (!all(nzchar(names(options))) || anyDuplicated(names(options)))
+      stop("The extra options given to multivariateControlCharts must be named, each name once.")
+   if (...length() > 0L && missing(version))
+      stop("multivariateControlCharts has no option ", paste(names(list(...)), collapse = ", "), ". Options of an older version need the `version` they were written for.")
    options[["data"]] <- NULL
    options[["version"]] <- NULL
 

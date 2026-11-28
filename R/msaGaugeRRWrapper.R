@@ -19,6 +19,8 @@
 
 #' Type 2 and 3 Gauge r&R Study
 #'
+#' @param ... options that are not an argument of this function: the options of an older version of the
+#'   analysis, to be used together with `version`. They are upgraded to the options of this version.
 msaGaugeRR <- function(
           data = NULL,
           version = "1",
@@ -95,9 +97,15 @@ msaGaugeRR <- function(
           trafficLightChart = FALSE,
           type3 = FALSE,
           varianceComponentsGraph = TRUE,
-          xBarChart = FALSE) {
+          xBarChart = FALSE,
+          ...) {
 
-   options <- mget(names(formals(sys.function())), envir = environment(), inherits = FALSE)
+   options <- mget(setdiff(names(formals(sys.function())), "..."), envir = environment(), inherits = FALSE)
+   options <- c(options, list(...))
+   if (!all(nzchar(names(options))) || anyDuplicated(names(options)))
+      stop("The extra options given to msaGaugeRR must be named, each name once.")
+   if (...length() > 0L && missing(version))
+      stop("msaGaugeRR has no option ", paste(names(list(...)), collapse = ", "), ". Options of an older version need the `version` they were written for.")
    options[["data"]] <- NULL
    options[["version"]] <- NULL
 

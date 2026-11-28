@@ -62,7 +62,8 @@ doeAnalysis(
   tableAlias = TRUE,
   tableCoefficientsCi = FALSE,
   tableCoefficientsCiLevel = 0.95,
-  tableEquation = TRUE
+  tableEquation = TRUE,
+  ...
 )
 }
 \arguments{
@@ -217,6 +218,9 @@ Defaults to \code{FALSE}.}
 
 \item{tableEquation, }{Display the regression coefficients as an equation predicting the response.
 Defaults to \code{TRUE}.}
+
+\item{...}{options that are not an argument of this function: the options of an older version of the
+analysis, to be used together with \code{version}. They are upgraded to the options of this version.}
 }
 \description{
 The purpose of analysing factorial and response surface designs is to identify influential factors and optimal response conditions. The analysis shows which factors significantly affect the response and how they interact. This allows to systematically optimize processes and improve product quality.

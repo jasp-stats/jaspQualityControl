@@ -25,6 +25,8 @@
 #'   \item \code{"accept"}
 #'   \item \code{"reject"}
 #' }
+#' @param ... options that are not an argument of this function: the options of an older version of the
+#'   analysis, to be used together with `version`. They are upgraded to the options of this version.
 msaAttribute <- function(
           data = NULL,
           version = "1",
@@ -43,9 +45,15 @@ msaAttribute <- function(
           positiveReference = "",
           positiveReferenceCategory = "accept",
           standardLongFormat = list(types = list(), value = ""),
-          standardWideFormat = list(types = list(), value = "")) {
+          standardWideFormat = list(types = list(), value = ""),
+          ...) {
 
-   options <- mget(names(formals(sys.function())), envir = environment(), inherits = FALSE)
+   options <- mget(setdiff(names(formals(sys.function())), "..."), envir = environment(), inherits = FALSE)
+   options <- c(options, list(...))
+   if (!all(nzchar(names(options))) || anyDuplicated(names(options)))
+      stop("The extra options given to msaAttribute must be named, each name once.")
+   if (...length() > 0L && missing(version))
+      stop("msaAttribute has no option ", paste(names(list(...)), collapse = ", "), ". Options of an older version need the `version` they were written for.")
    options[["data"]] <- NULL
    options[["version"]] <- NULL
 

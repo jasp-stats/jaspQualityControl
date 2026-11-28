@@ -34,8 +34,13 @@ attributesCharts(
   reportTitle = TRUE,
   reportTitleText = "",
   timeStamp = list(types = list(), value = ""),
-  total = list(types = list(), value = "")
+  total = list(types = list(), value = ""),
+  ...
 )
+}
+\arguments{
+\item{...}{options that are not an argument of this function: the options of an older version of the
+analysis, to be used together with \code{version}. They are upgraded to the options of this version.}
 }
 \description{
 Control Charts for Attributes
