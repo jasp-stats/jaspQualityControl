@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.0\n"
 "POT-Creation-Date: 2026-11-21 03:40\n"
-"PO-Revision-Date: 2026-11-16 06:38+0000\n"
+"PO-Revision-Date: 2026-11-22 05:51+0000\n"
 "Last-Translator: Koji Kosugi <kosugitti@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Japanese <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/ja/>\n"
@@ -155,17 +155,14 @@ msgstr "検定2: シフト"
 msgid "Test 3: Trend"
 msgstr "検定3: トレンド"
 
-#, fuzzy
 msgid "Test 5: Beyond 2 sigma, same side"
-msgstr "検定1: 限界の外"
+msgstr "検定5: 2シグマの外、同じ側"
 
-#, fuzzy
 msgid "Test 7: Reducing variation"
-msgstr "検定5: ばらつきの減少"
+msgstr "検定7: ばらつきの減少"
 
-#, fuzzy
 msgid "Test 8: Bimodal distribution"
-msgstr "検定6: 二峰性の分布"
+msgstr "検定8: 二峰性の分布"
 
 msgid "Points where a test failed."
 msgstr "検定に不合格となった点です。"
@@ -185,7 +182,7 @@ msgstr ""
 "なく連続する観測値が %1$s 個未満しかありません。"
 
 msgid "%1$s (occurrence %2$d)"
-msgstr ""
+msgstr "%1$s (%2$d 回目)"
 
 msgid "CL = %s"
 msgstr "CL = %s"
@@ -208,13 +205,11 @@ msgstr "- 上側"
 msgid "- lower"
 msgstr "- 下側"
 
-#, fuzzy
 msgid "Test 4: Oscillation"
-msgstr "検定8: 振動"
+msgstr "検定4: 振動"
 
-#, fuzzy
 msgid "Test 6: Beyond 1 sigma, same side"
-msgstr "検定1: 限界の外"
+msgstr "検定6: 1シグマの外、同じ側"
 
 msgid "Test 9: Benneyan test"
 msgstr "検定9: Benneyan の検定"
@@ -252,28 +247,29 @@ msgstr "累積和"
 msgid "Exponentially weighted moving average"
 msgstr "指数重み付き移動平均"
 
-#, fuzzy
 msgid "LSL = %s"
-msgstr "LSL = %g"
+msgstr "LSL = %s"
 
-#, fuzzy
 msgid "Tar. = %s"
-msgstr "目標 = %g"
+msgstr "目標 = %s"
 
-#, fuzzy
 msgid "USL = %s"
-msgstr "USL = %g"
+msgstr "USL = %s"
 
 msgid ""
 "The parameters could not be estimated. The %s distribution requires all "
 "measurements to be greater than zero. Consider a transformation that yields "
 "positive measurements."
 msgstr ""
+"パラメータを推定できませんでした。%s 分布では、すべての測定値が0より大きい必"
+"要があります。測定値が正になるような変換を検討してください。"
 
 msgid ""
 "For capability estimates, consider the 3-parameter Weibull if a lower "
 "threshold is appropriate for the process."
 msgstr ""
+"能力の推定には、工程に下側のしきい値を置くのが適切であれば、3母数ワイブル分布"
+"を検討してください。"
 
 msgid ""
 "The parameters could not be estimated for the selected distribution, most "
@@ -288,11 +284,15 @@ msgid ""
 "The parameters could not be estimated: the historical threshold (%1$s) must "
 "be smaller than the smallest observation (%2$s)."
 msgstr ""
+"パラメータを推定できませんでした: 過去のしきい値 (%1$s) は、最小の観測値 "
+"(%2$s) より小さくなければなりません。"
 
 msgid ""
 "It can only equal the smallest observation with a historical shape of 1 "
 "(shifted exponential distribution)."
 msgstr ""
+"しきい値が最小の観測値と等しくてよいのは、過去の形状が1の場合 (シフトした指数"
+"分布) だけです。"
 
 msgid "Design of Experiments - Analysis"
 msgstr "実験計画法 - 分析"
@@ -316,23 +316,28 @@ msgstr "%2$s に指定した低/高の水準 %1$s が、データセットの水
 
 msgid "Model omits lower-order terms: %s. Add these terms to continue."
 msgstr ""
+"モデルに低次の項が含まれていません: %s。続けるには、これらの項を追加してくだ"
+"さい。"
 
 msgid ""
 "Removing aliased terms leaves missing lower-order terms: %s. Remove the "
 "higher-order terms that require them or revise the design."
 msgstr ""
+"交絡した項を除くと、低次の項が欠けます: %s。それらを必要とする高次の項を除く"
+"か、計画を見直してください。"
 
 msgid ""
 "This model is not supported in both display units. Check lower-order terms, "
 "aliasing and predictor scales."
 msgstr ""
+"このモデルは、コード化した単位と非コード化の単位の両方で扱うことはできません"
+"。低次の項・交絡・予測変数の尺度を確認してください。"
 
 msgid "ANOVA tests use coded units."
-msgstr ""
+msgstr "分散分析の検定はコード化した単位を使います。"
 
-#, fuzzy
 msgid "Aliases: %s."
-msgstr "測定者: %s"
+msgstr "別名: %s。"
 
 msgid "Response Optimizer Settings"
 msgstr "応答の最適化の設定"
@@ -357,9 +362,8 @@ msgstr "下限と上限は、データから推定しています。"
 msgid "The targets of the goals maximize and minimize are estimated from data."
 msgstr "目標が最大化・最小化の場合の目標値は、データから推定しています。"
 
-#, fuzzy
 msgid "Response Optimizer: Best Solution Found"
-msgstr "応答の最適化の解"
+msgstr "応答の最適化: 見つかった最良の解"
 
 msgid "%s fit"
 msgstr "%s のあてはめ"
@@ -368,14 +372,18 @@ msgid ""
 "Search bounds use each factor's observed range; combinations may lie outside "
 "the sampled design region."
 msgstr ""
+"探索の範囲には、各因子の観測された範囲を使います。その組み合わせは、実行した"
+"計画の領域の外にあることがあります。"
 
 msgid "Some optimization runs failed; the best solution found is shown."
-msgstr ""
+msgstr "最適化の実行の一部が失敗しました。見つかった最良の解を表示します。"
 
 msgid ""
 "No acceptable setting was found. Very narrow feasible regions may be missed "
 "by the numerical search."
 msgstr ""
+"許容できる設定は見つかりませんでした。実行可能な領域がごく狭い場合、数値的な"
+"探索では見逃すことがあります。"
 
 msgid "Optimization Plot"
 msgstr "最適化のプロット"
@@ -422,14 +430,13 @@ msgstr "総合的な望ましさ"
 msgid ""
 "One or more settings are outside the observed factor ranges. Predictions "
 "involve extrapolation."
-msgstr ""
+msgstr "1つ以上の設定が、観測された因子の範囲の外にあります。予測は外挿になります。"
 
 msgid "Predicted Responses (Manual Predictor Values)"
 msgstr "予測された応答 (予測変数の値を手動で指定)"
 
-#, fuzzy
 msgid "Predicted Responses (Best Solution Found)"
-msgstr "予測された応答 (最適解)"
+msgstr "予測された応答 (見つかった最良の解)"
 
 msgid "Response"
 msgstr "応答"
@@ -463,7 +470,7 @@ msgstr "モデルに誤差の自由度がない場合、区間を計算できま
 msgid ""
 "%1$s: predictions and optimization assume that the removed aliased terms "
 "(%2$s) have zero effects."
-msgstr ""
+msgstr "%1$s: 予測と最適化では、除いた交絡した項 (%2$s) の効果を0と仮定しています。"
 
 msgid ""
 "Predictions are averaged over the blocks; the prediction interval excludes "
@@ -487,7 +494,7 @@ msgstr ""
 "ません (例: 実行のない要因の水準の組み合わせ)。これらの設定は除いています。"
 
 msgid "Optimization did not converge. Check the response goals and bounds."
-msgstr ""
+msgstr "最適化が収束しませんでした。応答の目標と下限・上限を確認してください。"
 
 msgid ""
 "The response optimizer cannot be used with this model: some contrasts are "
@@ -528,7 +535,6 @@ msgstr ""
 "る予測値の望ましさは0になります。それらを許すには、下限・上限を手動で設定して"
 "ください。"
 
-#, fuzzy
 msgid "the intercept"
 msgstr "切片"
 
@@ -548,13 +554,12 @@ msgid "Predictive %s"
 msgstr "予測 %s"
 
 msgid "%1$s (aliased with %2$s)"
-msgstr ""
+msgstr "%1$s (%2$s と交絡)"
 
-#, fuzzy
 msgid ""
 "The following aliased terms were removed; their effects are assumed to be "
 "zero: %s."
-msgstr "次の交絡した項を除きました: %s。"
+msgstr "次の交絡した項を除きました。それらの効果は0と仮定しています: %s。"
 
 msgid "The following terms are aliased and were not estimated: %s."
 msgstr "次の項は交絡しているため、推定されませんでした: %s。"
@@ -599,6 +604,8 @@ msgid ""
 "Type II sums of squares instead of the selected Type III: Type III sums of "
 "squares are not available when some coefficients are aliased."
 msgstr ""
+"選んだタイプIIIではなくタイプIIの平方和です: 係数の一部が交絡している場合、"
+"タイプIIIの平方和は使えません。"
 
 msgid "Type I sums of squares."
 msgstr "タイプIの平方和です。"
@@ -610,24 +617,22 @@ msgid "Type III sums of squares."
 msgstr "タイプIIIの平方和です。"
 
 msgid "Center-point curvature is not modeled automatically."
-msgstr ""
+msgstr "中心点による曲率は自動ではモデルに含めません。"
 
 msgid "Pure error assumes that omitted predictors (%s) have no effect."
-msgstr ""
+msgstr "純誤差は、除いた予測変数 (%s) に効果がないことを仮定しています。"
 
-#, fuzzy
 msgid "Factor Coding"
-msgstr "要因計画"
+msgstr "因子のコード化"
 
-#, fuzzy
 msgid "Factor"
 msgstr "因子"
 
 msgid "Low (−1)"
-msgstr ""
+msgstr "低水準 (−1)"
 
 msgid "High (+1)"
-msgstr ""
+msgstr "高水準 (+1)"
 
 msgid "Coded"
 msgstr "コード化"
@@ -679,7 +684,7 @@ msgstr ""
 "2乗項、3水準以上の離散予測変数、ブロック、共変量については表示していません。"
 
 msgid "SE, t and p refer to the uncoded coefficients."
-msgstr ""
+msgstr "標準誤差・t・p は、非コード化の係数についての値です。"
 
 msgid "Levels without runs are left out of the model: %s."
 msgstr "実行のない水準は、モデルから除いています: %s。"
@@ -697,7 +702,7 @@ msgstr ""
 "です (例: 主効果を含まない交互作用項や2乗項)。"
 
 msgid "VIF is calculated without the aliased coefficients."
-msgstr ""
+msgstr "VIF は、交絡した係数を除いて計算しています。"
 
 msgid "Discrete Predictor Levels"
 msgstr "離散予測変数の水準"
@@ -749,6 +754,8 @@ msgid ""
 "AIC selection in coded units. Tests and intervals do not account for model "
 "selection."
 msgstr ""
+"AIC による選択はコード化した単位で行っています。検定と区間は、モデル選択を考"
+"慮していません。"
 
 msgid ""
 "The model is saturated (no error degrees of freedom) and its effects are not "
@@ -769,7 +776,7 @@ msgstr ""
 
 msgid ""
 "Lenth's method requires orthogonal two-level effects with equal precision."
-msgstr ""
+msgstr "Lenth の方法には、直交し精度の等しい2水準の効果が必要です。"
 
 msgid ""
 "The model is saturated (no error degrees of freedom) and Lenth's pseudo "
@@ -778,13 +785,11 @@ msgstr ""
 "モデルが飽和しており (誤差の自由度なし)、効果の Lenth の擬似標準誤差が0である"
 "ため、効果を評価できません。"
 
-#, fuzzy
 msgid "Pareto Chart of Standardized Effects (α = .05)"
-msgstr "標準化効果のパレート図"
+msgstr "標準化効果のパレート図 (α = .05)"
 
-#, fuzzy
 msgid "Pareto Chart of Effects (Lenth screening, α = .05)"
-msgstr "効果のパレート図"
+msgstr "効果のパレート図 (Lenth のスクリーニング、α = .05)"
 
 msgid "ME = %s"
 msgstr "ME = %s"
@@ -792,13 +797,11 @@ msgstr "ME = %s"
 msgid "Standardized Effect"
 msgstr "標準化効果"
 
-#, fuzzy
 msgid "Normal Plot of Standardized Effects (α = .05)"
-msgstr "標準化効果の正規プロット"
+msgstr "標準化効果の正規プロット (α = .05)"
 
-#, fuzzy
 msgid "Normal Plot of Effects (Lenth screening, α = .05)"
-msgstr "効果の正規プロット"
+msgstr "効果の正規プロット (Lenth のスクリーニング、α = .05)"
 
 msgid "Percent"
 msgstr "パーセント"
@@ -878,14 +881,13 @@ msgid ""
 "Continuous predictors that are not on the axes of a plot are held at their "
 "mean (see \"Slice at\" in the plot)."
 msgstr ""
+"プロットの軸にない連続予測変数は、平均の値に固定しています (プロットの「"
+"Slice at」を参照)。"
 
-#, fuzzy
 msgid ""
 "The prediction is averaged over the levels of the discrete factors and "
 "blocks (%s)."
-msgstr ""
-"予測値はブロックにわたって平均しています。予測区間には、ブロック間の変動を含"
-"めていません。"
+msgstr "予測値は、離散因子とブロックの水準にわたって平均しています (%s)。"
 
 msgid "The analysis failed with the following error message: %s"
 msgstr "分析が次のエラーメッセージで失敗しました: %s"
@@ -927,7 +929,7 @@ msgid "Please select a row in the design table."
 msgstr "計画の表で行を選んでください。"
 
 msgid "This design uses the legacy block assignment."
-msgstr ""
+msgstr "この計画では、旧方式のブロックの割り当てを使っています。"
 
 msgid "Cannote create designs with more than 100000 total runs."
 msgstr "総実行数が 100000 を超える計画は作成できません。"
@@ -942,7 +944,7 @@ msgid "The design is exported as '%1$s'."
 msgstr "計画を '%1$s' として書き出しました。"
 
 msgid "Blocks = %s"
-msgstr ""
+msgstr "ブロック = %s"
 
 msgid ""
 "The selected design is a full factorial; no generators can be specified."
@@ -979,13 +981,14 @@ msgstr ""
 "本因子は %3$s です。"
 
 msgid "Factor codes in worksheet order: %s."
-msgstr ""
+msgstr "ワークシートの順での因子のコード: %s。"
 
-#, fuzzy
 msgid ""
 "No aliasing among main effects and 2-factor interactions, except for the 2-"
 "factor interactions confounded with blocks."
-msgstr "主効果と2因子交互作用のあいだに交絡はありません。"
+msgstr ""
+"ブロックと交絡している2因子交互作用を除き、主効果と2因子交互作用のあいだに交"
+"絡はありません。"
 
 msgid "No aliasing among main effects and 2-factor interactions."
 msgstr "主効果と2因子交互作用のあいだに交絡はありません。"
@@ -997,7 +1000,7 @@ msgid "Factorial Design"
 msgstr "要因計画"
 
 msgid "%s (design)"
-msgstr ""
+msgstr "%s (計画)"
 
 msgid "Run Order"
 msgstr "実行順序"
@@ -1005,11 +1008,9 @@ msgstr "実行順序"
 msgid "Standard Order"
 msgstr "標準順序"
 
-#, fuzzy
 msgid "Block"
-msgstr "基本のブロック数"
+msgstr "ブロック"
 
-#, fuzzy
 msgid "Replication"
 msgstr "繰り返し"
 
@@ -1017,7 +1018,7 @@ msgid "Hard-to-change factors: %1$s"
 msgstr "変更しにくい因子: %1$s"
 
 msgid "Run order randomized with seed %1$s."
-msgstr ""
+msgstr "実行順序はシード %1$s でランダム化しました。"
 
 msgid "Continuous factors"
 msgstr "連続因子"
@@ -1132,7 +1133,7 @@ msgstr "誤警報率"
 msgid ""
 "The miss rate and false alarm rate need exactly two categories in the "
 "results and the standard."
-msgstr ""
+msgstr "見逃し率と誤警報率には、結果と基準にちょうど2つのカテゴリが必要です。"
 
 msgid ""
 "Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false "
@@ -1158,6 +1159,9 @@ msgid ""
 "standard %2$s that are %1$s. False alarm rate: percentage of ratings of "
 "parts with standard %1$s that are %2$s."
 msgstr ""
+"合格 (良品) のカテゴリ: %1$s。見逃し率: 基準が %2$s である部品の評定のうち"
+"、%1$s とされたものの割合。誤警報率: 基準が %1$s である部品の評定のうち"
+"、%2$s とされたものの割合。"
 
 msgid "More than one measurement per operator required."
 msgstr "測定者1名につき2回以上の測定が必要です。"
@@ -1172,16 +1176,19 @@ msgstr "各測定者は、部品ごとにちょうど1行をもつ必要があ�
 msgid "Each part must have a single reference value."
 msgstr "各部品の参照値は1つでなければなりません。"
 
-#, fuzzy
 msgid ""
 "Kendall's tau is only available for numeric or ordinal measurements, with "
 "the same order of the levels in every column."
-msgstr "ケンドールのタウは数値の測定値にのみ使えます。"
+msgstr ""
+"ケンドールのタウは、数値または順序尺度の測定値で、すべての列の水準の順序が同"
+"じ場合にのみ使えます。"
 
 msgid ""
 "Kendall's tau is only available for a numeric standard or an ordinal "
 "standard with the same order of the levels as the ratings."
 msgstr ""
+"ケンドールのタウは、基準が数値であるか、評定と同じ水準の順序をもつ順序尺度で"
+"ある場合にのみ使えます。"
 
 msgid "Kendall's tau is only available for non-binary measurements."
 msgstr "ケンドールのタウは二値でない測定値にのみ使えます。"
@@ -1204,7 +1211,7 @@ msgstr ""
 "です。"
 
 msgid "Order of the ordinal levels: %s."
-msgstr ""
+msgstr "順序尺度の水準の順序: %s。"
 
 msgid "Agreement counts and totals must have compatible lengths."
 msgstr "一致数と合計数の長さが対応している必要があります。"
@@ -1300,10 +1307,10 @@ msgid "t-test not possible. No variance detected in Part(s) %s."
 msgstr "t検定を行えません。部品 %s に分散がありません。"
 
 msgid "Linearity requires at least 2 different reference values."
-msgstr ""
+msgstr "直線性には、少なくとも2つの異なる参照値が必要です。"
 
 msgid "The linearity slope could not be estimated from the reference values."
-msgstr ""
+msgstr "参照値から直線性の傾きを推定できませんでした。"
 
 msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
 msgstr "偏り = %1$.2f %2$s %3$.2f × 参照値"
@@ -1506,12 +1513,11 @@ msgstr "測定者 %1$s と測定者 %2$s の散布図"
 msgid "Matrix plot for operators"
 msgstr "測定者の行列プロット"
 
-#, fuzzy
 msgid "Repeat"
 msgstr "繰り返し性"
 
 msgid "Reprod"
-msgstr ""
+msgstr "再現性"
 
 msgid "%% Study Variation"
 msgstr "%% 調査変動"
@@ -1525,7 +1531,7 @@ msgstr "%.2f"
 
 msgid ""
 "At least 2 operators are required. The operator variable has only one level."
-msgstr ""
+msgstr "少なくとも2人の測定者が必要です。測定者の変数には水準が1つしかありません。"
 
 msgid ""
 "Unbalanced design. Some parts have more repeated measurements than others."
@@ -1610,6 +1616,8 @@ msgid ""
 "Enter a process std. dev. or a tolerance greater than zero to draw the "
 "traffic light chart."
 msgstr ""
+"信号灯チャートを描くには、工程の標準偏差または公差に0より大きい値を入力してく"
+"ださい。"
 
 msgid "Run chart of parts"
 msgstr "部品の推移図"
@@ -1638,7 +1646,7 @@ msgstr "%%GRR (工程の標準偏差に対して)"
 msgid ""
 "Enter a process standard deviation greater than zero to calculate its "
 "percentage."
-msgstr ""
+msgstr "割合を計算するには、工程の標準偏差に0より大きい値を入力してください。"
 
 msgid "Tolerance"
 msgstr "公差"
@@ -1647,7 +1655,7 @@ msgid "%%GRR of tolerance"
 msgstr "%%GRR (公差に対して)"
 
 msgid "Enter a tolerance greater than zero to calculate its percentage."
-msgstr ""
+msgstr "割合を計算するには、公差に0より大きい値を入力してください。"
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
 msgstr "1回目と2回目の測定値の散布図"
@@ -1749,9 +1757,8 @@ msgstr "%s に有効な測定値がありません。"
 msgid "Ref."
 msgstr "参照"
 
-#, fuzzy
 msgid "Observation"
-msgstr "観測数"
+msgstr "観測値"
 
 msgid ""
 "The stage variable must have at least two levels to define training and test "
@@ -2006,9 +2013,8 @@ msgstr "工程の能力"
 msgid "Probability plot"
 msgstr "確率プロット"
 
-#, fuzzy
 msgid "Process capability tables"
-msgstr "工程能力"
+msgstr "工程能力の表"
 
 msgid "X-bar & %s control chart"
 msgstr "X-bar & %s 管理図"
@@ -2184,17 +2190,14 @@ msgstr "ロジスティック分布"
 msgid "Log-logistic dist."
 msgstr "対数ロジスティック分布"
 
-#, fuzzy
 msgid "Target = %s"
-msgstr "目標 = %g"
+msgstr "目標 = %s"
 
-#, fuzzy
 msgid "LB = %s"
-msgstr "LB = %g"
+msgstr "LB = %s"
 
-#, fuzzy
 msgid "UB = %s"
-msgstr "UB = %g"
+msgstr "UB = %s"
 
 msgid "Lognormal dist."
 msgstr "対数正規分布"
@@ -2358,13 +2361,10 @@ msgstr "標準偏差 (%1$s)"
 msgid "AD"
 msgstr "AD"
 
-#, fuzzy
 msgid ""
 "The Anderson-Darling statistic (AD) is calculated against the %1$s "
 "distribution."
-msgstr ""
-"アンダーソン・ダーリング統計量 A<i>D</i> は %1$s 分布に対して計算されていま"
-"す。"
+msgstr "アンダーソン・ダーリング統計量 (AD) は %1$s 分布に対して計算されています。"
 
 msgid ""
 "Red dotted lines in the probability plot below represent a 95%% confidence "
@@ -2533,7 +2533,7 @@ msgstr "群の計量値管理図レポート"
 msgid "Stage %s has no observations, so no control limits are shown for it."
 msgid_plural ""
 "Stages %s have no observations, so no control limits are shown for them."
-msgstr[0] ""
+msgstr[0] "ステージ %s には観測値がないため、管理限界を表示しません。"
 
 msgid ""
 "%1$s cannot be analysed: after leaving out its runs with a missing value, "
@@ -2542,6 +2542,8 @@ msgid_plural ""
 "%1$s cannot be analysed: after leaving out its runs with a missing value, "
 "the factors %2$s have fewer than 2 levels left."
 msgstr[0] ""
+"%1$s は分析できません: 値が欠測している実行を除くと、因子 %2$s の水準が2つ未"
+"満になります。"
 
 msgid ""
 "%1$d run with a missing value of a predictor, block or covariate was left "
@@ -2550,6 +2552,8 @@ msgid_plural ""
 "%1$d runs with a missing value of a predictor, block or covariate were left "
 "out of the analysis of all responses."
 msgstr[0] ""
+"予測変数・ブロック・共変量の値が欠測している %1$d 件の実行を、すべての応答の"
+"分析から除きました。"
 
 msgid ""
 "%1$d run with a missing value of %2$s was left out of the analysis of this "
@@ -2557,7 +2561,7 @@ msgid ""
 msgid_plural ""
 "%1$d runs with a missing value of %2$s were left out of the analysis of this "
 "response."
-msgstr[0] ""
+msgstr[0] "%2$s の値が欠測している %1$d 件の実行を、この応答の分析から除きました。"
 
 msgid ""
 "The response optimizer cannot be used because the response %1$s could not be "
@@ -2566,6 +2570,8 @@ msgid_plural ""
 "The response optimizer cannot be used because the responses %1$s could not "
 "be analysed, see their output."
 msgstr[0] ""
+"応答 %1$s を分析できなかったため、応答の最適化を使えません。その出力を確認し"
+"てください。"
 
 msgid "The following covariate was considered but not included: %1$s."
 msgid_plural "The following covariates were considered but not included: %1$s."
@@ -2590,6 +2596,9 @@ msgid_plural ""
 "measurements are smaller than or equal to -shift (%2$s). Increase the shift "
 "or use the Yeo-Johnson or Johnson transformation."
 msgstr[0] ""
+"Box-Cox 変換には 測定値 + shift > 0 が必要ですが、%1$i 件の測定値が -shift "
+"(%2$s) 以下です。shift を大きくするか、Yeo-Johnson 変換か Johnson 変換を使っ"
+"てください。"
 
 #~ msgid "Test 4: Increasing variation"
 #~ msgstr "検定4: ばらつきの増大"
